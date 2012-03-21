@@ -1,4 +1,17 @@
 syntax on
+"------------------------------------
+" vundle settings
+"------------------------------------
+set nocompatible
+filetype off
+set rtp+=~/vimfiles/vundle.git/
+call vundle#rc()
+Bundle 'molkai'
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/unite.vim'
+Bundle 'FuzzyFinder'
+Bundle 'thinca/vim-ref'
+Bundle 'thinca/vim-quickrun'
 filetype plugin indent on
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
 set fileencodings=utf-8
@@ -111,11 +124,6 @@ nmap ,y ;YRShow<CR>
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 "-------------------------------------------------------------- set ONUNUME
-" Ctrl-iでヘルプ
-nnoremap <C-i>  :<C-u>help<Space>
-" カーソル下のキーワードをヘルプでひく
-nnoremap <C-i><C-i> :<C-u>help<Space><C-r><C-w><Enter>
-
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
@@ -144,8 +152,3 @@ imap <C-l> <Right>
 " コンマの後に自動的にスペースを挿入
 inoremap , ,<Space>
 
-
-"------------------------------------
-" syntax scheme
-"------------------------------------
-autocmd FileType scheme :let is_gauche=1
