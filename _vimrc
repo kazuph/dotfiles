@@ -11,6 +11,9 @@ endif
 
 NeoBundle 'molokai'
 NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
+NeoBundle 'http://github.com/Shougo/vimfiler.git'
+NeoBundle 'http://github.com/ujihisa/neco-look.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'thinca/vim-ref'
 " trying this
@@ -31,6 +34,9 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 " Programming
 NeoBundle "jQuery"
 NeoBundle "rails.vim"
+NeoBundle "http://github.com/hotchpotch/perldoc-vim"
+NeoBundle "http://github.com/c9s/perlomni.vim"
+NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
 
 " Snippets
 NeoBundle "http://github.com/gmarik/snipmate.vim.git"
@@ -133,13 +139,16 @@ imap  <C-e> <END>
 imap  <C-a> <HOME>
 
 " インサートモードでもhjklで移動（Ctrl押すけどね）
-imap <C-j> <Down>
-imap <C-k> <Up>
-imap <C-h> <Left>
-imap <C-l> <Right>
+"imap <C-j> <Down>
+"imap <C-k> <Up>
+"imap <C-h> <Left>
+"imap <C-l> <Right>
 
 " コンマの後に自動的にスペースを挿入
 inoremap , ,<Space>
+
+" Perlと同じ拡張正規表現を使うようにする
+nnoremap / /\v
 
 """ neocomplcache
 " Disable AutoComplPop.
@@ -161,7 +170,7 @@ let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
     \ 'scheme' : $HOME.'/.gosh_completions'
-    \ }
+        \ }
 
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
@@ -170,15 +179,12 @@ endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 " Plugin key-mappings.
-imap <C-k>     <Plug>(neocomplcache_snippets_expand)
-smap <C-k>     <Plug>(neocomplcache_snippets_expand)
 inoremap <expr><C-g>     neocomplcache#undo_completion()
 inoremap <expr><C-l>     neocomplcache#complete_common_string()
-" SuperTab like snippets behavior.
-"imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " <C-h>, <BS>: close popup and delete backword char.
@@ -187,15 +193,23 @@ inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
+" For cursor moving in insert mode(Not recommended)
+"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+" Or set this.
+"let g:neocomplcache_enable_cursor_hold_i = 1
+
 " AutoComplPop like behavior.
-"let g:neocomplcache_enable_auto_select = 1
+" let g:neocomplcache_enable_auto_select = 1
 
 " Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplcache_enable_auto_select = 1
-"let g:neocomplcache_disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-"inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+" set completeopt+=longest
+" let g:neocomplcache_enable_auto_select = 1
+" let g:neocomplcache_disable_auto_complete = 1
+" inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+" inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -203,13 +217,13 @@ autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
-    let g:neocomplcache_omni_patterns = {}
+  let g:neocomplcache_omni_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
-
