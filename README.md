@@ -6,7 +6,7 @@ cd dotfiles
 git submodule init
 git submodule update
 vim
-:BundleInstall
+:NeoBundleInstall
 cd ~/.
 ln -s .vimrc /dotfiles/_vimrc
 ...
