@@ -3,55 +3,59 @@
 "------------------------------------
 set nocompatible
 filetype off
-set rtp+=~/dotfiles/vimfiles/vundle.git/
-call vundle#rc()
-Bundle 'molokai'
-Bundle 'Shougo/neocomplcache'
-Bundle 'Shougo/unite.vim'
-Bundle 'thinca/vim-ref'
+set rtp+=~/dotfiles/neobundle.git/
+if has('vim_starting')
+    set runtimepath+=~/dotfiles/neobundle.vim
+    call neobundle#rc(expand('~/.vim/'))
+endif
+
+NeoBundle 'molokai'
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'thinca/vim-ref'
 " trying this
-Bundle "YankRing.vim"
+NeoBundle "YankRing.vim"
 let g:yankring_manual_clipboard_check = 0
 let g:yankring_max_history = 30
 let g:yankring_max_display = 70
 " Yankの履歴参照
 nmap ,y ;YRShow<CR>
 
-Bundle "http://github.com/thinca/vim-quickrun.git"
-Bundle "http://github.com/thinca/vim-poslist.git"
-Bundle "http://github.com/mattn/gist-vim.git"
-Bundle "http://github.com/rstacruz/sparkup.git", {'rtp': 'vim/'}
-Bundle "https://github.com/mattn/zencoding-vim.git"
+NeoBundle "http://github.com/thinca/vim-quickrun.git"
+NeoBundle "http://github.com/thinca/vim-poslist.git"
+NeoBundle "http://github.com/mattn/gist-vim.git"
+NeoBundle "http://github.com/rstacruz/sparkup.git", {'rtp': 'vim/'}
+NeoBundle "https://github.com/mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming
-Bundle "jQuery"
-Bundle "rails.vim"
+NeoBundle "jQuery"
+NeoBundle "rails.vim"
 
 " Snippets
-Bundle "http://github.com/gmarik/snipmate.vim.git"
+NeoBundle "http://github.com/gmarik/snipmate.vim.git"
 
 " Syntax highlight
-Bundle "cucumber.zip"
-Bundle "Markdown"
+NeoBundle "cucumber.zip"
+NeoBundle "Markdown"
 
 " Git integration
-Bundle "git.zip"
-Bundle "fugitive.vim"
+NeoBundle "git.zip"
+NeoBundle "fugitive.vim"
 
 " (HT|X)ml tool
-Bundle "ragtag.vim"
+NeoBundle "ragtag.vim"
 
 " Utility
-Bundle "repeat.vim"
-Bundle "surround.vim"
-Bundle "SuperTab"
-Bundle "file-line"
-Bundle "Align"
+NeoBundle "repeat.vim"
+NeoBundle "surround.vim"
+NeoBundle "SuperTab"
+NeoBundle "file-line"
+NeoBundle "Align"
 
 " FuzzyFinder
-Bundle "L9"
-Bundle "FuzzyFinder"
+NeoBundle "L9"
+NeoBundle "FuzzyFinder"
 let g:fuf_modesDisable = [] " {{{
 nnoremap <silent> <LocalLeader>h :FufHelp<CR>
 nnoremap <silent> <LocalLeader>2  :FufFileWithCurrentBufferDir<CR>
@@ -68,14 +72,14 @@ nnoremap <silent> <LocalLeader>9  :FufTaggedFile<CR>
 " " }}}
 
 " Zoomwin
-Bundle "ZoomWin"
+NeoBundle "ZoomWin"
 noremap <LocalLeader>o :ZoomWin<CR>
 vnoremap <LocalLeader>o <C-C>:ZoomWin<CR>
 inoremap <LocalLeader>o <C-O>:ZoomWin<CR>
 noremap <C-W>+o :ZoomWin<CR>
 
 " Ack
-Bundle "ack.vim"
+NeoBundle "ack.vim"
 noremap <LocalLeader># "ayiw:Ack <C-r>a<CR>
 vnoremap <LocalLeader># "ay:Ack <C-r>a<CR>
 
