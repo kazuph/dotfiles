@@ -16,6 +16,11 @@ NeoBundle 'http://github.com/Shougo/vimfiler.git'
 NeoBundle 'http://github.com/ujihisa/neco-look.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'thinca/vim-ref'
+
+" 正規表現をPerl風に
+NeoBundle 'http://github.com/othree/eregex.vim'
+nnoremap / :M/
+
 " trying this
 NeoBundle "YankRing.vim"
 let g:yankring_manual_clipboard_check = 0
@@ -37,6 +42,7 @@ NeoBundle "rails.vim"
 NeoBundle "http://github.com/hotchpotch/perldoc-vim"
 NeoBundle "http://github.com/c9s/perlomni.vim"
 NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
+NeoBundle 'petdance/vim-perl'
 
 " Snippets
 NeoBundle "http://github.com/gmarik/snipmate.vim.git"
@@ -110,7 +116,7 @@ set t_Co=256
 colorscheme molokai
 let g:molokai_original = 1
 set ttymouse=xterm2
-" nmap <ESC><ESC> :nohl<CR><ESC>
+nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
 noremap : ;
 au BufNewFile,BufRead *.psgi set filetype=perl
@@ -147,9 +153,6 @@ imap  <C-a> <HOME>
 " コンマの後に自動的にスペースを挿入
 inoremap , ,<Space>
 
-" Perlと同じ拡張正規表現を使うようにする
-nnoremap / /\v
-
 """ neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -162,14 +165,21 @@ let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_min_syntax_length = 2
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+let g:neocomplcache_ctags_arguments_list = {
+  \ 'perl' : '-R -h ".pm"'
+  \ }
+
+let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
-    \ 'default' : '',
+    \ 'default'  : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
+    \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
+    \ 'scheme'   : $HOME.'/.gosh_completions'
         \ }
 
 " Define keyword.
@@ -177,6 +187,10 @@ if !exists('g:neocomplcache_keyword_patterns')
     let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" for snippets
+imap <expr><C-k> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : "\<C-n>"
+smap <C-k> <Plug>(neocomplcache_snippets_expand)
 
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplcache#undo_completion()
@@ -227,3 +241,41 @@ let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+
+""" vimfiler
+let g:vimfiler_as_default_explorer = 1
+
+""" unite.vim
+let g:unite_update_time = 1000
+" 入力モードで開始する
+let g:unite_enable_start_insert=1
+" バッファ一覧
+nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+" ファイル一覧
+nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" レジスタ一覧
+nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+" 最近使用したファイル一覧
+nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
+" 常用セット
+nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+" 全部乗せ
+nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+
+" ウィンドウを分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+" ウィンドウを縦に分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+  " Overwrite settings.
+  imap <buffer> jj <Plug>(unite_insert_leave)
+  imap <buffer> <ESC> <ESC><ESC>
+  nnoremap <buffer> t G
+  startinsert
+endfunction
+call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
+
