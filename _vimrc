@@ -9,19 +9,68 @@ if has('vim_starting')
     call neobundle#rc(expand('~/.vim/'))
 endif
 
+" buffer
+" NeoBundle 'bufexplorer.vim'
+" NeoBundle 'buftabs'
+" ファイル名だけ表示
+let buftabs_only_basename = 1
+
+" 選択部分のキーワードを検索
+NeoBundle 'thinca/vim-visualstar'
+
+" Vimperator風に移動できる
+NeoBundle 'Lokaltog/vim-easymotion'
+
+" FontSizeを変更する
+NeoBundle 'thinca/vim-fontzoom'
+
+" 簡単にコメントアウトする
+NeoBundle 'tomtom/tcomment_vim'
+
+" エラーチェックする
+NeoBundle 'https://github.com/vim-scripts/errormarker.vim.git'
+let g:errormarker_errortext = '!!'
+let g:errormarker_warningtext = '??'
+let g:errormarker_errorgroup = 'Error'
+let g:errormarker_warninggroup = 'Warning'
+compiler perl
+compiler ruby
+compiler php
+if !exists('g:flymake_enabled')
+    let g:flymake_enabled = 1
+    autocmd BufWritePost *.rb, *.pl, *.pm, *.php silent make
+endif
+
+" コマンドライン上でWord単位の移動ができるようにする(Emacs風)
+" 実行：\wらしいが動かない
+NeoBundle 'houtsnip/vim-emacscommandline'
+" MacだとAltがMetaKeyとして認識しないので変更
+if exists('+macmeta')
+    set macmeta
+endif
+
+" =と押して = となるようにする他
+NeoBundle 'smartchr'
+inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
+inoremap <expr> , smartchr#one_of(', ', ',')
+
+" お気に入りのMolkaiカラーを使用する
 NeoBundle 'molokai'
+
+" Shogoさんの力を借りる
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
-NeoBundle 'http://github.com/ujihisa/neco-look.git'
+NeoBundle 'http://github.com/Shougo/vimproc.git'
+NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'thinca/vim-ref'
+" NeoBundle 'thinca/vim-ref'
 
 " 正規表現をPerl風に
 NeoBundle 'http://github.com/othree/eregex.vim'
 nnoremap / :M/
 
-" trying this
+" ヤンクを辿れるようにする
 NeoBundle "YankRing.vim"
 let g:yankring_manual_clipboard_check = 0
 let g:yankring_max_history = 30
@@ -29,16 +78,26 @@ let g:yankring_max_display = 70
 " Yankの履歴参照
 nmap ,y ;YRShow<CR>
 
+" 英語の補完を行う
+NeoBundle 'http://github.com/ujihisa/neco-look.git'
+
+" gistにVimから投稿を行う
+" NeoBundle "http://github.com/mattn/gist-vim.git"
+" let g:github_user = 'your_account'
+" let g:github_token = 'your_token'
+
+" \yで開いているコードを実行
 NeoBundle "http://github.com/thinca/vim-quickrun.git"
+
+
 NeoBundle "http://github.com/thinca/vim-poslist.git"
-NeoBundle "http://github.com/mattn/gist-vim.git"
 NeoBundle "http://github.com/rstacruz/sparkup.git", {'rtp': 'vim/'}
+
+" vimでzencodingする
 NeoBundle "https://github.com/mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
-" Programming
-NeoBundle "jQuery"
-NeoBundle "rails.vim"
+" Programming perl
 NeoBundle "http://github.com/hotchpotch/perldoc-vim"
 NeoBundle "http://github.com/c9s/perlomni.vim"
 NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
@@ -51,18 +110,17 @@ NeoBundle "http://github.com/gmarik/snipmate.vim.git"
 NeoBundle "cucumber.zip"
 
 " Git integration
-NeoBundle "git.zip"
+NeoBundle 'git.zip'
 NeoBundle "fugitive.vim"
 
 " (HT|X)ml tool
 NeoBundle "ragtag.vim"
 
 " Utility
-NeoBundle "repeat.vim"
-NeoBundle "surround.vim"
-NeoBundle "SuperTab"
-NeoBundle "file-line"
-NeoBundle "Align"
+NeoBundle 'repeat.vim'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'SuperTab'
+NeoBundle 'file-line'
 
 " FuzzyFinder
 NeoBundle "L9"
@@ -128,7 +186,11 @@ au BufNewFile,BufRead *.erb set filetype=html
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
-
+" vimgrep検索時に結果一覧を自動的に開く
+augroup grepopen
+    autocmd!
+    autocmd QuickFixCmdPost vimgrep cw
+augroup END
 " CTRL-hjklでウィンドウ移動
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -136,21 +198,16 @@ nnoremap <C-l> <C-w>l
 nnoremap <C-h> <C-w>h
 
 " 0, 9で行頭、行末へ
-"nmap 1 ^
-"nmap 0 $
+nmap <C-a> ^
+nmap <C-e> $
 
 " insert mode での移動
 imap  <C-e> <END>
 imap  <C-a> <HOME>
 
-" インサートモードでもhjklで移動（Ctrl押すけどね）
-"imap <C-j> <Down>
-"imap <C-k> <Up>
-"imap <C-h> <Left>
-"imap <C-l> <Right>
-
-" コンマの後に自動的にスペースを挿入
-inoremap , ,<Space>
+" インテントを＞＜の連打で変更できるようにする
+vnoremap < <gv
+vnoremap > >gv
 
 """ neocomplcache
 " Disable AutoComplPop.
@@ -204,7 +261,7 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
 " For cursor moving in insert mode(Not recommended)
 "inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
