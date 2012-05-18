@@ -9,12 +9,6 @@ if has('vim_starting')
     call neobundle#rc(expand('~/.vim/'))
 endif
 
-" buffer
-" NeoBundle 'bufexplorer.vim'
-" NeoBundle 'buftabs'
-" ファイル名だけ表示
-let buftabs_only_basename = 1
-
 " 選択部分のキーワードを検索
 NeoBundle 'thinca/vim-visualstar'
 
@@ -58,10 +52,12 @@ inoremap <expr> , smartchr#one_of(', ', ',')
 NeoBundle 'molokai'
 
 " Shogoさんの力を借りる
+NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
-NeoBundle 'http://github.com/Shougo/vimproc.git'
+" デフォルをvimfilerに
+let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 " NeoBundle 'thinca/vim-ref'
@@ -81,17 +77,8 @@ nmap ,y ;YRShow<CR>
 " 英語の補完を行う
 NeoBundle 'http://github.com/ujihisa/neco-look.git'
 
-" gistにVimから投稿を行う
-" NeoBundle "http://github.com/mattn/gist-vim.git"
-" let g:github_user = 'your_account'
-" let g:github_token = 'your_token'
-
 " \yで開いているコードを実行
 NeoBundle "http://github.com/thinca/vim-quickrun.git"
-
-
-NeoBundle "http://github.com/thinca/vim-poslist.git"
-NeoBundle "http://github.com/rstacruz/sparkup.git", {'rtp': 'vim/'}
 
 " vimでzencodingする
 NeoBundle "https://github.com/mattn/zencoding-vim.git"
@@ -101,26 +88,13 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 NeoBundle "http://github.com/hotchpotch/perldoc-vim"
 NeoBundle "http://github.com/c9s/perlomni.vim"
 NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
-NeoBundle 'petdance/vim-perl'
+NeoBundle "petdance/vim-perl"
 
-" Snippets
-NeoBundle "http://github.com/gmarik/snipmate.vim.git"
-
-" Syntax highlight
-NeoBundle "cucumber.zip"
-
-" Git integration
-NeoBundle 'git.zip'
-NeoBundle "fugitive.vim"
-
-" (HT|X)ml tool
-NeoBundle "ragtag.vim"
-
-" Utility
-NeoBundle 'repeat.vim'
+" ()や''でくくったりするための補助
 NeoBundle 'tpope/vim-surround'
-NeoBundle 'SuperTab'
-NeoBundle 'file-line'
+
+" surroundを.で繰り返す
+NeoBundle 'repeat.vim'
 
 " FuzzyFinder
 NeoBundle "L9"
@@ -138,81 +112,13 @@ nnoremap <silent> <LocalLeader>7  :FufLine<CR>
 nnoremap <silent> <LocalLeader>8  :FufBookmark<CR>
 nnoremap <silent> <LocalLeader>*  :FuzzyFinderAddBookmark<CR><CR>
 nnoremap <silent> <LocalLeader>9  :FufTaggedFile<CR>
-" " }}}
+" }}}
 
-" Zoomwin
-NeoBundle "ZoomWin"
-noremap <LocalLeader>o :ZoomWin<CR>
-vnoremap <LocalLeader>o <C-C>:ZoomWin<CR>
-inoremap <LocalLeader>o <C-O>:ZoomWin<CR>
-noremap <C-W>+o :ZoomWin<CR>
+"-------------------------------------------------------------------setting neocomplcache
 
-" Ack
-NeoBundle "ack.vim"
-noremap <LocalLeader># "ayiw:Ack <C-r>a<CR>
-vnoremap <LocalLeader># "ay:Ack <C-r>a<CR>
-
-filetype plugin indent on
-syntax on
-set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
-set fileencodings=utf-8
-set encoding=utf-8
-set tabstop=4
-set autoindent
-set expandtab
-set shiftwidth=4
-set hlsearch
-set number
-set cmdheight=2
-set mouse=a
-set list
-set listchars=tab:»-,trail:-,nbsp:%
-set t_Co=256
-" set statusline=%=%{g:HahHah()}
-"colorscheme desert256
-colorscheme molokai
-let g:molokai_original = 1
-set ttymouse=xterm2
-nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
-noremap ; :
-noremap : ;
-au BufNewFile,BufRead *.psgi set filetype=perl
-au BufNewFile,BufRead *.ejs set filetype=html
-au BufNewFile,BufRead *.pde set filetype=processing
-au BufNewFile,BufRead *.erb set filetype=html
-
-"-------------------------------------------------------------- set ONUNUME
-" 保存時に行末の空白を除去する
-autocmd BufWritePre * :%s/\s\+$//ge
-" 保存時にtabをスペースに変換する
-autocmd BufWritePre * :%s/\t/    /ge
-" vimgrep検索時に結果一覧を自動的に開く
-augroup grepopen
-    autocmd!
-    autocmd QuickFixCmdPost vimgrep cw
-augroup END
-" CTRL-hjklでウィンドウ移動
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-nnoremap <C-h> <C-w>h
-
-" 0, 9で行頭、行末へ
-nmap <C-a> ^
-nmap <C-e> $
-
-" insert mode での移動
-imap  <C-e> <END>
-imap  <C-a> <HOME>
-
-" インテントを＞＜の連打で変更できるようにする
-vnoremap < <gv
-vnoremap > >gv
-
-""" neocomplcache
-" Disable AutoComplPop.
+" AutoComplPopの補完を無効にする（インストールしてないなら無意味）
 let g:acp_enableAtStartup = 0
-" Use neocomplcache.
+" neocomplcacheを使う
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
@@ -221,22 +127,38 @@ let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 2
+let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
-let g:neocomplcache_ctags_arguments_list = {
-  \ 'perl' : '-R -h ".pm"'
-  \ }
-
-let g:neocomplcache_snippets_dir = "~/.vim/snippets"
-
-" Define dictionary.
+" 辞書定義
 let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default'  : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
     \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
     \ 'scheme'   : $HOME.'/.gosh_completions'
         \ }
+
+" Define keyword.
+if !exists('g:neocomplcache_keyword_patterns')
+  let g:neocomplcache_keyword_patterns = {}
+endif
+let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
+let g:neocomplcache_snippets_dir = "~/.vim/snippets"
 
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
@@ -248,38 +170,9 @@ let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 imap <expr><C-k> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : "\<C-n>"
 smap <C-k> <Plug>(neocomplcache_snippets_expand)
 
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-" inoremap <expr><C-e>  neocomplcache#cancel_popup()
-
-" For cursor moving in insert mode(Not recommended)
-"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
-"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
-"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
-"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
-" Or set this.
-"let g:neocomplcache_enable_cursor_hold_i = 1
-
-" AutoComplPop like behavior.
-" let g:neocomplcache_enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-" set completeopt+=longest
-" let g:neocomplcache_enable_auto_select = 1
-" let g:neocomplcache_disable_auto_complete = 1
-" inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-" inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -292,21 +185,15 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
-"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
-let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 
-""" vimfiler
-let g:vimfiler_as_default_explorer = 1
-
-""" unite.vim
+"----------------------------------------------------------------------------- unite.vim
 let g:unite_update_time = 1000
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
 " バッファ一覧
 nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+
 " ファイル一覧
 nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
 " レジスタ一覧
@@ -335,3 +222,58 @@ function! s:unite_my_settings()
 endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
+
+filetype plugin indent on
+syntax on
+set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
+set fileencodings=utf-8
+set encoding=utf-8
+set tabstop=4
+set autoindent
+set expandtab
+set shiftwidth=4
+set hlsearch
+set number
+set cmdheight=2
+set mouse=a
+set list
+set listchars=tab:»-,trail:-,nbsp:%
+set t_Co=256
+"colorscheme desert256
+colorscheme molokai
+let g:molokai_original = 1
+set ttymouse=xterm2
+nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
+noremap ; :
+noremap : ;
+au BufNewFile,BufRead *.psgi set filetype=perl
+au BufNewFile,BufRead *.ejs set filetype=html
+au BufNewFile,BufRead *.pde set filetype=processing
+au BufNewFile,BufRead *.erb set filetype=html
+
+" 保存時に行末の空白を除去する
+autocmd BufWritePre * :%s/\s\+$//ge
+" 保存時にtabをスペースに変換する
+autocmd BufWritePre * :%s/\t/    /ge
+" vimgrep検索時に結果一覧を自動的に開く
+augroup grepopen
+    autocmd!
+    autocmd QuickFixCmdPost vimgrep cw
+augroup END
+" CTRL-hjklでウィンドウ移動
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
+
+" 0, 9で行頭、行末へ
+nmap <C-a> ^
+nmap <C-e> $
+
+" insert mode での移動
+imap  <C-e> <END>
+imap  <C-a> <HOME>
+
+" インテントを＞＜の連打で変更できるようにする
+vnoremap < <gv
+vnoremap > >gv
