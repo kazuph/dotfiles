@@ -1,5 +1,5 @@
 "------------------------------------
-" vundle settings
+" NeoBundle settings
 "------------------------------------
 set nocompatible
 filetype off
@@ -9,16 +9,15 @@ if has('vim_starting')
     call neobundle#rc(expand('~/.vim/'))
 endif
 
-" 選択部分のキーワードを検索
+" 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
 " Vimperator風に移動できる
+" 実行：\\bで後方へ移動、\\wで前方へ移動
 NeoBundle 'Lokaltog/vim-easymotion'
 
-" FontSizeを変更する
-NeoBundle 'thinca/vim-fontzoom'
-
 " 簡単にコメントアウトする
+" gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
 " エラーチェックする
@@ -30,13 +29,13 @@ let g:errormarker_warninggroup = 'Warning'
 compiler perl
 compiler ruby
 compiler php
+" 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
     autocmd BufWritePost *.rb, *.pl, *.pm, *.php silent make
 endif
 
 " コマンドライン上でWord単位の移動ができるようにする(Emacs風)
-" 実行：\wらしいが動かない
 NeoBundle 'houtsnip/vim-emacscommandline'
 " MacだとAltがMetaKeyとして認識しないので変更
 if exists('+macmeta')
@@ -50,6 +49,14 @@ inoremap <expr> , smartchr#one_of(', ', ',')
 
 " お気に入りのMolkaiカラーを使用する
 NeoBundle 'molokai'
+colorscheme molokai
+let g:molokai_original = 1
+
+" インデントに色をつけてわかりやすくする
+" NeoBundle 'nathanaelkane/vim-indent-guides'
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_color_change_percent = 30
+" let g:indent_guides_guide_size = 1
 
 " Shogoさんの力を借りる
 NeoBundle 'http://github.com/Shougo/vimproc.git'
@@ -60,7 +67,9 @@ NeoBundle 'http://github.com/Shougo/vimfiler.git'
 let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
-" NeoBundle 'thinca/vim-ref'
+
+" APIのドキュメントを参照する
+NeoBundle 'thinca/vim-ref'
 
 " 正規表現をPerl風に
 NeoBundle 'http://github.com/othree/eregex.vim'
@@ -96,26 +105,7 @@ NeoBundle 'tpope/vim-surround'
 " surroundを.で繰り返す
 NeoBundle 'repeat.vim'
 
-" FuzzyFinder
-NeoBundle "L9"
-NeoBundle "FuzzyFinder"
-let g:fuf_modesDisable = [] " {{{
-nnoremap <silent> <LocalLeader>h :FufHelp<CR>
-nnoremap <silent> <LocalLeader>2  :FufFileWithCurrentBufferDir<CR>
-nnoremap <silent> <LocalLeader>@  :FufFile<CR>
-nnoremap <silent> <LocalLeader>3  :FufBuffer<CR>
-nnoremap <silent> <LocalLeader>4  :FufDirWithCurrentBufferDir<CR>
-nnoremap <silent> <LocalLeader>$  :FufDir<CR>
-nnoremap <silent> <LocalLeader>5  :FufChangeList<CR>
-nnoremap <silent> <LocalLeader>6  :FufMruFile<CR>
-nnoremap <silent> <LocalLeader>7  :FufLine<CR>
-nnoremap <silent> <LocalLeader>8  :FufBookmark<CR>
-nnoremap <silent> <LocalLeader>*  :FuzzyFinderAddBookmark<CR><CR>
-nnoremap <silent> <LocalLeader>9  :FufTaggedFile<CR>
-" }}}
-
 "-------------------------------------------------------------------setting neocomplcache
-
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
 let g:acp_enableAtStartup = 0
 " neocomplcacheを使う
@@ -191,11 +181,10 @@ let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:unite_update_time = 1000
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
-" バッファ一覧
-nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
-
 " ファイル一覧
 nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" バッファ一覧
+nnoremap <silent> ,ub :<C-u>Unite buffer_tab<CR>
 " レジスタ一覧
 nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
 " 最近使用したファイル一覧
@@ -214,15 +203,15 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vspli
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
-  " Overwrite settings.
-  imap <buffer> jj <Plug>(unite_insert_leave)
-  imap <buffer> <ESC> <ESC><ESC>
-  nnoremap <buffer> t G
-  startinsert
+    " Overwrite settings.
+    imap <buffer> jj <Plug>(unite_insert_leave)
+    imap <buffer> <ESC> <ESC><ESC>
+    nnoremap <buffer> t G
+    startinsert
 endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
-
+"--------------------------------------------------------------------------BasicSetting
 filetype plugin indent on
 syntax on
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
@@ -239,9 +228,6 @@ set mouse=a
 set list
 set listchars=tab:»-,trail:-,nbsp:%
 set t_Co=256
-"colorscheme desert256
-colorscheme molokai
-let g:molokai_original = 1
 set ttymouse=xterm2
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
@@ -266,9 +252,12 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap <C-h> <C-w>h
 
+" 数字のインクリメンタルを別にバインド
+nmap <C-c> <C-a>
+
 " 0, 9で行頭、行末へ
-nmap <C-a> ^
-nmap <C-e> $
+nmap 0 ^
+nmap 9 $
 
 " insert mode での移動
 imap  <C-e> <END>
@@ -277,3 +266,6 @@ imap  <C-a> <HOME>
 " インテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
 vnoremap > >gv
+
+" ファイルを開いた時に最後のカーソル位置を再現する
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
