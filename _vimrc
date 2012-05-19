@@ -105,6 +105,10 @@ NeoBundle 'tpope/vim-surround'
 " surroundを.で繰り返す
 NeoBundle 'repeat.vim'
 
+" HatenaをVimから投稿
+NeoBundle 'motemen/hatena-vim'
+let g:hatena_user = 'kazuph1986'
+
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
 let g:acp_enableAtStartup = 0
