@@ -3,11 +3,14 @@
 "------------------------------------
 set nocompatible
 filetype off
+filetype plugin indent off
 set rtp+=~/dotfiles/neobundle.git/
 if has('vim_starting')
     set runtimepath+=~/dotfiles/neobundle.vim
     call neobundle#rc(expand('~/.vim/'))
 endif
+" NeoBundleをNeoBundleで管理する
+NeoBundle 'Shougo/neobundle.vim'
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
