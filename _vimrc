@@ -15,6 +15,8 @@ NeoBundle 'thinca/vim-visualstar'
 " Vimperator風に移動できる
 " 実行：\\bで後方へ移動、\\wで前方へ移動
 NeoBundle 'Lokaltog/vim-easymotion'
+"嫌だったのでspace spaceに変更
+let g:EasyMotion_leader_key  =  '<Space><Space>'
 
 " 簡単にコメントアウトする
 " gcc or C-_でトグル
@@ -253,10 +255,10 @@ augroup grepopen
     autocmd QuickFixCmdPost vimgrep cw
 augroup END
 " CTRL-hjklでウィンドウ移動
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-nnoremap <C-h> <C-w>h
+" nnoremap <C-j> <C-w>j
+" nnoremap <C-k> <C-w>k
+" nnoremap <C-l> <C-w>l
+" nnoremap <C-h> <C-w>h
 
 " 数字のインクリメンタルを別にバインド
 nmap <C-c> <C-a>
@@ -266,8 +268,8 @@ nmap 0 ^
 nmap 9 $
 
 " insert mode での移動
-imap  <C-e> <END>
-imap  <C-a> <HOME>
+" imap  <C-e> <END>
+" imap  <C-a> <HOME>
 
 " インテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
