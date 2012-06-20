@@ -47,7 +47,7 @@ endif
 
 " =と押して = となるようにする他
 NeoBundle 'smartchr'
-inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
+" inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
 " お気に入りのMolkaiカラーを使用する
