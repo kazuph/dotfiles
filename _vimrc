@@ -222,7 +222,9 @@ function! s:unite_my_settings()
 endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
-"--------------------------------------------------------------------------BasicSetting
+"--------------------------------------------------------------------------
+" BasicSetting
+"--------------------------------------------------------------------------
 filetype plugin indent on
 syntax on
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
@@ -233,9 +235,11 @@ set autoindent
 set expandtab
 set shiftwidth=4
 set hlsearch
-set number
 set cmdheight=2
 set mouse=a
+
+set showmatch
+set number
 set list
 set listchars=tab:»-,trail:-,nbsp:%
 set t_Co=256
