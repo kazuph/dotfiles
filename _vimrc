@@ -47,27 +47,26 @@ if exists('+macmeta')
     set macmeta
 endif
 
-" =と押して = となるようにする他
-NeoBundle 'smartchr'
-" inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
-inoremap <expr> , smartchr#one_of(', ', ',')
-
 " お気に入りのMolkaiカラーを使用する
 NeoBundle 'molokai'
 colorscheme molokai
 let g:molokai_original = 1
 
 " インデントに色をつけてわかりやすくする
-" NeoBundle 'nathanaelkane/vim-indent-guides'
-" let g:indent_guides_enable_on_vim_startup = 1
-" let g:indent_guides_color_change_percent = 30
-" let g:indent_guides_guide_size = 1
+NeoBundle 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_color_change_percent = 30
+let g:indent_guides_guide_size = 1
 
 " Shogoさんの力を借りる
+" NeoBundleInstall 後に.vim/vimprocディレクトリで
+" Mac  : $ make -f make_mac.mak
+" Linux: $ make -f make_unix.mak
 NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
+
 " デフォルをvimfilerに
 let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
@@ -191,17 +190,17 @@ let g:unite_update_time = 1000
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
 " ファイル一覧
-nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
 " 最近使用したファイル一覧
-nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
+nnoremap <silent> um :<C-u>Unite file_mru<CR>
 " ブックマーク一覧
-nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
+nnoremap <silent> ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
-nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
+nnoremap <silent> ua :<C-u>UniteBookmarkAdd<CR>
 " レジスタ一覧
-nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> ur :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
-nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+nnoremap <silent> uu :<C-u>Unite buffer file_mru<CR>
 " 全部乗せ
 " nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
@@ -232,18 +231,43 @@ set fileencodings=utf-8
 set encoding=utf-8
 set tabstop=4
 set autoindent
+set autoread
 set expandtab
 set shiftwidth=4
 set hlsearch
 set cmdheight=2
-set mouse=a
-
+set showcmd                       " コマンドをステータス行に表示
+set showmode                     " 現在のモードを表示
+set modelines=0                  " モードラインは無効
 set showmatch
 set number
 set list
 set listchars=tab:»-,trail:-,nbsp:%
+set display=uhex
 set t_Co=256
-set ttymouse=xterm2
+
+" 全角スペースの表示
+highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+match ZenkakuSpace /　/
+
+" カーソル行をハイライト
+set cursorline
+" カレントウィンドウにのみ罫線を引く
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
+
+hi clear CursorLine
+hi CursorLine gui=underline
+highlight CursorLine ctermbg=black guibg=black
+
+" コマンド実行中は再描画しない
+set lazyredraw
+" 高速ターミナル接続を行う
+set ttyfast
+
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
 noremap : ;
@@ -261,6 +285,7 @@ augroup grepopen
     autocmd!
     autocmd QuickFixCmdPost vimgrep cw
 augroup END
+
 " CTRL-hjklでウィンドウ移動
 " nnoremap <C-j> <C-w>j
 " nnoremap <C-k> <C-w>k
@@ -284,3 +309,14 @@ vnoremap > >gv
 
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" OS依存
+" OSのクリップボードを使用する
+set clipboard+=unnamed
+" ターミナルでマウスを使用できるようにする
+set mouse=a
+set guioptions+=a
+set ttymouse=xterm2
+
+"ヤンクした文字は、システムのクリップボードに入れる"
+set clipboard=unnamed
