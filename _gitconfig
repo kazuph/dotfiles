@@ -1,0 +1,113 @@
+[user]
+  name = kazuhiro homma
+  email = kazu.homma@gmail.com
+[color]
+  # colorの設定(以下のコマンドは自動で色つける)
+  status = auto
+  diff = auto
+  branch = auto
+  interactive = auto
+  grep = auto
+[core]
+  excludesfile = ~/.gitignore  # globalな.gitignoreの指定
+  autocrlf = input                 # CRLFを自動変換
+  editor = vim
+  quotepath = false
+[merge]
+  tool = vimdiff
+[alias]
+  s   = status
+  st  = status
+  ss  = status -s
+  sh  = show
+  so  = remote show origin
+  # pull/push/fetch
+  ft  = fetch
+  ftp = fetch --prune
+  up  = pull --rebase       # pull rebase
+  po  = push origin         # push origin
+  pof = push -f origin      # force
+  pu  = push -u origin      # push origin and set upstream
+  # rebase
+  rbm = rebase master       # masterへのrebaseはよく使うのでalias
+  rbd = rebase develop
+  rbc = rebase --continue
+  rba = rebase --abort
+  rbi = rebase -i
+  rbi1 = rebase -i HEAD^
+  rbi2 = rebase -i HEAD^^
+  rbi3 = rebase -i HEAD^^^
+  rbi4 = rebase -i HEAD^^^^
+  rbi5 = rebase -i HEAD^^^^^
+  # merge
+  mn  = merge --no-ff
+  # comit
+  ad  = add
+  c   = commit
+  ci  = commit
+  ca  = commit -a           # modifiedなファイルを全てstageへ
+  cam = commit -a --amend   # 直前のcommitを修正
+  co  = checkout
+  cb  = checkout -b         # branch切ってcheckoutする
+  ct  = checkout --track    # remoteのbranchを追跡
+  cm  = checkout master
+  cd  = checkout develop
+  # branch関連
+  br  = branch
+  ba  = branch -a           # originも含めた全てのbranchを表示
+  bm  = branch --merged     # merge済みのbranchを表示
+  bn  = branch --no-merged  # mergeしてないbranchを表示
+  bo  = branch -r           # remote branchを表示
+  # log関連
+  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  wc  = whatchanged         # logに変更されたファイルも一緒に出す
+  ls  = log --stat          # logに変更されたファイルも一緒に出す
+  lp  = log -p              # diffも一緒に出す
+  la  = log --pretty=\"format:%ad %h (%an): %s\" --date=short  # ざっくりログ出す
+  lr  = log origin          # originのlog
+  ll = log --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn%x09%Creset%s' # onelineでlogを出す
+  oneline = log --pretty=oneline
+  ranking = shortlog -s -n --no-merges
+  # logをtree表示
+  log-graph = log --graph --date=short --pretty=format:'%Cgreen%h %cd %Cblue%cn %Creset%s'
+  log-all = log --graph --all --color --pretty='%x09%h %cn%x09%s %Cred%d%Creset'
+  # reset
+  rhs  = reset --soft HEAD
+  rhs1 = reset --soft HEAD~
+  rhs2 = reset --soft HEAD~~
+  rhs3 = reset --soft HEAD~~~
+  rhs4 = reset --soft HEAD~~~~
+  rhs5 = reset --soft HEAD~~~~~
+  rhh  = reset --hard HEAD       # 取り返しのつかないことをしてしまった……!
+  rhh1 = reset --hard HEAD~
+  rhh2 = reset --hard HEAD~~
+  rhh3 = reset --hard HEAD~~~
+  rhh4 = reset --hard HEAD~~~~
+  rhh5 = reset --hard HEAD~~~~~
+  # diff関連
+  di = diff
+  dm = diff master           # masterとのdiff
+  dw = diff --color-words    # 単語単位でいろつけてdiff
+  dc = diff --cached         # addされているものとのdiff
+  ds = diff --staged         # 同上(1.6.1移行)
+  d1 = diff HEAD~            # HEADから1つ前とdiff
+  d2 = diff HEAD~~           # HEADから2つ前とdiff
+  d3 = diff HEAD~~~          # HEADから3つ前とdiff
+  d4 = diff HEAD~~~~         # HEADから4つ前とdiff
+  d5 = diff HEAD~~~~~        # HEADから5つ前とdiff
+  d10 = diff HEAD~~~~~~~~~~  # HEADから10前とdiff
+  # edit関連
+  # modified or untrackedなファイルを編集する
+  edit = "!f() { git status -s | cut -b 4- | grep -v '\\/$' | uniq ; }; vim `f`"
+  # mergeの際にconflictが起きたファイルを編集
+  edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+  # mergeの際にconflictが起きたファイルをadd
+  add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  delete-unmerged =  "!f() { git ls-files --deleted | cut -f2 | sort -u ; }; git rm `f`"
+  # 指定したコミットで変更されたファイルを編集する
+  modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'vim "$@" < /dev/tty' - ;}; f"
+  # grep関連
+  gr = grep
+  gn = grep -n
+  sm = submodule
+  smupdate = submodule foreach "git checkout master; git pull origin master"
