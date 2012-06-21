@@ -190,17 +190,17 @@ let g:unite_update_time = 1000
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
 " ファイル一覧
-nnoremap <silent> uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
 " 最近使用したファイル一覧
-nnoremap <silent> um :<C-u>Unite file_mru<CR>
+nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
 " ブックマーク一覧
-nnoremap <silent> ub :<C-u>Unite bookmark<CR>
+nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
-nnoremap <silent> ua :<C-u>UniteBookmarkAdd<CR>
+nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
 " レジスタ一覧
-nnoremap <silent> ur :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
-nnoremap <silent> uu :<C-u>Unite buffer file_mru<CR>
+nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
 " 全部乗せ
 " nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
