@@ -106,6 +106,11 @@ NeoBundle "petdance/vim-perl"
 " ()や''でくくったりするための補助
 NeoBundle 'tpope/vim-surround'
 
+" =と押して = となるようにする他
+NeoBundle 'smartchr'
+" inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
+inoremap <expr> , smartchr#one_of(', ', ',')
+
 " surroundを.で繰り返す
 NeoBundle 'repeat.vim'
 
