@@ -34,6 +34,7 @@ let g:errormarker_warninggroup = 'Warning'
 compiler perl
 compiler ruby
 compiler php
+
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
@@ -68,7 +69,7 @@ NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
 
 " デフォルをvimfilerに
-let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_as_default_explorer = 0
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 
@@ -104,14 +105,18 @@ NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
 
 " ()や''でくくったりするための補助
-NeoBundle 'tpope/vim-surround'
+" text-objectの支援
+" vi' で'の中身を選択
+" va' で'も含めて選択 だが
+" cs'" cs"' などと囲っているものに対する操作ができる
+NeoBundle "tpope/vim-surround"
 
 " =と押して = となるようにする他
 NeoBundle 'smartchr'
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
-" surroundを.で繰り返す
+" 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
 
 " HatenaをVimから投稿
