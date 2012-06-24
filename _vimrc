@@ -262,6 +262,9 @@ augroup END
 " nnoremap <C-k> <C-w>k
 " nnoremap <C-l> <C-w>l
 " nnoremap <C-h> <C-w>h
+"カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
+nnoremap j gj
+nnoremap k gk
 
 " 数字のインクリメンタルを別にバインド
 nmap <C-c> <C-a>
