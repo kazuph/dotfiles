@@ -34,6 +34,7 @@ let g:errormarker_warninggroup = 'Warning'
 compiler perl
 compiler ruby
 compiler php
+
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
@@ -47,29 +48,28 @@ if exists('+macmeta')
     set macmeta
 endif
 
-" =と押して = となるようにする他
-NeoBundle 'smartchr'
-inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
-inoremap <expr> , smartchr#one_of(', ', ',')
-
 " お気に入りのMolkaiカラーを使用する
 NeoBundle 'molokai'
 colorscheme molokai
 let g:molokai_original = 1
 
 " インデントに色をつけてわかりやすくする
-" NeoBundle 'nathanaelkane/vim-indent-guides'
-" let g:indent_guides_enable_on_vim_startup = 1
-" let g:indent_guides_color_change_percent = 30
-" let g:indent_guides_guide_size = 1
+NeoBundle 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_color_change_percent = 30
+let g:indent_guides_guide_size = 1
 
 " Shogoさんの力を借りる
+" NeoBundleInstall 後に.vim/vimprocディレクトリで
+" Mac  : $ make -f make_mac.mak
+" Linux: $ make -f make_unix.mak
 NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
+
 " デフォルをvimfilerに
-let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_as_default_explorer = 0
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 
@@ -105,9 +105,18 @@ NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
 
 " ()や''でくくったりするための補助
-NeoBundle 'tpope/vim-surround'
+" text-objectの支援
+" vi' で'の中身を選択
+" va' で'も含めて選択 だが
+" cs'" cs"' などと囲っているものに対する操作ができる
+NeoBundle "tpope/vim-surround"
 
-" surroundを.で繰り返す
+" =と押して = となるようにする他
+NeoBundle 'smartchr'
+" inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
+inoremap <expr> , smartchr#one_of(', ', ',')
+
+" 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
 
 " HatenaをVimから投稿
@@ -222,7 +231,9 @@ function! s:unite_my_settings()
 endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
-"--------------------------------------------------------------------------BasicSetting
+"--------------------------------------------------------------------------
+" BasicSetting
+"--------------------------------------------------------------------------
 filetype plugin indent on
 syntax on
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
@@ -230,16 +241,43 @@ set fileencodings=utf-8
 set encoding=utf-8
 set tabstop=4
 set autoindent
+set autoread
 set expandtab
 set shiftwidth=4
 set hlsearch
-set number
 set cmdheight=2
-set mouse=a
+set showcmd                       " コマンドをステータス行に表示
+set showmode                     " 現在のモードを表示
+set modelines=0                  " モードラインは無効
+set showmatch
+set number
 set list
 set listchars=tab:»-,trail:-,nbsp:%
+set display=uhex
 set t_Co=256
-set ttymouse=xterm2
+
+" 全角スペースの表示
+highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+match ZenkakuSpace /　/
+
+" カーソル行をハイライト
+set cursorline
+" カレントウィンドウにのみ罫線を引く
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
+
+hi clear CursorLine
+hi CursorLine gui=underline
+highlight CursorLine ctermbg=black guibg=black
+
+" コマンド実行中は再描画しない
+set lazyredraw
+" 高速ターミナル接続を行う
+set ttyfast
+
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
 noremap : ;
@@ -257,6 +295,7 @@ augroup grepopen
     autocmd!
     autocmd QuickFixCmdPost vimgrep cw
 augroup END
+
 " CTRL-hjklでウィンドウ移動
 " nnoremap <C-j> <C-w>j
 " nnoremap <C-k> <C-w>k
@@ -283,3 +322,14 @@ vnoremap > >gv
 
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" OS依存
+" OSのクリップボードを使用する
+set clipboard+=unnamed
+" ターミナルでマウスを使用できるようにする
+set mouse=a
+set guioptions+=a
+set ttymouse=xterm2
+
+"ヤンクした文字は、システムのクリップボードに入れる"
+set clipboard=unnamed
