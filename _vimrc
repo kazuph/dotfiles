@@ -38,7 +38,7 @@ compiler php
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
-    autocmd BufWritePost *.pl, *.pm, *.php silent make
+    autocmd BufWritePost *.rb, *.pl, *.pm, *.php silent make
 endif
 
 " コマンドライン上でWord単位の移動ができるようにする(Emacs風)
@@ -129,6 +129,9 @@ let g:hatena_user = 'kazuph1986'
 " Ruby環境
 NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
 NeoBundle 'https://github.com/tpope/vim-rails.git'
+
+" Vimでプレゼンする？
+NeoBundle 'https://github.com/thinca/vim-showtime.git'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
