@@ -30,8 +30,6 @@ plugins=(svn git perl ruby linux)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=/home/homepage/.rvm/gems/ruby-1.9.2-p290/bin:/home/homepage/.rvm/gems/ruby-1.9.2-p290@global/bin:/home/homepage/.rvm/rubies/ruby-1.9.2-p290/bin:/home/homepage/.rvm/bin:/usr/lib/qt-3.3/bin:/usr/kerberos/sbin:/usr/kerberos/bin:/usr/lib/ccache:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/homepage/bin
-
 alias tmux="TERM=xterm-256color tmux -u"
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
@@ -43,3 +41,6 @@ alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
 
 export PATH="$HOME/.rbenv/bin:$PATH"
 # bindkey -v
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+source ~/.rbenv/completions/rbenv.zsh
