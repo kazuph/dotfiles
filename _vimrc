@@ -68,7 +68,7 @@ NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
 
-" デフォルをvimfilerに
+" デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
@@ -113,6 +113,9 @@ NeoBundle "petdance/vim-perl"
 " cs'" cs"' などと囲っているものに対する操作ができる
 NeoBundle "tpope/vim-surround"
 
+" %の拡張
+NeoBundle "https://github.com/tmhedberg/matchit.git"
+
 " =と押して = となるようにする他
 NeoBundle 'smartchr'
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
@@ -127,6 +130,13 @@ let g:hatena_user = 'kazuph1986'
 
 " Matrix
 NeoBundle 'https://github.com/vim-scripts/matrix.vim--Yang.git'
+
+" Ruby環境
+NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
+NeoBundle 'https://github.com/tpope/vim-rails.git'
+
+" Vimでプレゼンする？
+NeoBundle 'https://github.com/thinca/vim-showtime.git'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
@@ -150,12 +160,6 @@ let g:neocomplcache_dictionary_filetype_lists = {
     \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
     \ 'scheme'   : $HOME.'/.gosh_completions'
         \ }
-
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 " SuperTab like snippets behavior.
 imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -234,6 +238,9 @@ autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
     " Overwrite settings.
     imap <buffer> jj <Plug>(unite_insert_leave)
+    imap <buffer> <ESC> <ESC><ESC>
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+    nnoremap <buffer> t G
     startinsert
 endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
