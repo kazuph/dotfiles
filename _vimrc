@@ -111,6 +111,9 @@ NeoBundle "petdance/vim-perl"
 " cs'" cs"' などと囲っているものに対する操作ができる
 NeoBundle "tpope/vim-surround"
 
+" %の拡張
+NeoBundle "https://github.com/tmhedberg/matchit.git"
+
 " =と押して = となるようにする他
 NeoBundle 'smartchr'
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
@@ -122,6 +125,10 @@ NeoBundle 'repeat.vim'
 " HatenaをVimから投稿
 NeoBundle 'motemen/hatena-vim'
 let g:hatena_user = 'kazuph1986'
+
+" Ruby環境
+NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
+NeoBundle 'https://github.com/tpope/vim-rails.git'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
@@ -220,6 +227,7 @@ function! s:unite_my_settings()
     " Overwrite settings.
     imap <buffer> jj <Plug>(unite_insert_leave)
     imap <buffer> <ESC> <ESC><ESC>
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
     nnoremap <buffer> t G
     startinsert
 endfunction
