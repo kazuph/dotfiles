@@ -38,7 +38,7 @@ compiler php
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
-    autocmd BufWritePost *.rb, *.pl, *.pm, *.php silent make
+    autocmd BufWritePost *.pl, *.pm, *.php silent make
 endif
 
 " コマンドライン上でWord単位の移動ができるようにする(Emacs風)
@@ -68,8 +68,8 @@ NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
 
-" デフォルをvimfilerに
-let g:vimfiler_as_default_explorer = 0
+" デフォルトをvimfilerに
+let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 
@@ -145,12 +145,6 @@ let g:neocomplcache_dictionary_filetype_lists = {
     \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
     \ 'scheme'   : $HOME.'/.gosh_completions'
         \ }
-
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 " SuperTab like snippets behavior.
 imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
