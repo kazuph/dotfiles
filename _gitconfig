@@ -1,8 +1,11 @@
 [user]
   name = kazuhiro homma
   email = kazu.homma@gmail.com
+[github]
+    user = kazuph
 [color]
   # colorの設定(以下のコマンドは自動で色つける)
+  ui = auto
   status = auto
   diff = auto
   branch = auto
@@ -111,3 +114,5 @@
   gn = grep -n
   sm = submodule
   smupdate = submodule foreach "git checkout master; git pull origin master"
+
+  hist = log --pretty=format:\\\"%h %ad | %s%d [%an]\\\" --graph --date=short
