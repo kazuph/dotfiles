@@ -33,13 +33,17 @@ let g:errormarker_errorgroup = 'Error'
 let g:errormarker_warninggroup = 'Warning'
 compiler perl
 compiler ruby
-compiler php
 
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
-    autocmd BufWritePost *.pl, *.pm, *.php silent make
+    autocmd BufWritePost *.pl, *.pm silent make
 endif
+
+" errormarkerがめんどくさそうなのでこっちも試す
+" NeoBundle 'https://github.com/scrooloose/syntastic.git'
+" let g:syntastic_enable_signs=1
+" let g:syntastic_auto_loc_list=2
 
 " コマンドライン上でWord単位の移動ができるようにする(Emacs風)
 NeoBundle 'houtsnip/vim-emacscommandline'
@@ -54,10 +58,10 @@ colorscheme molokai
 let g:molokai_original = 1
 
 " インデントに色をつけてわかりやすくする
-" NeoBundle 'nathanaelkane/vim-indent-guides'
-" let g:indent_guides_enable_on_vim_startup = 1
-" let g:indent_guides_color_change_percent = 30
-" let g:indent_guides_guide_size = 1
+NeoBundle 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_color_change_percent = 30
+let g:indent_guides_guide_size = 1
 
 " Shogoさんの力を借りる
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
@@ -76,9 +80,11 @@ NeoBundle 'Sixeight/unite-grep.vim'
 NeoBundle 'https://github.com/Sixeight/unite-grep'
 
 " APIのドキュメントを参照する
+" Shift+K
 NeoBundle 'thinca/vim-ref'
 
 " 正規表現をPerl風に
+" :%S///gc
 NeoBundle 'http://github.com/othree/eregex.vim'
 nnoremap / :M/
 
@@ -97,6 +103,7 @@ NeoBundle 'http://github.com/ujihisa/neco-look.git'
 NeoBundle "http://github.com/thinca/vim-quickrun.git"
 
 " vimでzencodingする
+" Ctrl+y,
 NeoBundle "https://github.com/mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
@@ -111,13 +118,14 @@ NeoBundle "petdance/vim-perl"
 " vi' で'の中身を選択
 " va' で'も含めて選択 だが
 " cs'" cs"' などと囲っているものに対する操作ができる
+" visualモードのときはSを代用
 NeoBundle "tpope/vim-surround"
 
 " %の拡張
 NeoBundle "https://github.com/tmhedberg/matchit.git"
 
 " =と押して = となるようにする他
-NeoBundle 'smartchr'
+NeoBundle "smartchr"
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
