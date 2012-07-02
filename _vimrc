@@ -58,10 +58,13 @@ colorscheme molokai
 let g:molokai_original = 1
 
 " インデントに色をつけてわかりやすくする
-NeoBundle 'nathanaelkane/vim-indent-guides'
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_color_change_percent = 30
-let g:indent_guides_guide_size = 1
+" NeoBundle 'nathanaelkane/vim-indent-guides'
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_color_change_percent = 30
+" let g:indent_guides_guide_size = 1
+" let g:indent_guides_auto_colors = 1
+" autocmd VimEnter, Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
+" autocmd VimEnter, Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
 
 " Shogoさんの力を借りる
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
@@ -77,7 +80,6 @@ let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Sixeight/unite-grep.vim'
-NeoBundle 'https://github.com/Sixeight/unite-grep'
 
 " APIのドキュメントを参照する
 " Shift+K
