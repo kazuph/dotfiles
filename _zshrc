@@ -43,3 +43,5 @@ alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
 
 export PATH="$HOME/.rbenv/bin:$PATH"
 # bindkey -v
+export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
+export PATH=$PATH:/opt/local/bin
