@@ -148,6 +148,12 @@ NeoBundle 'https://github.com/tpope/vim-rails.git'
 " Vimでプレゼンする？
 NeoBundle 'https://github.com/thinca/vim-showtime.git'
 
+
+" node tree
+NeoBundle 'https://github.com/scrooloose/nerdtree.git'
+NeoBundle 'jistr/vim-nerdtree-tabs'
+map <Leader>n <plug>NERDTreeTabsToggle<CR>
+
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
 let g:acp_enableAtStartup = 0
