@@ -33,13 +33,17 @@ let g:errormarker_errorgroup = 'Error'
 let g:errormarker_warninggroup = 'Warning'
 compiler perl
 compiler ruby
-compiler php
 
 " 保存時にチェックが走る
 if !exists('g:flymake_enabled')
     let g:flymake_enabled = 1
-    autocmd BufWritePost *.rb, *.pl, *.pm, *.php silent make
+    autocmd BufWritePost *.pl, *.pm silent make
 endif
+
+" errormarkerがめんどくさそうなのでこっちも試す
+" NeoBundle 'https://github.com/scrooloose/syntastic.git'
+" let g:syntastic_enable_signs=1
+" let g:syntastic_auto_loc_list=2
 
 " コマンドライン上でWord単位の移動ができるようにする(Emacs風)
 NeoBundle 'houtsnip/vim-emacscommandline'
@@ -54,10 +58,13 @@ colorscheme molokai
 let g:molokai_original = 1
 
 " インデントに色をつけてわかりやすくする
-NeoBundle 'nathanaelkane/vim-indent-guides'
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_color_change_percent = 30
-let g:indent_guides_guide_size = 1
+" NeoBundle 'nathanaelkane/vim-indent-guides'
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_color_change_percent = 30
+" let g:indent_guides_guide_size = 1
+" let g:indent_guides_auto_colors = 1
+" autocmd VimEnter, Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
+" autocmd VimEnter, Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
 
 " Shogoさんの力を借りる
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
@@ -68,15 +75,18 @@ NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
 
-" デフォルをvimfilerに
-let g:vimfiler_as_default_explorer = 0
+" デフォルトをvimfilerに
+let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Sixeight/unite-grep.vim'
 
 " APIのドキュメントを参照する
+" Shift+K
 NeoBundle 'thinca/vim-ref'
 
 " 正規表現をPerl風に
+" :%S///gc
 NeoBundle 'http://github.com/othree/eregex.vim'
 nnoremap / :M/
 
@@ -95,6 +105,7 @@ NeoBundle 'http://github.com/ujihisa/neco-look.git'
 NeoBundle "http://github.com/thinca/vim-quickrun.git"
 
 " vimでzencodingする
+" Ctrl+y,
 NeoBundle "https://github.com/mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
@@ -109,10 +120,14 @@ NeoBundle "petdance/vim-perl"
 " vi' で'の中身を選択
 " va' で'も含めて選択 だが
 " cs'" cs"' などと囲っているものに対する操作ができる
+" visualモードのときはSを代用
 NeoBundle "tpope/vim-surround"
 
+" %の拡張
+NeoBundle "https://github.com/tmhedberg/matchit.git"
+
 " =と押して = となるようにする他
-NeoBundle 'smartchr'
+NeoBundle "smartchr"
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
@@ -122,6 +137,16 @@ NeoBundle 'repeat.vim'
 " HatenaをVimから投稿
 NeoBundle 'motemen/hatena-vim'
 let g:hatena_user = 'kazuph1986'
+
+" Matrix
+NeoBundle 'https://github.com/vim-scripts/matrix.vim--Yang.git'
+
+" Ruby環境
+NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
+NeoBundle 'https://github.com/tpope/vim-rails.git'
+
+" Vimでプレゼンする？
+NeoBundle 'https://github.com/thinca/vim-showtime.git'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
@@ -145,12 +170,6 @@ let g:neocomplcache_dictionary_filetype_lists = {
     \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
     \ 'scheme'   : $HOME.'/.gosh_completions'
         \ }
-
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 " SuperTab like snippets behavior.
 imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -208,9 +227,11 @@ nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
 nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
 " レジスタ一覧
-nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
 nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+" unite-grep
+nnoremap <silent> ,ug :Unite grep<CR>
 " 全部乗せ
 " nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
@@ -220,12 +241,15 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split
 " ウィンドウを縦に分割して開く
 au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
 au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
+au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
     " Overwrite settings.
     imap <buffer> jj <Plug>(unite_insert_leave)
     imap <buffer> <ESC> <ESC><ESC>
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
     nnoremap <buffer> t G
     startinsert
 endfunction
@@ -301,6 +325,7 @@ augroup END
 " nnoremap <C-k> <C-w>k
 " nnoremap <C-l> <C-w>l
 " nnoremap <C-h> <C-w>h
+
 "カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
 nnoremap j gj
 nnoremap k gk
