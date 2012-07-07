@@ -26,45 +26,26 @@ let g:EasyMotion_leader_key  =  '<Space><Space>'
 NeoBundle 'tomtom/tcomment_vim'
 
 " エラーチェックする
-NeoBundle 'https://github.com/vim-scripts/errormarker.vim.git'
-let g:errormarker_errortext = '!!'
-let g:errormarker_warningtext = '??'
-let g:errormarker_errorgroup = 'Error'
-let g:errormarker_warninggroup = 'Warning'
-compiler perl
+" perl, rubyは素の状態でもErrorチェックしてくれるみたい
+" javascriptとかはJlitとかいれましょう
+" rubyは保存時に勝手にチェックしてくれた！
+NeoBundle 'https://github.com/scrooloose/syntastic.git'
 compiler ruby
-
-" 保存時にチェックが走る
-if !exists('g:flymake_enabled')
-    let g:flymake_enabled = 1
-    autocmd BufWritePost *.pl, *.pm silent make
-endif
-
-" errormarkerがめんどくさそうなのでこっちも試す
-" NeoBundle 'https://github.com/scrooloose/syntastic.git'
-" let g:syntastic_enable_signs=1
-" let g:syntastic_auto_loc_list=2
-
-" コマンドライン上でWord単位の移動ができるようにする(Emacs風)
-NeoBundle 'houtsnip/vim-emacscommandline'
-" MacだとAltがMetaKeyとして認識しないので変更
-if exists('+macmeta')
-    set macmeta
-endif
+compiler perl
+let g:syntastic_mode_map = { 'mode': 'passive',
+                           \ 'active_filetypes': ['perl', 'ruby', 'javascript'],
+                           \ 'passive_filetypes': [] }
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_loc_list=2
+autocmd BufWritePre * :Errors
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
 " お気に入りのMolkaiカラーを使用する
 NeoBundle 'molokai'
 colorscheme molokai
 let g:molokai_original = 1
-
-" インデントに色をつけてわかりやすくする
-" NeoBundle 'nathanaelkane/vim-indent-guides'
-" let g:indent_guides_enable_on_vim_startup = 1
-" let g:indent_guides_color_change_percent = 30
-" let g:indent_guides_guide_size = 1
-" let g:indent_guides_auto_colors = 1
-" autocmd VimEnter, Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
-" autocmd VimEnter, Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
 
 " Shogoさんの力を借りる
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
@@ -80,6 +61,8 @@ let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Sixeight/unite-grep.vim'
+set grepprg=ack\ -a
+NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
 
 " APIのドキュメントを参照する
 " Shift+K
@@ -148,11 +131,41 @@ NeoBundle 'https://github.com/tpope/vim-rails.git'
 " Vimでプレゼンする？
 NeoBundle 'https://github.com/thinca/vim-showtime.git'
 
-
 " node tree
 NeoBundle 'https://github.com/scrooloose/nerdtree.git'
 NeoBundle 'jistr/vim-nerdtree-tabs'
-map <Leader>n <plug>NERDTreeTabsToggle<CR>
+map <Space>n <plug>NERDTreeTabsToggle<CR>
+
+" Date型のままインクリメント/デクリメント
+NeoBundle 'speeddatin.vim'
+
+" html
+NeoBundle 'html5.vim'
+NeoBundle 'hail2u/vim-css3-syntax'
+NeoBundle 'cakebaker/scss-syntax.vim'
+
+" cssのカラーコードをその色でハイライトして表示
+NeoBundle 'css_color.vim'
+
+" undo treeを表示する
+NeoBundle 'https://github.com/sjl/gundo.vim.git'
+nnoremap <F5> :GundoToggle<CR>
+
+" 整列を割と自動でやってくれる
+" 例えば:Alignta = で=でそろえてくれる
+NeoBundle 'https://github.com/h1mesuke/vim-alignta.git'
+set ambiwidth=double
+xnoremap <silent> a: :Alignta  01 :<CR>
+xnoremap al :Alignta<Space>
+
+" キャメル・アンダースコア記法を扱いやすく
+" ,w ,e ,b
+" v,w
+" d,w
+NeoBundle 'https://github.com/bkad/CamelCaseMotion.git'
+
+" 括弧とか勝手に閉じてくれる
+NeoBundle 'AutoClose'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
@@ -232,12 +245,16 @@ nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
 nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
 nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
-" レジスタ一覧
+" yank一覧
 nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
 nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
 " unite-grep
 nnoremap <silent> ,ug :Unite grep<CR>
+" source
+nnoremap <silent> ,us :Unite source<CR>
+" ref
+nnoremap <silent> ,ur :Unite ref/
 " 全部乗せ
 " nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
@@ -264,56 +281,78 @@ call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 "--------------------------------------------------------------------------
 " BasicSetting
 "--------------------------------------------------------------------------
+" ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
+" ハイライトON
 syntax on
+" 認識されないっぽいファイルタイプを追加
+au BufNewFile,BufRead *.psgi set filetype=perl
+au BufNewFile,BufRead *.ejs set filetype=html
+au BufNewFile,BufRead *.pde set filetype=processing
+au BufNewFile,BufRead *.erb set filetype=html
+au BufRead, BufNewFile *.scss set filetype=scss
+
+" ファイルエンコーディング
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
-set fileencodings=utf-8
 set encoding=utf-8
+" 未保存のバッファでも裏に保持
+set hidden
+" コマンドラインでの補完候補が表示されるようになる
+set wildmenu
+" コマンドをステータス行に表示
+set showcmd
+" 検索語を強調表示
+set hlsearch
+" 検索時に大文字・小文字を区別しない。ただし、検索後に大文字小文字が
+" 混在しているときは区別する
+set ignorecase
+set smartcase
+" オートインデント
 set autoindent
 set smartindent
+
+" 画面最下行にルーラーを表示する
+set ruler
+
+" ステータスラインを常に表示する
+set laststatus=2
+
+" <F11>キーで'paste'と'nopaste'を切り替える
+set pastetoggle=<F11>
+
 set cindent
 set tabstop=4
 set shiftwidth=4
-if has("autocmd")
-  "ファイルタイプの検索を有効にする
-  filetype plugin on
-  "そのファイルタイプにあわせたインデントを利用する
-  filetype indent on
-  " これらのftではインデントを無効に
-  "autocmd FileType php filetype indent off
-  autocmd FileType apache     setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType aspvbs     setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType c          setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType cpp        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType cs         setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType css        setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType python     setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType ruby       setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType haml       setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType sh         setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType sql        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType vb         setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType vim        setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType wsh        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType xhtml      setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
-  autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
-  autocmd FileType scala      setlocal sw=2 sts=2 ts=2 et
-endif
+autocmd FileType apache     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType aspvbs     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType c          setlocal sw=4 sts=4 ts=4 et
+autocmd FileType cpp        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType cs         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType css        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
+autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType python     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType ruby       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType haml       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType sh         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType sql        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType vb         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType vim        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType wsh        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType xhtml      setlocal sw=4 sts=4 ts=4 et
+autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType scala      setlocal sw=2 sts=2 ts=2 et
 
 set autoread
 set expandtab
-set hlsearch
 set cmdheight=2
-set showcmd                       " コマンドをステータス行に表示
 set showmode                     " 現在のモードを表示
 set modelines=0                  " モードラインは無効
 set showmatch
@@ -348,19 +387,17 @@ set ttyfast
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
 noremap : ;
-au BufNewFile,BufRead *.psgi set filetype=perl
-au BufNewFile,BufRead *.ejs set filetype=html
-au BufNewFile,BufRead *.pde set filetype=processing
-au BufNewFile,BufRead *.erb set filetype=html
 
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
+
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
     autocmd!
     autocmd QuickFixCmdPost vimgrep cw
+    autocmd QuickFixCmdPost grep cw
 augroup END
 
 " CTRL-hjklでウィンドウ移動
@@ -373,18 +410,7 @@ augroup END
 nnoremap j gj
 nnoremap k gk
 
-" 数字のインクリメンタルを別にバインド
-nmap <C-c> <C-a>
-
-" 0, 9で行頭、行末へ
-nmap 0 ^
-nmap 9 $
-
-" insert mode での移動
-" imap  <C-e> <END>
-" imap  <C-a> <HOME>
-
-" インテントを＞＜の連打で変更できるようにする
+" visualmodeでインテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
 vnoremap > >gv
 
