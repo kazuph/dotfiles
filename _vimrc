@@ -165,7 +165,7 @@ xnoremap al :Alignta<Space>
 NeoBundle 'https://github.com/bkad/CamelCaseMotion.git'
 
 " 括弧とか勝手に閉じてくれる
-NeoBundle 'AutoClose'
+" NeoBundle 'AutoClose'
 
 "-------------------------------------------------------------------setting neocomplcache
 " AutoComplPopの補完を無効にする（インストールしてないなら無意味）
