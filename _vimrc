@@ -434,6 +434,14 @@ set scrolloff=1000
 vnoremap < <gv
 vnoremap > >gv
 
+" C-sでEsc
+" だってHHKですらEscが遠ry
+inoremap <C-s> <Esc><Esc>
+
+" インサートモード中に抜け出す
+inoremap jj <Esc><Esc>
+inoremap kk <Esc><Esc>
+
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
