@@ -4,9 +4,11 @@
 /.*
 # しかし、"無視したくないファイル"は以下に"![ファイル名]"で指定する。
 ##### Gitで管理するファイルリスト #####
-!/.bashrc
-!/.zshrc
-!/.vimrc
+!/_bashrc
+!/_zshrc
+!/_vimrc
+!/_xvimrc
+!/_vrapperrc
 !/.gitignore
 !/.tmux.conf
 
