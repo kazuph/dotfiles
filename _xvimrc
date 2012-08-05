@@ -1,8 +1,7 @@
+" Xcode用のVimの設定
+" 全部のsetが利いてるかは不明
 syntax on
 filetype plugin indent on
-set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
-set fileencodings=utf-8
-set encoding=utf-8
 set tabstop=4
 set autoindent
 set expandtab
@@ -13,9 +12,9 @@ set cmdheight=2
 set mouse=a
 set list
 set tw=0
-set listchars=tab:»-,trail:-,nbsp:%
 noremap ; :
 noremap : ;
+
 " コンマの後に自動的にスペースを挿入
 inoremap , ,<Space>
 
@@ -24,5 +23,5 @@ inoremap , ,<Space>
 inoremap <C-s> <Esc><Esc>
 
 " インサートモード中に抜け出す
-inoremap jj <Esc><Esc>
-inoremap kk <Esc><Esc>
+"inoremap jj <Esc><Esc>
+"inoremap kk <Esc><Esc>

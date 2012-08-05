@@ -31,5 +31,5 @@ nnoremap gb :GoLastEditPosition<C-m>
 inoremap <C-s> <Esc><Esc>
 
 " インサートモード中に抜け出す
-inoremap jj <Esc><Esc>
-inoremap kk <Esc><Esc>
+" inoremap jj <Esc><Esc>
+" inoremap kk <Esc><Esc>
