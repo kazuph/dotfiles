@@ -60,9 +60,12 @@ NeoBundle 'http://github.com/Shougo/vimfiler.git'
 let g:vimfiler_as_default_explorer = 1
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Sixeight/unite-grep.vim'
-set grepprg=ack\ -a
+NeoBundle 'https://github.com/Sixeight/unite-grep.git'
 NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
+
+" 別にいらないけど入れてみた。いらなかった。
+NeoBundle 'ack.vim'
+set grepprg=ack\ -a
 
 " APIのドキュメントを参照する
 " Shift+K
@@ -136,9 +139,6 @@ NeoBundle 'https://github.com/scrooloose/nerdtree.git'
 NeoBundle 'jistr/vim-nerdtree-tabs'
 map <Space>n <plug>NERDTreeTabsToggle<CR>
 
-" Date型のままインクリメント/デクリメント
-NeoBundle 'speeddatin.vim'
-
 " html
 NeoBundle 'html5.vim'
 NeoBundle 'hail2u/vim-css3-syntax'
@@ -168,7 +168,11 @@ map e ,e
 map b ,b
 
 " 括弧とか勝手に閉じてくれる
+" いらいらするのでやめてる
 " NeoBundle 'AutoClose'
+
+" ステータスラインをかっこ良く
+NeoBundle 'Lokaltog/vim-powerline'
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
@@ -305,6 +309,7 @@ syntax on
 " 認識されないっぽいファイルタイプを追加
 au BufNewFile,BufRead *.psgi set filetype=perl
 au BufNewFile,BufRead *.ejs set filetype=html
+au BufNewFile,BufRead *.ep set filetype=html
 au BufNewFile,BufRead *.pde set filetype=processing
 au BufNewFile,BufRead *.erb set filetype=html
 au BufRead, BufNewFile *.scss set filetype=scss
@@ -366,6 +371,7 @@ autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType scala      setlocal sw=2 sts=2 ts=2 et
+autocmd FileType scheme     setlocal sw=2 sts=2 ts=2 et
 
 set autoread
 set expandtab
@@ -422,6 +428,8 @@ augroup END
 " nnoremap <C-k> <C-w>k
 " nnoremap <C-l> <C-w>l
 " nnoremap <C-h> <C-w>h
+nnoremap 0 ^
+nnoremap 9 $
 
 "カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
 nnoremap j gj
@@ -434,9 +442,7 @@ set scrolloff=1000
 vnoremap < <gv
 vnoremap > >gv
 
-" C-sでEsc
-" だってHHKですらEscが遠ry
-inoremap <C-s> <Esc><Esc>
+" C-cでEsc
 
 " インサートモード中に抜け出す
 inoremap jj <Esc><Esc>
