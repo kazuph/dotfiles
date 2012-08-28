@@ -174,6 +174,12 @@ map b ,b
 " ステータスラインをかっこ良く
 NeoBundle 'Lokaltog/vim-powerline'
 
+" ステータスラインでハァハァしたかったからやった。後悔はしていない。
+NeoBundle 'https://github.com/mattn/hahhah-vim.git'
+
+" vimからgitをいじる
+NeoBundle 'https://github.com/motemen/git-vim.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
