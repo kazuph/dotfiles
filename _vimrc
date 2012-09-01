@@ -86,6 +86,16 @@ NeoBundle 'http://github.com/ujihisa/neco-look.git'
 
 " \yで開いているコードを実行
 NeoBundle "http://github.com/thinca/vim-quickrun.git"
+" for quickrun.vim
+let g:quickrun_config = {
+  \   'objc': {
+  \     'command': 'clang',
+  \     'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
+  \     'tempfile': '{tempname()}.m',
+  \   }
+  \ }
+
+NeoBundle "https://github.com/msanders/cocoa.vim.git"
 
 " vimでzencodingする
 " Ctrl+y,
