@@ -1,0 +1,27 @@
+" Xcode用のVimの設定
+" 全部のsetが利いてるかは不明
+syntax on
+filetype plugin indent on
+set tabstop=4
+set autoindent
+set expandtab
+set shiftwidth=4
+set hlsearch
+set number
+set cmdheight=2
+set mouse=a
+set list
+set tw=0
+noremap ; :
+noremap : ;
+
+" コンマの後に自動的にスペースを挿入
+inoremap , ,<Space>
+
+" C-sでEsc
+" だってHHKですらEscが遠ry
+inoremap <C-s> <Esc><Esc>
+
+" インサートモード中に抜け出す
+"inoremap jj <Esc><Esc>
+"inoremap kk <Esc><Esc>

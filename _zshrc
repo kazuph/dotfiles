@@ -45,10 +45,4 @@ alias rgrep='find . -name "*.svn*" -prune -o -type f -print0 | xargs -0 grep'
 export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
-# ruby
-if [ -d ${HOME}/.rbenv  ] ; then
-    PATH=${HOME}/.rbenv/bin:${PATH}
-    export PATH
-    eval "$(rbenv init -)"
-fi
 stty -ixon -ixoff
