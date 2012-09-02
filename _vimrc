@@ -180,6 +180,9 @@ NeoBundle 'https://github.com/mattn/hahhah-vim.git'
 " vimからgitをいじる
 NeoBundle 'https://github.com/motemen/git-vim.git'
 
+" じゃあvimからsvnもいじる
+NeoBundle 'svn-diff.vim'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -467,3 +470,6 @@ set ttymouse=xterm2
 
 "ヤンクした文字は、システムのクリップボードに入れる"
 set clipboard=unnamed
+
+" テンプレートの設定
+autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
