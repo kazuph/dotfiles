@@ -27,10 +27,10 @@ let g:EasyMotion_leader_key  =  '<Space><Space>'
 NeoBundle 'tomtom/tcomment_vim'
 
 " エラーチェックする
-読み込み遅いし保存時に待たされるのでやめた
-perl, rubyは素の状態でもErrorチェックしてくれるみたい
-javascriptとかはJlitとかいれましょう
-rubyは保存時に勝手にチェックしてくれた！
+" 読み込み遅いし保存時に待たされるのでやめた
+" perl, rubyは素の状態でもErrorチェックしてくれるみたい
+" javascriptとかはJlitとかいれましょう
+" rubyは保存時に勝手にチェックしてくれた！
 NeoBundle 'https://github.com/scrooloose/syntastic.git'
 compiler ruby
 compiler perl
