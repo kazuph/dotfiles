@@ -9,6 +9,7 @@ if has('vim_starting')
     set runtimepath+=~/dotfiles/neobundle.vim
     call neobundle#rc(expand('~/.vim/'))
 endif
+
 " NeoBundleをNeoBundleで管理する
 NeoBundle 'Shougo/neobundle.vim'
 
@@ -26,6 +27,7 @@ let g:EasyMotion_leader_key  =  '<Space><Space>'
 NeoBundle 'tomtom/tcomment_vim'
 
 " エラーチェックする
+" 読み込み遅いし保存時に待たされるのでやめた
 " perl, rubyは素の状態でもErrorチェックしてくれるみたい
 " javascriptとかはJlitとかいれましょう
 " rubyは保存時に勝手にチェックしてくれた！
@@ -54,10 +56,11 @@ let g:molokai_original = 1
 NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
-NeoBundle 'http://github.com/Shougo/vimfiler.git'
 
+NeoBundle 'http://github.com/Shougo/vimfiler.git'
 " デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
+
 NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'https://github.com/Sixeight/unite-grep.git'
@@ -134,28 +137,12 @@ NeoBundle 'repeat.vim'
 NeoBundle 'motemen/hatena-vim'
 let g:hatena_user = 'kazuph1986'
 
-" Matrix
-NeoBundle 'https://github.com/vim-scripts/matrix.vim--Yang.git'
-
 " Ruby環境
 NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
 NeoBundle 'https://github.com/tpope/vim-rails.git'
 
 " Vimでプレゼンする？
 NeoBundle 'https://github.com/thinca/vim-showtime.git'
-
-" node tree
-NeoBundle 'https://github.com/scrooloose/nerdtree.git'
-NeoBundle 'jistr/vim-nerdtree-tabs'
-map <Space>n <plug>NERDTreeTabsToggle<CR>
-
-" html
-NeoBundle 'html5.vim'
-NeoBundle 'hail2u/vim-css3-syntax'
-NeoBundle 'cakebaker/scss-syntax.vim'
-
-" cssのカラーコードをその色でハイライトして表示
-NeoBundle 'css_color.vim'
 
 " undo treeを表示する
 NeoBundle 'https://github.com/sjl/gundo.vim.git'
@@ -192,6 +179,11 @@ NeoBundle 'https://github.com/motemen/git-vim.git'
 
 " じゃあvimからsvnもいじる
 NeoBundle 'svn-diff.vim'
+
+" 読み込みの遅延を測定する
+" 以下で実行
+" :BenchVimrc
+NeoBundle 'mattn/benchvimrc-vim.git'
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
@@ -231,29 +223,12 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
 " <TAB>: completion.
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
-
-" For cursor moving in insert mode(Not recommended)
-"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
-"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
-"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
-"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
-" Or set this.
-"let g:neocomplcache_enable_cursor_hold_i = 1
-
-" AutoComplPop like behavior.
-"let g:neocomplcache_enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplcache_enable_auto_select = 1
-"let g:neocomplcache_disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-"inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
