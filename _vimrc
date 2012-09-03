@@ -27,10 +27,10 @@ let g:EasyMotion_leader_key  =  '<Space><Space>'
 NeoBundle 'tomtom/tcomment_vim'
 
 " エラーチェックする
-読み込み遅いし保存時に待たされるのでやめた
-perl, rubyは素の状態でもErrorチェックしてくれるみたい
-javascriptとかはJlitとかいれましょう
-rubyは保存時に勝手にチェックしてくれた！
+" 読み込み遅いし保存時に待たされるのでやめた
+" perl, rubyは素の状態でもErrorチェックしてくれるみたい
+" javascriptとかはJlitとかいれましょう
+" rubyは保存時に勝手にチェックしてくれた！
 NeoBundle 'https://github.com/scrooloose/syntastic.git'
 compiler ruby
 compiler perl
@@ -53,15 +53,15 @@ let g:molokai_original = 1
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
 " Mac  : $ make -f make_mac.mak
 " Linux: $ make -f make_unix.mak
-NeoBundle 'http://github.com/Shougo/vimproc.git'
+NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
+NeoBundle 'Shougo/neocomplcache-snippets-complete'
 
-NeoBundle 'http://github.com/Shougo/vimfiler.git'
+NeoBundle 'Shougo/vimfiler.git'
 " デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
 
-NeoBundle 'http://github.com/Shougo/vimshell.git'
+NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'https://github.com/Sixeight/unite-grep.git'
 NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
