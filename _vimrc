@@ -185,6 +185,15 @@ NeoBundle 'svn-diff.vim'
 " :BenchVimrc
 NeoBundle 'mattn/benchvimrc-vim.git'
 
+" 日本語対策
+NeoBundle "https://github.com/fuenor/im_control.vim"
+" 「日本語入力固定モード」のMacVimKaoriya対策を無効化
+let IM_CtrlMacVimKaoriya = 0
+" 「日本語入力固定モード」の動作モード
+let IM_CtrlMode = 4
+" 「日本語入力固定モード」切替キー
+inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -458,3 +467,5 @@ set clipboard=unnamed
 
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
+
+

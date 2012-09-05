@@ -292,5 +292,6 @@ endif
 " MacVim-KaoriYa固有の設定
 "
 let $SSH_ASKPASS = simplify($VIM . '/../../MacOS') . '/macvim-askpass'
-set noimdisable
-set imdisableactivate
+" set noimdisable
+" set imdisableactivate
+set noimdisableactivate
