@@ -53,15 +53,15 @@ let g:molokai_original = 1
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
 " Mac  : $ make -f make_mac.mak
 " Linux: $ make -f make_unix.mak
-NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neocomplcache-snippets-complete'
+NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
 
-NeoBundle 'Shougo/vimfiler.git'
+NeoBundle 'http://github.com/Shougo/vimfiler.git'
 " デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
 
-NeoBundle 'Shougo/vimshell.git'
+NeoBundle 'http://github.com/Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'https://github.com/Sixeight/unite-grep.git'
 NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
@@ -184,15 +184,6 @@ NeoBundle 'svn-diff.vim'
 " 以下で実行
 " :BenchVimrc
 NeoBundle 'mattn/benchvimrc-vim.git'
-
-" 日本語対策
-NeoBundle "https://github.com/fuenor/im_control.vim"
-" 「日本語入力固定モード」のMacVimKaoriya対策を無効化
-let IM_CtrlMacVimKaoriya = 0
-" 「日本語入力固定モード」の動作モード
-let IM_CtrlMode = 4
-" 「日本語入力固定モード」切替キー
-inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
@@ -467,5 +458,4 @@ set clipboard=unnamed
 
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
-
-
+autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
