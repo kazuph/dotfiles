@@ -140,6 +140,10 @@ let g:hatena_user = 'kazuph1986'
 " Ruby環境
 NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
 NeoBundle 'https://github.com/tpope/vim-rails.git'
+let g:rubycomplete_buffer_loading = 1
+let g:rubycomplete_classes_in_global = 1
+let g:rubycomplete_rails = 1
+imap <C-o> <C-x><C-o>
 
 " Vimでプレゼンする？
 NeoBundle 'https://github.com/thinca/vim-showtime.git'
