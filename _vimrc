@@ -182,7 +182,9 @@ NeoBundle 'https://github.com/mattn/hahhah-vim.git'
 NeoBundle 'https://github.com/motemen/git-vim.git'
 
 " じゃあvimからsvnもいじる
+NeoBundle 'svn.vim'
 NeoBundle 'svn-diff.vim'
+NeoBundle 'svndiff.vim'
 
 " 読み込みの遅延を測定する
 " 以下で実行
