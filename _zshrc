@@ -34,7 +34,6 @@ source $ZSH/oh-my-zsh.sh
 alias tmux="TERM=xterm-256color tmux -u"
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
-source ~/perl5/perlbrew/etc/bashrc
 
 export LANG=ja_JP.UTF-8
 vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\2/'`
@@ -46,3 +45,8 @@ export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
 stty -ixon -ixoff
+
+if [ -d ${HOME}/perl5/perlbrew/etc/ ] ; then
+    source ~/perl5/perlbrew/etc/bashrc
+fi
+
