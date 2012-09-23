@@ -140,6 +140,10 @@ let g:hatena_user = 'kazuph1986'
 " Ruby環境
 NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
 NeoBundle 'https://github.com/tpope/vim-rails.git'
+let g:rubycomplete_buffer_loading = 1
+let g:rubycomplete_classes_in_global = 1
+let g:rubycomplete_rails = 1
+imap <C-o> <C-x><C-o>
 
 " Vimでプレゼンする？
 NeoBundle 'https://github.com/thinca/vim-showtime.git'
@@ -178,7 +182,9 @@ NeoBundle 'https://github.com/mattn/hahhah-vim.git'
 NeoBundle 'https://github.com/motemen/git-vim.git'
 
 " じゃあvimからsvnもいじる
+NeoBundle 'svn.vim'
 NeoBundle 'svn-diff.vim'
+NeoBundle 'svndiff.vim'
 
 " 読み込みの遅延を測定する
 " 以下で実行
@@ -235,14 +241,14 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+" autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\h\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
