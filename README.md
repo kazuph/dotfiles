@@ -9,5 +9,10 @@ cd ~/.
 ln -s dotfiles/_vimrc .vimrc
 vim
 :NeoBundleInstall
-...
+:q
+cd
+ln -s ~/dotfiles/_gitconfig .gitconfig
+ln -s ~/dotfiles/_zshrc .zshrc
+ln -s ~/dotfiles/_zshenv .zshenv
+ln -s ~/dotfiles/_tmux.conf .tmux.conf
 ~~~
