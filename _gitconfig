@@ -12,8 +12,9 @@
   interactive = auto
   grep = auto
 [core]
-  excludesfile = ~/.gitignore  # globalな.gitignoreの指定
-  autocrlf = input                 # CRLFを自動変換
+  # globalな.gitignoreの指定
+  excludesfile = ~/.gitignore
+  autoCRLF = false
   editor = vim
   quotepath = false
 [merge]
