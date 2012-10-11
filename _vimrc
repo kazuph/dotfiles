@@ -442,8 +442,6 @@ set scrolloff=1000
 vnoremap < <gv
 vnoremap > >gv
 
-" C-cでEsc
-
 " インサートモード中に抜け出す
 inoremap jj <Esc><Esc>
 inoremap kk <Esc><Esc>
