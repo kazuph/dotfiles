@@ -130,6 +130,9 @@ NeoBundle "smartchr"
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
+" 色々な入力補助
+NeoBundle "kana/vim-smartinput.git"
+
 " 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
 
