@@ -130,6 +130,9 @@ NeoBundle "smartchr"
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
+" 色々な入力補助
+NeoBundle "kana/vim-smartinput.git"
+
 " 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
 
@@ -412,7 +415,7 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-autocmd BufWritePre * :%s/\s\+$//ge
+" autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
 
@@ -441,8 +444,6 @@ set scrolloff=1000
 " visualmodeでインテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
 vnoremap > >gv
-
-" C-cでEsc
 
 " インサートモード中に抜け出す
 inoremap jj <Esc><Esc>

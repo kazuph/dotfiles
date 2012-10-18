@@ -15,18 +15,18 @@ vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\
 alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
 
 
+# nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
+# 設定を有効にする
 if [[ -f ~/.nvm/nvm.sh ]]; then
-    source ~/.nvm/nvm.sh
-    echo "run nvm"
-    if which nvm &>/dev/null 2>1 ;then ちょっと動作が不安定だったのでコメント
-        echo "exists nvm"
-        _nodejs_use_version="v0.8.9"
-        if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
-            nvm use "${_nodejs_use_version}" >/dev/null
-            export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
-        fi
-        unset _nodejs_use_version
+  source ~/.nvm/nvm.sh
+  # if which nvm >/dev/null 2>&1 ;then ちょっと動作が不安定だったのでコメント
+    _nodejs_use_version="v0.8.9"
+    if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
+      nvm use "${_nodejs_use_version}" >/dev/null
+      export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
     fi
+    unset _nodejs_use_version
+  # fi
 fi
 
 if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
