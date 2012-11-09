@@ -8,4 +8,4 @@
 !/.gitignore
 !/.tmux.conf
 !templates
-
+neobundle.vim
