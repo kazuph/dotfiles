@@ -55,7 +55,7 @@ let g:molokai_original = 1
 " Linux: $ make -f make_unix.mak
 NeoBundle 'http://github.com/Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'http://github.com/Shougo/neocomplcache-snippets-complete'
+NeoBundle 'https://github.com/Shougo/neosnippet'
 
 NeoBundle 'http://github.com/Shougo/vimfiler.git'
 " デフォルトをvimfilerに
