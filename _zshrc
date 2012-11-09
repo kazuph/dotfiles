@@ -1,57 +1,20 @@
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
-
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
+export LANG=ja_JP.UTF-8
 ZSH_THEME="skaro"
 # ZSH_THEME="robbyrussell"
 # ZSH_THEME="tonotdo"
-
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Comment this out to disable weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(svn git perl ruby linux osx)
-
 source $ZSH/oh-my-zsh.sh
-
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
 alias vi="vim"
-
-export LANG=ja_JP.UTF-8
 vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\2/'`
 alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
 
-alias rgrep='find . -name "*.svn*" -prune -o -type f -print0 | xargs -0 grep'
-# bindkey -v
-export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
-export PATH=$PATH:/opt/local/bin
 
-stty -ixon -ixoff
-
-if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
-    source ~/perl5/perlbrew/etc/bashrc
-fi
-# nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
-# 設定を有効にする
 # nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
 # 設定を有効にする
 if [[ -f ~/.nvm/nvm.sh ]]; then
@@ -65,3 +28,10 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
     unset _nodejs_use_version
   # fi
 fi
+
+if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
+    source ~/perl5/perlbrew/etc/bashrc
+fi
+
+export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
+export PATH=$PATH:/opt/local/bin
