@@ -194,6 +194,8 @@ NeoBundle 'svndiff.vim'
 " :BenchVimrc
 NeoBundle 'mattn/benchvimrc-vim.git'
 
+NeoBundle 'othree/html5.vim.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
