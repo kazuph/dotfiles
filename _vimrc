@@ -31,7 +31,7 @@ NeoBundle 'tomtom/tcomment_vim'
 " perl, rubyは素の状態でもErrorチェックしてくれるみたい
 " javascriptとかはJlitとかいれましょう
 " rubyは保存時に勝手にチェックしてくれた！
-NeoBundle 'https://github.com/scrooloose/syntastic.git'
+NeoBundle 'scrooloose/syntastic.git'
 compiler ruby
 compiler perl
 let g:syntastic_mode_map = { 'mode': 'passive',
@@ -53,18 +53,18 @@ let g:molokai_original = 1
 " NeoBundleInstall 後に.vim/vimprocディレクトリで
 " Mac  : $ make -f make_mac.mak
 " Linux: $ make -f make_unix.mak
-NeoBundle 'http://github.com/Shougo/vimproc.git'
+NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'https://github.com/Shougo/neosnippet'
+NeoBundle 'Shougo/neosnippet'
 
-NeoBundle 'http://github.com/Shougo/vimfiler.git'
+NeoBundle 'Shougo/vimfiler.git'
 " デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
 
-NeoBundle 'http://github.com/Shougo/vimshell.git'
+NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'https://github.com/Sixeight/unite-grep.git'
-NeoBundle 'https://github.com/thinca/vim-qfreplace.git'
+NeoBundle 'Sixeight/unite-grep.git'
+NeoBundle 'thinca/vim-qfreplace.git'
 
 " 別にいらないけど入れてみた。いらなかった。
 NeoBundle 'ack.vim'
@@ -76,7 +76,7 @@ NeoBundle 'thinca/vim-ref'
 
 " 正規表現をPerl風に
 " :%S///gc
-NeoBundle 'http://github.com/othree/eregex.vim'
+NeoBundle 'othree/eregex.vim'
 nnoremap / :M/
 
 " ヤンクを辿れるようにする
@@ -88,10 +88,10 @@ let g:yankring_max_display = 70
 nmap ,y ;YRShow<CR>
 
 " 英語の補完を行う
-NeoBundle 'http://github.com/ujihisa/neco-look.git'
+NeoBundle 'ujihisa/neco-look.git'
 
 " \yで開いているコードを実行
-NeoBundle "http://github.com/thinca/vim-quickrun.git"
+NeoBundle "thinca/vim-quickrun.git"
 " for quickrun.vim
 let g:quickrun_config = {
   \   'objc': {
@@ -101,17 +101,17 @@ let g:quickrun_config = {
   \   }
   \ }
 
-NeoBundle "https://github.com/msanders/cocoa.vim.git"
+NeoBundle "msanders/cocoa.vim.git"
 
 " vimでzencodingする
 " Ctrl+y,
-NeoBundle "https://github.com/mattn/zencoding-vim.git"
+NeoBundle "mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming perl
-NeoBundle "http://github.com/hotchpotch/perldoc-vim"
-NeoBundle "http://github.com/c9s/perlomni.vim"
-NeoBundle "http://github.com/mattn/perlvalidate-vim.git"
+NeoBundle "hotchpotch/perldoc-vim"
+NeoBundle "c9s/perlomni.vim"
+NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
 
 " ()や''でくくったりするための補助
@@ -123,7 +123,7 @@ NeoBundle "petdance/vim-perl"
 NeoBundle "tpope/vim-surround"
 
 " %の拡張
-NeoBundle "https://github.com/tmhedberg/matchit.git"
+NeoBundle "tmhedberg/matchit.git"
 
 " =と押して = となるようにする他
 NeoBundle "smartchr"
@@ -141,23 +141,23 @@ NeoBundle 'motemen/hatena-vim'
 let g:hatena_user = 'kazuph1986'
 
 " Ruby環境
-NeoBundle 'https://github.com/vim-ruby/vim-ruby.git'
-NeoBundle 'https://github.com/tpope/vim-rails.git'
+NeoBundle 'vim-ruby/vim-ruby.git'
+NeoBundle 'tpope/vim-rails.git'
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_classes_in_global = 1
 let g:rubycomplete_rails = 1
 imap <C-o> <C-x><C-o>
 
 " Vimでプレゼンする？
-NeoBundle 'https://github.com/thinca/vim-showtime.git'
+NeoBundle 'thinca/vim-showtime.git'
 
 " undo treeを表示する
-NeoBundle 'https://github.com/sjl/gundo.vim.git'
+NeoBundle 'sjl/gundo.vim.git'
 nnoremap <F5> :GundoToggle<CR>
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
-NeoBundle 'https://github.com/h1mesuke/vim-alignta.git'
+NeoBundle 'h1mesuke/vim-alignta.git'
 set ambiwidth=double
 xnoremap <silent> a: :Alignta  01 :<CR>
 xnoremap al :Alignta<Space>
@@ -166,7 +166,7 @@ xnoremap al :Alignta<Space>
 " ,w ,e ,b
 " v,w
 " d,w
-NeoBundle 'https://github.com/bkad/CamelCaseMotion.git'
+NeoBundle 'bkad/CamelCaseMotion.git'
 map w ,w
 map e ,e
 map b ,b
@@ -179,10 +179,10 @@ map b ,b
 NeoBundle 'Lokaltog/vim-powerline'
 
 " ステータスラインでハァハァしたかったからやった。後悔はしていない。
-NeoBundle 'https://github.com/mattn/hahhah-vim.git'
+NeoBundle 'mattn/hahhah-vim.git'
 
 " vimからgitをいじる
-NeoBundle 'https://github.com/motemen/git-vim.git'
+NeoBundle 'motemen/git-vim.git'
 
 " じゃあvimからsvnもいじる
 NeoBundle 'svn.vim'
