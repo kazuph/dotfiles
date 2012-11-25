@@ -110,8 +110,8 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming perl
 NeoBundle "hotchpotch/perldoc-vim"
-NeoBundle "c9s/perlomni.vim"
-NeoBundle "mattn/perlvalidate-vim.git"
+" NeoBundle "c9s/perlomni.vim"
+" NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
 
 " ()や''でくくったりするための補助
@@ -211,11 +211,12 @@ let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
+let g:neocomplcache_snippets_dir = "~/dotfiles/snippets"
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default' : '',
       \ 'vimshell' : $HOME.'/.vimshell_hist',
-      \ 'perl'     : $HOME . '/.vim/dict/perl.dict',
+      \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
       \ 'scheme' : $HOME.'/.gosh_completions'
       \ }
 
@@ -258,6 +259,10 @@ endif
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+
+" for snippets
+imap <expr><C-k> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <C-k> <Plug>(neocomplcache_snippets_expand)
 
 "----------------------------------------------------------------------------- unite.vim
 let g:unite_update_time = 1000
@@ -317,6 +322,8 @@ au BufNewFile,BufRead *.ejs set filetype=html
 au BufNewFile,BufRead *.ep set filetype=html
 au BufNewFile,BufRead *.pde set filetype=processing
 au BufNewFile,BufRead *.erb set filetype=html
+au BufNewFile,BufRead *.tt set filetype=html
+au BufNewFile,BufRead *.tt2 set filetype=html
 au BufRead, BufNewFile *.scss set filetype=scss
 
 " ファイルエンコーディング
