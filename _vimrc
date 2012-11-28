@@ -56,6 +56,7 @@ let g:molokai_original = 1
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
+NeoBundle 'honza/snipmate-snippets.git'
 
 NeoBundle 'Shougo/vimfiler.git'
 " デフォルトをvimfilerに
@@ -100,6 +101,12 @@ let g:quickrun_config = {
   \     'tempfile': '{tempname()}.m',
   \   }
   \ }
+
+" VimからRSecを実行する
+NeoBundle "skwp/vim-rspec.git"
+" let g:RspecKeyma,=0
+nnoremap <silent> ,rs :RunSpec<CR>
+nnoremap <silent> ,rl :RunSpecLine<CR>
 
 NeoBundle "msanders/cocoa.vim.git"
 
@@ -211,7 +218,9 @@ let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
-let g:neocomplcache_snippets_dir = "~/dotfiles/snippets"
+" let g:neosnippet#snippets_directory='~/dotfiles/snippets'
+let g:neosnippet#snippets_directory='~/.vim/bundle/snipmate-snippets/snippets'
+
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default' : '',
@@ -261,8 +270,17 @@ let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 
 " for snippets
-imap <expr><C-k> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <C-k> <Plug>(neocomplcache_snippets_expand)
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+" For snippet_complete marker.
+if has('conceal')
+  set conceallevel=2 concealcursor=i
+endif
 
 "----------------------------------------------------------------------------- unite.vim
 let g:unite_update_time = 1000
@@ -448,7 +466,8 @@ nnoremap j gj
 nnoremap k gk
 
 " スクロールしても常にカーソルが中央にあるようにする
-set scrolloff=1000
+" 飽きた
+" set scrolloff=1000
 
 " visualmodeでインテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
