@@ -6,12 +6,12 @@ filetype off
 filetype plugin indent off
 set rtp+=~/dotfiles/neobundle.git/
 if has('vim_starting')
-    set runtimepath+=~/dotfiles/neobundle.vim
-    call neobundle#rc(expand('~/.vim/'))
+  set runtimepath+=~/dotfiles/neobundle.vim
+  call neobundle#rc(expand('~/.vim/'))
 endif
 
-" NeoBundleをNeoBundleで管理する
-NeoBundle 'Shougo/neobundle.vim'
+" NeoBundleをNeoBundleで管理する(非推奨)
+" NeoBundle 'Shougo/neobundle.vim'
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
@@ -32,11 +32,9 @@ NeoBundle 'tomtom/tcomment_vim'
 " javascriptとかはJlitとかいれましょう
 " rubyは保存時に勝手にチェックしてくれた！
 NeoBundle 'scrooloose/syntastic.git'
-compiler ruby
-compiler perl
 let g:syntastic_mode_map = { 'mode': 'passive',
-                           \ 'active_filetypes': ['perl', 'ruby', 'javascript'],
-                           \ 'passive_filetypes': [] }
+      \ 'active_filetypes': ['perl', 'ruby', 'javascript'],
+      \ 'passive_filetypes': [] }
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=2
 autocmd BufWritePre * :Errors
@@ -44,15 +42,12 @@ set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-" お気に入りのMolkaiカラーを使用する
+" お気に入りのMolokaiカラーを使用する
 NeoBundle 'molokai'
 colorscheme molokai
 let g:molokai_original = 1
 
 " Shogoさんの力を借りる
-" NeoBundleInstall 後に.vim/vimprocディレクトリで
-" Mac  : $ make -f make_mac.mak
-" Linux: $ make -f make_unix.mak
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
@@ -91,16 +86,16 @@ nmap ,y ;YRShow<CR>
 " 英語の補完を行う
 NeoBundle 'ujihisa/neco-look.git'
 
-" \yで開いているコードを実行
+" \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
 " for quickrun.vim
 let g:quickrun_config = {
-  \   'objc': {
-  \     'command': 'clang',
-  \     'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
-  \     'tempfile': '{tempname()}.m',
-  \   }
-  \ }
+      \   'objc': {
+      \     'command': 'clang',
+      \     'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
+      \     'tempfile': '{tempname()}.m',
+      \   }
+      \ }
 
 " VimからRSecを実行する
 NeoBundle "skwp/vim-rspec.git"
@@ -116,7 +111,7 @@ NeoBundle "mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming perl
-NeoBundle "hotchpotch/perldoc-vim"
+NeoBundle "vim-perl/vim-perl.git"
 " NeoBundle "c9s/perlomni.vim"
 " NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
@@ -191,10 +186,8 @@ NeoBundle 'mattn/hahhah-vim.git'
 " vimからgitをいじる
 NeoBundle 'motemen/git-vim.git'
 
-" じゃあvimからsvnもいじる
+" svnコミット時にDiffを出す
 NeoBundle 'svn.vim'
-NeoBundle 'svn-diff.vim'
-NeoBundle 'svndiff.vim'
 
 " 読み込みの遅延を測定する
 " 以下で実行
@@ -219,7 +212,7 @@ let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
 " let g:neosnippet#snippets_directory='~/dotfiles/snippets'
-let g:neosnippet#snippets_directory='~/.vim/bundle/snipmate-snippets/snippets'
+let g:neosnippet#snippets_directory='~/.vim/bundle/snipmate-snippets/snippets, ~/dotfiles/snippets'
 
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
@@ -282,7 +275,7 @@ if has('conceal')
   set conceallevel=2 concealcursor=i
 endif
 
-"----------------------------------------------------------------------------- unite.vim
+"------------------------------------------------------ unite.vim
 let g:unite_update_time = 1000
 " 入力モードで開始する
 let g:unite_enable_start_insert=1
@@ -316,15 +309,11 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vspli
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
 
-autocmd FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-    " Overwrite settings.
-    imap <buffer> jj <Plug>(unite_insert_leave)
-    imap <buffer> <ESC> <ESC><ESC>
-    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-    nnoremap <buffer> t G
-    startinsert
-endfunction
+imap <buffer> jj <Plug>(unite_insert_leave)
+imap <buffer> <ESC> <ESC><ESC>
+imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+nnoremap <buffer> t G
+startinsert
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
 "--------------------------------------------------------------------------
@@ -434,8 +423,6 @@ highlight CursorLine ctermbg=black guibg=black
 
 " コマンド実行中は再描画しない
 set lazyredraw
-" 高速ターミナル接続を行う
-set ttyfast
 
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 noremap ; :
@@ -448,9 +435,9 @@ autocmd BufWritePre * :%s/\t/    /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
-    autocmd!
-    autocmd QuickFixCmdPost vimgrep cw
-    autocmd QuickFixCmdPost grep cw
+  autocmd!
+  autocmd QuickFixCmdPost vimgrep cw
+  autocmd QuickFixCmdPost grep cw
 augroup END
 
 " CTRL-hjklでウィンドウ移動
@@ -487,9 +474,6 @@ set clipboard+=unnamed
 set mouse=a
 set guioptions+=a
 set ttymouse=xterm2
-
-"ヤンクした文字は、システムのクリップボードに入れる"
-set clipboard=unnamed
 
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
