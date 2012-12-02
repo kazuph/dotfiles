@@ -309,11 +309,15 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vspli
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
 
-imap <buffer> jj <Plug>(unite_insert_leave)
-imap <buffer> <ESC> <ESC><ESC>
-imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-nnoremap <buffer> t G
-startinsert
+autocmd FileType unite call s:unite_my_settings()
+function! s:unite_my_settings()
+    " Overwrite settings.
+    imap <buffer> jj <Plug>(unite_insert_leave)
+    imap <buffer> <ESC> <ESC><ESC>
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+    nnoremap <buffer> t G
+    startinsert
+endfunction
 call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
 
 "--------------------------------------------------------------------------
