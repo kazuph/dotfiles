@@ -63,7 +63,7 @@ NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'thinca/vim-qfreplace.git'
 
 " 別にいらないけど入れてみた。いらなかった。
-NeoBundle 'ack.vim'
+" NeoBundle 'ack.vim'
 set grepprg=ack\ -a
 
 " APIのドキュメントを参照する
