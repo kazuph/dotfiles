@@ -29,9 +29,5 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
   # fi
 fi
 
-if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
-    source ~/perl5/perlbrew/etc/bashrc
-fi
-
 export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
