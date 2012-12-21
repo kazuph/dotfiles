@@ -44,8 +44,10 @@ set statusline+=%*
 
 " お気に入りのMolokaiカラーを使用する
 NeoBundle 'molokai'
-colorscheme molokai
-let g:molokai_original = 1
+NeoBundle 'jnurmine/Zenburn.git'
+" colorscheme molokai
+" let g:molokai_original = 1
+colorscheme zenburn 
 
 " Shogoさんの力を借りる
 NeoBundle 'Shougo/vimproc.git'
