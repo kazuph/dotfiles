@@ -53,6 +53,10 @@ NeoBundle 'vim-scripts/newspaper.vim'
 NeoBundle 'jnurmine/Zenburn.git'
 colorscheme molokai
 
+" outline機能を試す
+NeoBundle 'h1mesuke/unite-outline'
+NeoBundle 'VOoM'
+
 " Shogoさんの力を借りる
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
@@ -190,7 +194,7 @@ NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'mattn/hahhah-vim.git'
 
 " vimからgitをいじる
-NeoBundle 'motemen/git-vim.git'
+NeoBundle 'kmnk/vim-unite-giti.git'
 
 " svnコミット時にDiffを出す
 NeoBundle 'svn.vim'
@@ -287,8 +291,6 @@ let g:unite_update_time = 1000
 let g:unite_enable_start_insert=1
 " ファイル一覧
 nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-" 最近使用したファイル一覧
-nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
 " ブックマーク一覧
 nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
@@ -305,8 +307,14 @@ nnoremap <silent> ,us :Unite source<CR>
 nnoremap <silent> ,ur :Unite ref/
 " color scheme の変更
 nnoremap <silent> ,uc :Unite colorscheme<CR>
-" 全部乗せ
-" nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+" outline表示
+nnoremap <silent> ,uo :Unite outline<CR>
+" giti表示
+nnoremap <silent> ,ug :Unite giti<CR>
+" status
+nnoremap <silent> ,gs :Unite giti/status<CR>
+" log
+nnoremap <silent> ,gl :Unite giti/log<CR>
 
 " ウィンドウを分割して開く
 au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
