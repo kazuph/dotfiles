@@ -42,12 +42,16 @@ set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-" お気に入りのMolokaiカラーを使用する
-NeoBundle 'molokai'
+" color shcheme
+NeoBundle 'ujihisa/unite-colorscheme'
+NeoBundle 'ujihisa/unite-font'
+
+NeoBundle 'tomasr/molokai'
+NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'altercation/solarized'
+NeoBundle 'vim-scripts/newspaper.vim'
 NeoBundle 'jnurmine/Zenburn.git'
-" colorscheme molokai
-" let g:molokai_original = 1
-colorscheme zenburn 
+colorscheme molokai
 
 " Shogoさんの力を借りる
 NeoBundle 'Shougo/vimproc.git'
@@ -299,6 +303,8 @@ nnoremap <silent> ,ug :Unite grep<CR>
 nnoremap <silent> ,us :Unite source<CR>
 " ref
 nnoremap <silent> ,ur :Unite ref/
+" color scheme の変更
+nnoremap <silent> ,uc :Unite colorscheme<CR>
 " 全部乗せ
 " nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
@@ -320,7 +326,7 @@ function! s:unite_my_settings()
     nnoremap <buffer> t G
     startinsert
 endfunction
-call unite#custom_default_action('source/bookmark/directory' ,  'vimfiler')
+call unite#custom_default_action('source/bookmark/directory', 'vimfiler')
 
 "--------------------------------------------------------------------------
 " BasicSetting
@@ -435,7 +441,7 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-" autocmd BufWritePre * :%s/\s\+$//ge
+autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
 
@@ -447,10 +453,6 @@ augroup grepopen
 augroup END
 
 " CTRL-hjklでウィンドウ移動
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
-" nnoremap <C-h> <C-w>h
 nnoremap 0 ^
 nnoremap 9 $
 
@@ -472,6 +474,12 @@ inoremap kk <Esc><Esc>
 
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" 無限undo
+if has('persistent_undo')
+  set undodir=~/.vim/undo
+  set undofile
+endif
 
 " OS依存
 " OSのクリップボードを使用する
