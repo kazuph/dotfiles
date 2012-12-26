@@ -122,9 +122,12 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming perl
 NeoBundle "vim-perl/vim-perl.git"
-" NeoBundle "c9s/perlomni.vim"
-" NeoBundle "mattn/perlvalidate-vim.git"
+NeoBundle "c9s/perlomni.vim"
+NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
+NeoBundle "y-uuki/unite-perl-module.vim"
+NeoBundle "y-uuki/perl-local-lib-path.vim"
+autocmd FileType perl PerlLocalLibPath
 
 " ()や''でくくったりするための補助
 " text-objectの支援
