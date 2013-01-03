@@ -207,9 +207,6 @@ NeoBundle 'mattn/benchvimrc-vim.git'
 " HTML5
 NeoBundle 'othree/html5.vim.git'
 
-" todo
-NeoBundle 'davidoc/taskpaper.vim.git'
-
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
