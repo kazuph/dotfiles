@@ -504,3 +504,9 @@ set ttymouse=xterm2
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
 autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
+
+" .vimrcを瞬時に開く
+nnoremap <Space>. :vs $MYVIMRC<CR>
+
+" 念の為C-cでEsc
+inoremap <C-c> <Esc>
