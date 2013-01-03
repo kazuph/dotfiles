@@ -47,10 +47,7 @@ NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'ujihisa/unite-font'
 
 NeoBundle 'tomasr/molokai'
-NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'altercation/solarized'
-NeoBundle 'vim-scripts/newspaper.vim'
-NeoBundle 'jnurmine/Zenburn.git'
 colorscheme molokai
 
 " outline機能を試す
