@@ -207,6 +207,16 @@ NeoBundle 'mattn/benchvimrc-vim.git'
 " HTML5
 NeoBundle 'othree/html5.vim.git'
 
+" ソースコードを読みやすくする
+NeoBundle 'wesleyche/Trinity.git'
+NeoBundle 'scrooloose/nerdtree.git'
+NeoBundle 'wesleyche/SrcExpl.git'
+
+" テキストオブジェクトで置換
+NeoBundle 'kana/vim-operator-replace.git'
+NeoBundle 'kana/vim-operator-user.git'
+map R  <Plug>(operator-replace)
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -507,3 +517,6 @@ nnoremap <Space>. :vs $MYVIMRC<CR>
 
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
+
+" 連続でペースト
+vnoremap <silent> <C-p> "0p<CR>"
