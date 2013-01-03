@@ -517,6 +517,3 @@ nnoremap <Space>. :vs $MYVIMRC<CR>
 
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
-
-" 連続でペースト
-vnoremap <silent> <C-p> "0p<CR>"
