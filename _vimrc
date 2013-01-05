@@ -217,6 +217,24 @@ NeoBundle 'kana/vim-operator-replace.git'
 NeoBundle 'kana/vim-operator-user.git'
 map R  <Plug>(operator-replace)
 
+" ファイルを曖昧文字から探し出す
+NeoBundle 'kien/ctrlp.vim.git'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.?(extlib|git|hg|svn)$',
+  \ }
+
+" メモを簡単に取る
+NeoBundle 'glidenote/memolist.vim'
+let g:memolist_qfixgrep = 1
+nnoremap <silent> ,mn :MemoNew<CR>
+nnoremap <silent> ,ml :MemoList<CR>
+nnoremap <silent> ,mg :MemoGrep<CR>
+nnoremap <silent> ,mf :exe "CtrlP" g:memolist_path<cr><f5>
+
+
+NeoBundle 'fuenor/qfixgrep.git'
+let MyGrep_Key = ''
+let QFix_Height = 10
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -513,7 +531,7 @@ autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
 autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
 
 " .vimrcを瞬時に開く
-nnoremap <Space>. :vs $MYVIMRC<CR>
+nnoremap <Space>. :sp $MYVIMRC<CR>
 
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
