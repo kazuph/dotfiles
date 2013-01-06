@@ -536,3 +536,10 @@ nnoremap <Space>. :sp $MYVIMRC<CR>
 
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
+
+" vimscriptのリロード
+nnoremap <silent> <Space>r :<C-u>execute "source " expand("%:p")<CR>
+
+" テキスト全選択
+nnoremap <silent> <C-a> gg<S-v>G
+
