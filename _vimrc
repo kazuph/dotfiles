@@ -225,6 +225,7 @@ let g:ctrlp_custom_ignore = {
 
 " メモを簡単に取る
 NeoBundle 'glidenote/memolist.vim'
+let g:memolist_path = $HOME . "/Dropbox/アプリ/memolist"
 let g:memolist_qfixgrep = 1
 nnoremap <silent> ,mn :MemoNew<CR>
 nnoremap <silent> ,ml :MemoList<CR>
