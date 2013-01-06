@@ -26,7 +26,7 @@ let g:EasyMotion_leader_key = '<Space>'
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
-" エラーチェックす
+" エラーチェックする
 " 読み込み遅いし保存時に待たされるのでやめた
 " perl, rubyは素の状態でもErrorチェックしてくれるみたい
 " javascriptとかはJlitとかいれましょう
@@ -45,7 +45,6 @@ set statusline+=%*
 " color shcheme
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'ujihisa/unite-font'
-
 NeoBundle 'tomasr/molokai'
 NeoBundle 'altercation/solarized'
 colorscheme molokai
@@ -59,7 +58,6 @@ NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'honza/snipmate-snippets.git'
-
 NeoBundle 'Shougo/vimfiler.git'
 " デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
@@ -109,8 +107,6 @@ NeoBundle "skwp/vim-rspec.git"
 " let g:RspecKeyma,=0
 nnoremap <silent> ,rs :RunSpec<CR>
 nnoremap <silent> ,rl :RunSpecLine<CR>
-
-NeoBundle "msanders/cocoa.vim.git"
 
 " vimでzencodingする
 " Ctrl+y,
@@ -183,10 +179,6 @@ map w ,w
 map e ,e
 map b ,b
 
-" 括弧とか勝手に閉じてくれる
-" いらいらするのでやめてる
-" NeoBundle 'AutoClose'
-
 " ステータスラインをかっこ良く
 NeoBundle 'Lokaltog/vim-powerline'
 
@@ -232,10 +224,14 @@ nnoremap <silent> ,ml :MemoList<CR>
 nnoremap <silent> ,mg :MemoGrep<CR>
 nnoremap <silent> ,mf :exe "CtrlP" g:memolist_path<cr><f5>
 
-
+" grep結果をプレビュー付きで表示
 NeoBundle 'fuenor/qfixgrep.git'
 let MyGrep_Key = ''
 let QFix_Height = 10
+
+" DayOne投稿用(開発中)
+NeoBundle 'kazuph/dayone.vim'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
