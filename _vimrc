@@ -20,13 +20,13 @@ NeoBundle 'thinca/vim-visualstar'
 " 実行：\\bで後方へ移動、\\wで前方へ移動
 NeoBundle 'Lokaltog/vim-easymotion'
 "嫌だったのでspace spaceに変更
-let g:EasyMotion_leader_key  =  '<Space><Space>'
+let g:EasyMotion_leader_key = '<Space>'
 
 " 簡単にコメントアウトする
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
-" エラーチェックする
+" エラーチェックす
 " 読み込み遅いし保存時に待たされるのでやめた
 " perl, rubyは素の状態でもErrorチェックしてくれるみたい
 " javascriptとかはJlitとかいれましょう
@@ -522,6 +522,7 @@ endif
 " OS依存
 " OSのクリップボードを使用する
 set clipboard+=unnamed
+
 " ターミナルでマウスを使用できるようにする
 set mouse=a
 set guioptions+=a
@@ -534,12 +535,25 @@ autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
 " .vimrcを瞬時に開く
 nnoremap <Space>. :sp $MYVIMRC<CR>
 
+" vimrcの設定を反映
+nnoremap <Space>.. :<C-u>source $MYVIMRC<CR>
+
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
 
 " vimscriptのリロード
-nnoremap <silent> <Space>r :<C-u>execute "source " expand("%:p")<CR>
+" nnoremap <silent> <Space>r :<C-u>execute "source " expand("%:p")<CR>
 
 " テキスト全選択
 nnoremap <silent> <C-a> gg<S-v>G
 
+" 検索語が真ん中に来るようにする
+nmap n nzz
+nmap N Nzz
+nmap * *zz
+nmap # #zz
+nmap g* g*zz
+nmap g# g#zz
+
+" ヘルプを3倍の速度で引く
+nnoremap <C-h>  :<C-u>help<Space>
