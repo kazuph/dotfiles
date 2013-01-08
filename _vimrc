@@ -199,11 +199,6 @@ NeoBundle 'mattn/benchvimrc-vim.git'
 " HTML5
 NeoBundle 'othree/html5.vim.git'
 
-" ソースコードを読みやすくする
-NeoBundle 'wesleyche/Trinity.git'
-NeoBundle 'scrooloose/nerdtree.git'
-NeoBundle 'wesleyche/SrcExpl.git'
-
 " テキストオブジェクトで置換
 NeoBundle 'kana/vim-operator-replace.git'
 NeoBundle 'kana/vim-operator-user.git'
