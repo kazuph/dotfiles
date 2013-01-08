@@ -231,6 +231,9 @@ let QFix_Height = 10
 
 " DayOne投稿用(開発中)
 NeoBundle 'kazuph/dayone.vim'
+nnoremap <silent> ,dn :DayOneNew<CR>
+nnoremap <silent> ,dl :DayOneList<CR>
+nnoremap <silent> ,dg :DayOneGrep<CR>
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
