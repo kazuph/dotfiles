@@ -230,6 +230,9 @@ nnoremap <silent> ,dn :DayOneNew<CR>
 nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
 
+" RubyMotionの設定
+NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
