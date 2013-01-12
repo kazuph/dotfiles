@@ -230,6 +230,9 @@ nnoremap <silent> ,dn :DayOneNew<CR>
 nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
 
+" RubyMotionの設定
+NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -296,12 +299,12 @@ let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 
-" for snippets
+" Plugin key-mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 
 " SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+imap <expr><TAB> neosnippet#expandable() <Bar><Bar> neosnippet#jumpable() ?  "\<Plug>(neosnippet_expand_or_jump)" : "\<C-n>""
 smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " For snippet_complete marker.
