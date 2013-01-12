@@ -403,7 +403,7 @@ set ruler
 set laststatus=2
 
 " <F11>キーで'paste'と'nopaste'を切り替える
-set pastetoggle=<F11>
+set pastetoggle=<Space>r
 
 set cindent
 set tabstop=4
@@ -539,7 +539,7 @@ inoremap <C-c> <Esc>
 " nnoremap <silent> <Space>r :<C-u>execute "source " expand("%:p")<CR>
 
 " テキスト全選択
-nnoremap <silent> <C-a> gg<S-v>G
+nnoremap <silent> <S-C-a> gg<S-v>G
 
 " 検索語が真ん中に来るようにする
 nmap n nzz
