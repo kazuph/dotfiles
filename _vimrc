@@ -20,7 +20,7 @@ NeoBundle 'thinca/vim-visualstar'
 " 実行：\\bで後方へ移動、\\wで前方へ移動
 NeoBundle 'Lokaltog/vim-easymotion'
 "嫌だったのでspace spaceに変更
-let g:EasyMotion_leader_key = '<Space>'
+let g:EasyMotion_leader_key = '<Space><Space>'
 
 " 簡単にコメントアウトする
 " gcc or C-_でトグル
@@ -33,7 +33,7 @@ NeoBundle 'tomtom/tcomment_vim'
 " rubyは保存時に勝手にチェックしてくれた！
 NeoBundle 'scrooloose/syntastic.git'
 let g:syntastic_mode_map = { 'mode': 'passive',
-      \ 'active_filetypes': ['perl', 'ruby', 'javascript'],
+      \ 'active_filetypes': ['perl', 'javascript'],
       \ 'passive_filetypes': [] }
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=2
@@ -56,6 +56,11 @@ NeoBundle 'VOoM'
 " Shogoさんの力を借りる
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'tsukkee/unite-tag.git'
+autocmd BufEnter *
+\   if empty(&buftype)
+\|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
+\|  endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'honza/snipmate-snippets.git'
 NeoBundle 'Shougo/vimfiler.git'
@@ -151,6 +156,7 @@ let g:hatena_user = 'kazuph1986'
 " Ruby環境
 NeoBundle 'vim-ruby/vim-ruby.git'
 NeoBundle 'tpope/vim-rails.git'
+NeoBundle 'taichouchou2/vim-rsense'
 let g:rubycomplete_buffer_loading = 1
 let g:rubycomplete_classes_in_global = 1
 let g:rubycomplete_rails = 1
@@ -249,14 +255,15 @@ let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
 " let g:neosnippet#snippets_directory='~/dotfiles/snippets'
-let g:neosnippet#snippets_directory='~/.vim/bundle/snipmate-snippets/snippets, ~/dotfiles/snippets'
+let g:neosnippet#snippets_directory='~/.vim/snipmate-snippets/snippets, ~/dotfiles/snippets,  ~/.vim/snipmate-snippets-rubymotion/snippets'
 
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
       \ 'default' : '',
       \ 'vimshell' : $HOME.'/.vimshell_hist',
       \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
-      \ 'scheme' : $HOME.'/.gosh_completions'
+      \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
+      \ 'scheme'   : $HOME.'/.gosh_completions'
       \ }
 
 " Define keyword.
@@ -289,6 +296,12 @@ autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 " autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
+" rubyの設定
+" if !exists('g:neocomplcache_omni_functions')
+"   let g:neocomplcache_omni_functions = {}
+" endif
+" let g:neocomplcache_omni_functions.ruby = 'RSenseCompleteFunction'
+
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
@@ -298,14 +311,15 @@ endif
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 
 " Plugin key-mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 
 " SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable() <Bar><Bar> neosnippet#jumpable() ?  "\<Plug>(neosnippet_expand_or_jump)" : "\<C-n>""
-smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+imap <expr><TAB> neosnippet#jumpable() ?  "\<Plug>(neosnippet_expand_or_jump)" : "\<C-n>""
+smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
 " For snippet_complete marker.
 if has('conceal')
@@ -406,7 +420,7 @@ set ruler
 set laststatus=2
 
 " <F11>キーで'paste'と'nopaste'を切り替える
-set pastetoggle=<Space>r
+set pastetoggle=<F11>
 
 set cindent
 set tabstop=4
@@ -530,10 +544,10 @@ autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
 autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
 
 " .vimrcを瞬時に開く
-nnoremap <Space>. :sp $MYVIMRC<CR>
+nnoremap <Space><Space>. :sp $MYVIMRC<CR>
 
 " vimrcの設定を反映
-nnoremap <Space>.. :<C-u>source $MYVIMRC<CR>
+nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
 
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>

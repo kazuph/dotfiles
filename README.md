@@ -15,4 +15,8 @@ ln -s ~/dotfiles/_gitconfig .gitconfig
 ln -s ~/dotfiles/_zshrc .zshrc
 ln -s ~/dotfiles/_zshenv .zshenv
 ln -s ~/dotfiles/_tmux.conf .tmux.conf
+# rsence
+cd .vim
+wget http://cx4a.org/pub/rsense/rsense-0.3.zip
+unzip rsense-0.3.zip
 ~~~
