@@ -181,62 +181,270 @@ TypeError
 ZeroDivisionError
 SystemExit
 fatal
-
 initialize
-
 ActiveRecord::Base.establish_connection
-
-
-class clone display dup eql?
-equal? extend freeze frozen? hash id initialize_copy
-inspect instance_eval instance_of? instance_variable_get
-instance_variable_set instance_variables is_a? kind_of? method
-methods nil? object_id private_methods protected_methods
-public_methods remove_instance_variable respond_to? send
-singleton_method_added singleton_method_removed
-singleton_method_undefined singleton_methods taint tainted?
-to_a to_s type untaint
-
-
-abort at_exit autoload
-autoload? binding block_given? callcc caller catch chomp
-chomp! chop chop! eval exec exit exit! fail fork format
-getc gets global_variables gsub gsub! iterator? lambda load
-local_variables loop method_missing open p print printf
-proc putc puts raise rand readline readlines require scan
-select set_trace_func sleep split sprintf srand sub sub!
-syscall system test throw trace_var trap untrace_var warn
-
-
-all? any? collect detect each_with_index entries
-find find_all grep include? inject map max member? min
-partition reject select sort sort_by to_a to_set zip
-
-abbrev assoc at clear
-collect collect! compact compact! concat delete delete_at
-delete_if each each_index empty? eql? fetch fill first
-flatten flatten! frozen? hash include? index indexes
-indices initialize_copy insert inspect join last length map
-map! nitems pack pop push rassoc reject reject! replace
-reverse reverse! reverse_each rindex select shift size
-slice slice! sort sort! to_a to_ary to_s transpose uniq
-uniq! unshift values_at zip
-
-
-capitalize capitalize!
-casecmp center chomp chomp! chop chop! concat count crypt
-delete delete! downcase downcase! dump each each_byte
-each_line empty? eql? gsub gsub! hash hex include? index
-initialize_copy insert inspect intern length ljust lstrip
-lstrip! match next next! oct replace reverse reverse!
-rindex rjust rstrip rstrip! scan size slice slice! split
-squeeze squeeze! strip strip! sub sub! succ succ! sum
-swapcase swapcase! to_f to_i to_s to_str to_sym tr tr!
-tr_s tr_s! unpack upcase upcase! upto
-
-
+class
+clone
+display
+dup
+eql?
+equal?
+extend
+freeze
+frozen?
+hash
+id
+initialize_copy
+inspect
+instance_eval
+instance_of?
+instance_variable_get
+instance_variable_set
+instance_variables
+is_a?
+kind_of?
+method
+methods
+nil?
+object_id
+private_methods
+protected_methods
+public_methods
+remove_instance_variable
+respond_to?
+send
+singleton_method_added
+singleton_method_removed
+singleton_method_undefined
+singleton_methods
+taint
+tainted?
+to_a
+to_s
+type
+untaint
+abort
+at_exit
+autoload
+autoload?
+binding
+block_given?
+callcc
+caller
+catch
+chomp
+chomp!
+chop
+chop!
+eval
+exec
+exit
+exit!
+fail
+fork
+format
+getc
+gets
+global_variables
+gsub
+gsub!
+iterator?
+lambda
+load
+local_variables
+loop
+method_missing
+open
+p
+print
+printf
+proc
+putc
+puts
+raise
+rand
+readline
+readlines
+require
+scan
+select
+set_trace_func
+sleep
+split
+sprintf
+srand
+sub
+sub!
+syscall
+system
+test
+throw
+trace_var
+trap
+untrace_var
+warn
+all?
+any?
+collect
+detect
+each_with_index
+entries
+find
+find_all
+grep
+include?
+inject
+map
+max
+member?
+min
+partition
+reject
+select
+sort
+sort_by
+to_a
+to_set
+zip
+abbrev
+assoc
+at
+clear
+collect
+collect!
+compact
+compact!
+concat
+delete
+delete_at
+delete_if
+each
+each_index
+empty?
+eql?
+fetch
+fill
+first
+flatten
+flatten!
+frozen?
+hash
+include?
+index
+indexes
+indices
+initialize_copy
+insert
+inspect
+join
+last
+length
+map
+map!
+nitems
+pack
+pop
+push
+rassoc
+reject
+reject!
+replace
+reverse
+reverse!
+reverse_each
+rindex
+select
+shift
+size
+slice
+slice!
+sort
+sort!
+to_a
+to_ary
+to_s
+transpose
+uniq
+uniq!
+unshift
+values_at
+zip
+capitalize
+capitalize!
+casecmp
+center
+chomp
+chomp!
+chop
+chop!
+concat
+count
+crypt
+delete
+delete!
+downcase
+downcase!
+dump
+each
+each_byte
+each_line
+empty?
+eql?
+gsub
+gsub!
+hash
+hex
+include?
+index
+initialize_copy
+insert
+inspect
+intern
+length
+ljust
+lstrip
+lstrip!
+match
+next
+next!
+oct
+replace
+reverse
+reverse!
+rindex
+rjust
+rstrip
+rstrip!
+scan
+size
+slice
+slice!
+split
+squeeze
+squeeze!
+strip
+strip!
+sub
+sub!
+succ
+succ!
+sum
+swapcase
+swapcase!
+to_f
+to_i
+to_s
+to_str
+to_sym
+tr
+tr!
+tr_s
+tr_s!
+unpack
+upcase
+upcase!
+upto
 abort_on_exception
-
 assert
 assert_equal
 assert_not_equal
@@ -257,10 +465,8 @@ assert_match
 assert_in_delta
 assert_send
 assert_block
-
 Test::Unit::TestCase
 OptionParser
 StringScanner
 Rational
-
 Psychs
