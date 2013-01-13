@@ -37,9 +37,5 @@ export PATH=$PATH:/opt/local/bin
 function precmd () {
    z --add "$(pwd -P)"
 }
-# DLと展開
-wget http://cx4a.org/pub/rsense/rsense-0.3.zip
-unzipsense-0.3.zip
-
 # rsense
 export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
