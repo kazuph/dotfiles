@@ -76,6 +76,11 @@ let g:vimfiler_as_default_explorer = 1
 nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
 let g:vimfiler_safe_mode_by_default = 0
 
+" Uniteでファイル検索
+autocmd FileType vimfiler
+        \ nnoremap <buffer><silent>/
+        \ :<C-u>Unite file -default-action=vimfiler<CR>
+
 NeoBundle 'Shougo/vimshell.git'
 nnoremap ,vs :VimShell<CR>
 
@@ -599,34 +604,34 @@ nnoremap g/ :<C-u>%s/\<<C-R><C-w>\>//gc<Left><Left><Left>
 vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>"
 
 " スムーススクロール
-let s:scroll_time_ms = 100
-let s:scroll_precision = 8
-function! CohamaSmoothScroll(dir, windiv, factor)
-  let cl = &cursorline
-  set nocursorline
-  let height = winheight(0) / a:windiv
-  let n = height / s:scroll_precision
-  if n <= 0
-    let n = 1
-  endif
-  let wait_per_one_move_ms = s:scroll_time_ms / s:scroll_precision * a:factor
-  let i = 0
-  let scroll_command = a:dir == "down" ?
-        \ "normal " . n . "\<C-E>" . n ."j" :
-        \ "normal " . n . "\<C-Y>" . n ."k"
-  while i < s:scroll_precision
-    let i = i + 1
-    execute scroll_command
-    execute "sleep " . wait_per_one_move_ms . "m"
-    redraw
-  endwhile
-  let &cursorline = cl
-  echo "My Smooth Scroll"
-endfunction
-nnoremap <silent> <C-d> :call CohamaSmoothScroll("down", 2, 1)<CR>
-nnoremap <silent> <C-u> :call CohamaSmoothScroll("up", 2, 1)<CR>
-nnoremap <silent> <C-f> :call CohamaSmoothScroll("down", 1, 2)<CR>
-nnoremap <silent> <C-b> :call CohamaSmoothScroll("up", 1, 2)<CR>
+" let s:scroll_time_ms = 100
+" let s:scroll_precision = 8
+" function! CohamaSmoothScroll(dir, windiv, factor)
+"   let cl = &cursorline
+"   set nocursorline
+"   let height = winheight(0) / a:windiv
+"   let n = height / s:scroll_precision
+"   if n <= 0
+"     let n = 1
+"   endif
+"   let wait_per_one_move_ms = s:scroll_time_ms / s:scroll_precision * a:factor
+"   let i = 0
+"   let scroll_command = a:dir == "down" ?
+"         \ "normal " . n . "\<C-E>" . n ."j" :
+"         \ "normal " . n . "\<C-Y>" . n ."k"
+"   while i < s:scroll_precision
+"     let i = i + 1
+"     execute scroll_command
+"     execute "sleep " . wait_per_one_move_ms . "m"
+"     redraw
+"   endwhile
+"   let &cursorline = cl
+"   echo "My Smooth Scroll"
+" endfunction
+" nnoremap <silent> <C-d> :call CohamaSmoothScroll("down", 2, 1)<CR>
+" nnoremap <silent> <C-u> :call CohamaSmoothScroll("up", 2, 1)<CR>
+" nnoremap <silent> <C-f> :call CohamaSmoothScroll("down", 1, 2)<CR>
+" nnoremap <silent> <C-b> :call CohamaSmoothScroll("up", 1, 2)<CR>
 
 " 行末までをヤンク
 nmap Y y$
