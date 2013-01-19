@@ -573,4 +573,61 @@ nmap g* g*zz
 nmap g# g#zz
 
 " ヘルプを3倍の速度で引く
-nnoremap <C-h>  :<C-u>help<Space>
+nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
+
+" ヘルプを日本語に
+set helplang=ja
+
+" カーソル以下の単語を置換
+nnoremap g/ :<C-u>%s/\<<C-R><C-w>\>//gc<Left><Left><Left>
+
+" ビジュアルモードで選択した部分を置換
+vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>"
+
+" スムーススクロール
+let s:scroll_time_ms = 100
+let s:scroll_precision = 8
+function! CohamaSmoothScroll(dir, windiv, factor)
+  let cl = &cursorline
+  set nocursorline
+  let height = winheight(0) / a:windiv
+  let n = height / s:scroll_precision
+  if n <= 0
+    let n = 1
+  endif
+  let wait_per_one_move_ms = s:scroll_time_ms / s:scroll_precision * a:factor
+  let i = 0
+  let scroll_command = a:dir == "down" ?
+        \ "normal " . n . "\<C-E>" . n ."j" :
+        \ "normal " . n . "\<C-Y>" . n ."k"
+  while i < s:scroll_precision
+    let i = i + 1
+    execute scroll_command
+    execute "sleep " . wait_per_one_move_ms . "m"
+    redraw
+  endwhile
+  let &cursorline = cl
+  echo "My Smooth Scroll"
+endfunction
+nnoremap <silent> <C-d> :call CohamaSmoothScroll("down", 2, 1)<CR>
+nnoremap <silent> <C-u> :call CohamaSmoothScroll("up", 2, 1)<CR>
+nnoremap <silent> <C-f> :call CohamaSmoothScroll("down", 1, 2)<CR>
+nnoremap <silent> <C-b> :call CohamaSmoothScroll("up", 1, 2)<CR>
+
+" 行末までをヤンク
+nmap Y y$
+
+" コマンドモードのマッピング
+cmap <C-a> <Home>
+cmap <C-b> <Left>
+cmap <C-f> <Right>
+cmap <C-d> <Del>
+
+" インサートモードのマッピング
+inoremap <C-e> <End>
+inoremap <C-a> <C-o>^
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-d> <Del>
+
+
