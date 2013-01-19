@@ -73,11 +73,12 @@ NeoBundle 'honza/snipmate-snippets.git'
 
 NeoBundle 'Shougo/vimfiler.git'
 let g:vimfiler_as_default_explorer = 1
-nnoremap <Space><Space>f :VimFiler<CR>
+nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
 let g:vimfiler_safe_mode_by_default = 0
 
-
 NeoBundle 'Shougo/vimshell.git'
+nnoremap ,vs :VimShell<CR>
+
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'thinca/vim-qfreplace.git'
