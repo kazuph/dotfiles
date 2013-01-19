@@ -33,11 +33,11 @@ export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
 # z
-if [[ -f /etc/profile.d/z.sh ]]; then
+# if [[ -f /etc/profile.d/z.sh ]]; then
     . `brew --prefix`/etc/profile.d/z.sh
     function precmd () {
-    z --add "$(pwd -P)"
-}
-fi
+        z --add "$(pwd -P)"
+    }
+# fi
 # rsense
 export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
