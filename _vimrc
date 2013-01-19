@@ -54,7 +54,14 @@ NeoBundle 'h1mesuke/unite-outline'
 NeoBundle 'VOoM'
 
 " Shogoさんの力を借りる
-NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'Shougo/vimproc', {
+      \     'build': {
+      \        'windows': 'make_mingw64.mak',
+      \        'unix': 'make -f make_unix.mak',
+      \        'mac': 'make -f make_mac.mak'
+      \     }
+      \   }
+
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'tsukkee/unite-tag.git'
 autocmd BufEnter *
@@ -63,9 +70,12 @@ autocmd BufEnter *
 \|  endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'honza/snipmate-snippets.git'
+
 NeoBundle 'Shougo/vimfiler.git'
-" デフォルトをvimfilerに
 let g:vimfiler_as_default_explorer = 1
+nnoremap <Space><Space>f :VimFiler<CR>
+let g:vimfiler_safe_mode_by_default = 0
+
 
 NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/unite.vim'
@@ -145,6 +155,9 @@ inoremap <expr> , smartchr#one_of(', ', ',')
 
 " 色々な入力補助
 NeoBundle "kana/vim-smartinput.git"
+
+" endfunction とかを自動入力
+NeoBundle 'tpope/vim-endwise'
 
 " 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
