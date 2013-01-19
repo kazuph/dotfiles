@@ -239,6 +239,12 @@ nnoremap <silent> ,dg :DayOneGrep<CR>
 " RubyMotionの設定
 NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
 
+" Haskell
+NeoBundle 'haskell.vim'
+NeoBundle 'dag/vim2hs.git'
+NeoBundle 'eagletmt/ghcmod-vim.git'
+NeoBundle 'ujihisa/neco-ghc.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
