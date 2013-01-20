@@ -76,11 +76,6 @@ let g:vimfiler_as_default_explorer = 1
 nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
 let g:vimfiler_safe_mode_by_default = 0
 
-" Uniteでファイル検索
-autocmd FileType vimfiler
-        \ nnoremap <buffer><silent>/
-        \ :<C-u>Unite file -default-action=vimfiler<CR>
-
 NeoBundle 'Shougo/vimshell.git'
 nnoremap ,vs :VimShell<CR>
 
@@ -303,9 +298,14 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#close_popup() . "\<CR>"
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplcache#smart_close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+endfunction
 " <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
@@ -577,9 +577,6 @@ nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
 " 念の為C-cでEsc
 inoremap <C-c> <Esc>
 
-" vimscriptのリロード
-" nnoremap <silent> <Space>r :<C-u>execute "source " expand("%:p")<CR>
-
 " テキスト全選択
 nnoremap <silent> <S-C-a> gg<S-v>G
 
@@ -603,36 +600,6 @@ nnoremap g/ :<C-u>%s/\<<C-R><C-w>\>//gc<Left><Left><Left>
 " ビジュアルモードで選択した部分を置換
 vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>"
 
-" スムーススクロール
-" let s:scroll_time_ms = 100
-" let s:scroll_precision = 8
-" function! CohamaSmoothScroll(dir, windiv, factor)
-"   let cl = &cursorline
-"   set nocursorline
-"   let height = winheight(0) / a:windiv
-"   let n = height / s:scroll_precision
-"   if n <= 0
-"     let n = 1
-"   endif
-"   let wait_per_one_move_ms = s:scroll_time_ms / s:scroll_precision * a:factor
-"   let i = 0
-"   let scroll_command = a:dir == "down" ?
-"         \ "normal " . n . "\<C-E>" . n ."j" :
-"         \ "normal " . n . "\<C-Y>" . n ."k"
-"   while i < s:scroll_precision
-"     let i = i + 1
-"     execute scroll_command
-"     execute "sleep " . wait_per_one_move_ms . "m"
-"     redraw
-"   endwhile
-"   let &cursorline = cl
-"   echo "My Smooth Scroll"
-" endfunction
-" nnoremap <silent> <C-d> :call CohamaSmoothScroll("down", 2, 1)<CR>
-" nnoremap <silent> <C-u> :call CohamaSmoothScroll("up", 2, 1)<CR>
-" nnoremap <silent> <C-f> :call CohamaSmoothScroll("down", 1, 2)<CR>
-" nnoremap <silent> <C-b> :call CohamaSmoothScroll("up", 1, 2)<CR>
-
 " 行末までをヤンク
 nmap Y y$
 
@@ -648,5 +615,3 @@ inoremap <C-a> <C-o>^
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-d> <Del>
-
-
