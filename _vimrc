@@ -581,7 +581,7 @@ nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
 inoremap <C-c> <Esc>
 
 " テキスト全選択
-nnoremap <silent> <S-C-a> gg<S-v>G
+" nnoremap <silent><S-C-a> gg<S-v>G
 
 " 検索語が真ん中に来るようにする
 nmap n nzz
@@ -618,3 +618,6 @@ inoremap <C-a> <C-o>^
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-d> <Del>
+
+" バックアップを取らない
+set nobackup
