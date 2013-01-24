@@ -1,12 +1,17 @@
-#=============================
 # rbenv
-#=============================
 if [ -d ${HOME}/.rbenv  ] ; then
   PATH=${HOME}/.rbenv/bin:${PATH}
   export PATH
   eval "$(rbenv init -)"
 fi
 
+# perlbrew
 if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
     source ~/perl5/perlbrew/etc/bashrc
+fi
+
+# macvim
+if [ -f /Applications/MacVim.app/Contents/MacOS/Vim ]; then
+    alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+    alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 fi

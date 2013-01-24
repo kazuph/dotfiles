@@ -259,6 +259,9 @@ NeoBundle 'dag/vim2hs.git'
 NeoBundle 'eagletmt/ghcmod-vim.git'
 NeoBundle 'ujihisa/neco-ghc.git'
 
+" tmuxやscreenでもヤンクをクリップボードへコピー
+NeoBundle 'kana/vim-fakeclip.git'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -557,7 +560,7 @@ endif
 
 " OS依存
 " OSのクリップボードを使用する
-set clipboard+=unnamed
+set clipboard=unnamed
 
 " ターミナルでマウスを使用できるようにする
 set mouse=a
