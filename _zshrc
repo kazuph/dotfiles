@@ -13,7 +13,6 @@ alias v="vim -u NONE --noplugin"
 alias vi="vim"
 vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\2/'`
 alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
-# alias rake='reattach-to-user-namespace -l rake'
 
 # nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
 # 設定を有効にする
@@ -33,12 +32,6 @@ export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
 # z
-if [[ -f /etc/profile.d/z.sh ]]; then
-    . `brew --prefix`/etc/profile.d/z.sh
-    function precmd () {
-        z --add "$(pwd -P)"
-    }
-fi
 _Z_CMD=j
 source ~/dotfiles/z.sh
 precmd() {
