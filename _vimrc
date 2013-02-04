@@ -130,7 +130,6 @@ NeoBundle "mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " Programming perl
-NeoBundle "vim-perl/vim-perl.git"
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "petdance/vim-perl"
@@ -621,3 +620,6 @@ inoremap <C-d> <Del>
 
 " バックアップを取らない
 set nobackup
+
+" no bell
+set vb t_vb=
