@@ -34,12 +34,6 @@ export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
 # z
-if [[ -f /etc/profile.d/z.sh ]]; then
-    . `brew --prefix`/etc/profile.d/z.sh
-    function precmd () {
-        z --add "$(pwd -P)"
-    }
-fi
 _Z_CMD=j
 source ~/dotfiles/z.sh
 precmd() {
