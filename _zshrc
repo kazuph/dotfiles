@@ -32,12 +32,18 @@ fi
 export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
-# z
+# z.sh
 _Z_CMD=j
 source ~/dotfiles/z/z.sh
 precmd() {
   _z --add "$(pwd -P)"
 }
+
+# auto-fu.zh
+source ~/dotfiles/auto-fu.zsh/auto-fu.zsh
+zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+zstyle ':completion:*' completer _oldlist _complete'
+
 # rsense
 export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
 
