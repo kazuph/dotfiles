@@ -262,6 +262,10 @@ NeoBundle 'ujihisa/neco-ghc.git'
 " tmuxやscreenでもヤンクをクリップボードへコピー
 NeoBundle 'kana/vim-fakeclip.git'
 
+" Vimがしゃべるとうれしい・・・よね？
+NeoBundle 'supermomonga/shaberu.vim'
+let g:shaberu_user_define_say_command = 'say -v Kyoko '
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
