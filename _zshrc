@@ -34,7 +34,7 @@ export PATH=$PATH:/opt/local/bin
 
 # z
 _Z_CMD=j
-source ~/dotfiles/z.sh
+source ~/dotfiles/z/z.sh
 precmd() {
   _z --add "$(pwd -P)"
 }
