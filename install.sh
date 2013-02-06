@@ -13,7 +13,6 @@ git submodule init
 git submodule update
 cd ~/.
 ln -s dotfiles/_vimrc .vimrc
-ln -s dotfiles/_gvimrc .vimrc
 ln -s ~/dotfiles/_gitconfig .gitconfig
 ln -s ~/dotfiles/_zshrc .zshrc
 ln -s ~/dotfiles/_zshenv .zshenv
