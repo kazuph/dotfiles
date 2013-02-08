@@ -40,9 +40,11 @@ precmd() {
 }
 
 # auto-fu.zh
-source ~/dotfiles/auto-fu.zsh/auto-fu.zsh
-zle-line-init () {auto-fu-init;}; zle -N zle-line-init
-zstyle ':completion:*' completer _oldlist _complete'
+if [ -f ~/dotfiles/auto-fu.zsh/auto-fu.zsh ]; then
+    source ~/dotfiles/auto-fu.zsh/auto-fu.zsh
+    zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+    zstyle ':completion:*' completer _oldlist _complete
+fi
 
 # rsense
 export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
