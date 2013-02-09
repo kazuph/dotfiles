@@ -132,7 +132,7 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 " Programming perl
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
-NeoBundle "petdance/vim-perl"
+" NeoBundle "petdance/vim-perl"
 NeoBundle "y-uuki/unite-perl-module.vim"
 NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
