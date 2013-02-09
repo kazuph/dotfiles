@@ -14,7 +14,6 @@ alias v="vim -u NONE --noplugin"
 alias vi="vim"
 vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\2/'`
 alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
-# alias rake='reattach-to-user-namespace -l rake'
 
 # nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
 # 設定を有効にする
@@ -33,12 +32,20 @@ fi
 export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
-# z
+# z.sh
 _Z_CMD=j
-source ~/dotfiles/z.sh
+source ~/dotfiles/z/z.sh
 precmd() {
   _z --add "$(pwd -P)"
 }
+
+# auto-fu.zh
+if [ -f ~/dotfiles/auto-fu.zsh/auto-fu.zsh ]; then
+    source ~/dotfiles/auto-fu.zsh/auto-fu.zsh
+    zle-line-init () {auto-fu-init;}; zle -N zle-line-init
+    zstyle ':completion:*' completer _oldlist _complete
+fi
+
 # rsense
 export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
 

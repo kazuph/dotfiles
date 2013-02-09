@@ -12,4 +12,5 @@
 !neobundle.vim
 !snippets
 !dict
-!z.sh
+!z
+!install.sh
