@@ -33,7 +33,7 @@ NeoBundle 'tomtom/tcomment_vim'
 " rubyは保存時に勝手にチェックしてくれた！
 NeoBundle 'scrooloose/syntastic.git'
 let g:syntastic_mode_map = { 'mode': 'passive',
-      \ 'active_filetypes': ['perl', 'javascript'],
+      \ 'active_filetypes': ['javascript'],
       \ 'passive_filetypes': [] }
 let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=2
@@ -154,7 +154,7 @@ NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
 
 " 色々な入力補助
-NeoBundle "kana/vim-smartinput.git"
+" NeoBundle "kana/vim-smartinput.git"
 
 " endfunction とかを自動入力
 NeoBundle 'tpope/vim-endwise'
@@ -168,12 +168,12 @@ let g:hatena_user = 'kazuph1986'
 
 " Ruby環境
 NeoBundle 'vim-ruby/vim-ruby.git'
-NeoBundle 'tpope/vim-rails.git'
-NeoBundle 'taichouchou2/vim-rsense'
-let g:rubycomplete_buffer_loading = 1
-let g:rubycomplete_classes_in_global = 1
-let g:rubycomplete_rails = 1
-imap <C-o> <C-x><C-o>
+" NeoBundle 'tpope/vim-rails.git'
+" NeoBundle 'taichouchou2/vim-rsense'
+" let g:rubycomplete_buffer_loading = 1
+" let g:rubycomplete_classes_in_global = 1
+" let g:rubycomplete_rails = 1
+" imap <C-o> <C-x><C-o>
 
 " Vimでプレゼンする？
 NeoBundle 'thinca/vim-showtime.git'
