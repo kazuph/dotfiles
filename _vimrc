@@ -153,9 +153,6 @@ NeoBundle "smartchr"
 " inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
-" 色々な入力補助
-" NeoBundle "kana/vim-smartinput.git"
-
 " endfunction とかを自動入力
 NeoBundle 'tpope/vim-endwise'
 
@@ -259,7 +256,7 @@ NeoBundle 'eagletmt/ghcmod-vim.git'
 NeoBundle 'ujihisa/neco-ghc.git'
 
 " tmuxやscreenでもヤンクをクリップボードへコピー
-NeoBundle 'kana/vim-fakeclip.git'
+" NeoBundle 'kana/vim-fakeclip.git'
 
 " Vimがしゃべるとうれしい・・・よね？
 NeoBundle 'supermomonga/shaberu.vim'
