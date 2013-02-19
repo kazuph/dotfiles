@@ -256,7 +256,7 @@ NeoBundle 'eagletmt/ghcmod-vim.git'
 NeoBundle 'ujihisa/neco-ghc.git'
 
 " tmuxやscreenでもヤンクをクリップボードへコピー
-" NeoBundle 'kana/vim-fakeclip.git'
+NeoBundle 'kana/vim-fakeclip.git'
 
 " Vimがしゃべるとうれしい・・・よね？
 NeoBundle 'supermomonga/shaberu.vim'
