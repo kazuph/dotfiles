@@ -61,3 +61,4 @@ function gem(){
 }
 
 alias em="TERM=xterm-256color /usr/local/Cellar/emacs/24.2/bin/emacs"
+PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then growlnotify -t error! -m "see result" ;fi;`%{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
