@@ -263,6 +263,9 @@ NeoBundle 'kana/vim-fakeclip.git'
 NeoBundle 'supermomonga/shaberu.vim'
 let g:shaberu_user_define_say_command = 'say -v Kyoko '
 
+" もうセミコロンうざいなんて言わせない
+NeoBundle 'teol.vim'
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -561,7 +564,8 @@ endif
 
 " OS依存
 " OSのクリップボードを使用する
-set clipboard=unnamed
+" set clipboard=unnamed
+set clipboard+=unnamedplus,unnamed
 
 " ターミナルでマウスを使用できるようにする
 set mouse=a
