@@ -277,6 +277,12 @@ nnoremap <C-b>  :EasyBuffer<CR>
 " 賢いf
 NeoBundle 'rhysd/clever-f.vim'
 
+" カーソル移動を加速する
+NeoBundle 'rhysd/accelerated-jk.git'
+let g:accelerated_jk_acceleration_table = [5,3,1]
+nmap j <Plug>(accelerated_jk_gj)
+nmap k <Plug>(accelerated_jk_gk)
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -549,8 +555,8 @@ nnoremap 0 ^
 nnoremap 9 $
 
 "カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
-nnoremap j gj
-nnoremap k gk
+" nnoremap j gj
+" nnoremap k gk
 
 " スクロールしても常にカーソルが中央にあるようにする
 " 飽きた
