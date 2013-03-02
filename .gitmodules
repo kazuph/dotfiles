@@ -7,3 +7,6 @@
 [submodule "auto-fu.zsh"]
     path = auto-fu.zsh
     url = https://github.com/hchbaw/auto-fu.zsh.git
+[submodule "tmux-powerline"]
+	path = tmux-powerline
+	url = https://github.com/kazuph/tmux-powerline.git
