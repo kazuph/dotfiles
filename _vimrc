@@ -196,7 +196,8 @@ map e ,e
 map b ,b
 
 " ステータスラインをかっこ良く
-NeoBundle 'Lokaltog/vim-powerline'
+NeoBundle 'Lokaltog/vim-powerline.git'
+let g:Powerline_symbols='fancy'
 
 " ステータスラインでハァハァしたかったからやった。後悔はしていない。
 NeoBundle 'mattn/hahhah-vim.git'
@@ -572,7 +573,7 @@ autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
 autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
 
 " .vimrcを瞬時に開く
-nnoremap <Space><Space>. :sp $MYVIMRC<CR>
+nnoremap <Space><Space>. :e $MYVIMRC<CR>
 
 " vimrcの設定を反映
 nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
@@ -601,7 +602,7 @@ set helplang=ja
 nnoremap g/ :<C-u>%s/\<<C-R><C-w>\>//gc<Left><Left><Left>
 
 " ビジュアルモードで選択した部分を置換
-vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>"
+vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>
 
 " 行末までをヤンク
 nmap Y y$

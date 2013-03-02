@@ -64,3 +64,6 @@ ln -s ~/dotfiles/_gitconfig .gitconfig
 ln -s ~/dotfiles/_zshrc .zshrc
 ln -s ~/dotfiles/_zshenv .zshenv
 ln -s ~/dotfiles/_tmux.conf .tmux.conf
+
+# NeoBundleInstall from commandline
+vim +NeoBundleInstall +qa
