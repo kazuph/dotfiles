@@ -20,7 +20,10 @@ NeoBundle 'thinca/vim-visualstar'
 " 実行：\\bで後方へ移動、\\wで前方へ移動
 NeoBundle 'Lokaltog/vim-easymotion'
 "嫌だったのでspace spaceに変更
-let g:EasyMotion_leader_key = '<Space><Space>'
+let g:EasyMotion_leader_key = '<Space>'
+let g:EasyMotion_grouping=1
+let g:EasyMotion_keys = 'fjdkslaureiwoqpvncm'
+let g:EasyMotion_do_shade = 0
 
 " 簡単にコメントアウトする
 " gcc or C-_でトグル
@@ -270,6 +273,9 @@ NeoBundle 'teol.vim'
 " やっぱ便利やった・・・
 NeoBundle 'troydm/easybuffer.vim.git'
 nnoremap <C-b>  :EasyBuffer<CR>
+
+" 賢いf
+NeoBundle 'rhysd/clever-f.vim'
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
