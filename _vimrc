@@ -177,7 +177,7 @@ NeoBundle 'thinca/vim-showtime.git'
 
 " undo treeを表示する
 NeoBundle 'sjl/gundo.vim.git'
-nnoremap <F5> :GundoToggle<CR>
+nnoremap <Space>u :GundoToggle<CR>
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
@@ -265,6 +265,11 @@ let g:shaberu_user_define_say_command = 'say -v Kyoko '
 
 " もうセミコロンうざいなんて言わせない
 NeoBundle 'teol.vim'
+
+" bufferを以外に使うことに気づく
+" やっぱ便利やった・・・
+NeoBundle 'troydm/easybuffer.vim.git'
+nnoremap <C-b>  :EasyBuffer<CR>
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
