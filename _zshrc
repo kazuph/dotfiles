@@ -61,6 +61,12 @@ function gem(){
 }
 
 alias em="TERM=xterm-256color /usr/local/Cellar/emacs/24.2/bin/emacs"
+
+# design
+ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
 PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then growlnotify -t error! -m "see result" ;fi;`%{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
 
 function extract() {
@@ -110,10 +116,12 @@ resolve_alias() {
 PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
 if ! is_screen_or_tmux_running && shell_has_started_interactively; then
     tmux
-    # for cmd in tmux tscreen screen; do
-    #     if whence $cmd >/dev/null 2>/dev/null; then
-    #         $(resolve_alias "$cmd")
-    #         break
-    #     fi
-    # done
 fi
+
+# show_buffer_stack() {
+#   POSTDISPLAY="
+# stack: $LBUFFER"
+#   zle push-line
+# }
+# zle -N show_buffer_stack
+# bindkey "^[q" show_buffer_stack

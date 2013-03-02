@@ -1,12 +1,9 @@
 [submodule "neobundle.vim"]
-	path = neobundle.vim
-	url = https://github.com/Shougo/neobundle.vim.git
+    path = neobundle.vim
+    url = https://github.com/Shougo/neobundle.vim.git
 [submodule "z"]
-	path = z
-	url = https://github.com/rupa/z.git
+    path = z
+    url = https://github.com/rupa/z.git
 [submodule "auto-fu.zsh"]
-	path = auto-fu.zsh
-	url = https://github.com/hchbaw/auto-fu.zsh.git
-[submodule "tmux-powerline"]
-	path = tmux-powerline
-	url = https://github.com/erikw/tmux-powerline.git
+    path = auto-fu.zsh
+    url = https://github.com/hchbaw/auto-fu.zsh.git
