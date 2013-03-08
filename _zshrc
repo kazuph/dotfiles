@@ -114,8 +114,11 @@ stack: $LBUFFER"
 zle -N show_buffer_stack
 bindkey "^[q" show_buffer_stack
 
-# tmuxの方で利かない場合用
-# which reattach-to-user-namespace > /dev/null 2>&1
+# for mac
+# which test gdate > /dev/null 2>&1
 # if [ $? -eq 0 ] ; then
-#     reattach-to-user-namespace -l $SHELL
+#     alias date="$brew_prefix/bin/gdate"
 # fi
+# alias date="gdate"
+
+setopt no_share_history
