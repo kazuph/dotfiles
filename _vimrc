@@ -279,7 +279,7 @@ NeoBundle 'rhysd/clever-f.vim'
 
 " カーソル移動を加速する
 NeoBundle 'rhysd/accelerated-jk.git'
-let g:accelerated_jk_acceleration_table = [5,3,1]
+let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
@@ -646,3 +646,4 @@ set nobackup
 
 " no bell
 set vb t_vb=
+
