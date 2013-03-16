@@ -283,6 +283,13 @@ let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
+" 日本語固定モード
+NeoBundle 'fuenor/im_control.vim'
+"<C-^>でIM制御が行える場合の設定
+let IM_CtrlMode = 4
+""ctrl+jで日本語入力固定モードをOnOff
+inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
