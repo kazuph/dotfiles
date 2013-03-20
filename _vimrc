@@ -127,8 +127,7 @@ let g:quickrun_config.processing =  {
 let g:quickrun_config.markdown = {
       \ 'outputter' : 'null',
       \ 'command'   : 'open',
-      \ 'cmdopt'    : '-a',
-      \ 'exec'      : '%c %o %s',
+      \ 'exec'      : '%c %s',
       \ }
 
 " VimからRSecを実行する
