@@ -113,12 +113,22 @@ NeoBundle 'ujihisa/neco-look.git'
 " \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
 " for quickrun.vim
-let g:quickrun_config = {
-      \   'objc': {
+let g:quickrun_config = {}
+let g:quickrun_config.objc = {
       \     'command': 'clang',
       \     'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
       \     'tempfile': '{tempname()}.m',
       \   }
+let g:quickrun_config.processing =  {
+      \     'outputter' : 'null',
+      \     'command': 'processing-java',
+      \     'exec': '%c --sketch=$PWD/ --output=/Library/Processing --run --force',
+      \   }
+let g:quickrun_config.markdown = {
+      \ 'outputter' : 'null',
+      \ 'command'   : 'open',
+      \ 'cmdopt'    : '-a',
+      \ 'exec'      : '%c %o %s',
       \ }
 
 " VimからRSecを実行する
@@ -289,6 +299,16 @@ NeoBundle 'fuenor/im_control.vim'
 let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
+" 久しぶりにProcessingが書きたいんだ!
+NeoBundle 'sophacles/vim-processing.git'
+
+" AppleScriptを書く
+NeoBundle 'applescript.vim.git'
+
+" 急遽バイナリを弄りたく
+NeoBundle 'Shougo/vinarise'
+NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
