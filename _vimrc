@@ -278,11 +278,6 @@ let g:shaberu_user_define_say_command = 'say -v Kyoko '
 " もうセミコロンうざいなんて言わせない
 NeoBundle 'teol.vim'
 
-" bufferを以外に使うことに気づく
-" やっぱ便利やった・・・
-NeoBundle 'troydm/easybuffer.vim.git'
-nnoremap <C-b>  :EasyBuffer<CR>
-
 " 賢いf
 NeoBundle 'rhysd/clever-f.vim'
 
@@ -593,8 +588,8 @@ vnoremap < <gv
 vnoremap > >gv
 
 " インサートモード中に抜け出す
-inoremap jj <Esc><Esc>
-inoremap kk <Esc><Esc>
+" inoremap jj <Esc><Esc>
+" inoremap kk <Esc><Esc>
 
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
