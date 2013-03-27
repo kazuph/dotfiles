@@ -66,11 +66,6 @@ NeoBundle 'Shougo/vimproc', {
       \   }
 
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'tsukkee/unite-tag.git'
-autocmd BufEnter *
-\   if empty(&buftype)
-\|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
-\|  endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'honza/snipmate-snippets.git'
 
