@@ -60,6 +60,7 @@ function gem(){
 }
 
 alias em="TERM=xterm-256color /usr/local/Cellar/emacs/24.2/bin/emacs"
+alias vimupdate="vim +NeoBundleUpdate +qa"
 
 # design
 ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
@@ -121,3 +122,9 @@ bindkey "^[q" show_buffer_stack
 # alias date="gdate"
 
 setopt no_share_history
+
+_tmux() {
+    compadd attach-session bind-key break-pane capture-pane choose-buffer choose-client choose-list choose-session choose-tree choose-window clear-history clock-mode command-prompt confirm-before copy-mode delete-buffer detach-client display-message display-panes find-window has-session if-shell join-pane kill-pane kill-server kill-session kill-window last-pane last-window link-window list-buffers list-clients list-commands list-keys list-panes list-sessions list-windows load-buffer lock-client lock-server lock-session move-pane move-window new-session new-window next-layout next-window paste-buffer pipe-pane previous-layout previous-window refresh-client rename-session rename-window resize-pane respawn-pane respawn-window rotate-window run-shell save-buffer select-layout select-pane select-window send-keys send-prefix server-info set-buffer set-environment set-option set-window-option show-buffer show-environment show-messages show-options show-window-options source-file split-window start-server suspend-client swap-pane swap-window switch-client unbind-key unlink-window
+}
+compdef _tmux tmux
+

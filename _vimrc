@@ -10,9 +10,6 @@ if has('vim_starting')
   call neobundle#rc(expand('~/.vim/'))
 endif
 
-" NeoBundleをNeoBundleで管理する(非推奨)
-" NeoBundle 'Shougo/neobundle.vim'
-
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
@@ -29,32 +26,11 @@ let g:EasyMotion_do_shade = 0
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
-" エラーチェックする
-" 読み込み遅いし保存時に待たされるのでやめた
-" perl, rubyは素の状態でもErrorチェックしてくれるみたい
-" javascriptとかはJlitとかいれましょう
-" rubyは保存時に勝手にチェックしてくれた！
-NeoBundle 'scrooloose/syntastic.git'
-let g:syntastic_mode_map = { 'mode': 'passive',
-      \ 'active_filetypes': ['javascript'],
-      \ 'passive_filetypes': [] }
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_loc_list=2
-autocmd BufWritePre * :Errors
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
 " color shcheme
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'ujihisa/unite-font'
 NeoBundle 'tomasr/molokai'
-NeoBundle 'altercation/solarized'
 colorscheme molokai
-
-" outline機能を試す
-NeoBundle 'h1mesuke/unite-outline'
-NeoBundle 'VOoM'
 
 " Shogoさんの力を借りる
 NeoBundle 'Shougo/vimproc', {
@@ -66,11 +42,6 @@ NeoBundle 'Shougo/vimproc', {
       \   }
 
 NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'tsukkee/unite-tag.git'
-autocmd BufEnter *
-\   if empty(&buftype)
-\|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
-\|  endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'honza/snipmate-snippets.git'
 
@@ -85,10 +56,6 @@ nnoremap ,vs :VimShell<CR>
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'thinca/vim-qfreplace.git'
-
-" 別にいらないけど入れてみた。いらなかった。
-" NeoBundle 'ack.vim'
-set grepprg=ack\ -a
 
 " APIのドキュメントを参照する
 " Shift+K
@@ -105,7 +72,7 @@ let g:yankring_manual_clipboard_check = 0
 let g:yankring_max_history = 30
 let g:yankring_max_display = 70
 " Yankの履歴参照
-nmap ,y ;YRShow<CR>
+nmap ,y :YRShow<CR>
 
 " 英語の補完を行う
 NeoBundle 'ujihisa/neco-look.git'
@@ -131,7 +98,6 @@ let g:quickrun_config.markdown = {
 
 " VimからRSecを実行する
 NeoBundle "skwp/vim-rspec.git"
-" let g:RspecKeyma,=0
 nnoremap <silent> ,rs :RunSpec<CR>
 nnoremap <silent> ,rl :RunSpecLine<CR>
 
@@ -143,7 +109,7 @@ let g:user_zen_settings = { 'indentation' : '    ', }
 " Programming perl
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
-" NeoBundle "petdance/vim-perl"
+NeoBundle "petdance/vim-perl"
 NeoBundle "y-uuki/unite-perl-module.vim"
 NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
@@ -170,10 +136,6 @@ NeoBundle 'tpope/vim-endwise'
 " 前回の操作を.で繰り返す
 NeoBundle 'repeat.vim'
 
-" HatenaをVimから投稿
-NeoBundle 'motemen/hatena-vim'
-let g:hatena_user = 'kazuph1986'
-
 " Ruby環境
 NeoBundle 'vim-ruby/vim-ruby.git'
 " NeoBundle 'tpope/vim-rails.git'
@@ -188,7 +150,7 @@ NeoBundle 'thinca/vim-showtime.git'
 
 " undo treeを表示する
 NeoBundle 'sjl/gundo.vim.git'
-nnoremap <Space>u :GundoToggle<CR>
+nnoremap ,gt :GundoToggle<CR>
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
@@ -210,14 +172,8 @@ map b ,b
 NeoBundle 'Lokaltog/vim-powerline.git'
 let g:Powerline_symbols='fancy'
 
-" ステータスラインでハァハァしたかったからやった。後悔はしていない。
-NeoBundle 'mattn/hahhah-vim.git'
-
 " vimからgitをいじる
 NeoBundle 'kmnk/vim-unite-giti.git'
-
-" svnコミット時にDiffを出す
-NeoBundle 'svn.vim'
 
 " 読み込みの遅延を測定する
 " 以下で実行
@@ -230,7 +186,7 @@ NeoBundle 'othree/html5.vim.git'
 " テキストオブジェクトで置換
 NeoBundle 'kana/vim-operator-replace.git'
 NeoBundle 'kana/vim-operator-user.git'
-map R  <Plug>(operator-replace)
+map R <Plug>(operator-replace)
 
 " ファイルを曖昧文字から探し出す
 NeoBundle 'kien/ctrlp.vim.git'
@@ -259,6 +215,7 @@ nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
 
 " RubyMotionの設定
+" TODO:Rubyのときは発動しないようにする
 NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
 
 " Haskell
@@ -273,14 +230,6 @@ NeoBundle 'kana/vim-fakeclip.git'
 " Vimがしゃべるとうれしい・・・よね？
 NeoBundle 'supermomonga/shaberu.vim'
 let g:shaberu_user_define_say_command = 'say -v Kyoko '
-
-" もうセミコロンうざいなんて言わせない
-NeoBundle 'teol.vim'
-
-" bufferを以外に使うことに気づく
-" やっぱ便利やった・・・
-NeoBundle 'troydm/easybuffer.vim.git'
-nnoremap <C-b>  :EasyBuffer<CR>
 
 " 賢いf
 NeoBundle 'rhysd/clever-f.vim'
@@ -307,6 +256,9 @@ NeoBundle 'applescript.vim.git'
 " 急遽バイナリを弄りたく
 NeoBundle 'Shougo/vinarise'
 NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
+
+" ちょっとゴニョゴニョしたいときに
+NeoBundle 'scratch.vim'
 
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
@@ -591,10 +543,6 @@ nnoremap 9 $
 vnoremap < <gv
 vnoremap > >gv
 
-" インサートモード中に抜け出す
-inoremap jj <Esc><Esc>
-inoremap kk <Esc><Esc>
-
 " ファイルを開いた時に最後のカーソル位置を再現する
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
@@ -645,10 +593,10 @@ nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
 set helplang=ja
 
 " カーソル以下の単語を置換
-nnoremap g/ :<C-u>%s/\<<C-R><C-w>\>//gc<Left><Left><Left>
+nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
 
 " ビジュアルモードで選択した部分を置換
-vnoremap g/ y:<C-u>%s/\<<C-R>"\>//gc<Left><Left><Left>
+vnoremap g/ y:<C-u>%s/<C-R>"//gc<Left><Left><Left>
 
 " 行末までをヤンク
 nmap Y y$

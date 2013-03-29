@@ -77,6 +77,9 @@ snippet r200
 snippet r404
     [ 404, ['Content-Type', 'text/plain'], ['404 Not Found'] ]
 
+snippet wi
+    with '${1:Model::Role::Name}'
+
 snippet immu
     __PACKAGE__->meta->make_immutable;
     no Mouse;
