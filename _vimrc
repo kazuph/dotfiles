@@ -120,7 +120,6 @@ let g:quickrun_config.objc = {
       \     'tempfile': '{tempname()}.m',
       \   }
 let g:quickrun_config.processing =  {
-      \     'outputter' : 'null',
       \     'command': 'processing-java',
       \     'exec': '%c --sketch=$PWD/ --output=/Library/Processing --run --force',
       \   }
