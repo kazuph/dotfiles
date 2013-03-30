@@ -67,7 +67,7 @@ ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
-PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then growlnotify -t error! -m "see result" ;fi;`🍺  %{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
+PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then which growlnotify > /dev/null 2>&1 && growlnotify -t error! -m "see result" ;fi;`🍺  %{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
 
 function extract() {
   case $1 in
