@@ -4,6 +4,7 @@ snippet u
     use warnings;
     use 5.010000;
     use autodie;
+    use feature 'say';
 
 snippet ut
     use strict;
@@ -110,6 +111,12 @@ snippet pack
     package ${1:Model::Name};
     use Mouse;
 
+snippet packr
+    package ${1:Model::Name};
+    use Mouse::Role;
+
+    requires '${1:ModuleName}';
+
 snippet packm
     package main;
     ${1}
@@ -118,8 +125,11 @@ snippet extends
     extends '${1:Model::Name}';
 
 snippet requires
-    requires '${1:Model::Name}';
+    requires qw/${1:Model::Name}/;
 
 snippet print
     print "${1}\n";
+
+snippet '127
+    '127.0.0.1'
 
