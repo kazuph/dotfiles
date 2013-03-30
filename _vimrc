@@ -43,7 +43,13 @@ NeoBundle 'Shougo/vimproc', {
 
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
+set completeopt-=preview
 NeoBundle 'honza/snipmate-snippets.git'
+NeoBundle 'tsukkee/unite-tag.git'
+autocmd BufEnter *
+            \   if empty(&buftype)
+            \|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
+            \|  endif
 
 NeoBundle 'Shougo/vimfiler.git'
 let g:vimfiler_as_default_explorer = 1
@@ -114,6 +120,8 @@ NeoBundle "petdance/vim-perl"
 NeoBundle "y-uuki/unite-perl-module.vim"
 NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
+nnoremap ,pt <Esc>:%! perltidy -se<CR>
+nnoremap ,tp <Esc>:'<,'>! perltidy -se<CR>
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -353,6 +361,11 @@ if has('conceal')
   set conceallevel=2 concealcursor=i
 endif
 
+" ctags
+let g:neocomplcache_ctags_arguments_list = {
+  \ 'perl' : '-R -h ".pm"',
+  \ }
+
 "------------------------------------------------------ unite.vim
 let g:unite_update_time = 1000
 " 入力モードで開始する
@@ -367,6 +380,8 @@ nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
 nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
 nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+" tag
+nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
 nnoremap <silent> ,ug :Unite grep<CR>
 " source
@@ -413,6 +428,7 @@ filetype plugin indent on
 syntax on
 " 認識されないっぽいファイルタイプを追加
 au BufNewFile,BufRead *.psgi set filetype=perl
+au BufNewFile,BufRead *.t set filetype=perl
 au BufNewFile,BufRead *.ejs set filetype=html
 au BufNewFile,BufRead *.ep set filetype=html
 au BufNewFile,BufRead *.pde set filetype=processing
@@ -569,6 +585,14 @@ autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
 
 " .vimrcを瞬時に開く
 nnoremap <Space><Space>. :e $MYVIMRC<CR>
+
+" snippets/perl.snipを瞬時に開く
+nnoremap <Space><Space>ps :e $HOME/dotfiles/snippets/perl.snip<CR>
+nnoremap <Space><Space>pd :e $HOME/dotfiles/dict/perl.dict<CR>
+
+" snippets/ruby.snipを瞬時に開く
+nnoremap <Space><Space>rs :e $HOME/dotfiles/snippets/ruby.snip<CR>
+nnoremap <Space><Space>rd :e $HOME/dotfiles/dict/ruby.dict<CR>
 
 " vimrcの設定を反映
 nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>

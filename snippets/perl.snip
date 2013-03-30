@@ -1,8 +1,19 @@
 snippet u
     #!/usr/bin/env perl
-    use 5.10.0;
     use strict;
     use warnings;
+    use 5.010000;
+    use autodie;
+
+snippet ut
+    use strict;
+    use warnings;
+    use utf8;
+    use Test::More;
+
+    ${1}
+
+    done_testing;
 
 snippet d
     use Data::Dump qw(dump);
@@ -17,6 +28,10 @@ snippet dd
 snippet dds
     use Data::Dump::Streamer qw(Dumper);
     warn Dumper
+
+snippet querylog
+    require DBIx::QueryLog;
+    my $guard = DBIx::QueryLog->guard();
 
 snippet c
     use Carp qw/croak/;
@@ -78,7 +93,7 @@ snippet r404
     [ 404, ['Content-Type', 'text/plain'], ['404 Not Found'] ]
 
 snippet wi
-    with '${1:Model::Role::Name}'
+    with '${1:Model::Role::Name}';
 
 snippet immu
     __PACKAGE__->meta->make_immutable;
@@ -90,3 +105,21 @@ snippet coerce
     coerce '${1}'
         => from '${2:Int|Str|ArrayRef|HashRef}',
         => via { ${3} };
+
+snippet pack
+    package ${1:Model::Name};
+    use Mouse;
+
+snippet packm
+    package main;
+    ${1}
+
+snippet extends
+    extends '${1:Model::Name}';
+
+snippet requires
+    requires '${1:Model::Name}';
+
+snippet print
+    print "${1}\n";
+
