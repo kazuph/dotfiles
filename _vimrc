@@ -41,29 +41,7 @@ NeoBundle 'Shougo/vimproc', {
       \     }
       \   }
 
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neosnippet'
-set completeopt-=preview
-NeoBundle 'honza/snipmate-snippets.git'
-NeoBundle 'tsukkee/unite-tag.git'
-autocmd BufEnter *
-            \   if empty(&buftype)
-            \|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
-            \|  endif
-NeoBundle 'h1mesuke/unite-outline'
-
-NeoBundle 'Shougo/vimfiler.git'
-let g:vimfiler_as_default_explorer = 1
-nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
-let g:vimfiler_safe_mode_by_default = 0
-
-NeoBundle 'Shougo/vimshell.git'
-nnoremap ,vs :VimShell<CR>
-
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'thinca/vim-qfreplace.git'
-
 " APIのドキュメントを参照する
 " Shift+K
 NeoBundle 'thinca/vim-ref'
@@ -269,6 +247,39 @@ NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
 " ちょっとゴニョゴニョしたいときに
 NeoBundle 'scratch.vim'
 
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neosnippet'
+set completeopt-=preview
+NeoBundle 'honza/snipmate-snippets.git'
+NeoBundle 'tsukkee/unite-tag.git'
+autocmd BufEnter *
+            \   if empty(&buftype)
+            \|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
+            \|  endif
+NeoBundle 'h1mesuke/unite-outline'
+
+" NeoBundle 'Shougo/vimfiler.git'
+NeoBundleLazy 'Shougo/vimfiler', {
+\   'autoload' : { 'commands' : [ 'VimFiler' ] },
+\   'depends': [ 'Shougo/unite.vim' ],
+\ }
+let s:bundle = neobundle#get('vimfiler')
+function! s:bundle.hooks.on_source(bundle)
+  let g:vimfiler_as_default_explorer = 1
+  let g:vimfiler_safe_mode_by_default = 0
+endfunction
+nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
+
+" NeoBundle 'Shougo/vimshell.git'
+NeoBundleLazy 'Shougo/vimshell', {
+\   'autoload' : { 'commands' : [ 'VimShell' ] },
+\   'depends': [ 'Shougo/vimproc' ],
+\ }
+let s:bundle = neobundle#get('vimshell')
+function! s:bundle.hooks.on_source(bundle)
+endfunction
+nnoremap ,vs :VimShell<CR>
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -283,8 +294,10 @@ let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" "リスト表示
+let g:neocomplcache_max_list = 300
+let g:neocomplcache_max_keyword_width = 20
 
-" let g:neosnippet#snippets_directory='~/dotfiles/snippets'
 let g:neosnippet#snippets_directory='~/.vim/snipmate-snippets/snippets, ~/dotfiles/snippets,  ~/.vim/snipmate-snippets-rubymotion/snippets'
 
 " Define dictionary.
