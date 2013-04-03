@@ -133,3 +133,9 @@ snippet print
 snippet '127
     '127.0.0.1'
 
+snippet new
+    sub new {
+        my $class = shift;
+        my %args = @_ == 1 ? %{$_[0]} : @_;
+        bless \%args, $class;
+    }
