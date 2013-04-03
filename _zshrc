@@ -128,3 +128,7 @@ _tmux() {
 }
 compdef _tmux tmux
 
+_plenv() {
+    compadd init rehash exec which version help global local install list versions list_modules install_cpanm available migrate_modules
+}
+compdef _plenv plenv
