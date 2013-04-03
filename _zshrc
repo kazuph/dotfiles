@@ -143,6 +143,7 @@ _plenv() {
         if [ $words[CURRENT-1] = 'local' -o  $words[CURRENT-1] = 'global' -o $words[CURRENT-1] = 'migrate_modules' -o $words[CURRENT-2] = 'migrate_modules' ];then
             # 現在インストールされているPerlをパースして変換候補に
             compadd `plenv list | sed -e 's/\*//g' -e 's/ //g'`
+        else
         fi
     fi
 
