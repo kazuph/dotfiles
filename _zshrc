@@ -129,6 +129,17 @@ _tmux() {
 compdef _tmux tmux
 
 _plenv() {
-    compadd init rehash exec which version help global local install list versions list_modules install_cpanm available migrate_modules
+
+    local -a cmds
+
+    if (( CURRENT == 2 ));then
+        compadd init rehash exec which version help global local install list versions list_modules install_cpanm available migrate_modules
+    else
+        if [ $words[CURRENT-1] = 'local' -o  $words[CURRENT-1] = 'global' -o $words[CURRENT-1] = 'migrate_modules' -o $words[CURRENT-2] = 'migrate_modules' ];then
+            compadd `plenv list | sed -e 's/\*//g' -e 's/ //g'`
+        fi
+    fi
+
+    return 1;
 }
 compdef _plenv plenv
