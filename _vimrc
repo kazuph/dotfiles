@@ -41,29 +41,7 @@ NeoBundle 'Shougo/vimproc', {
       \     }
       \   }
 
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neosnippet'
-set completeopt-=preview
-NeoBundle 'honza/snipmate-snippets.git'
-NeoBundle 'tsukkee/unite-tag.git'
-autocmd BufEnter *
-            \   if empty(&buftype)
-            \|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
-            \|  endif
-NeoBundle 'h1mesuke/unite-outline'
-
-NeoBundle 'Shougo/vimfiler.git'
-let g:vimfiler_as_default_explorer = 1
-nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
-let g:vimfiler_safe_mode_by_default = 0
-
-NeoBundle 'Shougo/vimshell.git'
-nnoremap ,vs :VimShell<CR>
-
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'thinca/vim-qfreplace.git'
-
 " APIのドキュメントを参照する
 " Shift+K
 NeoBundle 'thinca/vim-ref'
@@ -269,6 +247,111 @@ NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
 " ちょっとゴニョゴニョしたいときに
 NeoBundle 'scratch.vim'
 
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neosnippet'
+set completeopt-=preview
+NeoBundle 'honza/snipmate-snippets.git'
+NeoBundle 'tsukkee/unite-tag.git'
+autocmd BufEnter *
+            \   if empty(&buftype)
+            \|      nnoremap <buffer> <C-]> :<C-u>UniteWithCursorWord -immediately tag<CR>
+            \|  endif
+NeoBundle 'h1mesuke/unite-outline'
+
+" NeoBundle 'Shougo/vimfiler.git'
+NeoBundleLazy 'Shougo/vimfiler', {
+\   'autoload' : { 'commands' : [ 'VimFiler' ] },
+\   'depends': [ 'Shougo/unite.vim' ],
+\ }
+let s:bundle = neobundle#get('vimfiler')
+function! s:bundle.hooks.on_source(bundle)
+  let g:vimfiler_as_default_explorer = 1
+  let g:vimfiler_safe_mode_by_default = 0
+endfunction
+nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
+
+" NeoBundle 'Shougo/vimshell.git'
+NeoBundleLazy 'Shougo/vimshell', {
+\   'autoload' : { 'commands' : [ 'VimShell' ] },
+\   'depends': [ 'Shougo/vimproc' ],
+\ }
+let s:bundle = neobundle#get('vimshell')
+function! s:bundle.hooks.on_source(bundle)
+endfunction
+nnoremap ,vs :VimShell<CR>
+
+NeoBundleLazy 'Shougo/unite.vim', {
+      \ 'autoload' : {
+      \     'commands' : ['Unite', 'UniteWithBufferDir',
+      \                  'UniteWithCursorWord', 'UniteWithInput'],
+      \     'functions' : 'unite#start'
+      \     }
+      \ }
+
+let s:bundle = neobundle#get('unite.vim')
+function! s:bundle.hooks.on_source(bundle)
+  let g:unite_update_time = 1000
+  let g:unite_enable_start_insert=1
+  let g:unite_source_file_mru_filename_format = ''
+  let g:unite_source_grep_default_opts = "-Hn --color=never"
+  let g:loaded_unite_source_bookmark = 1
+  let g:loaded_unite_source_tab = 1
+  let g:loaded_unite_source_window = 1
+  " the silver searcher を unite-grep のバックエンドにする
+  if executable('ag')
+    let g:unite_source_grep_command = 'ag'
+    let g:unite_source_grep_default_opts = '--nocolor --nogroup --column'
+    let g:unite_source_grep_recursive_opt = ''
+  endif
+
+  " ウィンドウを分割して開く
+  au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+  au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+  " ウィンドウを縦に分割して開く
+  au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+  au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+  au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
+  au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
+
+  autocmd FileType unite call s:unite_my_settings()
+  function! s:unite_my_settings()
+    " Overwrite settings.
+    imap <buffer> jj <Plug>(unite_insert_leave)
+    imap <buffer> <ESC> <ESC><ESC>
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+    nnoremap <buffer> t G
+    startinsert
+  endfunction
+  call unite#custom_default_action('source/bookmark/directory', 'vimfiler')
+endfunction
+"------------------------------------------------------ unite.vim
+" ファイル一覧
+nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" ブックマーク一覧
+nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
+" ブックマーク追加
+nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
+" yank一覧
+nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
+" 常用セット
+nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+" tag
+nnoremap <silent> ,ut :Unite tag/include<CR>
+" unite-grep
+nnoremap <silent> ,ug :Unite grep<CR>
+" source
+nnoremap <silent> ,us :Unite source<CR>
+" ref
+nnoremap <silent> ,ur :Unite ref/
+" color scheme の変更
+nnoremap <silent> ,uc :Unite colorscheme<CR>
+" outline表示
+nnoremap <silent> ,uo : <C-u>Unite -no-quit -vertical -winwidth=30 outline<CR>
+" git status
+nnoremap <silent> ,gs :Unite giti/status<CR>
+" git log
+nnoremap <silent> ,gl :Unite giti/log<CR>
+
 "-------------------------------------------------------------------setting neocomplcache
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -283,8 +366,10 @@ let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" "リスト表示
+let g:neocomplcache_max_list = 300
+let g:neocomplcache_max_keyword_width = 20
 
-" let g:neosnippet#snippets_directory='~/dotfiles/snippets'
 let g:neosnippet#snippets_directory='~/.vim/snipmate-snippets/snippets, ~/dotfiles/snippets,  ~/.vim/snipmate-snippets-rubymotion/snippets'
 
 " Define dictionary.
@@ -352,60 +437,6 @@ endif
 let g:neocomplcache_ctags_arguments_list = {
   \ 'perl' : '-R -h ".pm"',
   \ }
-
-"------------------------------------------------------ unite.vim
-let g:unite_update_time = 1000
-" 入力モードで開始する
-let g:unite_enable_start_insert=1
-" ファイル一覧
-nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-" ブックマーク一覧
-nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
-" ブックマーク追加
-nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
-" yank一覧
-nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
-" 常用セット
-nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
-" tag
-nnoremap <silent> ,ut :Unite tag/include<CR>
-" unite-grep
-nnoremap <silent> ,ug :Unite grep<CR>
-" source
-nnoremap <silent> ,us :Unite source<CR>
-" ref
-nnoremap <silent> ,ur :Unite ref/
-" color scheme の変更
-nnoremap <silent> ,uc :Unite colorscheme<CR>
-" outline表示
-nnoremap <silent> ,uo :Unite outline<CR>
-nnoremap <silent> ,uo : <C-u>Unite -no-quit -vertical -winwidth=30 outline<CR>
-" giti表示
-nnoremap <silent> ,ug :Unite giti<CR>
-" status
-nnoremap <silent> ,gs :Unite giti/status<CR>
-" log
-nnoremap <silent> ,gl :Unite giti/log<CR>
-
-" ウィンドウを分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-" ウィンドウを縦に分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
-au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
-
-autocmd FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-    " Overwrite settings.
-    imap <buffer> jj <Plug>(unite_insert_leave)
-    imap <buffer> <ESC> <ESC><ESC>
-    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-    nnoremap <buffer> t G
-    startinsert
-endfunction
-call unite#custom_default_action('source/bookmark/directory', 'vimfiler')
 
 "--------------------------------------------------------------------------
 " BasicSetting
