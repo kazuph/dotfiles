@@ -269,6 +269,9 @@ function! s:bundle.hooks.on_source(bundle)
   let g:vimfiler_safe_mode_by_default = 0
 endfunction
 nnoremap ,vf :VimFiler -split -simple -winwidth=35 -no-quit<CR>
+autocmd FileType vimfiler
+        \ nnoremap <buffer><silent>/
+        \ :<C-u>Unite file -default-action=vimfiler<CR>
 
 " NeoBundle 'Shougo/vimshell.git'
 NeoBundleLazy 'Shougo/vimshell', {
