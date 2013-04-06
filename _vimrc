@@ -250,7 +250,7 @@ NeoBundle 'scratch.vim'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
 set completeopt-=preview
-NeoBundle 'honza/snipmate-snippets.git'
+NeoBundle 'snipmate-snippets.git'
 NeoBundle 'tsukkee/unite-tag.git'
 autocmd BufEnter *
             \   if empty(&buftype)
