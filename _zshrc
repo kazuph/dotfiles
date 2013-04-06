@@ -138,13 +138,10 @@ _plenv() {
     # 3番目以降のコマンドを入力しようとしているときにはelseへ行く
     if (( CURRENT == 2 ));then
         compadd init rehash exec which version help global local install list versions list_modules install_cpanm available migrate_modules
-    else
+    elif [ $words[CURRENT-1] = 'local' -o  $words[CURRENT-1] = 'global' -o $words[CURRENT-1] = 'migrate_modules' -o $words[CURRENT-2] = 'migrate_modules' ];then
         # $wordsという配列に入力したコマンドが入っているのでそれを使ってパターンマッチ
-        if [ $words[CURRENT-1] = 'local' -o  $words[CURRENT-1] = 'global' -o $words[CURRENT-1] = 'migrate_modules' -o $words[CURRENT-2] = 'migrate_modules' ];then
-            # 現在インストールされているPerlをパースして変換候補に
-            compadd `plenv list | sed -e 's/\*//g' -e 's/ //g'`
-        else
-        fi
+        # 現在インストールされているPerlをパースして変換候補に
+        compadd `plenv list | sed -e 's/\*//g' -e 's/ //g'`
     fi
 
     return 1;
