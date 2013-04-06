@@ -26,6 +26,7 @@ else
     echo Install zsh! >&2
     sudo yum install -y zsh
     curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+    chsh -s /bin/zsh
 fi
 
 # # install tmux
