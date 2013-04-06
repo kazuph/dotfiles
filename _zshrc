@@ -32,6 +32,7 @@ export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
 export PATH=$PATH:/opt/local/bin
 
 # z.sh
+# . $HOME/dotfiles/z/z.sh
 _Z_CMD=j
 source ~/dotfiles/z/z.sh
 precmd() {
@@ -85,26 +86,6 @@ function extract() {
   esac
 }
 alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
-
-## tmux自動起動
-# http://d.hatena.ne.jp/tyru/20100828/run_tmux_or_screen_at_shell_startup
-is_screen_running() {
-    # tscreen also uses this varariable.
-    [ ! -z "$WINDOW" ]
-}
-is_tmux_runnning() {
-    [ ! -z "$TMUX" ]
-}
-is_screen_or_tmux_running() {
-    is_screen_running || is_tmux_runnning
-}
-shell_has_started_interactively() {
-    [ ! -z "$PS1" ]
-}
-if ! is_screen_or_tmux_running && shell_has_started_interactively; then
-    tmux
-fi
-PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
 
 show_buffer_stack() {
   POSTDISPLAY="
