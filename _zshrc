@@ -154,3 +154,8 @@ preexec () {
         COMMAND_TIME=`date +%s`
     fi
 }
+
+_vagrant() {
+    compadd box destroy gem halt init package provision reload resume sandbox ssh ssh-config status suspend up
+}
+compdef _vagrant vagrant
