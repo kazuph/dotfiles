@@ -10,6 +10,17 @@ if has('vim_starting')
   call neobundle#rc(expand('~/.vim/'))
 endif
 
+" syntax + 自動compile
+NeoBundle 'kchmck/vim-coffee-script'
+" js BDDツール
+NeoBundle 'claco/jasmine.vim'
+" indentの深さに色を付ける
+NeoBundle 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_enable_on_vim_startup=1
+let g:indent_guides_start_level=2
+let g:indent_guides_auto_colors=1
+let g:indent_guides_guide_size=1
+
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
@@ -501,6 +512,7 @@ autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType python     setlocal sw=4 sts=4 ts=4 et
@@ -683,3 +695,4 @@ endfunction
 
 " Change current directory.
 nnoremap <silent> <Space>cd :<C-u>CD<CR>
+
