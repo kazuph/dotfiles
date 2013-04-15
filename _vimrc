@@ -251,6 +251,9 @@ NeoBundle 'sophacles/vim-processing.git'
 " AppleScriptを書く
 NeoBundle 'applescript.vim.git'
 
+" ST2のようにテキスト操作
+NeoBundle 'terryma/vim-multiple-cursors.git'
+
 " 急遽バイナリを弄りたく
 NeoBundle 'Shougo/vinarise'
 NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
