@@ -1,0 +1,15 @@
+defencoding utf8
+defutf8 on
+vbell off
+
+escape ^T^T
+
+hardstatus alwayslastline "%`%-w%{=b bw}%n %t%{-}%+w"
+defscrollback 5000
+startup_message off
+
+bind n screen
+bind k prev
+bind j next
+bind l windowlist
+bind w windowlist -b
