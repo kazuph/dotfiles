@@ -112,6 +112,10 @@ autocmd FileType perl PerlLocalLibPath
 nnoremap ,pt <Esc>:%! perltidy -se<CR>
 nnoremap ,tp <Esc>:'<,'>! perltidy -se<CR>
 
+" cpanfile用
+NeoBundle 'moznion/vim-cpanfile'
+NeoBundle 'moznion/syntastic-cpanfile'
+
 " ()や''でくくったりするための補助
 " text-objectの支援
 " vi' で'の中身を選択
@@ -261,6 +265,7 @@ NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
 " ちょっとゴニョゴニョしたいときに
 NeoBundle 'scratch.vim'
 
+" 以下shougoさんの独壇場
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
 set completeopt-=preview
@@ -395,7 +400,8 @@ let g:neocomplcache_dictionary_filetype_lists = {
       \ 'vimshell' : $HOME.'/.vimshell_hist',
       \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
       \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
-      \ 'scheme'   : $HOME.'/.gosh_completions'
+      \ 'scheme'   : $HOME.'/.gosh_completions',
+      \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
       \ }
 
 " Define keyword.
@@ -471,7 +477,9 @@ au BufNewFile,BufRead *.pde set filetype=processing
 au BufNewFile,BufRead *.erb set filetype=html
 au BufNewFile,BufRead *.tt set filetype=html
 au BufNewFile,BufRead *.tt2 set filetype=html
-au BufRead, BufNewFile *.scss set filetype=scss
+au BufNewFile,BufRead *.scss set filetype=scss
+au BufNewFile,BufRead cpanfile set filetype=cpanfile
+au BufNewFile,BufRead cpanfile set syntax=perl.cpanfile
 
 " ファイルエンコーディング
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
