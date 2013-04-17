@@ -265,6 +265,11 @@ NeoBundle 's-yukikaze/vinarise-plugin-peanalysis'
 " ちょっとゴニョゴニョしたいときに
 NeoBundle 'scratch.vim'
 
+" gitの差分を表示するぜ
+NeoBundle 'airblade/vim-gitgutter'
+nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
+nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
+
 " 以下shougoさんの独壇場
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
