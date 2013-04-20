@@ -361,7 +361,7 @@ nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
 " tag
 nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
-nnoremap <silent> ,ug :Unite -no-quit grep<CR>
+nnoremap <silent> ,ug :Unite -no-quit -winheight=15 grep<CR>
 " source
 nnoremap <silent> ,us :Unite source<CR>
 " ref
