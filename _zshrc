@@ -31,7 +31,7 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
 fi
 
 export PATH=$PATH:~/android-sdks/tools:~/android-sdks/platform-tools
-export PATH=$PATH:/opt/local/bin
+# export PATH=$PATH:/opt/local/bin
 
 # z.sh
 # . $HOME/dotfiles/z/z.sh
