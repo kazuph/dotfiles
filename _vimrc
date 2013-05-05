@@ -269,7 +269,7 @@ nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
 set completeopt-=preview
-NeoBundle 'snipmate-snippets.git'
+NeoBundle 'kazuph/snipmate-snippets.git'
 NeoBundle 'tsukkee/unite-tag.git'
 autocmd BufEnter *
             \   if empty(&buftype)
