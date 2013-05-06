@@ -129,7 +129,7 @@ NeoBundle "tmhedberg/matchit.git"
 
 " =と押して = となるようにする他
 NeoBundle "smartchr"
-" inoremap <expr> = smartchr#loop(' = ', '=', ' == ')
+" inoremap <expr> = smartchr#loop(' = ', ' => ', '=', ' == ')
 inoremap <expr> , smartchr#one_of(', ', ',')
 
 " endfunction とかを自動入力
@@ -140,8 +140,12 @@ NeoBundle 'repeat.vim'
 
 " Ruby環境
 NeoBundle 'vim-ruby/vim-ruby.git'
+NeoBundle 'tpope/vim-rbenv.git'
 " NeoBundle 'tpope/vim-rails.git'
 " NeoBundle 'taichouchou2/vim-rsense'
+au BufNewFile, BufRead Gemfile setl filetype = Gemfile
+au BufWritePost Gemfile call vimproc#system('rbenv ctags')
+
 " let g:rubycomplete_buffer_loading = 1
 " let g:rubycomplete_classes_in_global = 1
 " let g:rubycomplete_rails = 1
@@ -218,7 +222,7 @@ nnoremap <silent> ,dg :DayOneGrep<CR>
 
 " RubyMotionの設定
 " TODO:Rubyのときは発動しないようにする
-NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
+" NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
 
 " Haskell
 NeoBundle 'haskell.vim'
@@ -274,7 +278,7 @@ nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'
 set completeopt-=preview
-NeoBundle 'snipmate-snippets.git'
+NeoBundle 'kazuph/snipmate-snippets.git'
 NeoBundle 'tsukkee/unite-tag.git'
 autocmd BufEnter *
             \   if empty(&buftype)
