@@ -695,7 +695,7 @@ set nobackup
 " no bell
 set vb t_vb=
 
-" カレントディレクトリを移動する
+" :CDでカレントディレクトリを移動する
 command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>')
 function! s:ChangeCurrentDir(directory, bang)
     if a:directory == ''
