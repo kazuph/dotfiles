@@ -209,11 +209,6 @@ nnoremap <silent> ,ml :MemoList<CR>
 nnoremap <silent> ,mg :MemoGrep<CR>
 nnoremap <silent> ,mf :exe "CtrlP" g:memolist_path<cr><f5>
 
-" grep結果をプレビュー付きで表示
-NeoBundle 'fuenor/qfixgrep.git'
-let MyGrep_Key = ''
-let QFix_Height = 10
-
 " DayOne投稿用(開発中)
 NeoBundle 'kazuph/dayone.vim'
 nnoremap <silent> ,dn :DayOneNew<CR>
@@ -333,6 +328,7 @@ function! s:bundle.hooks.on_source(bundle)
     let g:unite_source_grep_command = 'ag'
     let g:unite_source_grep_default_opts = '--nocolor --nogroup --column'
     let g:unite_source_grep_recursive_opt = ''
+    let g:unite_source_grep_max_candidates = 200
   endif
 
   " ウィンドウを分割して開く
@@ -369,7 +365,7 @@ nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
 " tag
 nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
-nnoremap <silent> ,ug :Unite grep<CR>
+nnoremap <silent> ,ug :Unite -no-quit -winheight=15 grep<CR>
 " source
 nnoremap <silent> ,us :Unite source<CR>
 " ref
