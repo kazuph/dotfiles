@@ -12,6 +12,7 @@ endif
 
 " syntax + 自動compile
 NeoBundle 'kchmck/vim-coffee-script'
+autocmd BufWritePost *.coffee silent CoffeeMake! -cb | cwindow | redraw!
 " js BDDツール
 NeoBundle 'claco/jasmine.vim'
 " indentの深さに色を付ける
@@ -90,6 +91,10 @@ let g:quickrun_config.markdown = {
       \ 'outputter' : 'null',
       \ 'command'   : 'open',
       \ 'exec'      : '%c %s',
+      \ }
+let g:quickrun_config.coffee = {
+      \ 'command' : 'coffee',
+      \ 'exec' : ['%c -cbp %s']
       \ }
 
 " VimからRSecを実行する
