@@ -595,8 +595,8 @@ augroup grepopen
 augroup END
 
 " CTRL-hjklでウィンドウ移動
-nnoremap 0 ^
-nnoremap 9 $
+" nnoremap 0 ^
+" nnoremap 9 $
 
 "カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
 " nnoremap j gj
@@ -667,7 +667,7 @@ nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
 " ヘルプを日本語に
 set helplang=ja
 
-" カーソル以下の単語を置換
+" カーソル下の単語を置換
 nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
 
 " ビジュアルモードで選択した部分を置換
@@ -711,4 +711,3 @@ endfunction
 
 " Change current directory.
 nnoremap <silent> <Space>cd :<C-u>CD<CR>
-
