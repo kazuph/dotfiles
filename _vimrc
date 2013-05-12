@@ -200,6 +200,8 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(extlib|git|hg|svn)$',
   \ }
 
+NeoBundle 'wincent/Command-T'
+
 " メモを簡単に取る
 NeoBundle 'glidenote/memolist.vim'
 let g:memolist_path = $HOME . "/Dropbox/アプリ/memolist"
