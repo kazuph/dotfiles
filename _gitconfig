@@ -62,6 +62,7 @@
   bm  = branch --merged     # merge済みのbranchを表示
   bn  = branch --no-merged  # mergeしてないbranchを表示
   bo  = branch -r           # remote branchを表示
+  sb = show-branch          # branchの進捗とかも表示
   # log関連
   edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
   wc  = whatchanged         # logに変更されたファイルも一緒に出す
