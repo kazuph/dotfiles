@@ -10,7 +10,17 @@ if has('vim_starting')
   call neobundle#rc(expand('~/.vim/'))
 endif
 
-" syntax + 自動compile
+" JS支援
+NeoBundle 'pangloss/vim-javascript.git'
+NeoBundle 'jiangmiao/simple-javascript-indenter'
+NeoBundle 'jQuery.git'
+NeoBundle 'jelera/vim-javascript-syntax.git'
+" au FileType javascript call JavaScriptFold()
+NeoBundle 'teramako/jscomplete-vim.git'
+" DOMとMozilla関連とES6のメソッドを補完
+let g:jscomplete_use = ['dom',  'moz',  'es6th']
+
+" CofeeScript syntax + 自動compile
 NeoBundle 'kchmck/vim-coffee-script'
 autocmd BufWritePost *.coffee silent CoffeeMake! -cb | cwindow | redraw!
 " js BDDツール
@@ -492,6 +502,7 @@ au BufNewFile,BufRead *.tt2 set filetype=html
 au BufNewFile,BufRead *.scss set filetype=scss
 au BufNewFile,BufRead cpanfile set filetype=cpanfile
 au BufNewFile,BufRead cpanfile set syntax=perl.cpanfile
+au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 
 " ファイルエンコーディング
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
