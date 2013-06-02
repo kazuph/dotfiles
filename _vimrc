@@ -132,7 +132,7 @@ NeoBundle "y-uuki/unite-perl-module.vim"
 NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
 nnoremap ,pt <Esc>:%! perltidy -se<CR>
-nnoremap ,tp <Esc>:'<,'>! perltidy -se<CR>
+vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 
 " cpanfile用
 NeoBundle 'moznion/vim-cpanfile'
