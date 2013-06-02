@@ -12,10 +12,17 @@ endif
 
 " JS支援
 NeoBundle 'pangloss/vim-javascript.git'
+let g:html_indent_inctags  = "html, body, head, tbody"
+let g:html_indent_autotags = "th, td, tr, tfoot, thead"
+let g:html_indent_script1  = "inc"
+let g:html_indent_style1   = "inc"
+NeoBundle 'open-browser.vim'
+NeoBundle 'mattn/webapi-vim'
+NeoBundle 'tell-k/vim-browsereload-mac'
+NeoBundle 'hail2u/vim-css3-syntax'
 NeoBundle 'jiangmiao/simple-javascript-indenter'
 NeoBundle 'jQuery.git'
 NeoBundle 'jelera/vim-javascript-syntax.git'
-" au FileType javascript call JavaScriptFold()
 NeoBundle 'teramako/jscomplete-vim.git'
 " DOMとMozilla関連とES6のメソッドを補完
 let g:jscomplete_use = ['dom',  'moz',  'es6th']
@@ -27,10 +34,10 @@ autocmd BufWritePost *.coffee silent CoffeeMake! -cb | cwindow | redraw!
 NeoBundle 'claco/jasmine.vim'
 " indentの深さに色を付ける
 NeoBundle 'nathanaelkane/vim-indent-guides'
-let g:indent_guides_enable_on_vim_startup=1
-let g:indent_guides_start_level=2
-let g:indent_guides_auto_colors=1
-let g:indent_guides_guide_size=1
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_start_level           = 2
+let g:indent_guides_auto_colors           = 1
+let g:indent_guides_guide_size            = 1
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
@@ -40,9 +47,9 @@ NeoBundle 'thinca/vim-visualstar'
 NeoBundle 'Lokaltog/vim-easymotion'
 "嫌だったのでspace spaceに変更
 let g:EasyMotion_leader_key = '<Space>'
-let g:EasyMotion_grouping=1
-let g:EasyMotion_keys = 'fjdkslaureiwoqpvncm'
-let g:EasyMotion_do_shade = 0
+let g:EasyMotion_grouping   = 1
+let g:EasyMotion_keys       = 'fjdkslaureiwoqpvncm'
+let g:EasyMotion_do_shade   = 0
 
 " 簡単にコメントアウトする
 " gcc or C-_でトグル
@@ -76,8 +83,8 @@ nnoremap / :M/
 " ヤンクを辿れるようにする
 NeoBundle "YankRing.vim"
 let g:yankring_manual_clipboard_check = 0
-let g:yankring_max_history = 30
-let g:yankring_max_display = 70
+let g:yankring_max_history            = 30
+let g:yankring_max_display            = 70
 " Yankの履歴参照
 nmap ,y :YRShow<CR>
 
@@ -87,24 +94,24 @@ NeoBundle 'ujihisa/neco-look.git'
 " \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
 " for quickrun.vim
-let g:quickrun_config = {}
-let g:quickrun_config.objc = {
-      \     'command': 'clang',
-      \     'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
-      \     'tempfile': '{tempname()}.m',
-      \   }
-let g:quickrun_config.processing =  {
-      \     'command': 'processing-java',
-      \     'exec': '%c --sketch=$PWD/ --output=/Library/Processing --run --force',
-      \   }
-let g:quickrun_config.markdown = {
-      \ 'outputter' : 'null',
-      \ 'command'   : 'open',
-      \ 'exec'      : '%c %s',
+let g:quickrun_config            = {}
+let g:quickrun_config.objc       = {
+      \   'command': 'clang',
+      \   'exec': ['%c %s -o %s:p:r -framework Foundation', '%s:p:r %a', 'rm -f %s:p:r'],
+      \   'tempfile': '{tempname()}.m',
       \ }
-let g:quickrun_config.coffee = {
-      \ 'command' : 'coffee',
-      \ 'exec' : ['%c -cbp %s']
+let g:quickrun_config.processing = {
+      \   'command': 'processing-java',
+      \   'exec': '%c --sketch     = $PWD/ --output = /Library/Processing --run --force',
+      \ }
+let g:quickrun_config.markdown   = {
+      \   'outputter' : 'null',
+      \   'command'   : 'open',
+      \   'exec'      : '%c %s',
+      \ }
+let g:quickrun_config.coffee     = {
+      \   'command' : 'coffee',
+      \   'exec' : ['%c -cbp %s']
       \ }
 
 " VimからRSecを実行する
@@ -489,17 +496,17 @@ filetype plugin indent on
 " ハイライトON
 syntax on
 " 認識されないっぽいファイルタイプを追加
-au BufNewFile,BufRead *.psgi set filetype=perl
-au BufNewFile,BufRead *.t set filetype=perl
-au BufNewFile,BufRead *.ejs set filetype=html
-au BufNewFile,BufRead *.ep set filetype=html
-au BufNewFile,BufRead *.pde set filetype=processing
-au BufNewFile,BufRead *.erb set filetype=html
-au BufNewFile,BufRead *.tt set filetype=html
-au BufNewFile,BufRead *.tt2 set filetype=html
-au BufNewFile,BufRead *.scss set filetype=scss
-au BufNewFile,BufRead cpanfile set filetype=cpanfile
-au BufNewFile,BufRead cpanfile set syntax=perl.cpanfile
+au BufNewFile,BufRead *.psgi       set filetype=perl
+au BufNewFile,BufRead *.t          set filetype=perl
+au BufNewFile,BufRead *.ejs        set filetype=html
+au BufNewFile,BufRead *.ep         set filetype=html
+au BufNewFile,BufRead *.pde        set filetype=processing
+au BufNewFile,BufRead *.erb        set filetype=html
+au BufNewFile,BufRead *.tt         set filetype=html
+au BufNewFile,BufRead *.tt2        set filetype=html
+au BufNewFile,BufRead *.scss       set filetype=scss
+au BufNewFile,BufRead cpanfile     set filetype=cpanfile
+au BufNewFile,BufRead cpanfile     set syntax=perl.cpanfile
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 
 " ファイルエンコーディング
