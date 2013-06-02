@@ -23,7 +23,7 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
     wait
     which nvm -v >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.10.5"
+        _nodejs_use_version="v0.10.8"
         if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
             nvm use "${_nodejs_use_version}" >/dev/null
             export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
@@ -113,28 +113,6 @@ _tmux() {
     compadd attach-session bind-key break-pane capture-pane choose-buffer choose-client choose-list choose-session choose-tree choose-window clear-history clock-mode command-prompt confirm-before copy-mode delete-buffer detach-client display-message display-panes find-window has-session if-shell join-pane kill-pane kill-server kill-session kill-window last-pane last-window link-window list-buffers list-clients list-commands list-keys list-panes list-sessions list-windows load-buffer lock-client lock-server lock-session move-pane move-window new-session new-window next-layout next-window paste-buffer pipe-pane previous-layout previous-window refresh-client rename-session rename-window resize-pane respawn-pane respawn-window rotate-window run-shell save-buffer select-layout select-pane select-window send-keys send-prefix server-info set-buffer set-environment set-option set-window-option show-buffer show-environment show-messages show-options show-window-options source-file split-window start-server suspend-client swap-pane swap-window switch-client unbind-key unlink-window
 }
 compdef _tmux tmux
-
-_plenv() {
-
-    # cmdsという変数を定義
-    local -a cmds
-
-    # カーソルが現在何番目のコマンドを入力しようとしてるのかがCURRENTに入ってる
-    # すでにplenvと打っているはずなので補完は2コマンド目から
-    # 3番目以降のコマンドを入力しようとしているときにはelseへ行く
-    if (( CURRENT == 2 ));then
-        compadd init rehash exec which version help global local install list versions list_modules install_cpanm available migrate_modules
-    elif [ $words[CURRENT-1] = 'local' -o  $words[CURRENT-1] = 'global' -o $words[CURRENT-1] = 'migrate_modules' -o $words[CURRENT-2] = 'migrate_modules' ];then
-        # $wordsという配列に入力したコマンドが入っているのでそれを使ってパターンマッチ
-        # 現在インストールされているPerlをパースして変換候補に
-        compadd `plenv list | sed -e 's/\*//g' -e 's/ //g'`
-    fi
-
-    return 1;
-}
-
-# plenvというコマンドに関数_plenvを関連付け
-compdef _plenv plenv
 
 # 一定時間以上かかる処理の場合は終了時に通知してくれる
 local COMMAND=""
