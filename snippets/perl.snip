@@ -30,6 +30,14 @@ snippet dds
     use Data::Dump::Streamer qw(Dumper);
     warn Dumper
 
+snippet ddn
+        use Data::Dumper;
+        {
+                package Data::Dumper;
+                sub qquote { return shift; }
+        }
+        local $Data::Dumper::Useperl = 1;
+
 snippet querylog
     require DBIx::QueryLog;
     my $guard = DBIx::QueryLog->guard();
@@ -139,3 +147,33 @@ snippet new
         my %args = @_ == 1 ? %{$_[0]} : @_;
         bless \%args, $class;
     }
+
+snippet debug
+    $c->log->debug("######## ${1} = ", dump ${2});
+
+snippet dbi
+        use DBI;
+        my $dbh = DBI->connect('DBI:mysql:${1:databasename}', '${2:username}', '${3:password}', {
+                AutoCommit => 1,
+                PrintError => 0,
+                RaiseError => 1,
+                ShowErrorStatement => 1,
+                AutoInactiveDestroy => 1,
+                mysql_enable_utf8 => 1,
+                mysql_auto_reconnect => 0,
+        });
+
+snippet select
+    my $rows = $dbh->selectall_arrayref("SELECT * FROM ${1:table}", {Slice=>{}});
+
+snippet insert
+    my $rc = $dbh->do('INSERT INTO ${1:table_name} (${2:column_name}) VALUES (${3:?, ?, ?})') || die $dbh->errstr;
+
+snippet do
+    my $rc = $dbh->do('${1}') || die $dbh->errstr;
+
+snippet hires
+    use Time::HiRes;
+    my $time_start = Time::HiRes::time;
+    my $time_end   = Time::HiRes::time;
+    printf("%5.3f(sec)\n", $time_end - $time_start);

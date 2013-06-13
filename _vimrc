@@ -113,6 +113,10 @@ let g:quickrun_config.coffee     = {
       \   'command' : 'coffee',
       \   'exec' : ['%c -cbp %s']
       \ }
+let g:quickrun_config.perl = {
+      \   'command' : 'perl',
+      \   'cmdopt': '-MProject::Libs' 
+      \ }
 
 " VimからRSecを実行する
 NeoBundle "skwp/vim-rspec.git"
