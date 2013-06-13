@@ -182,7 +182,7 @@ NeoBundle 'thinca/vim-showtime.git'
 
 " undo treeを表示する
 NeoBundle 'sjl/gundo.vim.git'
-nnoremap ,gt :GundoToggle<CR>
+nnoremap U      :<C-u>GundoToggle<CR>
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
@@ -243,7 +243,7 @@ nnoremap <silent> ,dg :DayOneGrep<CR>
 
 " RubyMotionの設定
 " TODO:Rubyのときは発動しないようにする
-" NeoBundle 'rcyrus/snipmate-snippets-rubymotion.git'
+" NeoBundle 'kazuph/snipmate-snippets-rubymotion.git'
 
 " Haskell
 NeoBundle 'haskell.vim'
@@ -296,8 +296,27 @@ nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
 nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
 " 以下shougoさんの独壇場
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neosnippet'
+NeoBundle 'Shougo/neocomplcache',  '',  'default'
+call neobundle#config('neocomplcache',  {
+      \ 'lazy' : 1,
+      \ 'autoload' : {
+      \   'commands' : 'NeoComplCacheEnable',
+      \ }})
+NeoBundle 'Shougo/neocomplcache-rsense',  '',  'default'
+call neobundle#config('neocomplcache-rsense',  {
+      \ 'lazy' : 1,
+      \ 'depends' : 'Shougo/neocomplcache',
+      \ 'autoload' : { 'filetypes' : 'ruby' }
+      \ })
+NeoBundle 'Shougo/neosnippet',  '',  'default'
+call neobundle#config('neosnippet',  {
+      \ 'lazy' : 1,
+      \ 'autoload' : {
+      \   'insert' : 1,
+      \   'filetypes' : 'snippet',
+      \   'unite_sources' : ['snippet',  'neosnippet/user',  'neosnippet/runtime'],
+      \ }})
+
 set completeopt-=preview
 NeoBundle 'kazuph/snipmate-snippets.git'
 NeoBundle 'tsukkee/unite-tag.git'
@@ -308,10 +327,29 @@ autocmd BufEnter *
 NeoBundle 'h1mesuke/unite-outline'
 
 " NeoBundle 'Shougo/vimfiler.git'
-NeoBundleLazy 'Shougo/vimfiler', {
-\   'autoload' : { 'commands' : [ 'VimFiler' ] },
-\   'depends': [ 'Shougo/unite.vim' ],
-\ }
+NeoBundle 'Shougo/vimfiler',  '',  'default'
+call neobundle#config('vimfiler',  {
+      \ 'lazy' : 1,
+      \ 'depends' : 'Shougo/unite.vim',
+      \ 'autoload' : {
+      \    'commands' : [
+      \                  { 'name' : 'VimFiler',
+      \                    'complete' : 'customlist, vimfiler#complete' },
+      \                  { 'name' : 'VimFilerExplorer',
+      \                    'complete' : 'customlist, vimfiler#complete' },
+      \                  { 'name' : 'Edit',
+      \                    'complete' : 'customlist, vimfiler#complete' },
+      \                  { 'name' : 'Write',
+      \                    'complete' : 'customlist, vimfiler#complete' },
+      \                  'Read',  'Source'],
+      \    'mappings' : ['<Plug>(vimfiler_switch)'],
+      \    'explorer' : 1,
+      \ }
+      \ })
+" NeoBundleLazy 'Shougo/vimfiler', {
+" \   'autoload' : { 'commands' : [ 'VimFiler' ] },
+" \   'depends': [ 'Shougo/unite.vim' ],
+" \ }
 let s:bundle = neobundle#get('vimfiler')
 function! s:bundle.hooks.on_source(bundle)
   let g:vimfiler_as_default_explorer = 1
@@ -332,13 +370,21 @@ function! s:bundle.hooks.on_source(bundle)
 endfunction
 nnoremap ,vs :VimShell<CR>
 
-NeoBundleLazy 'Shougo/unite.vim', {
+NeoBundle 'Shougo/unite.vim',  '',  'default'
+call neobundle#config('unite.vim', {
+      \ 'lazy' : 1,
       \ 'autoload' : {
-      \     'commands' : ['Unite', 'UniteWithBufferDir',
-      \                  'UniteWithCursorWord', 'UniteWithInput'],
-      \     'functions' : 'unite#start'
-      \     }
-      \ }
+      \   'commands' : [{ 'name' : 'Unite',
+      \                   'complete' : 'customlist, unite#complete_source'},
+      \                 'UniteWithCursorWord',  'UniteWithInput']
+      \ }})
+" NeoBundleLazy 'Shougo/unite.vim', {
+"       \ 'autoload' : {
+"       \     'commands' : ['Unite', 'UniteWithBufferDir',
+"       \                  'UniteWithCursorWord', 'UniteWithInput'],
+"       \     'functions' : 'unite#start'
+"       \     }
+"       \ }
 
 let s:bundle = neobundle#get('unite.vim')
 function! s:bundle.hooks.on_source(bundle)
@@ -411,18 +457,22 @@ let g:acp_enableAtStartup = 0
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
-let g:neocomplcache_enable_smart_case = 1
+" let g:neocomplcache_enable_smart_case = 1
 " Use camel case completion.
-let g:neocomplcache_enable_camel_case_completion = 1
+" let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
-let g:neocomplcache_enable_underbar_completion = 1
+" let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_min_syntax_length = 1
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 " "リスト表示
 let g:neocomplcache_max_list = 300
 let g:neocomplcache_max_keyword_width = 20
 
+let g:neocomplcache_enable_fuzzy_completion = 1
+let g:neocomplcache_fuzzy_completion_start_length = 2
+
+let g:neosnippet#enable_snipmate_compatibility = 1
 let g:neosnippet#snippets_directory='~/.vim/snipmate-snippets/snippets, ~/dotfiles/snippets,  ~/.vim/snipmate-snippets-rubymotion/snippets'
 
 " Define dictionary.
