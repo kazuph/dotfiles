@@ -115,7 +115,7 @@ let g:quickrun_config.coffee     = {
       \ }
 let g:quickrun_config.perl = {
       \   'command' : 'perl',
-      \   'cmdopt': '-MProject::Libs' 
+      \   'cmdopt': '-MProject::Libs'
       \ }
 
 " VimからRSecを実行する
@@ -261,6 +261,10 @@ let g:shaberu_user_define_say_command = 'say -v Kyoko '
 " 賢いf
 NeoBundle 'rhysd/clever-f.vim'
 
+" 走り幅跳び！
+NeoBundle 'mattn/habatobi-vim'
+
+
 " カーソル移動を加速する
 NeoBundle 'rhysd/accelerated-jk.git'
 let g:accelerated_jk_acceleration_table = [10,5,3]
@@ -273,6 +277,10 @@ NeoBundle 'fuenor/im_control.vim'
 let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
+" 前から連番機能欲しかった
+NeoBundle 'deris/vim-rengbang'
+vnoremap ,rb  <Esc>:'<,'>RengBang
 
 " 久しぶりにProcessingが書きたいんだ!
 NeoBundle 'sophacles/vim-processing.git'
