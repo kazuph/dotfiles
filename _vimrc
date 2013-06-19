@@ -17,8 +17,24 @@ let g:html_indent_autotags = "th, td, tr, tfoot, thead"
 let g:html_indent_script1  = "inc"
 let g:html_indent_style1   = "inc"
 NeoBundle 'open-browser.vim'
+" カーソル下のURLをブラウザで開く
+nmap <Leader>o <Plug>(openbrowser-open)
+vmap <Leader>o <Plug>(openbrowser-open)
+" ググる
+nnoremap <Leader>g :<C-u>OpenBrowserSearch<Space><C-r><C-w><Enter>
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'tell-k/vim-browsereload-mac'
+let g:returnApp = "iTerm"
+nnoremap <Space><Space>br :ChromeReloadStart<CR>
+nnoremap <Space><Space>BR :ChromeReloadStop<CR>
+" nmap <Space>bf :FirefoxReloadStart<CR>
+" nmap <Space>bF :FirefoxReloadStop<CR>
+" nmap <Space>bs :SafariReloadStart<CR>
+" nmap <Space>bS :SafariReloadStop<CR>
+" nmap <Space>bo :OperaReloadStart<CR>
+" nmap <Space>bO :OperaReloadStop<CR>
+" nmap <Space>ba :AllBrowserReloadStart<CR>
+" nmap <Space>bA :AllBrowserReloadStop<CR>
 NeoBundle 'hail2u/vim-css3-syntax'
 NeoBundle 'jiangmiao/simple-javascript-indenter'
 NeoBundle 'jQuery.git'
@@ -187,9 +203,10 @@ nnoremap U      :<C-u>GundoToggle<CR>
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
 NeoBundle 'h1mesuke/vim-alignta.git'
-set ambiwidth=double
 xnoremap <silent> a: :Alignta  01 :<CR>
 xnoremap al :Alignta<Space>
+
+set ambiwidth=double
 
 " キャメル・アンダースコア記法を扱いやすく
 " ,w ,e ,b
@@ -379,13 +396,13 @@ endfunction
 nnoremap ,vs :VimShell<CR>
 
 NeoBundle 'Shougo/unite.vim',  '',  'default'
-call neobundle#config('unite.vim', {
-      \ 'lazy' : 1,
-      \ 'autoload' : {
-      \   'commands' : [{ 'name' : 'Unite',
-      \                   'complete' : 'customlist, unite#complete_source'},
-      \                 'UniteWithCursorWord',  'UniteWithInput']
-      \ }})
+" call neobundle#config('unite.vim', {
+"       \ 'lazy' : 1,
+"       \ 'autoload' : {
+"       \   'commands' : [{ 'name' : 'Unite',
+"       \                   'complete' : 'customlist, unite#complete_source'},
+"       \                 'UniteWithBufferDir', 'UniteWithCursorWord',  'UniteWithInput']
+"       \ }})
 " NeoBundleLazy 'Shougo/unite.vim', {
 "       \ 'autoload' : {
 "       \     'commands' : ['Unite', 'UniteWithBufferDir',
@@ -587,7 +604,8 @@ set smartcase
 " オートインデント
 set autoindent
 set smartindent
-
+" 10進法でインクリメント
+set nf=""
 " 画面最下行にルーラーを表示する
 set ruler
 
