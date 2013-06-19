@@ -206,7 +206,7 @@ NeoBundle 'h1mesuke/vim-alignta.git'
 xnoremap <silent> a: :Alignta  01 :<CR>
 xnoremap al :Alignta<Space>
 
-set ambiwidth=double
+" set ambiwidth=double
 
 " キャメル・アンダースコア記法を扱いやすく
 " ,w ,e ,b
