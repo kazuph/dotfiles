@@ -695,6 +695,12 @@ augroup grepopen
   autocmd QuickFixCmdPost grep cw
 augroup END
 
+" quickfixの修正
+nnoremap q] :cnext<CR>
+nnoremap q[ :cprevious<CR>
+nnoremap Q[ :<C-u>cfirst<CR>
+nnoremap Q] :<C-u>clast<CR>
+
 " CTRL-hjklでウィンドウ移動
 " nnoremap 0 ^
 " nnoremap 9 $
