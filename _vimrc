@@ -158,6 +158,9 @@ vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 NeoBundle 'moznion/vim-cpanfile'
 NeoBundle 'moznion/syntastic-cpanfile'
 
+" 全般的に文法チェック
+NeoBundle 'scrooloose/syntastic.git'
+
 " ()や''でくくったりするための補助
 " text-objectの支援
 " vi' で'の中身を選択
@@ -206,7 +209,7 @@ NeoBundle 'h1mesuke/vim-alignta.git'
 xnoremap <silent> a: :Alignta  01 :<CR>
 xnoremap al :Alignta<Space>
 
-set ambiwidth=double
+" set ambiwidth=double
 
 " キャメル・アンダースコア記法を扱いやすく
 " ,w ,e ,b
@@ -239,9 +242,14 @@ map R <Plug>(operator-replace)
 
 " ファイルを曖昧文字から探し出す
 NeoBundle 'kien/ctrlp.vim.git'
+let g:ctrlp_max_height = &lines
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(extlib|git|hg|svn)$',
   \ }
+nnoremap <silent><C-l> :CtrlPLine<CR>
+" Ag.vimと競合するので使う場合はOFF
+" CtrlP起動時にCtrl+bでモード切り替えできるのでそれで変更する
+" nnoremap <silent><C-m> :CtrlPMRUFiles<CR>
 
 " メモを簡単に取る
 NeoBundle 'glidenote/memolist.vim'
@@ -257,6 +265,9 @@ NeoBundle 'kazuph/dayone.vim'
 nnoremap <silent> ,dn :DayOneNew<CR>
 nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
+
+" 爆速のagを使いたい
+NeoBundle 'rking/ag.vim'
 
 " RubyMotionの設定
 " TODO:Rubyのときは発動しないようにする
@@ -280,7 +291,6 @@ NeoBundle 'rhysd/clever-f.vim'
 
 " 走り幅跳び！
 NeoBundle 'mattn/habatobi-vim'
-
 
 " カーソル移動を加速する
 NeoBundle 'rhysd/accelerated-jk.git'
@@ -694,6 +704,12 @@ augroup grepopen
   autocmd QuickFixCmdPost vimgrep cw
   autocmd QuickFixCmdPost grep cw
 augroup END
+
+" quickfixの修正
+nnoremap ]q :cnext<CR>
+nnoremap [q :cprevious<CR>
+nnoremap [Q :<C-u>cfirst<CR>
+nnoremap ]Q :<C-u>clast<CR>
 
 " CTRL-hjklでウィンドウ移動
 " nnoremap 0 ^
