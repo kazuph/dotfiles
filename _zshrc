@@ -21,9 +21,9 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 if [[ -f ~/.nvm/nvm.sh ]]; then
     source ~/.nvm/nvm.sh
     wait
-    which nvm -v >/dev/null 2>&1
+    test nvm >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.10.8"
+        _nodejs_use_version="v0.10.12"
         if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
             nvm use "${_nodejs_use_version}" >/dev/null
             export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
