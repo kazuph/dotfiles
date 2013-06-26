@@ -246,10 +246,6 @@ let g:ctrlp_max_height = &lines
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(extlib|git|hg|svn)$',
   \ }
-nnoremap <silent><C-l> :CtrlPLine<CR>
-" Ag.vimと競合するので使う場合はOFF
-" CtrlP起動時にCtrl+bでモード切り替えできるのでそれで変更する
-" nnoremap <silent><C-m> :CtrlPMRUFiles<CR>
 
 " メモを簡単に取る
 NeoBundle 'glidenote/memolist.vim'
