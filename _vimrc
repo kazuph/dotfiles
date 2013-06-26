@@ -158,6 +158,9 @@ vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 NeoBundle 'moznion/vim-cpanfile'
 NeoBundle 'moznion/syntastic-cpanfile'
 
+" 全般的に文法チェック
+NeoBundle 'scrooloose/syntastic.git'
+
 " ()や''でくくったりするための補助
 " text-objectの支援
 " vi' で'の中身を選択
@@ -239,9 +242,12 @@ map R <Plug>(operator-replace)
 
 " ファイルを曖昧文字から探し出す
 NeoBundle 'kien/ctrlp.vim.git'
+let g:ctrlp_max_height = &lines
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(extlib|git|hg|svn)$',
   \ }
+nnoremap <silent><C-l> :CtrlPLine<CR>
+nnoremap <silent><C-m> :CtrlPMRUFiles<CR>
 
 " メモを簡単に取る
 NeoBundle 'glidenote/memolist.vim'
