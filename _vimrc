@@ -264,6 +264,9 @@ nnoremap <silent> ,dn :DayOneNew<CR>
 nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
 
+" 爆速のagを使いたい
+NeoBundle 'rking/ag.vim'
+
 " RubyMotionの設定
 " TODO:Rubyのときは発動しないようにする
 " NeoBundle 'kazuph/snipmate-snippets-rubymotion.git'
@@ -286,7 +289,6 @@ NeoBundle 'rhysd/clever-f.vim'
 
 " 走り幅跳び！
 NeoBundle 'mattn/habatobi-vim'
-
 
 " カーソル移動を加速する
 NeoBundle 'rhysd/accelerated-jk.git'
