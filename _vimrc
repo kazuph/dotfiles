@@ -75,6 +75,9 @@ let g:EasyMotion_do_shade   = 0
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
+" いろんな言語で作成するときのひな形を入力したい
+NeoBundle 'mattn/sonictemplate-vim'
+
 " color shcheme
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'ujihisa/unite-font'
