@@ -4,6 +4,10 @@
 set nocompatible
 filetype off
 filetype plugin indent off
+" for go
+if $GOROOT != ''
+  set rtp+=$GOROOT/misc/vim
+endif
 set rtp+=~/dotfiles/neobundle.git/
 if has('vim_starting')
   set runtimepath+=~/dotfiles/neobundle.vim
@@ -349,6 +353,7 @@ call neobundle#config('neosnippet',  {
       \ }})
 
 set completeopt-=preview
+" set completeopt=menu,preview
 NeoBundle 'kazuph/snipmate-snippets.git'
 NeoBundle 'tsukkee/unite-tag.git'
 autocmd BufEnter *
@@ -551,6 +556,7 @@ if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
 let g:neocomplcache_omni_patterns.perl = '\h\w*->\h\w*|\h\w*::'
+let g:neocomplcache_omni_patterns.go = '\h\w*\.\?'
 
 " <TAB>: completion.
 imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
@@ -824,3 +830,4 @@ endfunction
 
 " Change current directory.
 nnoremap <silent> <Space>cd :<C-u>CD<CR>
+
