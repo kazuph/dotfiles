@@ -266,8 +266,10 @@ nnoremap <silent> ,dn :DayOneNew<CR>
 nnoremap <silent> ,dl :DayOneList<CR>
 nnoremap <silent> ,dg :DayOneGrep<CR>
 
-" 爆速のagを使いたい
+" 爆速のgrepであるagを使いたい
 NeoBundle 'rking/ag.vim'
+nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
 " RubyMotionの設定
 " TODO:Rubyのときは発動しないようにする
