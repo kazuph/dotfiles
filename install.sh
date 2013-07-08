@@ -55,10 +55,10 @@ fi
 # wait
 
 # install ore setting
-git clone https://kazuph@github.com/kazuph/dotfiles.git
+git clone --recursive https://kazuph@github.com/kazuph/dotfiles.git
 cd dotfiles
-git submodule init
-git submodule update
+# git submodule init
+# git submodule update
 cd ~/.
 ln -s dotfiles/_vimrc .vimrc
 ln -s ~/dotfiles/_gitconfig .gitconfig
