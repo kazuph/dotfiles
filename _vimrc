@@ -159,7 +159,7 @@ NeoBundle 'moznion/vim-cpanfile'
 NeoBundle 'moznion/syntastic-cpanfile'
 
 " 全般的に文法チェック
-NeoBundle 'scrooloose/syntastic.git'
+" NeoBundle 'scrooloose/syntastic.git'
 
 " ()や''でくくったりするための補助
 " text-objectの支援
