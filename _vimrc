@@ -328,7 +328,7 @@ endfunction
 nnoremap ,vs :VimShell<CR>
 
 " Vimでプレゼンする？
-NeoBundle 'thinca/vim-showtime.git'"
+NeoBundle 'thinca/vim-showtime.git'
 
 "------------------------------------------------------ unite.vim
 let s:bundle = neobundle#get('unite.vim')
