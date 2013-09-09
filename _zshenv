@@ -22,3 +22,7 @@ if [ -f /Applications/MacVim.app/Contents/MacOS/Vim ]; then
 else
     alias vi="vim"
 fi
+export EDITOR=vim
+if ! type vim > /dev/null 2>&1; then
+    alias vim=vi
+fi

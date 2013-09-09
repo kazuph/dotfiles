@@ -15,11 +15,14 @@
   # globalな.gitignoreの指定
   excludesfile = ~/.gitignore
   autoCRLF = false
-  editor = vim
+  editor = /Applications/MacVim.app/Contents/MacOS/Vim
   quotepath = false
 [merge]
   tool = vimdiff
 [alias]
+  ignore = !"f() { local s=$1; shift; \
+    while [ $# -gt 0 ]; do s="$s, $1"; shift; done;\
+    curl "http://gitignore.io/api/$s"; }; f"
   s   = status
   st  = status
   ss  = status -s
@@ -118,4 +121,3 @@
   smupdate = submodule foreach "git checkout master; git pull origin master"
 
   hist = log --pretty=format:\\\"%h %ad | %s%d [%an]\\\" --graph --date=short
-

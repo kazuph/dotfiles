@@ -5,15 +5,6 @@
 "カーソル位置の単語をyankする
 nnoremap vv vawy
 
-"最後に変更されたテキストを選択する
-nnoremap gc  `[v`]
-vnoremap gc ;<C-u>normal gc<Enter>
-onoremap gc ;<C-u>normal gc<Enter>
-
-"  Insert mode中で単語単位/行単位の削除をアンドゥ可能にする
-inoremap <C-u>  <C-g>u<C-u>
-inoremap <C-w>  <C-g>u<C-w>
-
 " ;でExコマンド入力( ;と:を入れ替)
 noremap ; :
 noremap : ;
@@ -25,10 +16,6 @@ noremap gr :SearchRef<C-m>
 "最後に編集された位置に移動
 eclipseaction GoLastEditPosition org.eclipse.ui.edit.text.gotoLastEditPosition
 nnoremap gb :GoLastEditPosition<C-m>
-
-" C-sでEsc
-" だってHHKですらEscが遠ry
-inoremap <C-s> <Esc><Esc>
 
 " インサートモード中に抜け出す
 " inoremap jj <Esc><Esc>
