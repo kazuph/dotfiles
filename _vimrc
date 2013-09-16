@@ -43,6 +43,7 @@ endif
 " No.1 ステータスラインに情報を表示 → もう力はいらない
 " NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
+let g:airline_theme='light'
 let g:airline_left_sep = '⮀'
 let g:airline_left_alt_sep = '⮁'
 let g:airline_right_sep = '⮂'
@@ -50,9 +51,30 @@ let g:airline_right_alt_sep = '⮃'
 let g:airline_branch_prefix = '⭠'
 let g:airline_readonly_symbol = '⭤'
 let g:airline_linecolumn_prefix = '⭡'
+
 " ﾊｧﾊｧ...ﾊｧﾊｧ...
 NeoBundle 'mattn/hahhah-vim'
 NeoBundle 'mattn/vim-airline-hahhah'
+NeoBundle 'osyo-manga/vim-anzu'
+
+" キーマップ設定
+" nmap n <Plug>(anzu-n)
+" nmap N <Plug>(anzu-N)
+nmap n nzz<Plug>(anzu-update-search-status)
+nmap N Nzz<Plug>(anzu-update-search-status)
+nmap * <Plug>(anzu-star)
+nmap # <Plug>(anzu-sharp)
+" ESC2回押しで検索ハイライトを消去
+nmap <silent> <ESC><ESC> :<C-u>nohlsearch<CR><Plug>(anzu-clear-search-status)
+" format = (該当数/全体数)
+let g:anzu_status_format = "(%i/%l)"
+"}}}
+
+" vim-anzuの表示を statuslineに
+let g:airline_section_c = '%F %{anzu#search_status()}'
+" whitespace無効
+let g:airline#extensions#whitespace#enabled = 0
+"}}}
 
 " No.2 gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
