@@ -95,6 +95,8 @@ map C <Plug>(operator-camelize-toggle)
 " No.9  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
+autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop(' . ',  '->',  '.')
+autocmd FileType perl inoremap <buffer> <expr> - smartchr#loop('-',  '->')
 
 " No.10 カーソルジェットコースター
 NeoBundle 'rhysd/accelerated-jk.git'
@@ -121,7 +123,7 @@ nnoremap <space><space>y :YRShow<CR>
 " No.14 正規表現をPerl風に
 " :%S///gc
 NeoBundle 'othree/eregex.vim'
-nnoremap / :<C-u>M/
+" nnoremap / :<C-u>M/
 
 " No.15 memoはやっぱりVimからやろ
 NeoBundle 'glidenote/memolist.vim'
@@ -264,16 +266,17 @@ xnoremap al :Alignta<Space>
 
 " No.30 シンタックスチェックを非同期で
 " 他vim-quickrunとvimprocに依存
-NeoBundle "osyo-manga/vim-watchdogs"
-NeoBundle "osyo-manga/shabadou.vim"
-NeoBundle "cohama/vim-hier"
-let g:watchdogs_check_BufWritePost_enable = 1
-" let g:quickrun_config = {
-"       \   'watchdogs_checker/_' : {
-"       \       'outputter/quickfix/open_cmd' : '',
-"       \   }
-"       \ }
-call watchdogs#setup(g:quickrun_config)
+NeoBundle "scrooloose/syntastic"
+" NeoBundle "osyo-manga/vim-watchdogs"
+" NeoBundle "osyo-manga/shabadou.vim"
+" NeoBundle "cohama/vim-hier"
+" let g:watchdogs_check_BufWritePost_enable = 1
+" " let g:quickrun_config = {
+" "       \   'watchdogs_checker/_' : {
+" "       \       'outputter/quickfix/open_cmd' : '',
+" "       \   }
+" "       \ }
+" call watchdogs#setup(g:quickrun_config)
 
 " No.31 ゲーム。結構難しい
 NeoBundle 'deris/vim-duzzle'
@@ -429,6 +432,7 @@ if !exists('g:neocomplete#keyword_patterns')
     let g:neocomplete#keyword_patterns = {}
 endif
 let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+let g:neocomplete#keyword_patterns.perl = '\h\w*->\h\w*\|\h\w*::\w*'
 
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
@@ -520,6 +524,14 @@ let $LANG='ja_JP.UTF-8'
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
 
+" 検索語を強調表示
+set hlsearch
+" 検索時に大文字・小文字を区別しない
+set ignorecase
+" ただし、検索後に大文字小文字が
+" 混在しているときは区別する
+set smartcase
+
 " 未保存のバッファでも裏に保持
 set hidden
 
@@ -528,14 +540,6 @@ set wildmenu
 
 " コマンドをステータス行に表示
 set showcmd
-
-" 検索語を強調表示
-set hlsearch
-
-" 検索時に大文字・小文字を区別しない。ただし、検索後に大文字小文字が
-" 混在しているときは区別する
-set ignorecase
-set smartcase
 
 " オートインデント
 set autoindent
