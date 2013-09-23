@@ -186,7 +186,7 @@ let g:quickrun_config.markdown   = {
 " No.21 Programming perl
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
-NeoBundle "petdance/vim-perl"
+NeoBundle "vim-perl/vim-perl"
 NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
 nnoremap ,pt <Esc>:%! perltidy -se<CR>
@@ -406,7 +406,7 @@ nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
 " yank一覧
 nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
-nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+nnoremap <silent> ,uu :<C-u>Unite buffer file_mru file<CR>
 " tag
 nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
