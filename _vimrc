@@ -87,10 +87,21 @@ NeoBundle "tpope/vim-surround"
 NeoBundle 'kana/vim-operator-user.git'
 NeoBundle 'kana/vim-operator-replace.git'
 map R  <Plug>(operator-replace)
+
 " キャメルケースをスネークケースに置き換える
 " ※Cは元々行末まで置き換えるキー
 NeoBundle 'tyru/operator-camelize.vim'
 map C <Plug>(operator-camelize-toggle)
+
+" キャメル・アンダースコア記法を扱いやすく
+" ,w ,e ,b
+" v,w
+" d,w
+NeoBundle 'bkad/CamelCaseMotion.git'
+map w ,w
+map e ,e
+map b ,b
+
 
 " No.9  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
@@ -335,6 +346,19 @@ nnoremap ,vs :VimShell<CR>
 " Vimでプレゼンする？
 NeoBundle 'thinca/vim-showtime.git'
 
+" Vimshellしたい
+NeoBundle 'Shougo/vimshell.vim.git'
+NeoBundle 'matrix.vim--Yang'
+NeoBundle 'mattn/habatobi-vim'
+
+" ファイル名と内容をもとにファイルタイププラグインを有効にする
+filetype plugin indent on
+" ハイライトON
+syntax on
+
+" まだインストールしていないプラグインをインストールしてくれる
+NeoBundleCheck
+
 "------------------------------------------------------ unite.vim
 let s:bundle = neobundle#get('unite.vim')
 function! s:bundle.hooks.on_source(bundle)
@@ -468,7 +492,6 @@ endif
 let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
 let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*|\h\w*::'
 let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
 
 " For perlomni.vim setting.
@@ -497,11 +520,6 @@ let g:neocomplcache_ctags_arguments_list = {
 "--------------------------------------------------------------------------
 " No.0 BasicSetting
 "--------------------------------------------------------------------------
-" ファイル名と内容をもとにファイルタイププラグインを有効にする
-filetype plugin indent on
-" ハイライトON
-syntax on
-
 " ヘルプを3倍の速度で引く
 nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
 
