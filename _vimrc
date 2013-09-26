@@ -95,8 +95,8 @@ map C <Plug>(operator-camelize-toggle)
 " No.9  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
-autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop(' . ',  '->',  '.')
-autocmd FileType perl inoremap <buffer> <expr> - smartchr#loop('-',  '->')
+autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop('.',  '->')
+autocmd FileType perl inoremap <buffer> <expr> = smartchr#loop('=',  '=>')
 
 " No.10 カーソルジェットコースター
 NeoBundle 'rhysd/accelerated-jk.git'
@@ -334,6 +334,10 @@ nnoremap ,vs :VimShell<CR>
 
 " Vimでプレゼンする？
 NeoBundle 'thinca/vim-showtime.git'
+
+" 自動でセーブする
+NeoBundle 'vim-auto-save'
+let g:auto_save = 1
 
 "------------------------------------------------------ unite.vim
 let s:bundle = neobundle#get('unite.vim')
