@@ -40,6 +40,9 @@ if has('vim_starting')
   call neobundle#rc(expand('~/.vim/'))
 endif
 
+" NeoBundle自体の管理
+NeoBundleFetch 'Shougo/neobundle.vim'
+
 " ステータスラインに情報を表示 → もう力はいらない
 " NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
