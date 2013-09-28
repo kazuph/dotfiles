@@ -193,11 +193,8 @@ nnoremap ,pt <Esc>:%! perltidy -se<CR>
 vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 
 " cpanfile用
-NeoBundle 'moznion/vim-cpanfile'
-NeoBundle 'moznion/syntastic-cpanfile'
-
-" 全般的に文法チェック
-" NeoBundle 'scrooloose/syntastic.git'
+" NeoBundle 'moznion/vim-cpanfile'
+" NeoBundle 'moznion/syntastic-cpanfile'
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -277,17 +274,16 @@ xnoremap al :Alignta<Space>
 
 " シンタックスチェックを非同期で
 " 他vim-quickrunとvimprocに依存
-NeoBundle "scrooloose/syntastic"
-" NeoBundle "osyo-manga/vim-watchdogs"
-" NeoBundle "osyo-manga/shabadou.vim"
-" NeoBundle "cohama/vim-hier"
-" let g:watchdogs_check_BufWritePost_enable = 1
-" " let g:quickrun_config = {
-" "       \   'watchdogs_checker/_' : {
-" "       \       'outputter/quickfix/open_cmd' : '',
-" "       \   }
-" "       \ }
-" call watchdogs#setup(g:quickrun_config)
+NeoBundle "osyo-manga/vim-watchdogs"
+NeoBundle "osyo-manga/shabadou.vim"
+NeoBundle "cohama/vim-hier"
+let g:watchdogs_check_BufWritePost_enable = 1
+let g:quickrun_config = {
+      \   'watchdogs_checker/_' : {
+      \       'outputter/quickfix/open_cmd' : '',
+      \   }
+      \ }
+call watchdogs#setup(g:quickrun_config)
 
 " ゲーム。結構難しい
 NeoBundle 'deris/vim-duzzle'
@@ -354,10 +350,6 @@ NeoBundle 'matrix.vim--Yang'
 
 " 走り幅跳びする
 NeoBundle 'mattn/habatobi-vim'
-
-" 自動でセーブする
-NeoBundle 'vim-auto-save'
-let g:auto_save = 1
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on

@@ -17,6 +17,7 @@
   autoCRLF = false
   editor = /Applications/MacVim.app/Contents/MacOS/Vim
   quotepath = false
+  precomposeunicode = true
 [merge]
   tool = vimdiff
 [alias]
