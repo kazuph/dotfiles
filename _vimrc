@@ -40,7 +40,10 @@ if has('vim_starting')
   call neobundle#rc(expand('~/.vim/'))
 endif
 
-" No.1 ステータスラインに情報を表示 → もう力はいらない
+" NeoBundle自体の管理
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+" ステータスラインに情報を表示 → もう力はいらない
 " NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
 let g:airline_theme='light'
@@ -56,18 +59,18 @@ let g:airline_linecolumn_prefix = '⭡'
 NeoBundle 'mattn/hahhah-vim'
 NeoBundle 'mattn/vim-airline-hahhah'
 
-" No.2 gcc or C-_でトグル
+" gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
-" No.3 やっぱりVimはかっこよくなければならない
+" やっぱりVimはかっこよくなければならない
 set t_Co=256
 NeoBundle 'tomasr/molokai'
 colorscheme molokai
 
-" No.4 カーソルキー使うってやっぱなんか、ありえない？みたいな
+" カーソルキー使うってやっぱなんか、ありえない？みたいな
 NeoBundle 'https://github.com/kazuph/gips-vim.git'
 
-" No.5 ctrlpがないとかどんな苦行
+" ctrlpがないとかどんな苦行
 NeoBundle 'kien/ctrlp.vim.git'
 let g:ctrlp_map = '<c-f>' " yankringとかぶるんだよ・・・
 let g:ctrlp_max_height = &lines
@@ -75,7 +78,7 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn)$',
   \ }
 
-" No.6 ()や''でくくったりするための補助
+" ()や''でくくったりするための補助
 " text-objectの支援
 " di' で'の中身を削除
 " da' で'も含めて削df
@@ -83,7 +86,7 @@ let g:ctrlp_custom_ignore = {
 " visualモードのときはSを代用
 NeoBundle "tpope/vim-surround"
 
-" No.7 テキストオブジェクトを使い倒す
+" テキストオブジェクトを使い倒す
 NeoBundle 'kana/vim-operator-user.git'
 NeoBundle 'kana/vim-operator-replace.git'
 map R  <Plug>(operator-replace)
@@ -103,40 +106,40 @@ map e ,e
 map b ,b
 
 
-" No.9  ","と押して", "としてくれる優しさ
+"  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
-autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop(' . ',  '->',  '.')
-autocmd FileType perl inoremap <buffer> <expr> - smartchr#loop('-',  '->')
+autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop('.',  '->')
+autocmd FileType perl inoremap <buffer> <expr> = smartchr#loop('=',  '=>')
 
-" No.10 カーソルジェットコースター
+" カーソルジェットコースター
 NeoBundle 'rhysd/accelerated-jk.git'
 let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
-" No.11 ST2のようにテキスト操作
+" ST2のようにテキスト操作
 " ctrl+nで選択
 NeoBundle 'terryma/vim-multiple-cursors.git'
 
-" No.12 yankを異なるWindow間でも共有したい(screenやtmuxを使う場合に便利)
+" yankを異なるWindow間でも共有したい(screenやtmuxを使う場合に便利)
 " MacVimを使ってるならあまり意味ないかも
 NeoBundle 'yanktmp.vim'
 nnoremap <silent>sy :call YanktmpYank()<CR>
 nnoremap <silent>sp :call YanktmpPaste_p()<CR>
 nnoremap <silent>sP :call YanktmpPaste_P()<CR>
 
-" No.13 ヤンクの履歴を参照したい
+" ヤンクの履歴を参照したい
 NeoBundle 'kana/vim-fakeclip.git'
 NeoBundle 'YankRing.vim'
 nnoremap <space><space>y :YRShow<CR>
 
-" No.14 正規表現をPerl風に
+" 正規表現をPerl風に
 " :%S///gc
 NeoBundle 'othree/eregex.vim'
 " nnoremap / :<C-u>M/
 
-" No.15 memoはやっぱりVimからやろ
+" memoはやっぱりVimからやろ
 NeoBundle 'glidenote/memolist.vim'
 nnoremap ,mn :MemoNew<cr>
 nnoremap ,mg :MemoGrep<cr>
@@ -144,15 +147,15 @@ nnoremap ,ml :MemoList<CR>
 nnoremap ,mf :exe "CtrlP" g:memolist_path<cr><f5>
 let g:memolist_path = "~/Dropbox/memo"
 
-" No.16 爆速のgrepであるagを使いたい
+" 爆速のgrepであるagを使いたい
 NeoBundle 'rking/ag.vim'
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
-" No.17 grep後に置換したい
+" grep後に置換したい
 NeoBundle 'thinca/vim-qfreplace'
 
-" No.18 僕だってtag使ってみたい
+" 僕だってtag使ってみたい
 NeoBundle 'vim-scripts/taglist.vim'
 set tags=./tags,tags,../tags
 " let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"  " ctagsのコマンド
@@ -161,20 +164,20 @@ let Tlist_Use_Right_Window = 1
 let Tlist_Exit_OnlyWindow = 1
 nnoremap <silent> <Space><Space>t :TlistToggle<CR>
 
-" No.17 爆速のgrepであるagを使いたい
+" 爆速のgrepであるagを使いたい
 NeoBundle 'rking/ag.vim'
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
-" No.18 賢いf
+" 賢いf
 NeoBundle 'rhysd/clever-f.vim'
 
-" No.19 gitの差分を表示するぜ
+" gitの差分を表示するぜ
 NeoBundle 'airblade/vim-gitgutter'
 nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
 nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
-" No.20 \rで開いているコードを実行
+" \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
 let g:quickrun_config            = {}
 let g:quickrun_config.markdown   = {
@@ -183,7 +186,7 @@ let g:quickrun_config.markdown   = {
       \   'exec'      : '%c %s',
       \ }
 
-" No.21 Programming perl
+" Programming perl
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
 NeoBundle "vim-perl/vim-perl"
@@ -193,11 +196,8 @@ nnoremap ,pt <Esc>:%! perltidy -se<CR>
 vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 
 " cpanfile用
-NeoBundle 'moznion/vim-cpanfile'
-NeoBundle 'moznion/syntastic-cpanfile'
-
-" 全般的に文法チェック
-" NeoBundle 'scrooloose/syntastic.git'
+" NeoBundle 'moznion/vim-cpanfile'
+" NeoBundle 'moznion/syntastic-cpanfile'
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -210,14 +210,14 @@ NeoBundle "tpope/vim-surround"
 " %の拡張
 NeoBundle "tmhedberg/matchit.git"
 
-" No.22 APIのドキュメントを参照する
+" APIのドキュメントを参照する
 " Shift+K
 NeoBundle 'thinca/vim-ref'
 let g:ref_open = 'vsplit'
 let g:ref_refe_cmd = "rurema"
 let g:ref_refe_version = 2
 
-" No.23 Rubyでのコーディングを楽にする
+" Rubyでのコーディングを楽にする
 " endを自動挿入
 NeoBundleLazy 'alpaca-tc/vim-endwise.git', {
       \ 'autoload' : {
@@ -229,15 +229,15 @@ NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
       \ 'filetypes': ['ruby', 'html'],
       \ }}
 
-" No.24 括弧入力するのだるい時
+" 括弧入力するのだるい時
 NeoBundle "kana/vim-smartinput"
 
-" No.25 vimでzencodingする
+" vimでzencodingする
 " Ctrl+y,で展開
 NeoBundle "mattn/zencoding-vim.git"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
-" No.26 ついに闇の力に手を染めるとき
+" ついに闇の力に手を染めるとき
 NeoBundle 'Shougo/vimproc', {
       \ 'build' : {
       \     'mac' : 'make -f make_mac.mak',
@@ -263,47 +263,46 @@ NeoBundleLazy 'Shougo/neosnippet', {
       \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
       \ }}
 
-" No.27 すべてを破壊したいあなたに
+" すべてを破壊したいあなたに
 NeoBundle 'Shougo/unite.vim',  '',  'default'
 
-" No.28 まーくだうん
+" まーくだうん
 NeoBundle "tpope/vim-markdown"
 
-" No.29 整列を割と自動でやってくれる
+" 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
 NeoBundle 'h1mesuke/vim-alignta.git'
 xnoremap <silent> a: :Alignta  01 :<CR>
 xnoremap al :Alignta<Space>
 
-" No.30 シンタックスチェックを非同期で
+" シンタックスチェックを非同期で
 " 他vim-quickrunとvimprocに依存
-NeoBundle "scrooloose/syntastic"
-" NeoBundle "osyo-manga/vim-watchdogs"
-" NeoBundle "osyo-manga/shabadou.vim"
-" NeoBundle "cohama/vim-hier"
-" let g:watchdogs_check_BufWritePost_enable = 1
-" " let g:quickrun_config = {
-" "       \   'watchdogs_checker/_' : {
-" "       \       'outputter/quickfix/open_cmd' : '',
-" "       \   }
-" "       \ }
-" call watchdogs#setup(g:quickrun_config)
+NeoBundle "osyo-manga/vim-watchdogs"
+NeoBundle "osyo-manga/shabadou.vim"
+NeoBundle "cohama/vim-hier"
+let g:watchdogs_check_BufWritePost_enable = 1
+let g:quickrun_config = {
+      \   'watchdogs_checker/_' : {
+      \       'outputter/quickfix/open_cmd' : '',
+      \   }
+      \ }
+call watchdogs#setup(g:quickrun_config)
 
-" No.31 ゲーム。結構難しい
+" ゲーム。結構難しい
 NeoBundle 'deris/vim-duzzle'
 
-" No.32 CSSのデザインをライブで行う
+" CSSのデザインをライブで行う
 NeoBundle 'mattn/livestyle-vim'
 
-" No.33 Tag使いになりたい
+" Tag使いになりたい
 NeoBundle "majutsushi/tagbar"
 nnoremap <C-t> :TagbarToggle<CR>
 nnoremap <C-]> g<C-]>
 
-" No.34 選択部分のキーワードを*を押して検索
+" 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
-" No.35 カーソルのある場所でfiletypeを適宜変更する
+" カーソルのある場所でfiletypeを適宜変更する
 NeoBundle 'osyo-manga/vim-precious'
 NeoBundle 'Shougo/context_filetype.vim'
 NeoBundle 'kana/vim-textobj-user'
@@ -311,14 +310,14 @@ nmap <Space><Space>q <Plug>(precious-quickrun-op)
 omap ic <Plug>(textobj-precious-i)
 vmap ic <Plug>(textobj-precious-i)
 
-" No.36 日本語固定モード
+" 日本語固定モード
 NeoBundle 'fuenor/im_control.vim'
 "<C-^>でIM制御が行える場合の設定
 let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>"
 
-" No.37 Vimのキーバインドでfiling
+" Vimのキーバインドでfiling
 NeoBundleLazy 'Shougo/vimfiler', {
 \   'autoload' : { 'commands' : [ 'VimFiler' ] },
 \   'depends': [ 'Shougo/unite.vim' ],
@@ -348,7 +347,11 @@ NeoBundle 'thinca/vim-showtime.git'
 
 " Vimshellしたい
 NeoBundle 'Shougo/vimshell.vim.git'
+
+" MATRIX的な
 NeoBundle 'matrix.vim--Yang'
+
+" 走り幅跳びする
 NeoBundle 'mattn/habatobi-vim'
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
@@ -518,7 +521,7 @@ let g:neocomplcache_ctags_arguments_list = {
   \ }
 
 "--------------------------------------------------------------------------
-" No.0 BasicSetting
+" BasicSetting
 "--------------------------------------------------------------------------
 " ヘルプを3倍の速度で引く
 nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
