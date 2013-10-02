@@ -531,6 +531,7 @@ au BufNewFile,BufRead *.ep         set filetype=html
 au BufNewFile,BufRead *.pde        set filetype=processing
 au BufNewFile,BufRead *.erb        set filetype=html
 au BufNewFile,BufRead *.tt         set filetype=html
+au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=scss
 au BufNewFile,BufRead Guardfile    set filetype=ruby
