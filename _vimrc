@@ -178,13 +178,13 @@ nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
 nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
 " \rで開いているコードを実行
-NeoBundle "thinca/vim-quickrun.git"
-let g:quickrun_config            = {}
-let g:quickrun_config.markdown   = {
-      \   'outputter' : 'null',
-      \   'command'   : 'open',
-      \   'exec'      : '%c %s',
-      \ }
+" NeoBundle "thinca/vim-quickrun.git"
+" let g:quickrun_config            = {}
+" let g:quickrun_config.markdown   = {
+"       \   'outputter' : 'null',
+"       \   'command'   : 'open',
+"       \   'exec'      : '%c %s',
+"       \ }
 
 " Programming perl
 NeoBundle "c9s/perlomni.vim"
@@ -262,6 +262,7 @@ NeoBundleLazy 'Shougo/neosnippet', {
       \   'insert' : 1,
       \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
       \ }}
+NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
 NeoBundle 'Shougo/unite.vim',  '',  'default'
@@ -277,16 +278,16 @@ xnoremap al :Alignta<Space>
 
 " シンタックスチェックを非同期で
 " 他vim-quickrunとvimprocに依存
-NeoBundle "osyo-manga/vim-watchdogs"
-NeoBundle "osyo-manga/shabadou.vim"
-NeoBundle "cohama/vim-hier"
-let g:watchdogs_check_BufWritePost_enable = 1
-let g:quickrun_config = {
-      \   'watchdogs_checker/_' : {
-      \       'outputter/quickfix/open_cmd' : '',
-      \   }
-      \ }
-call watchdogs#setup(g:quickrun_config)
+" NeoBundle "osyo-manga/vim-watchdogs"
+" NeoBundle "osyo-manga/shabadou.vim"
+" NeoBundle "cohama/vim-hier"
+" let g:watchdogs_check_BufWritePost_enable = 1
+" let g:quickrun_config = {
+"       \   'watchdogs_checker/_' : {
+"       \       'outputter/quickfix/open_cmd' : '',
+"       \   }
+"       \ }
+" call watchdogs#setup(g:quickrun_config)
 
 " ゲーム。結構難しい
 NeoBundle 'deris/vim-duzzle'

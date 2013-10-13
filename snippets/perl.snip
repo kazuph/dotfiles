@@ -2,17 +2,18 @@ snippet u
     #!/usr/bin/env perl
     use strict;
     use warnings;
-    use 5.010000;
     use autodie;
     use feature 'say';
 
 snippet ut
+    #!/usr/bin/env perl
     use strict;
     use warnings;
     use utf8;
     use Test::More;
 
-    ${1}
+    subtest => sub {
+    };
 
     done_testing;
 
@@ -60,15 +61,10 @@ snippet l
 snippet ll
     Clas::Accessor::Lite->mk_accessors(${1:accessors});
 
-snippet t
-    #!/usr/bin/env perl -w
-    use strict;
-    use Test::More;
-
-    subtest => sub {
+snippet subtest
+    subtest "${1}" => sub {
+        ${2}
     };
-
-    done_testing;
 
 snippet s
     my ($self) = @_;
@@ -176,3 +172,21 @@ snippet hires
     my $time_start = Time::HiRes::time;
     my $time_end   = Time::HiRes::time;
     printf("%5.3f(sec)\n", $time_end - $time_start);
+
+snippet ok
+    ok ${1:bool}, ${2:explain};
+
+snippet is
+    is ${1:got},  ${2:expected}, ${3:explain};
+
+snippet isnt
+    isnt ${1:got},  ${2:expected}, ${3:explain};
+
+snippet like
+    like ${1:got},  qr/${2:expected}/, ${3:explain};
+
+snippet unlike
+    unlike ${1:got},  qr/${2:expected}/, ${3:explain};
+
+snippet is_deeply
+    is_deeply ${1:got}, ${2:expected}, ${3:explain};
