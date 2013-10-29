@@ -110,7 +110,7 @@ map b ,b
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
 autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop('.',  '->')
-autocmd FileType perl inoremap <buffer> <expr> = smartchr#loop('=',  '=>')
+autocmd FileType perl inoremap <buffer> <expr> = smartchr#loop('=',  '=>', '==')
 
 " カーソルジェットコースター
 NeoBundle 'rhysd/accelerated-jk.git'

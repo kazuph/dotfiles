@@ -122,4 +122,4 @@
   smupdate = submodule foreach "git checkout master; git pull origin master"
 
   hist = log --pretty=format:\\\"%h %ad | %s%d [%an]\\\" --graph --date=short
-  rmm = !git branch --merged | grep -v \\* | xargs -I % git branch -d %
+  rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
