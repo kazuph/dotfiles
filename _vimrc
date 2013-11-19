@@ -178,13 +178,13 @@ nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
 nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
 " \rで開いているコードを実行
-" NeoBundle "thinca/vim-quickrun.git"
-" let g:quickrun_config            = {}
-" let g:quickrun_config.markdown   = {
-"       \   'outputter' : 'null',
-"       \   'command'   : 'open',
-"       \   'exec'      : '%c %s',
-"       \ }
+NeoBundle "thinca/vim-quickrun.git"
+let g:quickrun_config            = {}
+let g:quickrun_config.markdown   = {
+      \   'outputter' : 'null',
+      \   'command'   : 'open',
+      \   'exec'      : '%c %s',
+      \ }
 
 " Programming perl
 NeoBundle "c9s/perlomni.vim"

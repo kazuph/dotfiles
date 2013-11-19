@@ -1,6 +1,6 @@
 ZSH=$HOME/.oh-my-zsh
 export LANG=ja_JP.UTF-8
-ZSH_THEME="skaro"
+ZSH_THEME="wedisagree"
 plugins=(svn git perl ruby linux osx)
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
@@ -41,17 +41,6 @@ precmd() {
     _z --add "$(pwd -P)"
 }
 
-# auto-fu.zh
-# 魅力がわからなくなった
-# if [ -f ~/dotfiles/auto-fu.zsh/auto-fu.zsh ]; then
-#     source ~/dotfiles/auto-fu.zsh/auto-fu.zsh
-#     zle-line-init () {auto-fu-init;}; zle -N zle-line-init
-#     zstyle ':completion:*' completer _oldlist _complete
-# fi
-
-# rsense
-export RSENSE_HOME=$HOME/.vim/rsense/rsense-0.3
-
 # auto rehash
 function gem(){
 $HOME/.rbenv/shims/gem $*
@@ -71,7 +60,7 @@ ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
-PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then which growlnotify > /dev/null 2>&1 && growlnotify -t error! -m "see result" ;fi;`🍺  %{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
+# PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then which growlnotify > /dev/null 2>&1 && growlnotify -t error! -m "see result" ;fi;`🍺  %{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
 
 function extract() {
 case $1 in
