@@ -78,6 +78,15 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn)$',
   \ }
 
+" 依存が少ないyankringらしい
+NeoBundle 'LeafCage/yankround.vim'
+nmap p <Plug>(yankround-p)
+nmap P <Plug>(yankround-P)
+nmap <C-p> <Plug>(yankround-prev)
+nmap <C-n> <Plug>(yankround-next)
+let g:yankround_max_history = 50
+nnoremap ,yp :<C-u>CtrlPYankRound<CR>
+
 " ()や''でくくったりするための補助
 " text-objectの支援
 " di' で'の中身を削除
@@ -105,7 +114,6 @@ map w ,w
 map e ,e
 map b ,b
 
-
 "  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
@@ -120,18 +128,11 @@ nmap k <Plug>(accelerated_jk_gk)
 
 " ST2のようにテキスト操作
 " ctrl+nで選択
-NeoBundle 'terryma/vim-multiple-cursors.git'
-
-" yankを異なるWindow間でも共有したい(screenやtmuxを使う場合に便利)
-" MacVimを使ってるならあまり意味ないかも
-NeoBundle 'yanktmp.vim'
-nnoremap <silent>sy :call YanktmpYank()<CR>
-nnoremap <silent>sp :call YanktmpPaste_p()<CR>
-nnoremap <silent>sP :call YanktmpPaste_P()<CR>
+" NeoBundle 'terryma/vim-multiple-cursors.git'
 
 " ヤンクの履歴を参照したい
 NeoBundle 'kana/vim-fakeclip.git'
-NeoBundle 'YankRing.vim'
+NeoBundle 'LeafCage/yankround.vim'
 nnoremap <space><space>y :YRShow<CR>
 
 " 正規表現をPerl風に
@@ -354,6 +355,10 @@ NeoBundle 'matrix.vim--Yang'
 
 " 走り幅跳びする
 NeoBundle 'mattn/habatobi-vim'
+
+" 置換をかっこ良くする
+NeoBundle 'osyo-manga/vim-over'
+nnoremap <silent> ,vo :OverCommandLine<CR>%s/
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
