@@ -129,8 +129,14 @@ _vagrant() {
 compdef _vagrant vagrant
 
 # for go
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/.go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+if \which go >/dev/null 2>&1; then
+    export GOPATH=$HOME/local/go:$HOME/hack/go
+    path=($HOME/local/go/bin $path)
+fi
+# export GOROOT=/usr/local/Cellar/go/1.1.2/libexec
+# export GOPATH=$HOME/.go
+# export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 alias i='iqube'

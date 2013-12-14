@@ -544,6 +544,7 @@ au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=scss
 au BufNewFile,BufRead Guardfile    set filetype=ruby
+au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead cpanfile     set filetype=perl
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 
@@ -657,9 +658,9 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-autocmd BufWritePre * :%s/\s\+$//ge
+" autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-autocmd BufWritePre * :%s/\t/    /ge
+" autocmd BufWritePre * :%s/\t/    /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
