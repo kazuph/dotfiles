@@ -123,3 +123,5 @@
 
   hist = log --pretty=format:\\\"%h %ad | %s%d [%an]\\\" --graph --date=short
   rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
+[push]
+	default = matching
