@@ -237,7 +237,7 @@ NeoBundle "kana/vim-smartinput"
 
 " vimでzencodingする
 " Ctrl+y,で展開
-NeoBundle "mattn/zencoding-vim.git"
+NeoBundle "mattn/emmet-vim"
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " ついに闇の力に手を染めるとき
