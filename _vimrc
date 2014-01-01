@@ -187,6 +187,8 @@ let g:quickrun_config.markdown   = {
       \   'exec'      : '%c %s',
       \ }
 
+let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
+
 " Programming perl
 NeoBundle "c9s/perlomni.vim"
 NeoBundle "mattn/perlvalidate-vim.git"
@@ -357,8 +359,22 @@ NeoBundle 'matrix.vim--Yang'
 NeoBundle 'mattn/habatobi-vim'
 
 " 置換をかっこ良くする
-NeoBundle 'osyo-manga/vim-over'
-nnoremap <silent> ,vo :OverCommandLine<CR>%s/
+" NeoBundle 'osyo-manga/vim-over'
+" nnoremap <silent> ,vo :OverCommandLine<CR>%s/
+
+" テンプレート集
+NeoBundle 'mattn/sonictemplate-vim'
+
+" coffee break!
+NeoBundle 'kchmck/vim-coffee-script.git'
+au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
+let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
+
+
+" for go
+exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
+NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
+auto BufWritePre *.go Fmt
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
@@ -722,6 +738,9 @@ nnoremap <Space><Space>pd :e $HOME/dotfiles/dict/perl.dict<CR>
 " snippets/ruby.snipを瞬時に開く
 nnoremap <Space><Space>rs :e $HOME/dotfiles/snippets/ruby.snip<CR>
 nnoremap <Space><Space>rd :e $HOME/dotfiles/dict/ruby.dict<CR>
+
+" snippets/go.snipを瞬時に開く
+nnoremap <Space><Space>gs :e $HOME/dotfiles/snippets/go.snip<CR>
 
 " vimrcの設定を反映
 nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>

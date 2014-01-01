@@ -10,7 +10,9 @@ alias tmux="TERM=xterm-256color tmux -u"
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
 alias zshrc='source $HOME/.zshrc'
+alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
+alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
 # nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
 # 設定を有効にする
 if [[ -f ~/.nvm/nvm.sh ]]; then
@@ -18,7 +20,7 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
     wait
     test nvm >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.10.12"
+        _nodejs_use_version="v0.11.9"
         if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
             nvm use "${_nodejs_use_version}" >/dev/null
             export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
@@ -60,7 +62,6 @@ ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
-# PROMPT='`exitStatus=$?;if [ ! $exitStatus -eq 0 ];then which growlnotify > /dev/null 2>&1 && growlnotify -t error! -m "see result" ;fi;`🍺  %{%(?.$fg_bold[green].$fg_bold[red])%}%h %{$fg[cyan]%}%2~ %{$fg_bold[blue]%}$(git_prompt_info) %{$reset_color%}» '
 
 function extract() {
 case $1 in
@@ -108,9 +109,10 @@ precmd() {
     if [ "$COMMAND_TIME" -ne "0" ] ; then
         local d=`date +%s`
         d=`expr $d - $COMMAND_TIME`
-        if [ "$d" -ge "30" ] ; then
+        if [ "$d" -ge "1" ] ; then
             COMMAND="$COMMAND "
             which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
+            which notify > /dev/null 2>&1 && echo "$COMMAND" | notify;
         fi
     fi
     COMMAND="0"
@@ -129,8 +131,9 @@ _vagrant() {
 compdef _vagrant vagrant
 
 # for go
-if \which go >/dev/null 2>&1; then
-    export GOPATH=$HOME/local/go:$HOME/hack/go
+if which go >/dev/null 2>&1; then
+    # export GOPATH=$HOME/local/go:$HOME/hack/go
+    export GOPATH=$HOME/local/go
     path=($HOME/local/go/bin $path)
 fi
 # export GOROOT=/usr/local/Cellar/go/1.1.2/libexec
