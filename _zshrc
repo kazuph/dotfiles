@@ -109,7 +109,7 @@ precmd() {
     if [ "$COMMAND_TIME" -ne "0" ] ; then
         local d=`date +%s`
         d=`expr $d - $COMMAND_TIME`
-        if [ "$d" -ge "1" ] ; then
+        if [ "$d" -ge "10" ] ; then
             COMMAND="$COMMAND "
             which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
             which notify > /dev/null 2>&1 && echo "$COMMAND" | notify;
