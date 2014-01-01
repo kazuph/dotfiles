@@ -4,64 +4,20 @@ ZSH_THEME="wedisagree"
 plugins=(svn git perl ruby linux osx)
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
+setopt no_share_history
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
+alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
 alias zshrc='source $HOME/.zshrc'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
-alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
-# nvm と指定されたバージョンの Node.js がインストール済みの場合だけ
-# 設定を有効にする
-if [[ -f ~/.nvm/nvm.sh ]]; then
-    source ~/.nvm/nvm.sh
-    wait
-    test nvm >/dev/null 2>&1
-    if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.11.9"
-        if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
-            nvm use "${_nodejs_use_version}" >/dev/null
-            export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
-        fi
-        unset _nodejs_use_version
-    fi
-fi
-
-# for android
-export ANT_OPTS=-Dfile.encoding=UTF8
-export ANDROID_HOME=$HOME/Documents/sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-# :$ANT_HOME/bin:$M2:$JAVA_HOME/bin:$PATH
-
-# z.sh
-# . $HOME/dotfiles/z/z.sh
-_Z_CMD=j
-source ~/dotfiles/z/z.sh
-precmd() {
-    _z --add "$(pwd -P)"
-}
-
-# auto rehash
-function gem(){
-$HOME/.rbenv/shims/gem $*
-if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
-then
-    rbenv rehash
-    rehash
-fi
-}
-
-alias em="TERM=xterm-256color /usr/local/Cellar/emacs/24.2/bin/emacs"
 alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
+alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
 
-# design
-ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
 
 function extract() {
 case $1 in
@@ -88,19 +44,70 @@ show_buffer_stack() {
 zle -N show_buffer_stack
 bindkey "^[q" show_buffer_stack
 
-# for mac
-# which test gdate > /dev/null 2>&1
-# if [ $? -eq 0 ] ; then
-#     alias date="$brew_prefix/bin/gdate"
-# fi
-# alias date="gdate"
+## プログラミング言語の設定
+# for node
+if [[ -f ~/.nvm/nvm.sh ]]; then
+    source ~/.nvm/nvm.sh
+    wait
+    test nvm >/dev/null 2>&1
+    if [ $? -eq 0 ] ; then
+        _nodejs_use_version="v0.11.9"
+        if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
+            nvm use "${_nodejs_use_version}" >/dev/null
+            export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
+        fi
+        unset _nodejs_use_version
+    fi
+fi
 
-setopt no_share_history
+# for go
+if which go >/dev/null 2>&1; then
+    # export GOPATH=$HOME/local/go:$HOME/hack/go
+    export GOPATH=$HOME/local/go
+    path=($HOME/local/go/bin $path)
+fi
+
+# for python
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
+
+# for android
+export ANT_OPTS=-Dfile.encoding=UTF8
+export ANDROID_HOME=$HOME/Documents/sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# z.sh
+_Z_CMD=j
+source ~/dotfiles/z/z.sh
+precmd() {
+    _z --add "$(pwd -P)"
+}
+
+# auto rehash
+function gem(){
+$HOME/.rbenv/shims/gem $*
+if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
+then
+    rbenv rehash
+    rehash
+fi
+}
+
+# design
+ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
+# 補完
 
 _tmux() {
     compadd attach-session bind-key break-pane capture-pane choose-buffer choose-client choose-list choose-session choose-tree choose-window clear-history clock-mode command-prompt confirm-before copy-mode delete-buffer detach-client display-message display-panes find-window has-session if-shell join-pane kill-pane kill-server kill-session kill-window last-pane last-window link-window list-buffers list-clients list-commands list-keys list-panes list-sessions list-windows load-buffer lock-client lock-server lock-session move-pane move-window new-session new-window next-layout next-window paste-buffer pipe-pane previous-layout previous-window refresh-client rename-session rename-window resize-pane respawn-pane respawn-window rotate-window run-shell save-buffer select-layout select-pane select-window send-keys send-prefix server-info set-buffer set-environment set-option set-window-option show-buffer show-environment show-messages show-options show-window-options source-file split-window start-server suspend-client swap-pane swap-window switch-client unbind-key unlink-window
 }
 compdef _tmux tmux
+
+_vagrant() {
+    compadd box destroy gem halt init package provision reload resume sandbox ssh ssh-config status suspend up
+}
+compdef _vagrant vagrant
 
 # 一定時間以上かかる処理の場合は終了時に通知してくれる
 local COMMAND=""
@@ -125,21 +132,3 @@ preexec () {
     fi
 }
 
-_vagrant() {
-    compadd box destroy gem halt init package provision reload resume sandbox ssh ssh-config status suspend up
-}
-compdef _vagrant vagrant
-
-# for go
-if which go >/dev/null 2>&1; then
-    # export GOPATH=$HOME/local/go:$HOME/hack/go
-    export GOPATH=$HOME/local/go
-    path=($HOME/local/go/bin $path)
-fi
-# export GOROOT=/usr/local/Cellar/go/1.1.2/libexec
-# export GOPATH=$HOME/.go
-# export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
-
-alias i='iqube'
