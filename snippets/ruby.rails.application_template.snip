@@ -1,0 +1,103 @@
+include Gemfile.snip
+include ruby.rails.route.snip
+include ruby.thor.snip
+
+# From Document#{{{
+snippet gem_group
+abbr    gem_group(*names, &block)
+options word
+  gem_group :${1:development|test|production} do
+    ${2:gem}
+  end
+
+snippet add_source
+abbr    add_source 'http://...'
+options word
+  add_source '${1:http://...}'
+
+snippet application
+alias   environment
+abbr    application(data=nil, options={}, &block)
+options word
+  application <<-GENERATOR, env: ${1:development|test|production}
+    config.${2:option} = ${3:value} 
+  GENERATOR
+
+snippet initializer
+abbr    initializer(filename, data=nil, &block)
+options word
+  initializer '${1:file_name}.rb', <<-CODE
+    ${2:init_code}
+  CODE
+
+snippet lib
+abbr    lib(filename, data=nil, &block)
+options word
+  lib '${1:file_name}', <<-CODE
+    ${2:init_code}
+  CODE
+
+snippet vendor
+abbr    vendor(filename, data=nil, &block)
+options word
+  vendor '${1:file_name}', <<-CODE
+    ${2:init_code}
+  CODE
+
+snippet file
+abbr    file(file_path, data=nil, &block)
+options word
+  file '${1:#:path/to/file}', <<-CODE
+    ${2:init_code}
+  CODE
+
+snippet rakefile
+abbr    rakefile(rakefile_path, data=nil, &block)
+options word
+  rakefile '${1:file_name}.rake', <<-CODE
+    namespace :${2:namespace} do
+      task :${3:task_name} do
+        ${4:do}
+      end
+    end
+  CODE
+
+snippet generate
+abbr    generate(what, *args)
+options word
+  generate :${1:model|controller|view|scaffold}, '${2:name}'${3:#:*args}
+
+snippet rake
+abbr    rake(command, opts={})
+options word
+  rake '${1:rake_command}'${2:#:opts}
+
+snippet route
+abbr    route(routing_code)
+options word
+  route <<-ROUTE
+    ${1:root to: 'top#index'}
+  ROUTE
+
+snippet ask
+abbr    ask(question)
+options word
+  ask('${1:Question}?')
+
+snippet yes?
+abbr    yes?(question)
+options word
+  yes?('${1:Question}')
+
+snippet no?
+abbr    no?(question)
+options word
+  no?('${1:Question}')
+
+snippet git
+abbr    git(command)
+options word
+  git %Q!${1:#:git_command}!
+
+#}}}
+

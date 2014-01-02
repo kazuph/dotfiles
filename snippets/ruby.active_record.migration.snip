@@ -1,0 +1,174 @@
+# ActiveRecord::ConnectionAdapters::SchemaStatements #{{{
+snippet     create_table
+abbr        create_table(table_name, opts={})
+options     word
+  create_table :${1:table_name}${2:, opts} do |t
+    ${2}
+  end
+
+snippet     change_table
+abbr        change_table(table_name, opts={})
+options     word
+  change_table :${1:table_name}${2:, opts} do |t|
+    ${3}
+  end
+
+snippet     drop_table
+abbr        drop_table(table_name)
+options     word
+  drop_table :${1:table_name}
+
+snippet     add_column
+abbr        add_column(table_name, column_name, type, opts={})
+options     word
+  add_column :${1:table_name}, ${2:column_name}, ${3:type}${4:, limit: 10, precision}
+
+snippet     table_alias_for
+abbr        table_alias_for(table_name)
+options     word
+  table_alias_for(:${1:name})
+
+snippet     table_exists?
+abbr        table_exists?(table_name)
+options     word
+  table_exists?(:${1:table_name})
+
+snippet     index_exists?
+abbr        index_exists?(table_name, column_name, opts={})
+options     word
+  index_exists?(:${1:table_name}, ${2:column_name}${3:, ${4:opts\}})
+
+snippet     column_exists?
+abbr        column_exists?(table_name, column_name, type=nil, opts={})
+options     word
+  column_exists?(:${1:table_name}, ${2:column_name}${3:, type${4:, opts\}})
+
+snippet     create_opts
+abbr        id: 1, primary_key: 2, options: 3, temporary: 4, force: 5
+options     word
+  ${1:id: ${2:false\}}${2:, primary_key: ${3:column_name\}}${4:, opts}${5:temporary: ${6:bool\}}${7:, force: true}
+
+snippet     remove_column
+abbr        remove_column(table_name, *column_names)
+alias       remove_columns
+options     word
+  remove_column :${1:table_name}, ${2:*column_names}
+
+snippet     change_column
+abbr        change_column(table_name, column_name, type, opts={})
+options     word
+  change_column :${1:table_name}, :${2:column_name}, :${3:type}${4:, ${5:opts}}
+
+snippet     change_column_default
+abbr        change_column_default(table_name, column_name, default)
+options     word
+  change_column_default(:${1:table_name}, :${2:column_name}, ${3:default})
+
+snippet     columns
+abbr        columns(table_name, name=nil)
+options     word
+  columns(:${1:table_name}${2:, ${3:name=nil\}})
+
+snippet     distinct
+abbr        distinct(columns, order_by)
+options     word
+  distinct(${1:"table.name"}, ${2:"table.created_at desc"})
+
+snippet     add_index
+abbr        add_index(table_name, column_name, opts={})
+options     word
+  add_index :${1:table_name}, :${2:column_name}${3:, ${4:opts\}}
+
+snippet     add_index_options
+abbr        add_index_options(table_name, column_name, opts={})
+options     word
+  add_index_options(:${1:table_name}, :${2:column_name}${3:, ${4:opts\}})
+
+snippet     add_timestamps
+abbr        add_timestamps(table_name)
+options     word
+  add_timestamps(:${1:table_name})
+
+
+snippet     remove_index
+abbr        remove_index(table_name, opts={})
+options     word
+  remove_index(:${1:table_name}${2:, ${3:opts\}})
+
+snippet     remove_index!
+abbr        remove_index!(table_name, index_name)
+options     word
+  remove_index!(:${1:table_name}, :${2:index_name})
+
+snippet     rename_index
+abbr        rename_index(table_name, old_name, new_name)
+options     word
+  rename_index(:${1:table_name}, ${2:old_name}, ${3:new_name})
+
+snippet     remove_timestamps
+abbr        remove_timestamps(table_name)
+options     word
+  remove_timestamps(:${1:table_name})
+
+snippet     rename_column
+abbr        rename_column(table_name, old_name, new_name)
+options     word
+  rename_column(:${1:table_name}, :${2:old_name}, :${3:new_name})
+
+snippet     rename_table
+abbr        rename_table(table_name, new_name)
+options     word
+  rename_table(${1:table_name}, ${2:new_name})
+
+snippet     structure_dump
+abbr        structure_dump
+options     word
+  structure_dump
+
+
+
+snippet     index_name
+abbr        index_name(table_name, opts)
+options     word
+  index_name(${1:table_name}, ${2:opts})
+
+snippet     index_name_exists?
+abbr        index_name_exists?(table_name, index_name, default)
+options     word
+  index_name_exists?(${1:table_name}, ${2:index_name}, ${3:default})
+
+snippet     drop_schema_informantion
+abbr        drop_schema_informantion
+options     word
+  drop_schema_informantion
+
+snippet     initialize_schema_migrations_table
+abbr        initialize_schema_migrations_table
+options     word
+  initialize_schema_migrations_table
+
+snippet     assume_migrated_upto_version
+abbr        assume_migrated_upto_version(version, migrations_paths = ActiveRecord::Migrator.migrations_paths)
+options     word
+  assume_migrated_upto_version(${1:version}${2:, ${3:migrations_path\}})
+
+#snippet     type_to_sql
+#abbr        type_to_sql(type, limit=nil, precision=nil, scale)
+#options     word
+#  type_to_sql(${1:type})
+
+snippet     native_database_types
+abbr        native_database_types
+options     word
+  native_database_types
+#}}}
+
+
+# snip#{{{
+snippet     class_migrate
+abbr        class_migrate
+options     word
+  class ${1:AddColumnToTable} < ActiveRecord::Migration
+    ${2}
+  end
+#}}}

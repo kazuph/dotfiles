@@ -1,0 +1,205 @@
+#ClassMethods#{{{
+#AbstractController::Base #{{{
+snippet     internal_methods
+abbr        internal_methods
+options     word
+  internal_methods
+
+snippet     action_methods
+abbr        action_methods
+options     word
+  action_methods
+
+snippet     clear_action_methods!
+abbr        clear_action_methods!
+options     word
+  clear_action_methods!
+
+snippet     controller_path
+abbr        controller_path
+options     word
+  controller_path
+#}}}
+
+#AbstractController::Callbacks::ClassMethods#{{{
+snippet     skip_filter
+abbr        skip_filter(*names, &block)
+options     word
+  skip_filter ${1:*names} ${2:&block}
+
+snippet     before_filter
+abbr        before_filter *names, &block
+options     word
+  before_filter ${1:*names} ${2:&block}
+
+snippet     after_filter
+abbr        after_filter *names, &block
+options     word
+  after_filter ${1:*names} ${2:&block}
+
+snippet     around_filter
+abbr        around_filter *names, &block
+options     word
+  around_filter ${1:*names} ${2:&block}
+#}}}
+
+#AbstractController::Helpers::ClassMethods#{{{
+snippet     inherited
+abbr        inherited(klass)
+options     word
+  inherited ${1:klass}
+
+snippet     helper_method
+abbr        helper_method *meths
+options     word
+  helper_method ${1:*meths}
+
+snippet     helper
+abbr        helper(*args, &block)
+options     word
+  helper ${1:*args} ${2:block}
+
+snippet     helepr_do
+abbr        helepr(*args) do ... end
+options     word
+  helepr ${1:*args} do
+    ${2:def bar(); end}
+  end
+
+snippet     clear_helpers
+abbr        clear_helpers
+options     word
+  clear_helpers
+
+snippet     modules_for_helpers
+abbr        modules_for_helpers(args)
+options     word
+  modules_for_helpers ${1:args}
+
+snippet     add_template_helper
+abbr        add_template_helper(mod)
+options     word
+  add_template_helper(${1:mod})
+
+snippet     default_helper_module!
+abbr        default_helper_module!
+options     word
+  default_helper_module!
+#}}}
+
+#AbstractController::Layouts::ClassMethods::LayoutConditions#{{{
+snippet     conditional_layout?
+abbr        conditional_layout?
+options     word
+  conditional_layout?
+#}}}
+
+#AbstractController::Layouts::ClassMethods#{{{
+snippet     layout
+abbr        layout(layout, conditions={})
+options     word
+  layout ${1:layout}${2:, conditions={\}}
+
+snippet     action_has_layout?
+abbr        action_has_layout?
+options     word
+  action_has_layout?
+#}}}
+
+#AbstractController::Rendering::ClassMethods#{{{
+snippet     view_context_class
+abbr        view_context_class
+options     word
+  view_context_class
+#}}}
+
+#AbstractController::ViewPaths::ClassMethods#{{{
+snippet     parent_prefixes
+abbr        parent_prefixes
+options     word
+  parent_prefixes
+
+snippet     append_view_path
+abbr        append_view_path path
+options     word
+  append_view_path ${1:path}
+
+snippet     prepend_view_path
+abbr        prepend_view_path path
+options     word
+  prepend_view_path ${1:path}
+
+snippet     view_paths
+abbr        view_paths
+options     word
+  view_paths
+
+snippet     view_paths=
+abbr        view_paths = ...
+options     word
+  view_paths = ${1}
+#}}}
+#}}}
+
+#InstanceMethod#{{{
+#AbstractController::Base #{{{
+snippet     process
+abbr        process(action, *args)
+options     word
+  process(${1:action}${2:, *args})
+
+snippet     available_action?
+abbr        available_action?(action_name)
+options     word
+  available_action?(${1:action_name})
+
+snippet     action_method?
+abbr        action_method?(name)
+options     word
+  action_method?(${1:name})
+
+snippet     process_action
+abbr        process_action(method_name, *args)
+options     word
+  process_action(${1:method_name}${2:, *args})
+
+snippet     method_for_action
+abbr        method_for_action(action_name)
+options     word
+  method_for_action(${1:method_name})
+#}}}
+
+#AbstractController::Rendering#{{{
+#snippet     view_context
+#abbr        view_context
+#options     word
+#  view_context
+
+snippet     view_renderer
+abbr        view_renderer
+options     word
+  view_renderer
+
+snippet     render_to_string
+abbr        render_to_string(*args, &block)
+options     word
+  render_to_string ${1:*args} ${2:&block}
+
+snippet     render_to_body
+abbr        render_to_body
+options     word
+  render_to_body ${1:opts={\}}
+
+snippet     view_assigns
+abbr        view_assigns
+options     word
+  view_assigns
+#}}}
+
+#AbstractController::ViewPaths
+snippet     lookup_context
+abbr        lookup_context
+options     word
+  lookup_context
+#}}}
+

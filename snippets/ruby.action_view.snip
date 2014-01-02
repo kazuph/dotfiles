@@ -1,0 +1,1041 @@
+# ----------------------------------------
+# rails3.2 {{{
+# ActionView::Helpers options#{{{
+snippet     disable_with
+abbr        disable_with: 'loading...'
+options     word
+  disable_with: "${1:message}"
+
+snippet     confirm
+abbr        confirm: "Are you sure?"
+options     word
+  confirm: "${1:message}"
+
+snippet     method
+abbr        method: (:delete|:post|:get|:put)
+options     word
+  method: :${1}
+
+snippet     remote
+abbr        remote: true
+options     word
+  remote: true
+#}}}
+
+# ActionView::Helpers::UrlHelper#{{{
+snippet     url_for
+abbr        url_for((:back|http://...|action: :index)) URL生成
+options     word
+  url_for ${1:options}
+
+snippet     link_to
+abbr        link_to(*args, &block) リンク生成
+options     word
+  link_to ${1:*args}
+
+snippet     link_to_do
+abbr        link_to do ... end リンク生成
+options     word
+  link_to ${1:*args} do
+    ${2}
+
+snippet     button_to
+abbr        button_to(name, options={}, html_prop={}) ボタン作成
+options     word
+  button_to ${1:name}${2:, ${3:options\}}${4:, ${5:html_prop\}}
+
+snippet     button_to_destroy
+abbr        button_to("text", { action: :delete ...} ) 削除ボタン作成
+options     word
+  button_to ${1:text}, ${2:{ confirm: "削除してもよろしいですか？", method: :delete, remote: true, disable_with: 'loading...' }}
+
+snippet     link_to_unless_current
+abbr        link_to_unless_current(name, options={}, html_prop={}, &block)
+options     word
+  link_to_unless_current ${1:name}${2:, { ${3:prop\} \}}${4:, { ${5:html_prop\} \}}
+
+snippet     link_to_unless_current_do
+abbr        link_to_unless_current "name" {} do ... end
+options     word
+  link_to_unless_current ${1:name}${2:, { ${3:prop\} \}}${4:, { ${5:html_prop\} \}} do
+    ${6}
+
+snippet     link_to_unless
+abbr        link_to_unless(condition, name, ops={}, html_prop={}, &block)
+options     word
+  link_to_unless ${1:true|false}, ${2:name}${3:, { ${4:prop\} \}}${5:, { ${6:html_prop\} \}}
+
+snippet     link_to_unless_do
+abbr        link_to_unless
+options     word
+  link_to_unless ${1:true|false}, ${2:name}${3:, { ${4:prop\} \}}${5:, { ${6:html_prop\} \}} do
+    ${7}
+
+snippet     link_to_if
+abbr        link_to_if(condition, name, prop={}, html_prop={}, &block)
+options     word
+  link_to_if ${1:true|false}, ${2:name}${3:, { ${4:prop\} \}}${5:, { ${6:html_prop\} \}}
+
+snippet     link_to_if_do
+abbr        link_to_if
+options     word
+  link_to_if ${1:true|false}, ${2:name}${3:, { ${4:prop\} \}}${5:, { ${6:html_prop\} \}} do
+    ${7}
+
+snippet     mail_to
+abbr        mail_to(email_address, name=nil, html_prop={})
+options     word
+  mail_to ${1:admin@example.com}${2:, ${3:text\}}${4:, { ${5:html_prop\} \}}
+
+snippet     mail_to_prop
+abbr        mail_to_prop mail_toのオプション
+options     word
+  cc: "", replace_at: "_at_", replace_dot: "_dot_", encode: "javascript|hex", subject: ""
+
+snippet     current_page?
+abbr        current_page?(prop)
+options     word
+  current_page? ${1:action: :index}
+#}}}
+
+#ActionView::Helpers::TranslationHelper#{{{
+snippet     translate
+abbr        translate(key, prop={}) 翻訳
+alias       t
+options     word
+  t(${1})
+
+snippet     localize
+abbr        localize(*args) 時間等
+alias       l
+options     word
+  l(${1:*args})
+#}}}
+
+#ActionView::Helpers::TextHelper#{{{
+snippet     concat
+abbr        concat(string) printの代わり
+options     word
+  concat ${1:string}
+
+snippet     safe_concat
+abbr        safe_concat(string) printの代わり(安全)
+options     word
+  safe_concat ${1:string}
+
+snippet     truncate
+abbr        truncate(text, opt={}) 切り捨て
+options     word
+  truncate ${1:text}, length: ${2:n}${3:, omission: "${4\}"}${5:, separator: "${6:...\}"}
+
+snippet     highlight
+abbr        highlight(text, phrases, *args) キーワードにタグ追加
+options     word
+  highlight ${1:text}, ${2:phrases}${3:, highlighter: "${4:<span class="highlight">\1</span>\}"}
+
+snippet     excerpt
+abbr        excerpt(text, phrase, *args) キーワードを抜粋
+options     word
+  excerpt ${1:text}, ${2:phrase}${3:, radius: ${4:n\}\}}${5:, omission: "${6:...\}"}
+
+snippet     pluralize
+abbr        pluralize(n, text) nを判定してtextの単数/複数へ
+options     word
+  pluralize ${1:n}, ${2:singular}${3:, ${4:plural\}}
+
+snippet     word_wrap
+abbr        word_wrap(text, n=80)
+options     word
+  word_wrap ${1:text}, ${2:80}
+
+snippet     simple_format
+abbr        simple_format(text, html_prop={}, prop={}) 改行をpタグに
+options     word
+  simple_format ${1:text}${2:, { ${3:html_prop\} \}}${4:, { ${5:prop\} \}}
+
+snippet     cycle
+abbr        cycle(first_value, *values) 一定周期で変数を返す
+options     word
+  cycle ${1:values}${2:, name: "${3\}"}
+
+snippet     current_cycle
+abbr        current_cycle(name="default") 今のcycleの変数
+options     word
+  current_cycle ${1:name}
+
+snippet     reset_cycle
+abbr        reset_cycle(name="default")
+options     word
+  reset_cycle ${1:name}
+#}}}
+
+#ActionView::Helpers::TagHelper#{{{
+snippet     tag
+abbr        tag(name, prop={}, open=false, escape=true)
+options     word
+  tag "${1:name}"${2:, prop={\}}${3:, false}${4:, true}
+
+snippet     content_tag
+abbr        content_tag(name, content_or_options_with_block=nil, prop=nil, escape=false, &block)
+options     word
+  content_tag :${1:tag}${2:prop}
+
+snippet     cdata_section
+abbr        cdata_section(content) <![CDATA
+options     word
+  cdata_section ${1:content}
+
+snippet     escape_once
+abbr        escape_once(html) 文字をhtml文字に
+options     word
+  escape_once ${1:html}
+#}}}
+
+#ActionView::Helpers::SanitizeHelper#{{{
+snippet     sanitize
+abbr        sanitize(html, prop={})
+options     word
+  sanitize ${1:html}${2:, { ${3:tags: %w!a tr!, attributes: %w!id class!\} \}}
+
+snippet     sanitize_css
+abbr        sanitize_css(style)
+options     word
+  sanitize_css ${1:style}
+
+snippet     strip_tags
+abbr        strip_tags(html) htmlコードを削除
+options     word
+  strip_tags ${1:html}
+#}}}
+
+#ActionView::Helpers::RenderingHelper#{{{
+snippet     render
+abbr        render(prop={}, locals={}, &block)
+options     word
+  render ${1}
+#}}}
+
+#ActionView::Helpers::RecordTagHelper#{{{
+snippet     div_for
+abbr        div_for(record, *args, &block)
+options     word
+  div_for ${1:@record}${2:, { ${3:prop\} \}}
+
+snippet     current_tag_for
+abbr        current_tag_for(:tag, @record, prefix=nil, prop=nil, &block)
+options     word
+  current_tag_for :${1:tag}, ${2:@record}${3:, { ${4:prop\} \}}
+#}}}
+
+#ActionView::Helpers::OutputSafetyHelper#{{{
+snippet     raw
+abbr        raw(stringish)
+options     word
+  raw ${1:stringish}
+
+snippet     safe_join
+abbr        safe_join(array, sep=$,)
+options     word
+  safe_join(${1:array})
+#}}}
+
+#ActionView::Helpers::NumberHelper#{{{
+snippet     number_to_phone
+abbr        number_to_phone(number, prop={})
+options     word
+  number_to_phone ${1:number}${2:, area_code: true, delimiter: " ", extension: 555, country_code: 1, raise: true }
+
+snippet     number_to_currency
+abbr        number_to_currency(number, prop={})
+options     word
+  number_to_currency ${1:number}${2:, separator: "${3\}"}${4:format: "%n %u"}
+
+snippet     number_to_currency_prop
+abbr        number_to_currency_prop
+options     word
+  precision: 3, locale: :jp, raise: true, negative_format: "(%u%n)", separator: ",", delimiter: "", unit: "&pound;"
+
+snippet     number_to_percentage
+abbr        number_to_percentage(number, prop={})
+options     word
+  number_to_percentage ${1:n}${2:, precision: 0}${3:, separator: ','}
+
+snippet     number_with_delimiter
+abbr        number_with_delimiter(number, prop={})
+options     word
+  number_with_delimiter ${1:n}${2:, delimiter: ','}${3:, separator: " "}
+
+snippet     number_to_human_size
+abbr        number_to_human_size(number, prop={})
+options     word
+  number_to_human_size ${1:n}${2:, precision: 2}${3:, separator: ','}
+
+# If in your I18n locale you have:
+#   distance:
+#     centi:
+#       one: "centimeter"
+#       other: "centimeters"
+#     unit:
+#       one: "meter"
+#       other: "meters"
+#     thousand:
+#       one: "kilometer"
+#       other: "kilometers"
+#     billion: "gazillion-distance"
+snippet     number_to_human
+abbr        number_to_human(number, prop={})
+options     word
+  number_to_human ${1:n}${2:, prop={\}}
+#}}}
+
+# ActionView::Helpers::JavaScriptHelper#{{{
+# j render "some/element_template"
+snippet     escape_javascript
+abbr        escape_javascript(javascript)
+alias       j
+options     word
+  escape_javascript ${1:javascript}
+
+snippet     javascript_tag
+abbr        javascript_tag(block, html_prop={}, &block)
+options     word
+  javascript_tag ${1}
+
+snippet     javascript_cdata_section
+abbr        javascript_cdata_section(content)
+options     word
+  javascript_cdata_section ${1:content}
+
+snippet     button_to_function
+abbr        button_to_function(name, function=nil, html_prop={})
+options     word
+  button_to_function ${1:name}, "${2:function}"${3:, { ${4:html_prop\} \}}
+
+snippet     link_to_function
+abbr        link_to_function(name, function, html_prop)
+options     word
+  link_to_function ${1:name}, "${2:function}"${3:, { ${4\} \}}
+#}}}
+
+# ActionView::Helpers::FormTagHelper#{{{
+snippet     form_tag
+abbr        form_tag(url_for_opt={}, prop={}, &block)
+options     word
+  form_tag ${1:url}, method: ${2:put|post}${3:, remote: true, authenticity_token: false } do
+
+snippet     select_tag
+abbr        select_tag(name, opt_tags=nil, prop={})
+options     word
+  select_tag ${1:name}, options_from_collection_for_select(@${2:array}, ${3:text}, ${4:value})${5:, include_blank: true}${6:, prompt: "${7:Select something\}"}${8:, disable: true}
+
+snippet     text_field_tag
+abbr        text_field_tag(name, value=nil, prop={})
+options     word
+  text_field_tag :${1:name}, ${2:value}${3:, { ${4:prop\} \}}
+
+snippet     label_tag
+abbr        label_tag(name=nil, current_or_prop={}, prop={}, &block)
+options     word
+  label_tag ${1:name}${2:, ${3:value\}}${4:, { ${5:html_prop\} \}}
+
+snippet     hidden_field_tag
+abbr        hidden_field_tag(name, value=nil, prop={})
+options     word
+  hidden_field_tag ${1:name}, ${2:value}${3:, { ${4:prop\} \}}
+
+snippet     file_field_tag
+abbr        file_field_tag(name, prop={})
+options     word
+  file_field_tag :${1:name}${2:, { ${3:accept: 'image/png,image/gif,image/jpg'\} \}}
+
+snippet     password_field_tag
+abbr        password_field_tag(name="password", value=nil, prop={})
+options     word
+  password_field_tag ${1:name}${2:, ${3:value\}}${4: { ${5\} }}
+
+snippet     text_area_tag
+abbr        text_area_tag(name, content=nil, prop={})
+options     word
+  text_area_tag ${1:name}${2:, ${3:value\}}${4:, { ${5\} \}}
+
+snippet     check_box_tag
+abbr        check_box_tag(name, value="1", checked=false, prop={})
+options     word
+  check_box_tag ${1:name}, ${2:value}${3:, ${4:cheked(true)\}}${5:, { ${6:prop\} \}}
+
+snippet     radio_button_tag
+abbr        radio_button_tag(name, value, checked=false, prop={})
+options     word
+  radio_button_tag ${1:name}
+
+snippet     submit_tag
+abbr        submit_tag(value, prop={})
+options     word
+  submit_tag ${1:text}${2:, { ${3:prop\} }}
+
+snippet     button_tag
+abbr        button_tag(content_or_prop=nil, prop=nil, &block)
+options     word
+  button_tag ${1:text}${2:, disable_with: "お待ちください..."}
+
+snippet     button_tag_do
+abbr        button_tag(content_or_prop=nil, prop=nil) do ... end
+options     word
+  button_tag "${1:text}"${2:, disable_with: "お待ちください..."} do
+    ${3}
+
+snippet     image_submit_tag
+abbr        image_submit_tag(source, prop={})
+options     word
+  image_submit_tag ${1:source}${2:, ${3:prop\}}
+
+snippet     field_set_tag
+abbr        field_set_tag(legend=nil, prop={}, &block)
+options     word
+  field_set_tag ${1:field_title}${2:, ${3:prop\}}
+
+snippet     search_field_tag
+abbr        search_field_tag(name, value=nil, prop={})
+options     word
+  search_field_tag ${1:name}${2:, ${3:value\}}${4:, ${5:prop\}}
+
+snippet     telephone_field_tag
+abbr        telephone_field_tag(name, value=nil, prop={})
+options     word
+  telephone_field_tag ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     url_field_tag
+abbr        url_field_tag(name, value=nil, prop={})
+options     word
+  url_field_tag ${1:name}, ${2:value}${3:, ${4:value\}}
+
+snippet     email_field_tag
+abbr        email_field_tag(name, value=nil, prop={})
+options     word
+  email_field_tag ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     number_field_tag
+abbr        number_field_tag(name, value=nil, prop={})
+options     word
+  number_field_tag ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     range_field_tag
+abbr        range_field_tag(name, value=nil, prop={})
+options     word
+  range_field_tag ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     utf8_enforcer_tag
+abbr        utf8_enforcer_tag
+options     word
+  utf8_enforcer_tag
+#}}}
+
+#ActionView::Helpers::FormOptionsHelper#{{{
+snippet     select
+abbr        select(object, method, choices, prop={}, html_prop={})
+options     word
+  select :${1:object_name}, :${2:use_field}, ${3:collection}${4:, ${5:include_blank: true\}}${5:, ${6:html_prop\}}
+
+snippet     collection_select
+abbr        collection_select(object, method, collection, value_method, text_method, prop={}, html_prop={})
+options     word
+  collection_select ${1:object_name}, :${2:use_field}, ${3:collection}, :${4:text_method}${5:, ${6:include_blank: true\}}${6:, ${7:html_prop\}}
+
+snippet     grouped_collection_select
+abbr        grouped_collection_select(object, method, collection, group_method, group_label_method, option_key_method, option_value_method, prop={}, html_prop={})
+options     word
+  grouped_collection_select ${1:object_name}, :${2:use_field}, @${3:collection}, :${4:group_method}, :${5:label}, :${6:key}, :${6:value}
+
+snippet     time_zone_select
+abbr        time_zone_select(object, method, priority_zones=nil, prop={}, html_prop={})
+options     word
+  time_zone_select ${1:object_name}, "time_zone", ${2:priority_zone}${3:, ${4:prop\}}${5:, ${6:prop\}}
+
+snippet     options_for_select
+abbr        options_for_select(container, selected=nil)
+options     word
+  options_for_select ${1:hash_or_array}, ${2:selected_value}
+
+snippet     options_from_collection_for_select
+abbr        options_from_collection_for_select(collection, :value_method, :text_method, selected=nil)
+options     word
+  options_from_collection_for_select @${1:collection}, :${2:value_method}, :${3:texd_method}${4:, ${5:selected\}}
+
+snippet     option_groups_from_collection_for_select
+abbr        option_groups_from_collection_for_select(collection, :group_method, :group_label_method, :option_key_method, :option_value_method, selected_key=nil)
+options     word
+  option_groups_from_collection_for_select @${1:collection}, :${2:group_method}, :${3:group_label_method}, :${4:option_key_method}, :${5:option_value_method}${6:, ${7:selected\}}
+
+snippet     grouped_options_for_select
+abbr        grouped_options_for_select(grouped_options, selected_key=nil, prompt=nil)
+options     word
+  grouped_options_for_select ${1:hash_or_array}${2:, ${3:selected_key\}}${4:, ${5:prompt\}}
+
+snippet     time_zone_options_for_select
+abbr        time_zone_options_for_select(selected=nil, priority_zones=nil, model = ::ActiveSupport::TimeZone)
+options     word
+  time_zone_options_for_select ${1:selected=nil}${2:, ${3:priority_zones\}}
+#}}}
+
+# f.helpers#{{{
+# ActionView::Helpers::FormTagHelper#{{{
+#snippet     form_tag
+#abbr        form_tag(url_for_opt={}, prop={}, &block)
+#options     word
+#  form_tag ${1:url}, method: ${2:put|post}${3:, remote: true, authenticity_token: false } do
+
+snippet     .select_with_opt
+abbr        .select(name, opt_tags=nil, prop={})
+options     word
+  .select ${1:name}, options_from_collection_for_select(@${2:array}, ${3:text}, ${4:value})${5:, include_blank: true}${6:, prompt: "${7:Select something\}"}${8:, disable: true}
+
+snippet     .text_field
+abbr        .text_field(name, value=nil, prop={})
+options     word
+  .text_field_tag :${1:name}, ${2:value}${3:, { ${4:prop\} \}}
+
+snippet     .hidden_field_tag
+abbr        .hidden_field(name, value=nil, prop={})
+options     word
+  .hidden_field_tag ${1:name}, ${2:value}${3:, { ${4:prop\} \}}
+
+snippet     .file_field_tag
+abbr        .file_field(name, prop={})
+options     word
+  .file_field_tag :${1:name}${2:, { ${3:accept: 'image/png,image/gif,image/jpg'\} \}}
+
+snippet     .password_field_with_value
+abbr        .password_field(name="password", value=nil, prop={})
+options     word
+  .password_field ${1:name}${2:, ${3:value\}}${4: { ${5\} }}
+
+snippet     .text_area
+abbr        .text_area(name, content=nil, prop={})
+options     word
+  .text_area ${1:name}${2:, ${3:value\}}${4:, { ${5\} \}}
+
+snippet     .check_box_tag
+abbr        .check_box(name, value="1", checked=false, prop={})
+options     word
+  .check_box ${1:name}, ${2:value}${3:, ${4:cheked(true)\}}${5:, { ${6:prop\} \}}
+
+snippet     .radio_button
+abbr        .radio_button(name, value, checked=false, prop={})
+options     word
+  .radio_button ${1:name}
+
+snippet     .submit
+abbr        .submit(value, prop={})
+options     word
+  .submit ${1:text}${2:, { ${3:prop\} \}}
+
+snippet     .button
+abbr        .button(content_or_prop=nil, prop=nil, &block)
+options     word
+  .button ${1:text}${2:, disable_with: "お待ちください..."}
+
+snippet     .button_do
+abbr        .button(content_or_prop=nil, prop=nil) do ... end
+options     word
+  .button "${1:text}"${2:, disable_with: "お待ちください..."} do
+    ${3}
+
+snippet     .image_submit
+abbr        .image_submit(source, prop={})
+options     word
+  .image_submit ${1:source}${2:, ${3:prop\}}
+
+snippet     .field_set
+abbr        .field_set(legend=nil, prop={}, &block)
+options     word
+  .field_set ${1:field_title}${2:, ${3:prop\}}
+
+snippet     .search_field_tag
+abbr        .search_field(name, value=nil, prop={})
+options     word
+  .search_field ${1:name}${2:, ${3:value\}}${4:, ${5:prop\}}
+
+snippet     .telephone_field_tag
+abbr        .telephone_field(name, value=nil, prop={})
+options     word
+  .telephone_field ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     .url_field_tag
+abbr        .url_field(name, value=nil, prop={})
+options     word
+  .url_field ${1:name}, ${2:value}${3:, ${4:value\}}
+
+snippet     .email_field
+abbr        .email_field(name, value=nil, prop={})
+options     word
+  .email_field ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     .number_field_tag
+abbr        .number_field(name, value=nil, prop={})
+options     word
+  .number_field ${1:name}, ${2:value}${3:, ${4:prop\}}
+
+snippet     .range_field_tag
+abbr        .range_field(name, value=nil, prop={})
+options     word
+  .range_field ${1:name}, ${2:value}${3:, ${4:prop\}}
+#}}}
+
+#ActionView::Helpers::FormOptionsHelper#{{{
+snippet     .select
+abbr        .select(method, choices, prop={}, html_prop={})
+options     word
+  .select :${1:use_field}, ${2:collection}${3:, ${4:include_blank: true\}}${4:, ${5:html_prop\}}
+
+snippet     .collection_select
+abbr        .collection_select(method, collection, value_method, text_method, prop={}, html_prop={})
+options     word
+  .collection_select :${1:use_field}, ${2:collection}, :${3:text_method}${4:, ${5:include_blank: true\}}${5:, ${6:html_prop\}}
+
+snippet     .grouped_collection_select
+abbr        .grouped_collection_select(method, collection, group_method, group_label_method, option_key_method, option_value_method, prop={}, html_prop={})
+options     word
+  .grouped_collection_select :${1:use_field}, @${2:collection}, :${3:group_method}, :${4:label}, :${5:key}, :${6:value}
+
+snippet     .time_zone_select
+abbr        .time_zone_select(method, priority_zones=nil, prop={}, html_prop={})
+options     word
+  .time_zone_select "time_zone", ${1:priority_zone}${2:, ${3:prop\}}${4:, ${5:prop\}}
+
+snippet     .options_for_select
+abbr        .options_for_select(container, selected=nil)
+options     word
+  .options_for_select ${1:hash_or_array}, ${2:selected_value}
+
+snippet     .options_from_collection_for_select
+abbr        .options_from_collection_for_select(collection, :value_method, :text_method, selected=nil)
+options     word
+  .options_from_collection_for_select @${1:collection}, :${2:value_method}, :${3:texd_method}${4:, ${5:selected\}}
+
+snippet     .option_groups_from_collection_for_select
+abbr        .option_groups_from_collection_for_select(collection, :group_method, :group_label_method, :option_key_method, :option_value_method, selected_key=nil)
+options     word
+  .option_groups_from_collection_for_select @${1:collection}, :${2:group_method}, :${3:group_label_method}, :${4:option_key_method}, :${5:option_value_method}${6:, ${7:selected\}}
+
+snippet     .grouped_options_for_select
+abbr        .grouped_options_for_select(grouped_options, selected_key=nil, prompt=nil)
+options     word
+  .grouped_options_for_select ${1:hash_or_array}${2:, ${3:selected_key\}}${4:, ${5:prompt\}}
+
+snippet     .time_zone_options_for_select
+abbr        .time_zone_options_for_select(selected=nil, priority_zones=nil, model = ::ActiveSupport::TimeZone)
+options     word
+  .time_zone_options_for_select ${1:selected=nil}${2:, ${3:priority_zones\}}
+#}}}
+
+#ActionView::Helpers::FormHelper#{{{
+snippet     .fields_for
+abbr        .fields_for(record_name, record_object=nil, prop={}, &block)
+options     word
+  .fields_for :${1:record_names}${2:, ${3:@record_object\}}${4:, ${5:prop\}} do |f_fields|
+
+snippet     .label
+abbr        .label(:method, content_or_prop=nil, prop=nil, &block)
+options     word
+  .label :${1:method(locales)}${2:, ${3:contents_or_prop\}}
+
+snippet     .label_do
+abbr        .label(:method, content_or_prop=nil, prop=nil, &block)
+options     word
+  .label :${1:method(locales)}${2:, ${3:prop\}} do
+    ${4:label_text}
+
+snippet     .password_field
+abbr        .password_field(:method, prop={})
+options     word
+  .password_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .hidden_field
+abbr        .hidden_field(:method, prop={})
+options     word
+  .hidden_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .file_field
+abbr        .file_field(:method, prop={})
+options     word
+  .file_field :${1:method}${2:, ${3:accept: 'text/html'\}}
+
+snippet     .text_area_tag
+abbr        .text_area(:method, prop={})
+options     word
+  .text_area :${1:method}${2:, ${3:accept: 'text/html'\}}
+
+snippet     .check_box
+abbr        .check_box(method, prop={}, checked_value="1", unchecked_value="0")
+options     word
+  .check_box :${1:method}, ${2:{\}}${3:, ${4:checked_value\}}${5:, ${6:unchecked_value\}}
+
+
+snippet     .radio_button_tag
+abbr        .radio_button(method, tag_value, prop={})
+options     word
+  .radio_button :${1:method}, ${2:tag_value}${3:, ${4:prop\}}
+
+snippet     .search_field
+abbr        .search_field(method, prop={})
+options     word
+  .search_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .telephone_field
+abbr        .telephone_field(method, prop={})
+alias       phone_field
+options     word
+  .telephone_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .url_field
+abbr        .url_field(method, prop={})
+options     word
+  .url_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .number_field
+abbr        .number_field(method, prop={})
+options     word
+  .number_field :${1:method}${2:, ${3:prop\}}
+
+snippet     .range_field
+abbr        .range_field(method, prop={})
+options     word
+  .range_field :${1:method}${2:, ${3:prop\}}
+
+#}}}
+##}}}
+
+#ActionView::Helpers::FormHelper#{{{
+snippet     convert_to_model
+abbr        convert_to_model(obj)
+options     word
+  convert_to_model ${1:object}
+
+snippet     form_for
+abbr        form_for(record, prop={}, &proc)
+options     word
+  form_for ${1:record}, url: ${2} do |f|
+
+#snippet     apply_form_for_options!
+#abbr        apply_form_for_options!(obj_or_array, prop)
+#options     word
+#  apply_form_for_options!(${1:object_or_array}, ${2:options})
+
+snippet     fields_for
+abbr        fields_for(record_name, record_object=nil, prop={}, &block)
+options     word
+  fields_for :${1:record_names}${2:, ${3:@record_object\}}${4:, ${5:prop\}} do |f_fields|
+
+snippet     label
+abbr        label(object_name, :method, content_or_prop=nil, prop=nil, &block)
+options     word
+  label ${1:object_name}, :${2:method(locales)}${3:, ${4:contents_or_prop\}}
+
+snippet     label_do
+abbr        label(object_name, :method, content_or_prop=nil, prop=nil, &block)
+options     word
+  label ${1:object_name}, :${2:method(locales)}${3:, ${4:prop\}} do
+    ${5:label_text}
+
+snippet     password_field
+abbr        password_field(object_name, :method, prop={})
+options     word
+  password_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     hidden_field
+abbr        hidden_field(object_name, :method, prop={})
+options     word
+  hidden_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     file_field
+abbr        file_field(object_name, :method, prop={})
+options     word
+  file_field ${1:object_name}, :${2:method}${3:, ${4:accept: 'text/html'\}}
+
+snippet     text_area
+abbr        text_area(object_name, :method, prop={})
+options     word
+  text_area ${1:object_name}, :${2:method}${3:, ${4:accept: 'text/html'\}}
+
+snippet     check_box
+abbr        check_box(object_name, method, prop={}, checked_value="1", unchecked_value="0")
+options     word
+  check_box ${1:object_name}, :${2:method}, ${4:{\}}${5:, ${6:checked_value\}}${7:, ${8:unchecked_value\}}
+
+
+snippet     radio_button
+abbr        radio_button(object_name, method, tag_value, prop={})
+options     word
+  radio_button ${1:object_name}, :${2:method}, ${3:tag_value}${4:, ${5:prop\}}
+
+snippet     search_field
+abbr        search_field(object_name, method, prop={})
+options     word
+  search_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     telephone_field
+abbr        telephone_field(object_name, method, prop={})
+alias       phone_field
+options     word
+  telephone_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     url_field
+abbr        url_field(object_name, method, prop={})
+options     word
+  url_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     number_field
+abbr        number_field(object_name, method, prop={})
+options     word
+  number_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     range_field
+abbr        range_field(object_name, method, prop={})
+options     word
+  range_field ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+#}}}
+
+#ActionView::Helpers::DebugHelper#{{{
+snippet     debug
+abbr        debug(object)
+options     word
+  debug ${1:object}
+#}}}
+
+#ActionView::Helpers::DateHelper#{{{
+snippet     distance_of_time_in_words
+abbr        distance_of_time_in_words(from_time, to_time=0, include_seconds=false, prop={})
+options     word
+  distance_of_time_in_words ${1:from_time}, ${2:to_time}${3:, true}
+
+snippet     distance_of_time_in_words_demo
+abbr        distance_of_time_in_words_demo
+options     word
+  from_time = Time.now
+  distance_of_time_in_words from_time, from_time + 50.minutes
+
+snippet     time_ago_in_words
+abbr        time_ago_in_words(from_time, include_seconds=false)
+alias       distance_of_time_in_words_to_now
+options     word
+  time_ago_in_words ${1:from_time}${2:, true}
+
+snippet     date_select
+abbr        date_select(obj_name, method, prop={}, html_prop={})
+options     word
+  date_select ${1:object_name}, :${2:method}, ${3:date_select_prop}
+
+snippet     date_select_prop
+abbr        date_select_prop
+options     word
+  default: { day: 20 }, order: [:month, :day], discard_day: true, include_blank: true, start_year: 2003, use_month_number: true, prompt: { day: "SelectDay", month: 'SelectMonth', year: "SelectYear" }
+
+snippet     time_select
+abbr        time_select(obj_name, method, prop={}, html_prop={})
+options     word
+  time_select ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     datetime_select
+abbr        datetime_select(object_name, method, prop={}, html_prop={})
+options     word
+  datetime_select ${1:object_name}, :${2:method}${3:, ${4:prop\}}
+
+snippet     select_datetime
+abbr        select_datetime(datetime=Time.current, prop={}, html_prop={})
+options     word
+  select_datetime ${1:datetime=Time.current}${2:, ${3:prop\}}
+
+snippet     select_date
+abbr        select_date(date=Date.current, prop={}, html_prop={})
+options     word
+  select_date ${1:date=Date.current}${2:, ${3:prop\}}
+
+snippet     select_time
+abbr        select_time(datetime=Time.current, prop={}, html_prop={})
+options     word
+  select_time ${1:datetime=Time.new}${2:, ${3:prop\}}
+
+snippet     select_second
+abbr        select_second(datetime, prop={}, html_prop={})
+options     word
+  select_second ${1:datetime}${2:, ${3:prop\}}
+
+snippet     select_minute
+abbr        select_minute(datetime, prop={}, html_prop={})
+options     word
+  select_minute ${1:datetime}${2:, ${3:prop\}}
+
+snippet     select_hour
+abbr        select_hour(datetime, prop={}, html_prop={})
+options     word
+  select_hour ${1:datetime}${2:, ${3:prop\}}
+
+snippet     select_day
+abbr        select_day(date, prop={}, html_prop={})
+options     word
+  select_day ${1:date|n}${2:, ${3:prop\}}
+
+snippet     select_month
+abbr        select_month(date, prop={}, html_prop={})
+options     word
+  select_month ${1:date}${2:, ${3:prop\}}
+
+snippet     select_year
+abbr        select_year(date, prop={}, html_prop={})
+options     word
+  select_year ${1:date}${2:, ${3:prop\}}
+
+snippet     time_tag
+abbr        time_tag(date_or_time, *args)
+options     word
+  time_tag ${1:date_or_time}${2:, ${3:args\}}
+
+#}}}
+
+#ActionView::Helper::CsrfHelper#{{{
+snippet     csrf_meta_tags
+abbr        csrf_meta_tags
+options     word
+  csrf_meta_tags
+#}}}
+
+#ActionView::Helpers::ControllerHelper#{{{
+snippet     assign_controller
+abbr        assign_controller(controller)
+options     word
+  assign_controller ${1:controller}
+
+snippet     logger
+abbr        logger エイリアス?
+options     word
+  logger ${1}
+#}}}
+
+#ActionView::Helpers::CaptureHelper#{{{
+snippet     capture
+abbr        capture(*args) blockを変数を取り込んで保存
+options     word
+  capture do
+    ${1}
+
+snippet     content_for
+abbr        content_for :name do ... end
+options     word
+  content_for :${1:name} do
+    ${2}
+
+snippet     provide
+abbr        provide(name, content=nil, &block)
+options     word
+  provide ${1:name}, ${2:content=nil}
+
+snippet     content_for?
+abbr        content_for?(name)
+options     word
+  content_for? :${1:name}
+
+snippet     with_output_buffer
+abbr        with_output_buffer(buf=nil)
+options     word
+  with_output_buffer${1:(${2:(buf=nil)\})}
+
+snippet     flush_output_buffer
+abbr        flush_output_buffer
+options     word
+  flush_output_buffer
+
+#}}}
+
+#ActionView::Helpers::CacheHelper#{{{
+snippet     cache
+abbr        cache(name={}, options=nil, &block)
+options     word
+  cache ${1:name_or_routing_hash}${2:, action_suffix: "${3\}"} do
+    ${2}
+
+snippet     atom_feed
+abbr        atom_feed(prop={}, &block)
+options     word
+  atom_feed {'xmlns:app' => '${1}'} do |feed|
+    ${2}
+#}}}
+
+#ActionView::Helpers::AssetTagHelper#{{{
+snippet     auto_discovery_link_tag
+abbr        auto_discovery_link_tag(type=:rss, url_prop={}, tag_prop={})
+options     word
+  auto_discovery_link_tag ${1::rss|:atom}
+
+snippet     favicon_link_tag
+abbr        favicon_link_tag(source='/favicon.ico', prop={})
+options     word
+  favicon_link_tag ${1:source}${2:, ${3:prop\}}
+
+snippet     image_path
+abbr        image_path(source)
+alias       path_to_image
+options     word
+  image_path ${1:assets_path}
+
+snippet     video_path
+abbr        video_path(source)
+alias       path_to_video
+options     word
+  video_path ${1:assets_path}
+
+snippet     font_path
+abbr        font_path(source)
+alias       path_to_font
+options     word
+  font_path ${1:source}
+
+snippet     image_tag
+abbr        image_tag(source, prop={})
+options     word
+  image_tag ${1:source}${2:, ${3:prop\}}
+
+snippet     image_tags
+abbr        image_tag(source, prop={})
+options     word
+  image_tags "${1:assets_path}", size: "${2:16x16}", alt: "${3:text}"
+
+snippet     image_tag_button
+abbr        image_tag(source, prop={})
+options     word
+  image_tag "${1:assets_path}", size: "${2:16x16}", onmouseover="this.src='$1${3}'", onmouseout="this.src='$1${4}'", alt: "${5}"
+
+snippet     image_alt
+abbr        image_alt(source)
+options     word
+  image_alt ${1:assets_path}
+
+snippet     video_tag
+abbr        video_tag(source, prop={})
+options     word
+  video_tag ${1:assets_path}${2:, ${3:prop\}}
+
+snippet     audio_tag
+abbr        audio_tag(source, prop={})
+options     word
+  audio_tag ${1:assets_path}${2:, ${3:prop\}}
+#}}}
+
+#ActionView::Helpers::ActionModelInstanceTag#{{{
+snippet     object
+abbr        object
+options     word
+  object
+
+snippet     error_wrapping
+abbr        error_wrapping(html_tag)
+options     word
+  error_wrapping ${1:html_tag}
+
+snippet     error_message
+abbr        object.errors[@method_name]
+options     word
+  error_message
+#}}}
+# }}}
+

@@ -1,0 +1,312 @@
+# rspec#{{{
+# basic#{{{
+snippet     con
+abbr        context '...' do
+alias       context
+  context ${1} do
+    ${2}
+  end
+
+snippet     bef
+alias       before
+abbr        before do ... end
+  before do
+    ${1}
+  end
+
+snippet     stub_model
+abbr        stub_model(...)
+options     word
+  stub_model(${1})
+
+snippet     itd
+abbr        it ... do
+  it ${1} do
+    ${2}
+  end
+
+snippet     it
+abbr        it { ... }
+  it { ${1} }
+
+snippet     des
+abbr        describe do
+  describe ${1} do
+      ${2}
+  end
+
+snippet     sub
+alias       subject
+abbr        subject
+  subject { ${1} }
+
+snippet     share
+abbr        shared_examples_for
+  shared_examples_for '${1:name}' do
+    ${2}
+  end
+
+snippet     pend
+abbr        pending '...'
+options     word
+  pending '${1}'
+
+snippet     behave
+abbr        it_should_behave_like '...'
+options     word
+  it_should_behave_like '${1:name}'
+
+snippet     expect
+abbr        expect(...).to
+options     word
+  expect(${1:}).to ${2}
+
+snippet     behaves
+abbr        it_behaves_like '...'
+options     word
+  it_behaves_like '${1:name}'
+
+snippet     let
+abbr        let(:name) {}
+  let(:${1:symbol}) { ${2} }
+
+snippet     let!
+abbr        let!(:name) {}
+  let!(:${1:symbol}) { ${2} }
+
+snippet     reqs
+abbr        require rspec
+  require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+
+snippet     req
+abbr        require 'spec_helper'
+options     word
+  require 'spec_helper'
+
+snippet     its
+  its(:${1}) { ${2} }
+
+snippet     raise_error
+abbr        raise_error(ErrorKlass)
+options     word
+  raise_error(${1:NameError})
+#}}}
+# controller#{{{
+snippet     controller.class.skip_before_filter
+abbr        controller.class.skip_before_filter :method
+options     word
+  controller.class.skip_before_filter :${1:method}
+
+snippet     controller
+abbr        controller do ... end
+options     word
+  controller do
+    ${1}
+  end
+#}}}
+
+# routes#{{{
+snippet     route_to
+abbr        route_to(controller: name, action: name)
+options     word
+  route_to(controller: ${1}, action: ${2})
+
+snippet     route_test
+abbr        route_test
+options     word
+  { ${1:method}: ${2:path} }.should route_to(controller: ${1}, action: ${2})
+#}}}
+
+# view#{{{
+snippet     assign
+abbr        assign(:instance_var, value)
+options     word
+  assign(:${1:instance_var}, ${2:value})
+
+snippet     controller_request
+abbr        controller.request.path_parameters[...].should ...
+options     word
+  controller.request.path_parameters['${1:action|controller}'].should ${2:eq('${3:new\}')}
+
+snippet     have_tag
+abbr        have_tag(name, attributes={}, &bloc)
+alias       match_tag
+options     word
+  have_tag('${1:selector}', ${2:value})
+
+snippet     assert_have_tag
+abbr        assert_have_tag(name, attributes={}, &bloc)
+alias       assert_have_sselector
+options     word
+  assert_have_tag('${1:selector}', ${2:value})
+
+snippet     have_selector
+abbr        have_selector(name, attributes={}, &block)
+alias       match_selector
+options     word
+  have_selector('${1:selector}', ${2})
+
+snippet     contain
+abbr        contain(content)
+options     word
+  contain(${1:content})
+
+snippet     asset_contain
+abbr        asset_contain(reg_or_str_content)
+options     word
+  asset_contain(${1:content})
+##}}}
+
+# stub#{{{
+snippet     stub
+abbr        .stub(:method).and_return(value)
+options     word
+  stub(:${1:method})${2:.with(${3\})}.and_return(${4:value})
+
+snippet     and_return
+abbr        and_return
+options     word
+  and_return(${1})
+
+snippet     stub_hash
+abbr        stub(message: :value)
+options     word
+  stub(${1:method}: ${2:value})${3:.with(${4\})}
+
+snippet     stub_method
+abbr        stub(:method) { ... }
+options     word
+  stub(${1:method})${2:.with(${3\})} { ${4} }
+
+snippet     stub_do
+abbr        stub(:method) do |arg| ... end
+options     word
+  stub(${1:method}) do |${2:arg}|
+    ${3}
+  end
+
+snippet     stub_chain
+abbr        stub_chain(...).and_return(value)
+alias       chain
+options     word
+  stub_chain(${1::one, :two}).and_return(${2:value})
+
+snippet     stub_any_instance
+abbr        any_instance.stub(:method).and_return(value)
+options     word
+  any_instance.stub(:${1:method})${2:.with(${3:args\})}.and_return(${4})
+
+snippet     stub_any_instanceh
+abbr        any_instance.stub(...)
+options     word
+  any_instance.stub(:${1:{ method: value }})
+
+snippet     unstub
+abbr        unstub(:method)
+options     word
+  unstub(:${1:method})
+
+snippet     stub_const
+abbr        stub_const('Klass', var) クラスを偽装
+alias       stub_klass
+options     word
+  stub_const('${1:Klass}', ${2:alias})
+
+snippet     hide_const
+abbr        hide_const('Klass') クラスを隠す
+options     word
+  hide_const('${1:Klass}')
+
+snippet     as_null_object
+abbr        as_null_object
+options     word
+  as_null_object
+#}}}
+# Message expectations#{{{
+snippet     should_receive
+abbr        should_receive(:method).with(:args).and_return(value)
+options     word
+  should_receive(:${1:method})${2:.with(${3:args\})}.and_return(${4:value})
+
+snippet     should_receivedo
+abbr        should_receive(:method) do |args| ... end
+options     word
+  should_receive(:${1:method}) do |${2:args}|
+    ${3}
+  end
+
+snippet     and_call_original
+abbr        and_call_original
+alias       original
+options     word
+  and_call_original
+
+snippet     should_receive_exactly
+abbr        should_receive(:method).exactly(n).times ぴったり
+options     word
+  should_receive(:${1:method}).exactly(${2:value}).times
+
+snippet     should_receive_at_least
+abbr        should_receive(:method).at_least(n).times
+options     word
+  should_receive(:${1:method}).at_least(${2:n}).times
+
+snippet     should_receive_at_most
+abbr        should_receive(:method).at_most(n).times
+options     word
+  should_receive(${1:method}).at_most(${2:n}).times
+
+snippet     .at_most
+abbr        .at_most(n)
+options     word
+  .at_most(${1::once, :twice, n})
+
+snippet     .at_least
+abbr        .at_least(n)
+options     word
+  .at_least(${1::once, :twice, n})
+
+snippet     .ordered
+abbr        .ordered
+options     word
+  .ordered
+#}}}
+
+# filter {{{
+# describeの後に続けて書くと、テストを飛ばしてくれる(spec_helperに設定必要)
+snippet     focus
+abbr        focus: ...
+options     word
+  focus: ${1:true}
+
+snippet     broken
+abbr        broken: ...
+options     word
+  broken: ${1:true}
+
+snippet     issue
+abbr        issue: ...
+options     word
+  issue: ${1:number}
+
+snippet     slow
+abbr        slow: true
+options     word
+  slow: true
+#}}}
+
+snippet     respond_to
+abbr        be_respond_to(...)
+options     word
+  should be_respond_to(:${1:method})
+
+snippet     when
+abbr        context 'when'
+options     word
+  context 'when ${1}'
+
+snippet     given
+abbr        context 'given'
+options     word
+  context 'given ${1}'
+#}}}

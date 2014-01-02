@@ -1,0 +1,96 @@
+snippet     source
+abbr        source 'https://rubygems.org'
+options     word
+  source 'https://rubygems.org'
+
+snippet ruby
+abbr    ruby 'version'
+options word
+  ruby '${1:#:version}'
+
+snippet     gem
+abbr        gem 'name', 'version'
+options     word
+  gem '${1:#:name}'${2:, '~> ${3:version\}'}
+
+# Options {{{
+snippet     branch
+abbr        branch: 'branch_name'
+options     word
+  branch: '${1}'
+
+snippet     git
+abbr        git: 'http://github...'
+options     word
+  git: '${1:http://...}'
+
+snippet     require
+abbr        require: 'gem_name'
+options     word
+  require: '${1:gem_name}'
+
+snippet     platforms
+abbr        platforms: :platform_name
+options     word
+  platforms :${1:platform_list}
+
+snippet     path
+abbr        path: 'directory_path'
+options     word
+  path '${1:directory_path}'
+
+snippet     >=
+abbr        >= 1.0
+options     word
+  >= ${1:version}
+
+snippet     ~>
+abbr        ~>
+options     word
+  ~> ${1:version}
+
+#snippet     group
+#abbr        group: :group_name
+#options     word
+#  group :${1:group_name}
+
+snippet     platform_list
+abbr        platform_list
+options     word
+  ruby C Ruby (MRI) or Rubinius, but NOT Windows
+  ruby_18
+  ruby AND version 1.8
+  ruby_19
+  ruby AND version 1.9
+  ruby_20
+  ruby AND version 2.0
+  mri
+  Same as ruby, but not Rubinius
+  mri_18
+  mri AND version 1.8
+  mri_19
+  mri AND version 1.9
+  mri_20
+  mri AND version 2.0
+  rbx
+  Same as ruby, but only Rubinius (not MRI)
+  jruby
+  JRuby
+  mswin
+  Windows
+  mingw
+  Windows 'mingw32' platform (aka RubyInstaller)
+  mingw_18
+  mingw AND version 1.8
+  mingw_19
+  mingw AND version 1.9
+  mingw_20
+  mingw AND version 2.0
+# }}}
+
+snippet     group
+abbr        group :development do
+options     word
+  group :${1:development|test|production} do
+    ${2}
+  end

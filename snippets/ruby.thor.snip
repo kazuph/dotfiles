@@ -1,0 +1,188 @@
+# Thor::Actions#{{{
+snippet action
+abbr    action(instance)
+options word
+  action ${1:instance}
+
+snippet append_to_file
+abbr    append_to_file(path, *args, &block)
+options word
+  append_to_file '${1:#:path/to_file}'${2:#:, *opts\}} do
+    <<-CODE
+    ${4}
+    CODE
+  end
+
+snippet apply
+abbr    apply(path_or_url, config={})
+options word
+  apply ${1:path_or_url}${2:#:, ${3:opts\}}
+
+snippet chmod
+abbr    chmod(path, mode, config={})
+options word
+  chmod ${1:#:path/to/*}, ${2:0755}${3:#:, opts={\}}
+
+snippet comment_lines
+alias   comment
+abbr    comment_lines(path, flag, *args)
+options word
+  comment_lines ${1:file_or_path}, /${2:Regexp}/
+
+snippet uncomment_lines
+alias   uncomment
+abbr    uncomment_lines(path, flag, *args)
+options word
+  uncomment_lines ${1:file_or_path}, /${2:Regexp}/
+
+snippet copy_file
+abbr    copy_file(file, *args, &block)
+options word
+  copy_file ${1:from_file}, ${2:to_file}
+
+snippet create_file
+alias   add_file
+abbr    create_file(file_path, *data, &block)
+options word
+  create_file ${1:file_path}, <<-DATA
+  ${2:input_data}
+  DATA
+
+snippet touch_file
+alias   touch
+abbr    create_file(file_path, nil)
+options word
+  create_file ${1:file_path}
+
+snippet verbose
+abbr    verbose: false
+options word
+  verbose: false
+
+snippet create_link
+alias   add_link
+abbr    create_link(file_path, *args, &block)
+options word
+  create_link ${1:from_path}, ${2:to_path}, ${3:#:symbolic: false}
+
+snippet destination_root
+alias   root_path
+abbr    Returns the root for this thor class (also aliased as destination root).
+options word
+  destination_root
+
+snippet directory
+abbr    directory(source, *args, &block)
+options word
+  directory '${1:path}'
+
+snippet mv_dir
+abbr    directory(from, to)
+options word
+  directory '${1:from}', '${2:to}'
+
+snippet empty_directory
+alias   create_directory
+abbr    empty_directory(path, config={})
+options word
+  empty_directory ${1:path}
+
+snippet find_in_source_paths
+abbr    find_in_source_paths(file)
+options word
+  find_in_source_paths(${1:file})
+
+snippet get
+abbr    get(source, *args, &block)
+options word
+  get '${1:url_or_path}' do |content|
+    ${2}
+  end
+
+snippet create_file_from_url
+abbr    get(url, output_path)
+options word
+  get '${1:#:from_url}', '${2:output_path}'
+
+snippet gsub_file
+abbr    gsub_file(path, flag, *args, &block)
+options word
+  gsub_file ${1:path}, /${2:#:regexp}/, '${3:repracement}' 
+
+snippet inject_into_class
+abbr    inject_into_class('path', Klass, *args, &block)
+options word
+  inject_into_class ${1:path}, ${2:Klass}, <<-CODE
+    ${3:do}
+  CODE
+
+snippet insert_into_file
+alias   inject_into_file
+abbr    insert_into_file(destination, *args, &block)
+options word
+  insert_into_file '${1:path}', options_for_search_text${2} do
+    ${3}
+  end
+
+snippet options_for_search_text
+abbr    before: ..., alfter: ...
+options word
+  ${1:before: ${2\}}${3:after: '${4\}'}
+
+snippet inside
+abbr    inside 'path' do ... end
+options word
+  inside '${1:path}' do
+    ${2:#:do}
+  end
+
+snippet link_file
+abbr    link_file(source, *args, &block)
+options word
+  link_file ${1:path}${2:, ${3:#:to\}}
+
+snippet prepend_to_file
+alias   prepend_file
+abbr    prepend_to_file(path, *args, &block)
+options word
+  prepend_to_file '${1:path}', <<-CODE
+    ${2}
+  CODE
+
+snippet remove_file
+abbr    remove_file(path, config={})
+options word
+  remove_file ${1:path}
+
+snippet remove_file_array
+abbr    %w[...].each { |f| remove_file(f) }
+options word
+  %w[${1:#:file_list}].each { |f| remove_file(f) }
+
+snippet run
+abbr    run(command, config={})
+options word
+  run '${1:#:shell command}'
+
+snippet run_ruby_script
+abbr    run_ruby_script(command, config={})
+options word
+  run_ruby_script <<-CODE
+    ${1}
+  CODE
+
+snippet source_paths
+abbr    source_paths
+options word
+  source_paths
+
+snippet template
+abbr    template(source, *args, &block)
+options word
+  template ${1:source}${2:, ${3:path\}}
+
+snippet thor
+abbr    thor(task, *args)
+options word
+  thor :${1:thor_task_name}, ${2:args}
+#}}}

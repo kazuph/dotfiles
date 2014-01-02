@@ -1,0 +1,182 @@
+# Factorygirl for rspec#{{{
+snippet     build
+abbr        build(:model_name)
+options     word
+  build(:${1:model_name})
+
+snippet     create
+abbr        create(:model_name)
+options     word
+  create(:${1:model_name})
+##}}}
+
+snippet     association
+abbr        association ..., factory: ...
+  association ${1:column}, factory: ${2:build}
+
+# FactoryGirl # {{{
+snippet     FactoryGirl.define
+abbr        FactoryGirl.define(&block)
+options     word
+  FactoryGirl.define do
+    factory :${1:name} do
+      ${2}
+    end
+  end
+
+snippet     FactoryGirl.factories
+abbr        FactoryGirl.factories
+options     word
+  FactoryGirl.factories
+
+snippet     FactoryGirl.register_factory
+abbr        FactoryGirl.register_factory(factory)
+options     word
+  FactoryGirl.register_factory(${1:factory})
+
+snippet     FactoryGirl.sequences
+abbr        FactoryGirl.sequences
+options     word
+  FactoryGirl.sequences
+
+snippet     FactoryGirl.register_sequence
+abbr        FactoryGirl.register_sequence(sequence)
+options     word
+  FactoryGirl.register_sequence(${1:sequence})
+
+snippet     FactoryGirl.sequence_by_name
+abbr        FactoryGirl.sequence_by_name(name)
+options     word
+  FactoryGirl..sequence_by_name(${1:name})
+
+snippet     FactoryGirl.register_trait
+abbr        FactoryGirl.register_trait(trait)
+options     word
+  FactoryGirl.register_trait(${1:trait})
+
+snippet     FactoryGirl.trait_by_name
+abbr        FactoryGirl.trait_by_name(name)
+options     word
+  FactoryGirl.trait_by_name(${1:name})
+
+snippet     FactoryGirl.callback_names
+abbr        FactoryGirl.callback_names
+options     word
+  FactoryGirl.callback_names
+# }}}
+
+#FactoryGirl::Syntax::Methods#{{{
+snippet     FactoryGirl.attributes_for
+abbr        FactoryGirl.attributes_for(name, *traits_and_overrides, &block)
+options     word
+  FactoryGirl.attributes_for :${1:name}${2:, *traits_and_overrides} do
+    ${2}
+  end
+
+snippet     FactoryGirl.build
+abbr        FactoryGirl.build(name, *traits_and_overrides, &block)
+options     word
+  FactoryGirl.build(:${1:name}${2:, *traits_and_overrides})
+
+snippet     FactoryGirl.create
+abbr        FactoryGirl.create(name, *traits_and_overrides, &block)
+options     word
+  FactoryGirl.create(:${1:name}${2:, *traits_and_overrides})
+
+snippet     FactoryGirl.build_stubbed
+abbr        FactoryGirl.build_stubbed(name, *traits_and_overrides, &block)
+options     word
+  FactoryGirl.build_stubbed(:${1:name}, ${2:*traits_and_overrides})
+
+snippet     FactoryGirl.build_list
+abbr        FactoryGirl.build_list(name, amount, *traits_and_overrides)
+options     word
+  FactoryGirl.build_list(:${1:name}, ${2:amount}, ${3:*traits_and_overrides})
+
+snippet     FactoryGirl.create_list
+abbr        FactoryGirl.create_list(name, amount, *traits_and_overrides)
+options     word
+  FactoryGirl.create_list(:${1:name}, ${2:amount}, ${3:*traits_and_overrides})
+
+snippet     FactoryGirl.generate
+abbr        FactoryGirl.generate(name)
+options     word
+  FactoryGirl.generate(${1:name})
+#}}}
+#FactoryGirl::Syntax::Sham#{{{
+snippet     require_sham
+abbr        require 'factory_girl/syntax/sham'
+options     word
+  require 'factory_girl/syntax/sham'
+
+snippet     Sham
+abbr        Sham.method_name &block
+options     word
+  Sham.${1:method_name} ${1:block { |n| "admin#{n\}@example.com"\} }
+
+snippet     Sham.name
+abbr        Sham.name(&block)
+options     word
+  Sham.name do
+    ${2}
+  end
+#}}}
+#FactoryGirl::Syntax::Default#{{{
+snippet     FactoryGirl.modify
+abbr        FactoryGirl.modify(&block)
+options     word
+  FactoryGirl.modify do
+    ${1}
+  end
+#}}}
+#FactoryGirl::Syntax::Default::DSL#{{{
+snippet     factory
+abbr        factory(name, opts={}, &block)
+options     word
+  factory :${1:name}, ${2:opts = { parent, aliases: [:name], class: ClassName, default_strategy, traits\}} do
+    ${3}
+  end
+
+#abbr        factory_name
+#options     word
+#  factory_name
+
+#snippet     names
+#abbr        names
+#options     word
+#  names
+
+#snippet     compile
+#abbr        compile
+#options     word
+#  compile
+
+snippet     with_traits
+abbr        with_traits(traits)
+options     word
+  with_traits ${1:traits}
+#}}}
+#FactoryGirl::DefinitionProxy#{{{
+snippet     sequence
+abbr        sequence(name, start_value, &block)
+options     word
+  sequence :${1:name}${2:, start_value 1} do
+    ${3}
+  end
+
+snippet     trait
+abbr        trait(name, &block)
+options     word
+  trait ${1:name} do
+    ${2}
+  end
+#}}}
+#FactoryGirl aliases#{{{
+snippet     FactoryGirl.aliases_for
+abbr        FactoryGirl.aliases_for(attribute)
+options     word
+  FactoryGirl.aliases_for(${1:attribute})
+#}}}
+#FactoryGirl::attribute#{{{
+#}}}
+

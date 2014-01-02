@@ -67,6 +67,15 @@ set t_Co=256
 NeoBundle 'tomasr/molokai'
 colorscheme molokai
 
+" 翻訳
+NeoBundleLazy 'mattn/excitetranslate-vim', {
+      \ 'depends': 'mattn/webapi-vim',
+      \ 'autoload' : { 'commands': ['ExciteTranslate']}
+      \ }
+
+" 英語補完
+NeoBundle 'ujihisa/neco-look'
+
 " カーソルキー使うってやっぱなんか、ありえない？みたいな
 NeoBundle 'https://github.com/kazuph/gips-vim.git'
 
@@ -212,7 +221,27 @@ NeoBundle "tpope/vim-surround"
 
 " Rubyでのコーディングを楽にする
 NeoBundle "tpope/vim-rails"
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'tpope/vim-cucumber'
 NeoBundle "dbext.vim"
+autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
+autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
+" autocmd User Rails.view*                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.view.snip
+" autocmd User Rails.view.haml             NeoSnippetSource ~/dotfiles/snippets/haml.rails.view.snip
+" autocmd User Rails.view.erb              NeoSnippetSource ~/dotfiles/snippets/eruby.rails.view.snip
+" autocmd User Rails.model                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.model.snip
+" autocmd User Rails.controller            NeoSnippetSource ~/dotfiles/snippets/ruby.rails.controller.snip
+" autocmd User Rails.db.migration          NeoSnippetSource ~/dotfiles/snippets/ruby.rails.migrate.snip
+" autocmd User Rails/config/environment.rb NeoSnippetSource ~/dotfiles/snippets/ruby.rails.environment.snip
+" autocmd User Rails/config/routes.rb      NeoSnippetSource ~/dotfiles/snippets/ruby.rails.route.snip
+" autocmd User Rails.fixtures.replacement  NeoSnippetSource ~/dotfiles/snippets/ruby.factory_girl.snip
+" autocmd User Rails.spec.controller       NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.controller.snip
+" autocmd User Rails.spec.model            NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.model.snip
+" autocmd User Rails.spec.helper           NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.helper.snip
+" autocmd User Rails.spec.feature          NeoSnippetSource ~/dotfiles/snippets/ruby.capybara.snip
+" autocmd User Rails.spec.routing          NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.routing.snip
+" autocmd User Rails/db/migrate/*          NeoSnippetSource ~/dotfiles/snippets/ruby.rails.migrate.snip
+
 
 " ノーマルモード時に-でswitch
 NeoBundle "AndrewRadev/switch.vim"
@@ -351,16 +380,29 @@ NeoBundle 'Shougo/vimproc', {
       \     'unix' : 'make -f make_unix.mak',
       \    },
       \ }
+
+function! s:meet_neocomplete_requirements()
+    return has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
+endfunction
+
+if s:meet_neocomplete_requirements()
+    NeoBundle 'Shougo/neocomplete.vim'
+    NeoBundleFetch 'Shougo/neocomplcache.vim'
+else
+    NeoBundleFetch 'Shougo/neocomplete.vim'
+    NeoBundle 'Shougo/neocomplcache.vim'
+endif
+
+if s:meet_neocomplete_requirements()
+    " 新しく追加した neocomplete の設定
+else
+    " 今までの neocomplcache の設定
+endif
+
 if has("lua")
   NeoBundleLazy 'Shougo/neocomplete', { 'autoload' : {
         \   'insert' : 1,
         \ }}
-else
-  NeoBundleLazy 'Shougo/neocomplete', {
-        \ 'autoload' : {
-        \   'insert' : 1,
-        \ },
-        \ }
 endif
 NeoBundleLazy 'Shougo/neosnippet', {
       \ 'autoload' : {
@@ -369,6 +411,7 @@ NeoBundleLazy 'Shougo/neosnippet', {
       \   'insert' : 1,
       \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
       \ }}
+
 NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
@@ -404,20 +447,20 @@ NeoBundle 'deris/vim-duzzle'
 NeoBundle 'mattn/livestyle-vim'
 
 " Tag使いになりたい
-NeoBundle "majutsushi/tagbar"
-nnoremap <C-t> :TagbarToggle<CR>
-nnoremap <C-]> g<C-]>
+" NeoBundle "majutsushi/tagbar"
+" nnoremap <C-t> :TagbarToggle<CR>
+" nnoremap <C-]> g<C-]>
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
 " カーソルのある場所でfiletypeを適宜変更する
-NeoBundle 'osyo-manga/vim-precious'
-NeoBundle 'Shougo/context_filetype.vim'
-NeoBundle 'kana/vim-textobj-user'
-nmap <Space><Space>q <Plug>(precious-quickrun-op)
-omap ic <Plug>(textobj-precious-i)
-vmap ic <Plug>(textobj-precious-i)
+" NeoBundle 'osyo-manga/vim-precious'
+" NeoBundle 'Shougo/context_filetype.vim'
+" NeoBundle 'kana/vim-textobj-user'
+" nmap <Space><Space>q <Plug>(precious-quickrun-op)
+" omap ic <Plug>(textobj-precious-i)
+" vmap ic <Plug>(textobj-precious-i)
 
 " 日本語固定モード
 NeoBundle 'fuenor/im_control.vim'
@@ -560,6 +603,7 @@ nnoremap <silent> ,gl :Unite giti/log<CR>
 "--------------------------------------------------------------------------
 " neocomplate
 "--------------------------------------------------------------------------
+let g:neocomplete#force_overwrite_completefunc = 1
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
@@ -567,12 +611,14 @@ let g:neocomplete#enable_at_startup = 1
 " Use smartcase.
 let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#sources#syntax#min_keyword_length = 4
+let g:neocomplete#auto_completion_start_length = 4
+let g:neocomplete#skip_auto_completion_time = '0.2'
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
 " for snippets
 let g:neosnippet#enable_snipmate_compatibility = 1
-let g:neosnippet#snippets_directory='~/.vim/snipmate-snippets/snippets, ~/dotfiles/snippets,  ~/.vim/snipmate-snippets-rubymotion/snippets'
+let g:neosnippet#snippets_directory='~/.vim/vim-snippets, ~/dotfiles/snippets'
 
 " Define dictionary.
 let g:neocomplete#sources#dictionary#dictionaries = {
@@ -618,13 +664,14 @@ autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
+let g:neocomplete#sources = {
+  \ '_' : ['vim', 'neosnippet', 'omni', 'include', 'buffer', 'file/include']
+  \ }
+
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
-let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
 
 " For perlomni.vim setting.

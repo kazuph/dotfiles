@@ -1,0 +1,379 @@
+# capybara
+# basic {{{
+
+# node actions {{{
+snippet     click_link_or_button
+abbr        click_link_or_button(locator)
+options     word
+  click_link_or_button(${1:locator})
+
+snippet     click_link
+abbr        click_link(locator)
+options     word
+  click_link('${1:locator}')
+
+snippet     click_button
+abbr        click_button(locator)
+options     word
+  click_button('${1:locator}')
+
+snippet     fill_in
+abbr        fill_in(locator, options={})
+options     word
+  fill_in('${1:locator}', with: ${2:input_text})
+
+snippet     choose
+abbr        choose(locator)
+options     word
+  choose('${1:locator}')
+
+snippet     check
+abbr        check(locator)
+options     word
+  check('${1:locator}')
+
+snippet     uncheck
+abbr        uncheck(locator)
+options     word
+  uncheck('${1:locator}')
+
+snippet     visit
+abbr        visit ...
+options     word
+  visit ${1}
+
+snippet     select
+abbr        select(value, options={})
+options     word
+  select('${1:value}', from: '${2:string}')
+
+snippet     unselect
+abbr        unselect(value, options={})
+options     word
+  unselect(${1:value}, from: ${2:string})
+
+snippet     attach_file
+abbr        attach_file(locator, path)
+options     word
+  attach_file(${1:locator}, ${1:path})
+#}}}
+
+snippet     click_on
+abbr        click_on('...') link or button
+options     word
+  click_on('${1}')
+
+# have {{{
+#snippet     have_selector
+#abbr        have_selector(*args)
+#options     word
+#  have_selector('${1:locator}')
+
+snippet     have_selectorx
+abbr        have_selector(:xpath, options={})
+options     word
+  have_selector(:xpath, '${1:locator}')
+
+snippet     have_xpath
+abbr        have_xpath(xpath, options={})
+options     word
+  have_xpath('${1}'${2:, ${3:options\}})
+
+snippet     have_css
+abbr        have_css(css, options={})
+options     word
+  have_css('${1}'${2:, ${3:options\}})
+
+
+snippet     have_content
+abbr        have_content(text)
+options     word
+  have_content('${1:text}')
+
+snippet     have_text
+abbr        have_text(text)
+options     word
+  have_text(${1})
+
+snippet     have_link
+abbr        have_link(locator, options={})
+options     word
+  have_link(${1:locator}${2:, ${3:options\}})
+
+snippet     have_button
+abbr        have_button(locator)
+options     word
+  have_button(${1:locator})
+
+snippet     have_field
+abbr        have_field(locator, options={})
+options     word
+  have_field(${1:locator}${2:, ${3:options\}})
+
+snippet     have_checked_field
+abbr        have_checked_field(locator)
+options     word
+  have_checked_field(${1:locator})
+
+snippet     have_unchecked_field
+abbr        have_unchecked_field(locator)
+options     word
+  have_unchecked_field(${1:locator})
+
+snippet     have_select
+abbr        have_select(locator, options={})
+options     word
+  have_select(${1:locator}${2:, ${3:options\}})
+
+snippet     have_table
+abbr        have_table(locator, options={})
+options     word
+  have_table(${1:locator}${2:, ${3:options\}})
+
+#}}}
+# has#{{{
+snippet     has_selector?
+alias       selector?
+options     word
+abbr        has_selector?(*args)
+  has_selector?('${1}')
+
+snippet     has_no_selector?
+alias       no_selector?
+options     word
+abbr        has_no_selector?(*args)
+  has_no_selector?('${1}')
+
+snippet     has_selector?x
+alias       selectorx?
+options     word
+abbr        has_selector?(:xpath, '...')
+  has_selector?(:xpath, '${1}')
+
+snippet     assert_selector
+abbr        assert_selector(*args)
+options     word
+  assert_selector(${1})
+
+snippet     assert_no_selector
+abbr        assert_no_selector(*args)
+options     word
+  assert_no_selector(${1})
+
+snippet     has_xpath?
+abbr        has_xpath?(path, options={})
+options     word
+  has_xpath?(${1:path}${2:, ${3:options\}})
+
+snippet     has_no_xpath?
+abbr        has_no_xpath?
+options     word
+  has_no_xpath?(${1:path}${2:, ${3:options\}})
+
+snippet     has_css?
+options     word
+abbr        has_css?(path, options={})
+  has_css?(${1:path}${2:, ${3:options\}})
+
+snippet     has_no_css?
+options     word
+abbr        has_no_css?(path, options={})
+  has_no_css?(${1:path}${2:, ${3:options\}})
+
+snippet     has_text?
+abbr        has_text?(content)
+options     word
+  has_text?(${1:string})
+
+snippet     has_no_text?
+abbr        has_no_text?(content)
+options     word
+  has_no_text?(${1:string})
+
+snippet     has_link?
+abbr        has_link?(locator, options={})
+options     word
+  has_link?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_no_link?
+abbr        has_no_link?(locator, options={})
+options     word
+  has_no_link?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_button?
+abbr        has_button?(locator)
+options     word
+  has_button?(${1:locator})
+
+snippet     has_no_button?
+abbr        has_no_button?(locator)
+options     word
+  has_no_button?(${1:locator})
+
+snippet     has_field?
+abbr        has_field?(locator, options={})
+options     word
+  has_field?(${1:locator}${2:, ${3:with: '...', type: :email\}})
+
+snippet     has_no_field?
+abbr        has_no_field?(locator, options={})
+options     word
+  has_no_field?(${1:locator}${2:, ${3:with: '...', type: :email\}})
+
+snippet     has_checked_field?
+abbr        has_checked_field?(locator)
+options     word
+  has_checked_field?(${1:locator})
+
+snippet     has_no_checked_field?
+abbr        has_no_checked_field?(locator)
+options     word
+  has_no_checked_field?(${1:locator})
+
+snippet     has_unchecked_field?
+abbr        has_unchecked_field?(locator)
+options     word
+  has_unchecked_field?(${1:locator})
+
+snippet     has_no_unchecked_field?
+abbr        has_no_unchecked_field?(locator)
+options     word
+  has_no_unchecked_field?(${1:locator})
+
+snippet     has_select?
+abbr        has_select?(locator, options={})
+options     word
+  has_select?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_no_select?
+abbr        has_no_select?(locator, options={})
+options     word
+  has_no_select?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_table?
+abbr        has_table?(locator, options={})
+options     word
+  has_table?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_no_table?
+abbr        has_no_table?(locator, options={})
+options     word
+  has_no_table?(${1:locator}${2:, ${3:options\}})
+
+snippet     has_content?
+alias       content?
+options     word
+abbr        has_content?('...')
+  has_content?(${1})
+#}}}
+
+# find {{{
+snippet     find
+abbr        find(*args)
+options     word
+  find(${1})
+
+snippet     find_field
+abbr        find_field(locator)
+options     word
+  find_field(${1:locator})
+
+snippet     find_link
+abbr        find_link(locator)
+options     word
+  find_link(${1:locator})
+
+snippet     find_button
+abbr        find_button(locator)
+options     word
+  find_button(${1:locator})
+
+snippet     find_by_id
+abbr        find_by_id(id)
+options     word
+  find_by_id(${1:id})
+
+snippet     findx
+abbr        find(:xpath, '...')
+options     word
+  find(:xpath, '${1}')
+
+snippet     all
+abbr        all(*args)
+options     word
+  all(${1})
+
+snippet     first
+abbr        first(*args)
+options     word
+  first(${1})
+#}}}
+
+# with {{{
+snippet     within
+abbr        within('...') do ... end
+options     word
+  within '${1}' do
+    ${2}
+  end
+
+snippet     withinx
+abbr        within :xpath, '...' do ... end
+options     word
+  within :xpath, '${1}' do
+    ${2}
+  end
+
+snippet     withinf
+abbr        within_fieldset '...' do ... end
+options     word
+  within_fieldset ${1} do
+    ${2}
+  end
+#}}}
+
+# js {{{
+snippet     execute_script
+abbr        page.execute_script('...')
+options     word
+alias       script_ex
+  page.execute_script(%Q!${1}!)
+
+snippet     evaluate_script
+alias       script_ev
+options     word
+abbr        page.evaluate_script('...')
+  page.evaluate_script(%Q!${1}!)
+#}}}
+
+# debug {{{
+snippet     save_and_open_page
+options     word
+  save_and_open_page
+
+snippet     print
+options     word
+  print ${1:page.html}
+
+snippet     save_screenshot
+options     word
+  page.save_screenshot('${1:name.png}')
+#}}}
+#}}}
+
+# wait
+snippet     wait_until
+abbr        wait_until
+options     word
+  page.driver.wait_until(${1})
+
+snippet     accept
+abbr        accept
+alias       dialog_accept
+options     word
+  page.driver.wait_until(page.driver.browser.switch_to.alert.accept)
+
+snippet     skip_confirm
+abbr        page.evaluate_script('window.confirm = function() { return true; }')
+options     word
+  page.evaluate_script('window.confirm = function() { return true; }')

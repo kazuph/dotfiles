@@ -1,0 +1,219 @@
+# shoulda-matchers {{{
+# other#{{{
+snippet     named_scope
+abbr        named_scope(scope, conditions: ...)
+options     word
+  have_named_scope(${1:scope}, conditions: ${2})
+
+snippet     instance_method
+abbr        instance_method(method_name)
+options     word
+  instance_method(${1:method_name})
+
+snippet     have_class_methods
+abbr        have_class_methods(method)
+options     word
+  have_class_methods(${1:method})
+
+snippet     have_indices
+abbr        have_indices(field)
+options     word
+  have_indices(${1:field})
+#}}}
+
+# common#{{{
+snippet     kind_of
+abbr        be_a_kind_of(...)
+options     word
+  be_a_kind_of(${1:Klass})
+
+snippet     instance_of
+abbr        be_an_instance_of(...)
+options     word
+  be_an_instance_of(${1:Klass})
+
+snippet     have_key
+abbr        have_key(...)
+options     word
+  have_key(${1:key})
+#}}}
+
+# Module: Shoulda::ActiveRecord::Matchers#{{{
+# validation#{{{
+snippet     .with_message
+abbr        .with_message(regexp)
+options     word
+  .with_message(${1})
+
+snippet     allow_m
+abbr        allow_mass_assignment_of(value)
+options     word
+  allow_mass_assignment_of(${1:value})
+
+snippet     allow_v
+abbr        allow_value(value).for(column)
+options     word
+  allow_value(${1:value}).for(:${2:column})
+
+snippet     inclusion
+abbr        ensure_inclusion_of(attr).in_range(...)
+options     word
+  ensure_inclusion_of(${1:column}).in_range(${2:1..100})${3:.with_low_message(${4:message\})}${5:.with_high_message${6:message\}}
+
+snippet     exclusion
+abbr        ensure_exclusion_of(...)
+options     word
+  ensure_exclusion_of(${1:column})
+    ${2:.in_range(${3:10..20\})}
+
+snippet     confirmation
+abbr        validate_confirmation_of(...)
+options     word
+  validate_confirmation_of(${1:column})
+
+snippet     length
+abbr ensure_length_of(...).is_at_least(...)
+options     word
+  ensure_length_of(${1:column})${2:.is_at_least(${3\}})${4:.is_at_most(${5\}})${6:.with_short_message(/${7:regext\}/) }
+
+snippet     acceptance
+abbr validate_acceptance_of(...)
+options     word
+  validate_acceptance_of(${1:column})
+
+snippet     format_of
+abbr validate_format_of(...)
+options     word
+  validate_format_of(${1:column}).with(${2:message})
+
+snippet     numericality
+abbr        validate_numericality_of(...)
+options     word
+  validate_numericality_of(${1:column})
+
+snippet     presence
+abbr        validate_presence_of(...)
+options     word
+  validate_presence_of(${1:column})
+
+snippet     uniq
+abbr        validate_uniqueness_of(...)
+options     word
+  validate_uniqueness_of(${1:column})${2:.scoped_to: ${3:scope_name\}}${4:.case_insensitive}
+#}}}
+# db common#{{{
+snippet     have_db_index
+abbr        have_db_index(columns)
+options     word
+  have_db_index(${1:columns})${2:.unique(true)}
+
+snippet     have_db_indexc
+abbr        have_db_index([name, column])
+options     word
+  have_db_index([${1:name}, ${2:column}])
+
+snippet read_only_attributes
+abbr        have_readonly_attributes(field)
+  have_read_only_attributes(:${1:field})
+#}}}
+# association#{{{
+snippet     belong
+abbr        belong_to(...)
+options     word
+  should belong_to(${1:table})
+
+snippet     have_many
+abbr        have_many(...)
+options     word
+  should have_many(${1:table})${2:.dependent(${3::destroy\})}
+
+snippet     have_one
+abbr        have_one(...)
+options     word
+  should have_one(${1:table})${2:.dependent(${3::destroy\})}
+
+snippet     have_manyt
+abbr        have_many(...).through(...)
+options     word
+  should have_many(${1:table}).through(${2:table})${3:.dependent(${4::destroy\})}
+
+snippet     have_and_belong_to_many
+abbr        have_and_belong_to_many(association)
+options     word
+  should have_and_belong_to_many(${1:table})
+#}}}
+#}}}
+# Module: Shoulda::Matchers::ActiveRecord#{{{
+snippet     accept_nested_attributes_for
+abbr        accept_nested_attributes_for(field)
+options     word
+  accept_nested_attributes_for(${1:field})${2:.allow_destroy(true)}${3:.limit(${4\})}${5:.update_only}
+
+snippet     have_db_columns
+abbr        have_db_columns(field)
+options     word
+  should_have_db_columns(${1:field})
+
+snippet     query_the_database
+abbr        query_the_database(time=nil)
+options     word
+  query_the_database(${1:4}.times)${2:.or_less}${3:.when_calling(${4:method_name\})}${5:.with(${6:parameter\})}
+
+snippet     serialize
+abbr        serialize(name)
+options     word
+  serialize(${1:name})${2:.as(${3:Hash\})}
+#}}}
+#Module: Shoulda::Matchers::ActionMailer#{{{
+snippet     have_sent_email
+abbr        have_sent_email...
+options     word
+  have_sent_email${1:.with_subject(${2\})}
+    ${3:.from(${4\})}
+    ${5:with_body(${6\})}
+    ${7:to(${8\})}
+    ${9:with_part('text/html', /${10:regexp\}/)}
+    ${11:reply_to(${12\})}
+#}}}
+#Module: Shoulda::Matchers::ActionController#{{{
+snippet     assign_to
+abbr        assign_to(variable)
+options     word
+  assign_to(${1:column})${2:with(${3\})}${3:.with_kind_of(${4:Class\})}
+
+snippet     filter_param
+abbr        filter_param(key)
+options     word
+  should filter_param(${1:key})
+
+snippet     render_template
+abbr        render_template(options={}, message=nil)
+options     word
+  should render_template(${1:templete})
+
+snippet     render_with_layout
+abbr        render_with_layout(name)
+options     word
+  should render_with_layout${1:(${name\})}
+
+snippet     respond_with
+abbr        respond_with(status)
+options     word
+  expect(response).to${1:_not} respond_with(${2::success|:redirect|:missing|:error|404})
+
+snippet     resopnd_with_content_type
+abbr        resopnd_with_content_type(content_type)
+options     word
+  should resopnd_with_content_type(${1::text|:csv|/json/|'application/rss'})
+
+snippet     route
+abbr        route(method, path).to(...)
+options     word
+  should route(${1:method}, ${2:path}).to(action: ${3:action_name}, ${4:id: 4}})
+
+snippet     flash
+abbr        set_the_flash.to(message)
+options     word
+  should set_the_flash(:${1:notice}).to(${2:message})}
+#}}}
+#}}}

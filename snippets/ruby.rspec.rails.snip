@@ -1,0 +1,28 @@
+# RSpec::Rails::Matchers
+snippet     be_a_new
+abbr        be_a_new
+alias       new_record?
+options     word
+  be_a_new(${1:Klass})${2:.with(${3:params\})}
+
+snippet     be_a_new_record
+abbr        be_a_new_record
+options     word
+  be_a_new_record
+
+snippet     be_valid
+abbr        be_valid(*args)
+options     word
+  be_valid${1:(${2:args\})}
+
+snippet     have
+abbr        have(n).errors_on(attribute, opts={})
+options     word
+  have(${1:number or :no}).errors_on(:${2:attribute}${3:, ${4:opts\}})
+
+snippet     match_array
+abbr        match_array(array)
+options     word
+  expect(${1:object}).to${2:_not} match_array(${3:array})
+
+

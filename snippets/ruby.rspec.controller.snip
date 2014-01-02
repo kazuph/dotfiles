@@ -1,0 +1,120 @@
+include ~/.vim/snippet/ruby.rspec.snip
+include ~/.vim/snippet/ruby.rspec.rails.snip
+include ~/.vim/snippet/ruby.rails.controller.snip
+
+snippet     get
+abbr        get *opts
+options     word
+  get ${1::controller => :${2\}, :action => :${3\}}
+
+snippet     put
+abbr        put *opts
+options     word
+  put ${1::controller => :${2\}, :action => :${3\}}
+
+snippet     post
+abbr        post *opts
+options     word
+  post ${1::controller => :${2\}, :action => :${3\}}
+
+snippet     delete
+abbr        delete *opts
+options     word
+  delete ${1::controller => :${2\}, :action => :${3\}}
+
+snippet     flash
+abbr        flash[:name].should eql name
+options     word
+  flash[:${1:name}].should ${2:eql} ${3:value}
+
+# RSpec::Rails::Matchers#{{{
+snippet     render_template
+abbr        expect(response).to render_template(template_name)
+alias       have_rendered
+options     word
+  expect(response).to${1:_not} render_template(${2:template_name})
+
+snippet     redirect_to
+abbr        redirect_to(target)
+options     word
+  expect(response).to${1:_not} redirect_to(${1:target})
+
+snippet     route_to
+abbr        route_to(*expected)
+options     word
+  ${1:routing_hash}.should${2:_not} route_to(${3:"top#index" or { controller: :top, action: :index \}})
+
+snippet     be_routable
+abbr        be_routable
+options     word
+  ${1:routing_hash}.should${2:_not} be_routable
+#}}}
+
+snippet     assigns
+abbr        assigns(:name)
+options     word
+  expect(assigns(${1:variable_name})).to eql(${2:expect_var})
+
+snippet     status
+abbr        expect(response.status).to eql(n)
+options     word
+  expect(response.status).to eql(${1:status_code})
+
+snippet     controller_do
+abbr        controller do ... end
+options     word
+  controller${1:(ControllerClass)} do
+    def ${2:action_name}
+      ${3}
+    end
+  end
+
+snippet     body
+abbr        body
+options     word
+  expect(response.body).to${1:_not} ${2:matcher eql(), match()}
+
+snippet     routes.draw
+abbr        routes.draw { routing_hash }
+options     word
+  routes.draw { ${1:post,get,delete,put} ${2:routing_hash} }
+
+snippet     routes.draw_do
+abbr        Rails.application.routes.draw do ... end
+options     word
+  Rails.application.routes.draw do
+    ${1:matching_rule}
+  end
+
+snippet     bypass_rescue
+abbr        bypass_rescue
+options     word
+  bypass_rescue
+  ${1:expect { get :index \}.to raise_error(${2:Exception\})}
+
+snippet     before_cookies
+abbr        request.cookies["string_key"]
+alias       request.cookies
+options     word
+  request.cookies["${1:string_key}"]
+
+snippet     after_cookies
+abbr        resopnse.cookies["string_key"]
+alias       response.cookies
+options     word
+  resopnse.cookies["${1:string_key}"]
+
+snippet     render_views
+abbr        render_views
+options     word
+  render_views
+
+snippet     controller.prepend_view_path
+abbr        controller.prepend_view_path "path"
+options     word
+  controller.prepend_view_path "${1:path}"
+
+snippet     controller.append_view_path
+abbr        controller.append_view_path "path"
+options     word
+  controller.append_view_path "${1:path}"

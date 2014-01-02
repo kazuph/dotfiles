@@ -1,0 +1,452 @@
+#ClassMethods#{{{
+# Caching#{{{
+# ActionController::Caching::ClassMethods#{{{
+snippet     fragment_cache_key
+abbr        fragment_cache_key(key)
+options     word
+  fragment_cache_key(${1:key_or_roting_hash})
+
+snippet     write_fragment
+abbr        write_fragment(key, content, option=nil)
+options     word
+  write_fragment(${1:key}, ${2:content}${3:, ${4:opt=nil\}})
+
+snippet     read_fragment
+abbr        read_fragment(key, options=nil)
+options     word
+  read_fragment(${1:key}${2:, ${3:opt=nil\}})
+
+snippet     fragment_exist
+abbr        fragment_exist(key, options=nil)
+# Check if a cached fragment from the location signified by
+options     word
+  fragment_exist(${1:key}${2:, ${3:opt=nil\}})
+
+snippet     expire_fragment
+abbr        expire_fragment(key, ${2:opt=nil})
+options     word
+  expire_fragment(${1:key_or_hash_or_str_or_reg}${2:, opt=nil})
+
+snippet     instrument_fragment_cache
+abbr        instrument_fragment_cache(name, key)
+options     word
+  instrument_fragment_cache(${1:name}, ${2:key})
+#}}}
+
+#ActionController::Caching::ClassMethods#{{{
+snippet     expire_page
+abbr        expire_page(path)
+options     word
+  expire_page(${1:routing})
+
+snippet     cache_page
+abbr        cache_page(content, path, extension=nil, gzip=Zlib::BEST_COMPRESSION)
+options     word
+  cache_page ${1:content}, ${2:routing}${3:, extension=nil, gzip}
+
+snippet     caches_page
+abbr        caches_page(*actions)
+options     word
+  caches_page ${1:actions}
+
+snippet     caches_action
+abbr        caches_action(*actions)
+options     word
+  caches_action ${1:actions}
+#}}}
+
+#ActionController::Sweeping::ClassMethods#{{{
+snippet     cache_sweeper
+abbr        cache_sweeper(*sweepers)
+options     word
+  cache_sweeper ${1:sweepers only: [...], if: {\}}
+#}}}
+#}}}
+
+# Metal#{{{
+#ActionController::Heleprs::ClassMethods#{{{
+snippet     helper_attr
+abbr        helper_attr(*attr)
+options     word
+  helper_attr :${1:name ...}
+
+snippet     helpers
+abbr        helpers
+options     word
+  helpers
+
+snippet     modules_for_helpers
+abbr        modules_for_helpers(args)
+options     word
+  modules_for_helpers(${1:list_of_helpers_or_modules})
+
+snippet     all_helpers_from_path
+abbr        all_helpers_from_path(path)
+options     word
+  all_helpers_from_path(${1:path})
+#}}}
+
+#ActionController::HideActions::ClassMethods#{{{
+snippet     hide_action
+abbr        hide_action(*args)
+options     word
+  hide_action ${1:list_of_actions}
+
+snippet     visible_action?
+abbr        visible_action?(action_name)
+options     word
+  visible_action?(${1:action_name})
+
+snippet     action_methods
+abbr        action_methods
+options     word
+  action_methods
+#}}}
+
+#ActionController::HttpAuthontication::Basic::ControllerHelper::ClassMethods#{{{
+snippet     http_basic_authenticate_with_easy
+abbr        http_basic_authenticate_with(opt={})
+options     word
+  http_basic_authenticate_with name: ${1:name}, password: ${2:password}${3: except only...}
+
+snippet     http_basic_authenticate_with
+abbr        http_basic_authenticate_with(opt={})
+options     word
+  http_basic_authenticate_with ${1:opt or block}
+#}}}
+
+#ActionController::MimeResponds::ClassMethods#{{{
+#snippet     respond_to
+#abbr        respond_to(*mimes)
+#options     word
+#  respond_to :${1:extention ...}, ${2:except, only ...}
+
+snippet     clear_respond_to
+abbr        clear_respond_to
+options     word
+  clear_respond_to
+#}}}
+
+#ActionController::ParamsWrapper::ClassMethods#{{{
+snippet     wrap_parameters
+abbr        wrap_parameters(name_or_model_or_opts, opts={})
+options     word
+  wrap_parameters ${1:name_or_model_or_opts}, ${2:opt}
+#}}}
+
+#ActionController::Renderers::ClassMethods#{{{
+snippet     use_renderers(*args)
+abbr        use_renderers(*args)
+options     word
+  use_renderers(${1:*args})
+#}}}
+
+#ActionController::RequestForgeryProtection::ClassMethods#{{{
+snippet     protect_from_forgery
+abbr        protect_from_forgery(opt={})
+options     word
+  protect_from_forgery ${1:only except}
+#}}}
+
+#ActionController::UrlFor#{{{
+snippet     url_options
+abbr        url_options
+options     word
+  url_options
+#}}}
+#}}}
+# }}}
+
+# InstanceMethod#{{{
+#Metal#{{{
+#ActionController::ConditinalGet#{{{
+snippet     fresh_when
+abbr        fresh_when(record_or_opt, additional_opt={})
+options     word
+  fresh_when(${1:record or etag: @obj, last_modified: @obj.created_at, public: true})
+
+snippet     stale?
+abbr        stale?(record_or_opt, additional_opt)
+options     word
+  stale?(${1:record or etag: @obj, last_modified: @obj.created_at, public: true})
+
+snippet     expires_in
+abbr        expires_in(seconds, opt={})
+options     word
+  expires_in ${1:second 20.minutes}${2:, opt}
+
+snippet     expires_now
+abbr        expires_now
+options     word
+  expires_now
+#}}}
+
+#ActionController::DataStreaming#{{{
+snippet     send_file
+abbr        send_file(path, opt={})
+options     word
+  send_file ${1:path}, type: ${2:image/jpeg}${3:, disposition: ${4:inline\}}
+
+snippet     send_data
+abbr        send_data(data, opt={})
+options     word
+  send_data ${1:data}, type: ${2:image/jpeg}${3:, disposition: ${4:inline\}}
+#}}}
+
+#ActionController::Exceptions#{{{
+snippet     ActionControllerError
+abbr        ActionControllerError
+options     word
+  ActionControllerError
+
+snippet     RoutingError
+abbr        RoutingError
+options     word
+  RoutingError
+
+snippet     MethodNotAllowed
+abbr        MethodNotAllowed
+options     word
+  MethodNotAllowed
+
+snippet     NotImplemented
+abbr        NotImplemented
+options     word
+  NotImplemented
+
+snippet     UnknownController
+abbr        UnknownController
+options     word
+  UnknownController
+
+snippet     MissingFile
+abbr        MissingFile
+options     word
+  MissingFile
+
+snippet     RenderError
+abbr        RenderError
+options     word
+  RenderError
+
+snippet     SessionOverflowError
+abbr        SessionOverflowError
+options     word
+  SessionOverflowError
+
+snippet     UnknownHttpMethod
+abbr        UnknownHttpMethod
+options     word
+  UnknownHttpMethod
+#}}}
+
+#ActionController::ForceSSL#{{{
+snippet     force_ssl
+abbr        force_ssl(opt={})
+options     word
+  force_ssl ${1:only, exclude...}
+#}}}
+
+#ActionController::Head#{{{
+snippet     head
+abbr        head(status, opt={})
+options     word
+  head ${1:status(:created, :ok, :bad_request)}${2:, location: ${3:routing}}
+#}}}
+
+#ActionController::HideActions#{{{
+snippet     method_for_action
+# Overrides AbstractController::Base#action_method? to return false if the # action name is in the list of hidden actions.
+abbr        method_for_action(action_name)
+options     word
+  method_for_action(${1:action_name})
+#}}}
+
+#ActionController::HttpAuthontication::Basic::ControllerHelper#{{{
+snippet     authenticate_or_request_with_http_basic
+abbr        authenticate_or_request_with_http_basic(realm = "Application", &login_procedure)
+options     word
+  authenticate_or_request_with_http_basic ${1:realm}${2:&login_procedure}
+
+snippet     authenticate_with_http_basic
+abbr        authenticate_with_http_basic(&login_procedure)
+options     word
+  authenticate_with_http_basic ${1:&login_procedure}
+
+#ActionController::HttpAuthontication::Digest::ControllerMethods
+snippet     authenticate_or_request_with_http_digest
+abbr        authenticate_or_request_with_http_digest(realm = "Application", &password_procedure)
+options     word
+  authenticate_or_request_with_http_digest ${1:realm}${2:&password_procedure}
+
+#ActionController::HttpAuthontication::Token::ControllerMethods
+#snippet     authenticate_or_request_with_http_token
+#abbr        authenticate_or_request_with_http_token(realm = "Application", &password_procedure)
+#options     word
+#  authenticate_or_request_with_http_token ${1:realm}${2:&password_procedure}
+
+snippet     authenticate_with_http_token
+abbr        authenticate_with_http_token(&login_procedure)
+options     word
+  authenticate_with_http_token ${1:&login_procedure}
+
+snippet     request_http_token_authentication
+abbr        request_http_token_authentication(realm = "Application", &password_procedure)
+options     word
+  request_http_token_authentication ${1:realm}${2:&password_procedure}
+#}}}
+
+#ActionController::ImplicitRender#{{{
+#snippet     send_action
+#abbr        send_action(method, *args)
+#options     word
+#  send_action(${1:method}, ${2:*args})
+#
+#snippet     default_render
+#abbr        default_render(*args)
+#options     word
+#  default_render(${1:*args})
+#
+#snippet     method_for_action
+#abbr        method_for_action(action_name)
+#options     word
+#  method_for_action(${1:action_name})
+#}}}
+
+#ActionController::Instrumentation For BenchMark
+
+#ActionController::MimeResponds#{{{
+snippet     respond_to
+abbr        respond_to(*mimes, &block)
+options     word
+  respond_to do |format|
+    ${1:format.any(:json) { render request.format.to_sym: @people \}}
+  end
+
+snippet     respond_with
+abbr        respond_with(*resources, &block)
+options     word
+  respond_with(${1:resources})
+
+
+snippet     respond_with_do
+abbr        respond_with(*resources, &block)
+options     word
+  respond_with(${1:resources}) do |format|
+    ${2}
+  end
+#}}}
+
+#ActionController::ParamsWrapper#{{{
+snippet     inherited
+abbr        inherited(klass)
+options     word
+  inherited(${1:klass})
+#}}}
+
+#ActionController::RackDelegation#{{{
+snippet     dispatch
+abbr        dispatch(action, request, response=ActionDispatch::Response.new)
+options     word
+  dispatch(${1:action}, ${2:request}${3:, response})
+
+snippet     response_body=
+abbr        response_body = ...
+options     word
+  response_body = ${1}
+
+snippet     reset_session
+abbr        reset_session
+options     word
+  reset_session
+#}}}
+
+#ActionController::Redirection#{{{
+snippet     redirect_to
+abbr        redirect_to(opts={}, response_status={})
+options     word
+  redirect_to ${1:option}
+
+snippet     redirect_to_example
+abbr        redirect_to_example
+options     word
+  redirect_to_example admin_path(@user), status: :ok, flash: { result: "good" }
+#}}}
+
+#ActionController::Renderers#{{{
+snippet     render_to_body(opts)
+abbr        render_to_body(opts)
+options     word
+  render_to_body(${1:opts})
+#}}}
+
+#ActionController::Rendering
+#process_action
+#render
+#render_to_string
+
+#ActionController::RequestForgeryProtection#{{{
+snippet     protect_from_forgery_skip
+abbr        protect_from_forgery_skip
+options     word
+  skip_before_filter :verify_authenticity_token${1:, only except}
+
+snippet     verify_authenticity_token
+abbr        verify_authenticity_token
+options     word
+  verify_authenticity_token
+
+snippet     handle_unverified_request
+abbr        handle_unverified_request
+options     word
+  handle_unverified_request
+
+snippet     verified_request?
+abbr        verified_request?
+options     word
+  verified_request?
+
+snippet     form_authenticity_token
+abbr        form_authenticity_token
+options     word
+  form_authenticity_token
+
+snippet     form_authenticity_param
+abbr        form_authenticity_param
+options     word
+  form_authenticity_param
+
+snippet     protect_against_forgery?
+abbr        protect_against_forgery?
+options     word
+  protect_against_forgery?
+#}}}
+
+#ActionController::Rescue#{{{
+snippet     rescue_with_handler
+abbr        rescue_with_handler(exception)
+options     word
+  rescue_with_handler(${1:exception})
+#}}}
+#}}}
+
+#ActionController::Caching#{{{
+snippet     cache
+abbr        cache(key, opt={}, &block)
+options     word
+  cache(${1:key}, ${2:opts})
+#}}}
+
+# ActionController::RecordIdentifier#{{{
+snippet     dom_class
+abbr        dom_class(record_or_class, prefix=nil)
+options     word
+  dom_class(${1:record_or_class}${2:, :prefix})
+
+snippet     dom_id
+abbr        dom_id(record, prefix=nil)
+options     word
+  dom_id(${1:record}${2:, :prefix})
+#}}}
+#}}}
+

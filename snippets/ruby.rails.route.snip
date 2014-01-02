@@ -1,0 +1,328 @@
+# ----------------------------------------
+# Get Delete etc...# {{{
+snippet get
+abbr    get 'plural', to: 'controllers#action'
+options word
+  get '${1:#:plural}', to: '${2:#:controllers#action}'
+
+snippet get_singular
+abbr    get 'singular', to: :action
+options word
+  get '${1:#:singular}', to: :${2:action}
+
+snippet put
+abbr    put 'plural', to: 'controllers#action'
+options word
+  put '${1:#:plural}', to: '${2:#:controllers#action}'
+
+snippet put_singular
+abbr    put 'singular', to: :action
+options word
+  put '${1:#:singular}', to: :${2:action}
+
+snippet post
+abbr    post 'plural', to: 'controllers#action'
+options word
+  post '${1:#:plural}', to: '${2:#:controllers#action}'
+
+snippet post_singular
+abbr    post 'singular', to: :action
+options word
+  post '${1:#:singular}', to: :${2:action}
+
+snippet patch
+abbr    patch 'plural', to: 'controllers#action'
+options word
+  patch '${1:#:plural}', to: '${2:#:controllers#action}'
+
+snippet patch_singular
+abbr    patch 'singular', to: :action
+options word
+  patch '${1:#:singular}', to: :${2:action}
+
+snippet delete
+abbr    delete 'plural', to: 'controllers#action'
+options word
+  delete '${1:#:plural}', to: '${2:#:controllers#action}'
+
+snippet delete_singular
+abbr    delete 'singular', to: :action
+options word
+  delete '${1:#:singular}', to: :${2:action}
+#}}}
+
+# ----------------------------------------
+# Options#{{{
+snippet to:
+abbr    to: 'controller#action'
+options word
+  to: '${1:#:controller#action}'
+
+snippet as:
+abbr    as: 'method_name'
+options word
+  as: '${1:#:method_name}'
+
+snippet only:
+abbr    only: [:index, :new]
+options word
+  only: [:${1:#:new|create|destroy}]
+
+snippet on:
+abbr    on: :member
+options word
+  on: :${1:member|collection}
+
+snippet default
+alias   format
+abbr    default: { format: 'xxx' }
+options word
+  default: { format: '${1:jpg|json}' }
+
+snippet constraints
+abbr    constraints: { key: /Regexp/ }
+options word
+  constraints: { ${1:key}: /${2:Regexp}/ }
+
+# ----------------------------------------
+# Regexp
+snippet constraints_reg
+abbr    constraints: { key: /Regexp/ }
+options word
+  constraints: { ${1:key}: /${2:Regexp}/ }
+
+snippet regexp
+alias   reg
+abbr    key: /Regexp/
+options word
+  ${1:key}: /${2:Regexp}/
+
+# ----------------------------------------
+# lambda
+snippet constraints_lambda
+abbr    constraints: -> { |request| ... }
+options word
+  constraints: -> { |request| ${1} }
+
+# ----------------------------------------
+# Subdomain
+snippet subdomain
+abbr    subdomain: 'name'
+options word
+  constraints: { subdomain: '${1:name}' }
+
+snippet constraints_subdomain
+abbr    constraints: { subdomain: 'name' }
+options word
+  constraints: { subdomain: '${1:name}' }
+
+snippet subdomain_do
+abbr    constraints subdomain: 'name' do ... end
+options word
+  constraints subdomain: '${1:name}' do
+    ${2}
+  end
+
+# ----------------------------------------
+# Redirect
+snippet redirect
+abbr    redirect('path')
+options word
+  redirect('${1:#:/path/%{name\}}')
+
+snippet redirect_block
+abbr    redirect { |params, req| ... }
+options word
+  redirect { |params, req| ${1} }
+
+snippet to_redirect
+abbr    to: redirect('path')
+options word
+  to: redirect('${1:#:/path/%{name\}}')
+
+# ----------------------------------------
+# Translated paths
+snippet path_names:
+abbr    path_names:
+options word
+  path_names: { new: '${1:#:translated_name}', edit: '${2:#:translated_name}' }
+
+snippet path:
+abbr    path:
+options word
+  path: '${1:translated_path}'
+#}}}
+
+# ----------------------------------------
+# Shallow#{{{
+snippet shallow:
+abbr    shallow:
+options word
+  shallow: true
+
+snippet shallow_path:
+abbr    shallow_path: 'path'
+options word
+  shallow_path: '${1:path}'
+
+snippet shallow_prefix:
+abbr    shallow_prefix: 'path'
+options word
+  shallow_prefix: '${1:path}'
+
+snippet shallow_do
+abbr    shallow do ... end
+options word
+  shallow do 
+    ${1}
+  end
+#}}}
+
+# ----------------------------------------
+# Concern#{{{
+snippet concern:
+abbr    concern: :name
+options word
+  concern: :${1:name}
+
+snippet concerns:
+abbr    concerns: :name
+options word
+  concerns: :${1:name}
+
+snippet concern
+abbr    concern :name
+options word
+  concern :${1:name}
+
+snippet concerns
+abbr    concerns :name
+options word
+  concerns :${1:name}
+
+snippet concern_do
+abbr    concern :name do ... end
+options word
+  concern :${1:name} do
+    ${2}
+  end
+#}}}
+
+# ----------------------------------------
+# Resources / Scope {{{
+snippet resources
+abbr    resources(*args)
+options word
+  resources :${1:controller_name}s
+
+snippet resource
+abbr    resource(*args)
+options word
+  resource :${1:controller_name}
+
+snippet namespace
+abbr    namespace :name do ... end
+options word
+  namespace :${1:name} do 
+    ${2:define_route}
+  end
+
+snippet scope
+abbr    scope module: 'name' do ... end
+options word
+  scope module: '${1:name}' do
+    ${2:define_route}
+  end
+
+snippet scope_oneliner
+abbr    scope :name, path: 'path/name'
+options word
+  scope :${1:name}, path: '${2:path/}$1'
+
+snippet scope_with_shallow
+abbr    scope shallow_path: 'path' do ... end
+options word
+  scope shallow_path: '${1:name}' do
+    ${2}
+  end
+
+snippet resources_oneliner
+abbr    resources :name, module: 'name'
+options word
+  resources :${1:name}s, module: '${2:name}'
+
+snippet resources_nest
+abbr    resources :name do resources :nested ...
+options word
+  resources :${1:name} do
+    resources ${2:nested}
+  end
+#}}}
+
+# ----------------------------------------
+# Member / collection{{{
+snippet member
+abbr    member do ... end
+options word
+  member do
+    ${1}
+  end
+
+snippet collection
+abbr    collection do ... end
+options word
+  collection do 
+    ${1}
+  end
+#}}}
+
+# ----------------------------------------
+# Match {{{
+snippet match
+abbr    match 'name', to: 'controllers#action', via: :all
+options word
+  match '${1:name}', to: '${2:controller#action}', via: [:${3:all|get|post|delete}]
+#}}}
+
+# ----------------------------------------
+# DEMO code#{{{
+snippet dynamic_get
+abbr    get ':controller/:action/:id/:user_id'
+options word
+  get ':controller/:action/:id/:user_id'
+
+snippet dynamic_get_with_controller
+abbr    get ':controller(/:action(/:id))', controller: /admin\/[^\/]+/
+options word
+  get ':controller(/:action(/:id))', controller: /admin\/[^\/]+/
+
+snippet match_all
+alias   other
+abbr    *other
+options word
+  *other
+
+snippet overriding_the_singular_form
+abbr    If you want to define the singular form of a resource, you should add additional rules to the Inflector:
+options word
+  # If you want to define the singular form of a resource, you should add additional rules to the Inflector:
+  ActiveSupport::Inflector.inflections do |inflect|
+    inflect.irregular 'tooth', 'teeth'
+  end
+
+snippet as_in_nested_resources
+abbr    as option overrides the automatically-generated name for the resource in nested route helpers. For example:
+options word
+  # as option overrides the automatically-generated name for the resource in nested route helpers. For example:
+  resources :magazines do
+    resources :ads, as: 'periodical_ads'
+  end
+#}}}
+
+# ----------------------------------------
+# Root {{{
+snippet root
+abbr    root 'countrollers#action'
+options word
+  root '${1:controllers#action}'
+# }}}
