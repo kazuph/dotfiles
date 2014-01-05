@@ -4,7 +4,6 @@ ZSH_THEME="wedisagree"
 plugins=(svn git perl ruby linux osx)
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
-setopt no_share_history
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
@@ -135,3 +134,5 @@ preexec () {
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+setopt no_share_history
