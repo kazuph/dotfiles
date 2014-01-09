@@ -402,6 +402,9 @@ NeoBundle 'honza/vim-snippets'
 NeoBundle 'Shougo/unite.vim',  '',  'default'
 NeoBundle 'basyura/unite-rails'
 NeoBundle 'kmnk/vim-unite-giti'
+NeoBundle 'tsukkee/unite-tag'
+NeoBundle 'ujihisa/unite-colorscheme'
+NeoBundle 'h1mesuke/unite-outline'
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
@@ -455,19 +458,13 @@ let IM_CtrlMode = 4
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>"
 
 " Vimのキーバインドでfiling
-NeoBundleLazy 'Shougo/vimfiler', {
-\   'autoload' : { 'commands' : [ 'VimFiler' ] },
-\   'depends': [ 'Shougo/unite.vim' ],
-\ }
+NeoBundle 'Shougo/vimfiler'
 let s:bundle = neobundle#get('vimfiler')
 function! s:bundle.hooks.on_source(bundle)
   let g:vimfiler_as_default_explorer = 1
   let g:vimfiler_safe_mode_by_default = 0
 endfunction
 nnoremap <Space>v :VimFiler -split -simple -winwidth=35 -no-quit<CR>
-autocmd FileType vimfiler
-        \ nnoremap <buffer><silent>/
-        \ :<C-u>Unite file -default-action=vimfiler<CR>
 
 NeoBundle 'scrooloose/nerdtree'
 nnoremap <Space>n :NERDTreeToggle<CR>
@@ -570,15 +567,16 @@ endfunction
 " source: Uniteから各種pluginへのinteface
 nnoremap <silent> ,us :Unite source<CR>
 " ファイル一覧
-nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> ,f  :<C-u>Unite file_rec/async:!<CR>
 " ブックマーク一覧
 nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
 " ブックマーク追加
 nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
 " yank一覧
-nnoremap <silent> ,uy :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> ,y :<C-u>Unite -buffer-name=register register<CR>
 " 常用セット
-nnoremap <silent> ,uu :<C-u>Unite buffer file_mru file<CR>
+nnoremap <silent> ,uu :<C-u>Unite buffer file_mru file_rec/async:!<CR>
 " tag
 nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
