@@ -378,9 +378,9 @@ NeoBundle 'Shougo/vimproc', {
       \    },
       \ }
 
-if has("lua")
+" if has("lua")
   NeoBundle 'Shougo/neocomplete'
-endif
+" endif
 
 " 英語補完
 NeoBundle 'ujihisa/neco-look'
@@ -400,7 +400,8 @@ NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
 NeoBundle 'Shougo/unite.vim',  '',  'default'
-NeoBundle "basyura/unite-rails"
+NeoBundle 'basyura/unite-rails'
+NeoBundle 'kmnk/vim-unite-giti'
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
@@ -500,11 +501,20 @@ NeoBundle 'mattn/habatobi-vim'
 " テンプレート集
 NeoBundle 'mattn/sonictemplate-vim'
 
+" codic
+NeoBundle 'koron/codic-vim'
+NeoBundle 'rhysd/unite-codic.vim'
+
+" カーソル下の単語を検索
+nnoremap cd :<C-u>Codic<CR>
+
+" ビジュアルモードで選択した部分を検索
+vnoremap cd y:<C-u>Codic<C-R>"<CR>
+
 " coffee break!
 NeoBundle 'kchmck/vim-coffee-script.git'
 au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
 let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
-
 
 " for go
 exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
@@ -557,6 +567,8 @@ function! s:bundle.hooks.on_source(bundle)
   endfunction
   call unite#custom_default_action('source/bookmark/directory', 'vimfiler')
 endfunction
+" source: Uniteから各種pluginへのinteface
+nnoremap <silent> ,us :Unite source<CR>
 " ファイル一覧
 nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
 " ブックマーク一覧
@@ -571,8 +583,6 @@ nnoremap <silent> ,uu :<C-u>Unite buffer file_mru file<CR>
 nnoremap <silent> ,ut :Unite tag/include<CR>
 " unite-grep
 nnoremap <silent> ,ug :Unite -no-quit -winheight=15 grep<CR>
-" source
-nnoremap <silent> ,us :Unite source<CR>
 " ref
 nnoremap <silent> ,ur :Unite ref/
 " color scheme の変更
@@ -587,7 +597,7 @@ nnoremap <silent> ,gl :Unite giti/log<CR>
 "--------------------------------------------------------------------------
 " neocomplate
 "--------------------------------------------------------------------------
-let g:neocomplete#force_overwrite_completefunc = 1
+" let g:neocomplete#force_overwrite_completefunc = 1
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
@@ -597,7 +607,8 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 4
 let g:neocomplete#auto_completion_start_length = 4
-let g:neocomplete#skip_auto_completion_time = '5.0'
+" let g:neocomplete#skip_auto_completion_time = '5.0'
+let g:neocomplete#skip_auto_completion_time = ''
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
 " for snippets
@@ -614,26 +625,26 @@ let g:neocomplete#sources#dictionary#dictionaries = {
     \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
         \ }
 
-if !exists('g:neocomplete#text_mode_filetypes')
-  let g:neocomplete#text_mode_filetypes = {}
-endif
-
-let g:neocomplete#text_mode_filetypes = {
-      \ 'rst': 1,
-      \ 'vimrc': 1,
-      \ 'perl': 1,
-      \ 'ruby': 1,
-      \ 'javascript': 1,
-      \ 'coffee': 1,
-      \ 'markdown': 1,
-      \ 'gitrebase': 1,
-      \ 'gitcommit': 1,
-      \ 'vcs-commit': 1,
-      \ 'hybrid': 1,
-      \ 'text': 1,
-      \ 'help': 1,
-      \ 'tex': 1,
-      \ }
+" if !exists('g:neocomplete#text_mode_filetypes')
+"   let g:neocomplete#text_mode_filetypes = {}
+" endif
+"
+" let g:neocomplete#text_mode_filetypes = {
+"       \ 'rst': 1,
+"       \ 'vimrc': 1,
+"       \ 'perl': 1,
+"       \ 'ruby': 1,
+"       \ 'javascript': 1,
+"       \ 'coffee': 1,
+"       \ 'markdown': 1,
+"       \ 'gitrebase': 1,
+"       \ 'gitcommit': 1,
+"       \ 'vcs-commit': 1,
+"       \ 'hybrid': 1,
+"       \ 'text': 1,
+"       \ 'help': 1,
+"       \ 'tex': 1,
+"       \ }
 
 " Define keyword.
 if !exists('g:neocomplete#keyword_patterns')
@@ -668,10 +679,6 @@ autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-let g:neocomplete#sources = {
-  \ '_' : ['vim', 'neosnippet', 'omni', 'include', 'buffer', 'file/include']
-  \ }
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
