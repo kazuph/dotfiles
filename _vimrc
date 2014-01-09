@@ -404,6 +404,7 @@ NeoBundle "basyura/unite-rails"
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
+autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
