@@ -73,9 +73,6 @@ NeoBundleLazy 'mattn/excitetranslate-vim', {
       \ 'autoload' : { 'commands': ['ExciteTranslate']}
       \ }
 
-" 英語補完
-NeoBundle 'ujihisa/neco-look'
-
 " カーソルキー使うってやっぱなんか、ありえない？みたいな
 NeoBundle 'https://github.com/kazuph/gips-vim.git'
 
@@ -381,29 +378,16 @@ NeoBundle 'Shougo/vimproc', {
       \    },
       \ }
 
-function! s:meet_neocomplete_requirements()
-    return has('lua') && (v:version > 703 || (v:version == 703 && has('patch885')))
-endfunction
-
-if s:meet_neocomplete_requirements()
-    NeoBundle 'Shougo/neocomplete.vim'
-    NeoBundleFetch 'Shougo/neocomplcache.vim'
-else
-    NeoBundleFetch 'Shougo/neocomplete.vim'
-    NeoBundle 'Shougo/neocomplcache.vim'
-endif
-
-if s:meet_neocomplete_requirements()
-    " 新しく追加した neocomplete の設定
-else
-    " 今までの neocomplcache の設定
-endif
-
 if has("lua")
-  NeoBundleLazy 'Shougo/neocomplete', { 'autoload' : {
-        \   'insert' : 1,
-        \ }}
+  NeoBundle 'Shougo/neocomplete'
 endif
+
+" 英語補完
+NeoBundle 'ujihisa/neco-look'
+
+" スペルチェック
+nnoremap <Space>s  :<C-u>setl spell!<CR>
+
 NeoBundleLazy 'Shougo/neosnippet', {
       \ 'autoload' : {
       \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
@@ -613,7 +597,7 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 4
 let g:neocomplete#auto_completion_start_length = 4
-let g:neocomplete#skip_auto_completion_time = '0.2'
+let g:neocomplete#skip_auto_completion_time = '5.0'
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
 " for snippets
@@ -629,6 +613,27 @@ let g:neocomplete#sources#dictionary#dictionaries = {
     \ 'scheme'   : $HOME.'/.gosh_completions',
     \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
         \ }
+
+if !exists('g:neocomplete#text_mode_filetypes')
+  let g:neocomplete#text_mode_filetypes = {}
+endif
+
+let g:neocomplete#text_mode_filetypes = {
+      \ 'rst': 1,
+      \ 'vimrc': 1,
+      \ 'perl': 1,
+      \ 'ruby': 1,
+      \ 'javascript': 1,
+      \ 'coffee': 1,
+      \ 'markdown': 1,
+      \ 'gitrebase': 1,
+      \ 'gitcommit': 1,
+      \ 'vcs-commit': 1,
+      \ 'hybrid': 1,
+      \ 'text': 1,
+      \ 'help': 1,
+      \ 'tex': 1,
+      \ }
 
 " Define keyword.
 if !exists('g:neocomplete#keyword_patterns')
@@ -829,9 +834,12 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-" autocmd BufWritePre * :%s/\s\+$//ge
+autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-" autocmd BufWritePre * :%s/\t/    /ge
+autocmd BufWritePre * :%s/\t/    /ge
+
+" 保存時に自動でスペルチェック
+autocmd BufWritePre * :setl spell!
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
