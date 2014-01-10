@@ -502,6 +502,11 @@ NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'koron/codic-vim'
 NeoBundle 'rhysd/unite-codic.vim'
 
+" gauche
+NeoBundle 'aharisu/vim_goshrepl'
+NeoBundle 'aharisu/vim-gdev'
+NeoBundle 'aharisu/Gauche-Complete'
+
 " カーソル下の単語を検索
 nnoremap cd :<C-u>Codic<CR>
 
@@ -649,7 +654,8 @@ if !exists('g:neocomplete#keyword_patterns')
     let g:neocomplete#keyword_patterns = {}
 endif
 let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-let g:neocomplete#keyword_patterns.perl = '\h\w*->\h\w*\|\h\w*::\w*'
+let g:neocomplete#keyword_patterns['perl'] = '\h\w*->\h\w*\|\h\w*::\w*'
+let g:neocomplete#keyword_patterns['gosh-repl'] = "[[:alpha:]+*/@$_=.!?-][[:alnum:]+*/@$_:=.!?-]*"
 
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
