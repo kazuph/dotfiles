@@ -136,3 +136,7 @@ preexec () {
 export PATH="/usr/local/heroku/bin:$PATH"
 
 setopt no_share_history
+
+#THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
+[[ -s "/Users/kazuhiro.honma/.gvm/bin/gvm-init.sh" ]] && source "/Users/kazuhiro.honma/.gvm/bin/gvm-init.sh"
+function gi() { curl http://gitignore.io/api/$@ ;}
