@@ -524,6 +524,8 @@ filetype plugin indent on
 " ハイライトON
 syntax on
 
+NeoBundle 'aharisu/vim-gdev'
+
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
 
@@ -843,9 +845,6 @@ noremap : ;
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
-
-" 保存時に自動でスペルチェック
-autocmd BufWritePre * :setl spell!
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
