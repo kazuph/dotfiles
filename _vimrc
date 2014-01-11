@@ -505,7 +505,6 @@ NeoBundle 'rhysd/unite-codic.vim'
 " gauche
 NeoBundle 'aharisu/vim_goshrepl'
 NeoBundle 'aharisu/vim-gdev'
-NeoBundle 'aharisu/Gauche-Complete'
 
 " カーソル下の単語を検索
 nnoremap cd :<C-u>Codic<CR>
