@@ -16,7 +16,10 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
 alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
-
+alias t='tree'
+alias gs='git status'
+alias gr='git branch -a'
+alias ga='git add'
 
 function extract() {
 case $1 in
