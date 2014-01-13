@@ -510,7 +510,7 @@ NeoBundle 'aharisu/vim-gdev'
 nnoremap cd :<C-u>Codic<CR>
 
 " ビジュアルモードで選択した部分を検索
-vnoremap cd y:<C-u>Codic<C-R>"<CR>
+vnoremap cd y:<C-u>Codic <C-R>"<CR>
 
 " coffee break!
 NeoBundle 'kchmck/vim-coffee-script.git'
@@ -521,6 +521,23 @@ let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s'
 exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
 NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
 auto BufWritePre *.go Fmt
+
+" 複数開いているウィンドウに瞬時に移動する
+NeoBundle 't9md/vim-choosewin'
+nmap  -  <Plug>(choosewin)
+let g:choosewin_overlay_enable = 1
+let g:choosewin_overlay_clear_multibyte = 1
+let g:choosewin_color_overlay = {
+      \ 'gui': ['DodgerBlue3', 'DodgerBlue3' ],
+      \ 'cterm': [ 25, 25 ]
+      \ }
+let g:choosewin_color_overlay_current = {
+      \ 'gui': ['firebrick1', 'firebrick1' ],
+      \ 'cterm': [ 124, 124 ]
+      \ }
+let g:choosewin_blink_on_land      = 0
+let g:choosewin_statusline_replace = 0
+let g:choosewin_tabline_replace    = 0
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
@@ -595,6 +612,8 @@ nnoremap <silent> ,uo : <C-u>Unite -no-quit -vertical -winwidth=30 outline<CR>
 nnoremap <silent> ,gs :Unite giti/status<CR>
 " git log
 nnoremap <silent> ,gl :Unite giti/log<CR>
+" codic
+nnoremap <silent> ,cd :Unite codic<CR>
 
 "--------------------------------------------------------------------------
 " neocomplate
@@ -847,9 +866,6 @@ noremap : ;
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
 autocmd BufWritePre * :%s/\t/    /ge
-
-" 保存時に自動でスペルチェック
-autocmd BufWritePre * :setl spell!
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
