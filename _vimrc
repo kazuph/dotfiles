@@ -383,9 +383,9 @@ NeoBundle 'Shougo/vimproc', {
       \    },
       \ }
 
-" if has("lua")
+if has("lua")
   NeoBundle 'Shougo/neocomplete'
-" endif
+endif
 
 " 英語補完
 NeoBundle 'ujihisa/neco-look'
@@ -401,6 +401,7 @@ NeoBundleLazy 'Shougo/neosnippet', {
       \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
       \ }}
 
+NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
@@ -413,6 +414,7 @@ NeoBundle 'h1mesuke/unite-outline'
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
+autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
@@ -543,6 +545,8 @@ let g:choosewin_tabline_replace    = 0
 filetype plugin indent on
 " ハイライトON
 syntax on
+
+NeoBundle 'aharisu/vim-gdev'
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
@@ -833,7 +837,9 @@ set number
 set list
 set listchars=tab:»-,trail:-,nbsp:%
 set display=uhex
-set noimdisableactivate
+if exists("noimdisableactivate")
+  set noimdisableactivate
+endif
 
 " 全角スペースの表示
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
