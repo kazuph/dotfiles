@@ -163,13 +163,20 @@ vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 NeoBundle 'thinca/vim-qfreplace'
 
 " 僕だってtag使ってみたい
+NeoBundle 'szw/vim-tags'
+let g:vim_tags_project_tags_command = "/usr/local/bin/ctags -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+let g:vim_tags_gems_tags_command = "/usr/local/bin/ctags -R {OPTIONS} `bundle show --paths` 2>/dev/null"
+
 NeoBundle 'vim-scripts/taglist.vim'
 set tags=./tags,tags,../tags
-" let Tlist_Ctags_Cmd = "/usr/local/bin/ctags"  " ctagsのコマンド
 let Tlist_Show_One_File = 1
 let Tlist_Use_Right_Window = 1
 let Tlist_Exit_OnlyWindow = 1
 nnoremap <silent> <Space><Space>t :TlistToggle<CR>
+
+NeoBundle "majutsushi/tagbar"
+nnoremap <C-t> :TagbarToggle<CR>
+nnoremap <C-]> g<C-]>
 
 " 爆速のgrepであるagを使いたい
 NeoBundle 'rking/ag.vim'
@@ -352,10 +359,7 @@ let g:ref_refe_cmd = "rurema"
 let g:ref_refe_version = 2
 
 " endを自動挿入
-NeoBundleLazy 'alpaca-tc/vim-endwise.git', {
-      \ 'autoload' : {
-      \   'insert' : 1,
-      \ }}
+NeoBundle 'tpope/vim-endwise.git'
 
 " do endを%移動
 NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
@@ -364,6 +368,7 @@ NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
 
 " 括弧入力するのだるい時
 NeoBundle "kana/vim-smartinput"
+NeoBundle 'cohama/vim-smartinput-endwise'
 
 " vimでzencodingする
 " Ctrl+y,で展開
@@ -433,11 +438,6 @@ NeoBundle 'deris/vim-duzzle'
 
 " CSSのデザインをライブで行う
 NeoBundle 'mattn/livestyle-vim'
-
-" Tag使いになりたい
-" NeoBundle "majutsushi/tagbar"
-" nnoremap <C-t> :TagbarToggle<CR>
-" nnoremap <C-]> g<C-]>
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
