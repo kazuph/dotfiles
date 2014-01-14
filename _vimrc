@@ -409,6 +409,7 @@ NeoBundle 'h1mesuke/unite-outline'
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
+autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
@@ -544,6 +545,8 @@ let g:choosewin_tabline_replace    = 0
 filetype plugin indent on
 " ハイライトON
 syntax on
+
+NeoBundle 'aharisu/vim-gdev'
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
