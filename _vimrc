@@ -378,9 +378,9 @@ NeoBundle 'Shougo/vimproc', {
       \    },
       \ }
 
-" if has("lua")
+if has("lua")
   NeoBundle 'Shougo/neocomplete'
-" endif
+endif
 
 " 英語補完
 NeoBundle 'ujihisa/neco-look'
@@ -396,6 +396,7 @@ NeoBundleLazy 'Shougo/neosnippet', {
       \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
       \ }}
 
+NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
@@ -833,7 +834,9 @@ set number
 set list
 set listchars=tab:»-,trail:-,nbsp:%
 set display=uhex
-set noimdisableactivate
+if exists("noimdisableactivate")
+  set noimdisableactivate
+endif
 
 " 全角スペースの表示
 highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
