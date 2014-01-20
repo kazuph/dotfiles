@@ -383,26 +383,145 @@ NeoBundle 'Shougo/vimproc', {
       \    },
       \ }
 
-if has("lua")
+" NeoComplate {{{
+" if has("lua")
+if 0
   NeoBundle 'Shougo/neocomplete'
+  NeoBundleLazy 'Shougo/neosnippet', {
+        \ 'autoload' : {
+        \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
+        \   'filetypes' : 'snippet',
+        \   'insert' : 1,
+        \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
+        \ }}
+
+  NeoBundle 'Shougo/neosnippet-snippets'
+  NeoBundle 'honza/vim-snippets'
+
+  "--------------------------------------------------------------------------
+  " neocomplate
+  "--------------------------------------------------------------------------
+  " let g:neocomplete#force_overwrite_completefunc = 1
+  " Disable AutoComplPop.
+  let g:acp_enableAtStartup = 0
+  " Use neocomplete.
+  let g:neocomplete#enable_at_startup = 1
+  " Use smartcase.
+  let g:neocomplete#enable_smart_case = 1
+  " Set minimum syntax keyword length.
+  let g:neocomplete#sources#syntax#min_keyword_length = 4
+  let g:neocomplete#auto_completion_start_length = 4
+  " let g:neocomplete#skip_auto_completion_time = '5.0'
+  let g:neocomplete#skip_auto_completion_time = ''
+  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+  " for snippets
+  let g:neosnippet#enable_snipmate_compatibility = 1
+  let g:neosnippet#snippets_directory='~/.vim/vim-snippets, ~/dotfiles/snippets'
+
+  " Define dictionary.
+  let g:neocomplete#sources#dictionary#dictionaries = {
+        \ 'default' : '',
+        \ 'vimshell' : $HOME.'/.vimshell_hist',
+        \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
+        \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
+        \ 'scheme'   : $HOME.'/.gosh_completions',
+        \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
+        \ }
+
+  " if !exists('g:neocomplete#text_mode_filetypes')
+  "   let g:neocomplete#text_mode_filetypes = {}
+  " endif
+  "
+  " let g:neocomplete#text_mode_filetypes = {
+  "       \ 'rst': 1,
+  "       \ 'vimrc': 1,
+  "       \ 'perl': 1,
+  "       \ 'ruby': 1,
+  "       \ 'javascript': 1,
+  "       \ 'coffee': 1,
+  "       \ 'markdown': 1,
+  "       \ 'gitrebase': 1,
+  "       \ 'gitcommit': 1,
+  "       \ 'vcs-commit': 1,
+  "       \ 'hybrid': 1,
+  "       \ 'text': 1,
+  "       \ 'help': 1,
+  "       \ 'tex': 1,
+  "       \ }
+
+  " Define keyword.
+  if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+  let g:neocomplete#keyword_patterns['perl'] = '\h\w*->\h\w*\|\h\w*::\w*'
+  let g:neocomplete#keyword_patterns['gosh-repl'] = "[[:alpha:]+*/@$_=.!?-][[:alnum:]+*/@$_:=.!?-]*"
+
+  " Plugin key-mappings.
+  inoremap <expr><C-g>     neocomplete#undo_completion()
+  inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+  " Recommended key-mappings.
+  " <CR>: close popup and save indent.
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return neocomplete#smart_close_popup() . "\<CR>"
+    " For no inserting <CR> key.
+    "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+  endfunction
+  " <TAB>: completion.
+  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+  " <C-h>, <BS>: close popup and delete backword char.
+  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><C-y>  neocomplete#close_popup()
+  inoremap <expr><C-e>  neocomplete#cancel_popup()
+
+  " Enable omni completion.
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+  " Enable heavy omni completion.
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  endif
+  let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
+
+  " For perlomni.vim setting.
+  " https://github.com/c9s/perlomni.vim
+  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+  " <TAB>: completion.
+  imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+  smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+  inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+  " Plugin key-mappings.
+  imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+
+  " For snippet_complete marker.
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+
+  " ctags
+  let g:neocomplcache_ctags_arguments_list = {
+        \ 'perl' : '-R -h ".pm"',
+        \ }
+
 endif
+" NeoComplate end}}}
 
 " 英語補完
 NeoBundle 'ujihisa/neco-look'
 
 " スペルチェック
 nnoremap <Space>s  :<C-u>setl spell!<CR>
-
-NeoBundleLazy 'Shougo/neosnippet', {
-      \ 'autoload' : {
-      \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
-      \   'filetypes' : 'snippet',
-      \   'insert' : 1,
-      \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
-      \ }}
-
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'honza/vim-snippets'
 
 " すべてを破壊したいあなたに
 NeoBundle 'Shougo/unite.vim',  '',  'default'
@@ -466,6 +585,7 @@ function! s:bundle.hooks.on_source(bundle)
   let g:vimfiler_as_default_explorer = 1
   let g:vimfiler_safe_mode_by_default = 0
 endfunction
+
 nnoremap <Space>v :VimFiler -split -simple -winwidth=35 -no-quit<CR>
 
 NeoBundle 'scrooloose/nerdtree'
@@ -548,6 +668,14 @@ syntax on
 
 NeoBundle 'aharisu/vim-gdev'
 
+NeoBundle 'Valloric/YouCompleteMe',  {
+      \ 'build' : {
+      \     'mac' : './install.sh',
+      \    },
+      \ }
+" let g:ycm_key_list_select_completion = ['',  '<Down>']
+" let g:ycm_key_list_previous_completion = ['',  '<Up>']
+
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
 
@@ -618,122 +746,6 @@ nnoremap <silent> ,gs :Unite giti/status<CR>
 nnoremap <silent> ,gl :Unite giti/log<CR>
 " codic
 nnoremap <silent> ,cd :Unite codic<CR>
-
-"--------------------------------------------------------------------------
-" neocomplate
-"--------------------------------------------------------------------------
-" let g:neocomplete#force_overwrite_completefunc = 1
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplete.
-let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
-let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplete#sources#syntax#min_keyword_length = 4
-let g:neocomplete#auto_completion_start_length = 4
-" let g:neocomplete#skip_auto_completion_time = '5.0'
-let g:neocomplete#skip_auto_completion_time = ''
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-" for snippets
-let g:neosnippet#enable_snipmate_compatibility = 1
-let g:neosnippet#snippets_directory='~/.vim/vim-snippets, ~/dotfiles/snippets'
-
-" Define dictionary.
-let g:neocomplete#sources#dictionary#dictionaries = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
-    \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
-    \ 'scheme'   : $HOME.'/.gosh_completions',
-    \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
-        \ }
-
-" if !exists('g:neocomplete#text_mode_filetypes')
-"   let g:neocomplete#text_mode_filetypes = {}
-" endif
-"
-" let g:neocomplete#text_mode_filetypes = {
-"       \ 'rst': 1,
-"       \ 'vimrc': 1,
-"       \ 'perl': 1,
-"       \ 'ruby': 1,
-"       \ 'javascript': 1,
-"       \ 'coffee': 1,
-"       \ 'markdown': 1,
-"       \ 'gitrebase': 1,
-"       \ 'gitcommit': 1,
-"       \ 'vcs-commit': 1,
-"       \ 'hybrid': 1,
-"       \ 'text': 1,
-"       \ 'help': 1,
-"       \ 'tex': 1,
-"       \ }
-
-" Define keyword.
-if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-let g:neocomplete#keyword_patterns['perl'] = '\h\w*->\h\w*\|\h\w*::\w*'
-let g:neocomplete#keyword_patterns['gosh-repl'] = "[[:alpha:]+*/@$_=.!?-][[:alnum:]+*/@$_:=.!?-]*"
-
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplete#smart_close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplete#sources#omni#input_patterns')
-  let g:neocomplete#sources#omni#input_patterns = {}
-endif
-let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-
-" <TAB>: completion.
-imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
-
-" Plugin key-mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-
-" For snippet_complete marker.
-if has('conceal')
-  set conceallevel=2 concealcursor=i
-endif
-
-" ctags
-let g:neocomplcache_ctags_arguments_list = {
-  \ 'perl' : '-R -h ".pm"',
-  \ }
 
 "--------------------------------------------------------------------------
 " BasicSetting
