@@ -881,9 +881,9 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-autocmd BufWritePre * :%s/\s\+$//ge
+" autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-autocmd BufWritePre * :%s/\t/    /ge
+" autocmd BufWritePre * :%s/\t/    /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
