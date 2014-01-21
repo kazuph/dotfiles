@@ -11,6 +11,7 @@ alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
 alias v="vim -u NONE --noplugin"
 alias zshrc='source $HOME/.zshrc'
+alias vimzshrc='vim $HOME/.zshrc'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
@@ -20,6 +21,9 @@ alias t='tree'
 alias gs='git status'
 alias gr='git branch -a'
 alias ga='git add'
+alias gf='git flow'
+alias z='zeus'
+
 
 function extract() {
 case $1 in
