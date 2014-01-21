@@ -576,7 +576,7 @@ NeoBundle 'fuenor/im_control.vim'
 "<C-^>でIM制御が行える場合の設定
 let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
-inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>"
+inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
 " Vimのキーバインドでfiling
 NeoBundle 'Shougo/vimfiler'
