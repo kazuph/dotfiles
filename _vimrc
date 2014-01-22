@@ -670,11 +670,11 @@ NeoBundle 'aharisu/vim-gdev'
 
 NeoBundle 'Valloric/YouCompleteMe',  {
       \ 'build' : {
-      \     'mac' : './install.sh',
+      \     'mac' : 'git submodule update --init --recursive && ./install.sh',
       \    },
       \ }
-" let g:ycm_key_list_select_completion = ['',  '<Down>']
-" let g:ycm_key_list_previous_completion = ['',  '<Up>']
+let g:ycm_key_list_select_completion = ['',  '<Down>']
+let g:ycm_key_list_previous_completion = ['',  '<Up>']
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
