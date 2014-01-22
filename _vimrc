@@ -384,8 +384,7 @@ NeoBundle 'Shougo/vimproc', {
       \ }
 
 " NeoComplate {{{
-" if has("lua")
-if 0
+if has("lua")
   NeoBundle 'Shougo/neocomplete'
   NeoBundleLazy 'Shougo/neosnippet', {
         \ 'autoload' : {
@@ -668,13 +667,13 @@ syntax on
 
 NeoBundle 'aharisu/vim-gdev'
 
-NeoBundle 'Valloric/YouCompleteMe',  {
-      \ 'build' : {
-      \     'mac' : 'git submodule update --init --recursive && ./install.sh',
-      \    },
-      \ }
-let g:ycm_key_list_select_completion = ['',  '<Down>']
-let g:ycm_key_list_previous_completion = ['',  '<Up>']
+" NeoBundle 'Valloric/YouCompleteMe',  {
+"       \ 'build' : {
+"       \     'mac' : 'git submodule update --init --recursive && ./install.sh',
+"       \    },
+"       \ }
+" let g:ycm_key_list_select_completion = ['',  '<Down>']
+" let g:ycm_key_list_previous_completion = ['',  '<Up>']
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
