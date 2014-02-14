@@ -80,8 +80,9 @@ NeoBundle 'https://github.com/kazuph/gips-vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 let g:ctrlp_map = '<c-f>' " yankringとかぶるんだよ・・・
 let g:ctrlp_max_height = &lines
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn)$',
+  \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle)$',
   \ }
 
 " 依存が少ないyankringらしい
@@ -880,9 +881,9 @@ noremap ; :
 noremap : ;
 
 " 保存時に行末の空白を除去する
-" autocmd BufWritePre * :%s/\s\+$//ge
+autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-" autocmd BufWritePre * :%s/\t/    /ge
+autocmd BufWritePre * :%s/\t/  /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen

@@ -147,14 +147,12 @@ setopt no_share_history
 
 function gi() { curl http://gitignore.io/api/$@ ;}
 
-### search a destination from cdr list
-function percol-get-destination-from-cdr() {
+### カレントディレクトリ以下を検索して移動
+function percol-get-current-dir() {
     find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|public/uploads|/tmp)' | percol
 }
-
-### search a destination from cdr list and cd the destination
 function percol-cdr() {
-    local destination="$(percol-get-destination-from-cdr)"
+    local destination="$(percol-get-current-dir)"
     if [ -n "$destination" ]; then
         BUFFER="cd $destination"
         zle accept-line
