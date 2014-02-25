@@ -667,6 +667,8 @@ filetype plugin indent on
 syntax on
 
 NeoBundle 'aharisu/vim-gdev'
+NeoBundle 'adie/BlockDiff'
+
 
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {

@@ -125,8 +125,9 @@ precmd() {
         d=`expr $d - $COMMAND_TIME`
         if [ "$d" -ge "10" ] ; then
             COMMAND="$COMMAND "
-            which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
-            which notify > /dev/null 2>&1 && echo "$COMMAND" | notify;
+            which terminal-notifier > /dev/null 2>&1 && terminal-notifier -message "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
+            # which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
+            # which notify > /dev/null 2>&1 && echo "$COMMAND" | notify;
         fi
     fi
     COMMAND="0"
