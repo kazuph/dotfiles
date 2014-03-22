@@ -6,13 +6,19 @@ snippet     binding
 abbr        binding
 alias       pry
 options     word
-  binding.pry;
+  binding.pry
 
 # japanese match
 snippet     match_japanese
 abbr        match_japanese
 options     word
   /[ぁ-んァ-ヴ一-龠亜-煕]/u
+
+snippet     ab
+abbr        ab
+options     word
+  class ${1:ClassName} < ActiveRecord::Base
+  end
 
 snippet     concern
 abbr        extend ActiveSupport::Concern

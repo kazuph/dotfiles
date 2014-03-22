@@ -228,6 +228,7 @@ NeoBundle "tpope/vim-surround"
 NeoBundle "tpope/vim-rails"
 NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'tpope/vim-cucumber'
+NeoBundle 'slim-template/vim-slim'
 NeoBundle "dbext.vim"
 autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
 autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
@@ -661,14 +662,10 @@ let g:choosewin_blink_on_land      = 0
 let g:choosewin_statusline_replace = 0
 let g:choosewin_tabline_replace    = 0
 
-" ファイル名と内容をもとにファイルタイププラグインを有効にする
-filetype plugin indent on
-" ハイライトON
-syntax on
-
 NeoBundle 'aharisu/vim-gdev'
-NeoBundle 'adie/BlockDiff'
 
+" 同一ファイル内のdiffを確認する
+NeoBundle 'adie/BlockDiff'
 
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {
@@ -677,6 +674,11 @@ NeoBundle 'adie/BlockDiff'
 "       \ }
 " let g:ycm_key_list_select_completion = ['',  '<Down>']
 " let g:ycm_key_list_previous_completion = ['',  '<Up>']
+
+" ファイル名と内容をもとにファイルタイププラグインを有効にする
+filetype plugin indent on
+" ハイライトON
+syntax on
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck

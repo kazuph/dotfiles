@@ -19,11 +19,14 @@ alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
 alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
 alias t='tree'
-alias gs='git status'
-alias gr='git branch -a'
-alias ga='git add'
-alias gf='git flow'
+alias gis='git status'
+alias gir='git branch -a'
+alias gia='git add'
+alias gic='git commit'
+alias gipo='git push origin'
 alias z='zeus'
+alias brake='bin/rake'
+alias brails='bin/rails'
 
 
 function extract() {
@@ -58,7 +61,7 @@ if [[ -f ~/.nvm/nvm.sh ]]; then
     wait
     test nvm >/dev/null 2>&1
     if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.11.9"
+        _nodejs_use_version="v0.10.26"
         if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
             nvm use "${_nodejs_use_version}" >/dev/null
             export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
