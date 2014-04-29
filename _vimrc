@@ -490,7 +490,7 @@ if has("lua")
   if !exists('g:neocomplete#sources#omni#input_patterns')
     let g:neocomplete#sources#omni#input_patterns = {}
   endif
-  let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
+  " let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
 
   " For perlomni.vim setting.
   " https://github.com/c9s/perlomni.vim
@@ -642,7 +642,7 @@ let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s'
 
 " for go
 exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
-NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
+" NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
 auto BufWritePre *.go Fmt
 
 " 複数開いているウィンドウに瞬時に移動する
@@ -887,7 +887,7 @@ noremap : ;
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-autocmd BufWritePre * :%s/\t/  /ge
+" autocmd BufWritePre * :%s/\t/  /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
