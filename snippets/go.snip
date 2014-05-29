@@ -7,3 +7,16 @@ snippet while
 snippet if
     if ${1} {
     }
+snippet type
+    type ${1} struct {
+        ${2}
+    }
+snippet importmartini
+    "github.com/codegangsta/martini"
+
+snippet martini
+    m := martini.Classic()
+    m.Get("/", func() string {
+            return "Hello ${1}"
+    })
+    m.Run()

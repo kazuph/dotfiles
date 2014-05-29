@@ -30,8 +30,10 @@ set nocompatible
 filetype plugin indent off
 
 " for go
-if $GOROOT != ''
-  set rtp+=$GOROOT/misc/vim
+let s:goroot=substitute(system("go env GOROOT"),"\n", "", "g") . "/misc/vim"
+if s:goroot != ''
+  exe "set runtimepath+=".globpath("/", s:goroot)
+  set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 endif
 
 set rtp+=~/dotfiles/neobundle.git/
@@ -211,10 +213,6 @@ NeoBundle "y-uuki/perl-local-lib-path.vim"
 autocmd FileType perl PerlLocalLibPath
 nnoremap ,pt <Esc>:%! perltidy -se<CR>
 vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
-
-" cpanfile用
-" NeoBundle 'moznion/vim-cpanfile'
-" NeoBundle 'moznion/syntastic-cpanfile'
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -581,13 +579,13 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
 " Vimのキーバインドでfiling
 NeoBundle 'Shougo/vimfiler'
-let s:bundle = neobundle#get('vimfiler')
-function! s:bundle.hooks.on_source(bundle)
-  let g:vimfiler_as_default_explorer = 1
-  let g:vimfiler_safe_mode_by_default = 0
-endfunction
+" let s:bundle = neobundle#get('vimfiler')
+" function! s:bundle.hooks.on_source(bundle)
+"   let g:vimfiler_as_default_explorer = 1
+"   let g:vimfiler_safe_mode_by_default = 0
+" endfunction
 
-nnoremap <Space>v :VimFiler -split -simple -winwidth=35 -no-quit<CR>
+" nnoremap <Space>v :VimFiler -split -simple -winwidth=35 -no-quit<CR>
 
 NeoBundle 'scrooloose/nerdtree'
 nnoremap <Space>n :NERDTreeToggle<CR>
@@ -640,10 +638,11 @@ NeoBundle 'kchmck/vim-coffee-script.git'
 au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
 let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
-" for go
-exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
+" for golang
+" exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
 " NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
-auto BufWritePre *.go Fmt
+auto BufWritePre *.go execute 'Fmt'
+" auto BufWritePost *.go execute 'Lint' | cwindow
 
 " 複数開いているウィンドウに瞬時に移動する
 NeoBundle 't9md/vim-choosewin'

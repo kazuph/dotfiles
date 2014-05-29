@@ -37,10 +37,12 @@
   # pull/push/fetch
   ft  = fetch
   ftp = fetch --prune
-  up  = pull --rebase       # pull rebase
+  # pull rebase
+  up = !git fetch && git branch | grep \\* | cut -d' ' -f 2 | xargs -I% git pull --rebase origin %
   po  = push origin         # push origin
   pom = push origin master  # push origin master
-  pu  = push -u origin      # push origin and set upstream
+  # push origin and set upstream
+  pu  = !git push -u origin `git branch | grep \\* | cut -d' ' -f 2`
   # rebase
   rbm = rebase master       # masterへのrebaseはよく使うのでalias
   rbd = rebase develop
@@ -124,10 +126,7 @@
   gr = grep
   gn = grep -n
   sm = submodule
-  smupdate = submodule foreach "git checkout master; git pull origin master"
-
-  hist = log --pretty=format:\\\"%h %ad | %s%d [%an]\\\" --graph --date=short
+  smup = submodule foreach "git checkout master; git pull origin master"
 
   # mergeされたbranchを一括削除
   rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
-
