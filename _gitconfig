@@ -100,6 +100,7 @@
   rhh3 = reset --hard HEAD~~~
   rhh4 = reset --hard HEAD~~~~
   rhh5 = reset --hard HEAD~~~~~
+  cl = !git status | grep 'both modified' | perl -pe 's/ +/ /g' | cut -d' ' -f3
   # diff関連
   di = diff
   dm = diff master           # masterとのdiff

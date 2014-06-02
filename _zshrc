@@ -33,6 +33,8 @@ alias seed='brake db:seed'
 alias rename='massren'
 alias dl='docker ps -l -q'
 alias vip='vim `fzf`'
+alias vic='vim -o `git cl`'
+alias viz='vim ~/.zshrc'
 
 function extract() {
 case $1 in
