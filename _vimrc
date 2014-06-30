@@ -766,7 +766,7 @@ au BufNewFile,BufRead *.erb        set filetype=html
 au BufNewFile,BufRead *.tt         set filetype=html
 au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
-au BufNewFile,BufRead *.scss       set filetype=scss
+au BufNewFile,BufRead *.scss       set filetype=css
 au BufNewFile,BufRead Guardfile    set filetype=ruby
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead cpanfile     set filetype=perl
@@ -809,7 +809,7 @@ set laststatus=2
 
 " Ctrl+eで'paste'と'nopaste'を切り替える
 set pastetoggle=<C-e>
-
+set textwidth=0
 set cindent
 set tabstop=4
 set shiftwidth=4
