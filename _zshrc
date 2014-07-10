@@ -162,6 +162,7 @@ zle -N percol-cdr
 bindkey '^q' percol-cdr
 
 export DOCKER_HOST=tcp://localhost:4243
+# export DOCKER_HOST=tcp://192.168.56.101:4243
 
 # ------------------------------------
 # Docker alias and function
