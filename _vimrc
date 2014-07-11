@@ -146,8 +146,8 @@ nnoremap <space><space>y :YRShow<CR>
 
 " 正規表現をPerl風に
 " :%S///gc
-NeoBundle 'othree/eregex.vim'
-" nnoremap / :<C-u>M/
+NeoBundle 'kazuph/eregex.vim'
+nnoremap / :<C-u>M/
 
 " memoはやっぱりVimからやろ
 NeoBundle 'glidenote/memolist.vim'
@@ -1012,3 +1012,10 @@ function! s:ChangeCurrentDir(directory, bang)
 endfunction
 nnoremap <silent><Space>cd :<C-u>CD<CR>
 
+" peco
+function! PecoOpen()
+  for filename in split(system("find . -type f | peco"), "\n")
+    execute "e" filename
+  endfor
+endfunction
+nnoremap <Space><Space>op :call PecoOpen()<CR>
