@@ -167,16 +167,17 @@ function percol-cdr() {
 zle -N percol-cdr
 bindkey '^q' percol-cdr
 
-# export DOCKER_HOST=tcp://localhost:4243
-# export DOCKER_HOST=tcp://192.168.56.101:4243
-eval $(dvm env)
-
 # ------------------------------------
 # Docker alias and function
 # ------------------------------------
+if [ `ps aux | grep dvm | grep -v grep | wc -l` == 1 ]; then
+  eval $(dvm env)
+fi
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
+alias dhip="echo $DOCKER_HOST | cut -c7-19"
+alias dhport="echo $DOCKER_HOST | cut -c7-19"
 
 # Get latest container ID
 alias dl="docker ps -l -q"
@@ -194,7 +195,7 @@ alias di="docker images"
 alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
 
 # Get latest container IP
-alias dlip="docker inspect --format '{{ .NetworkSettings.IPAddress }}' `dl`"
+# alias dlip="docker inspect --format '{{ .NetworkSettings.IPAddress }}' `dl`"
 
 # Run deamonized container, e.g., $dkd base /bin/echo hello
 alias dkd="docker run -d -P"
