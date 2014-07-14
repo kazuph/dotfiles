@@ -7,7 +7,7 @@ plugins=(svn git ruby linux osx docker mosh)
 # plugins=(svn git ruby linux osx mosh)
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
-export PATH=/usr/local/bin:/usr/bin:$PATH
+# export PATH=/usr/local/bin:/usr/bin:$PATH
 
 source $ZSH/oh-my-zsh.sh
 # Customize to your needs...
@@ -170,13 +170,14 @@ bindkey '^q' percol-cdr
 # ------------------------------------
 # Docker alias and function
 # ------------------------------------
-if [ `ps aux | grep dvm | grep -v grep | wc -l` == 1 ]; then
-  eval $(dvm env)
-fi
+# if [ `ps aux | grep dvm | grep -v grep | wc -l` == 1 ]; then
+#   eval $(dvm env)
+# fi
+export DOCKER_HOST=tcp://192.168.59.103:2375
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
-alias dhip="echo $DOCKER_HOST | cut -c7-19"
+alias dhip="boot2docker ip"
 alias dhport="echo $DOCKER_HOST | cut -c7-19"
 
 # Get latest container ID

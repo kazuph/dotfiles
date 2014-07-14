@@ -666,6 +666,9 @@ NeoBundle 'aharisu/vim-gdev'
 " 同一ファイル内のdiffを確認する
 NeoBundle 'adie/BlockDiff'
 
+NeoBundle 'mattn/flappyvird-vim'
+
+
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {
 "       \     'mac' : 'git submodule update --init --recursive && ./install.sh',
