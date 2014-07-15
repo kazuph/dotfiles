@@ -666,8 +666,14 @@ NeoBundle 'aharisu/vim-gdev'
 " 同一ファイル内のdiffを確認する
 NeoBundle 'adie/BlockDiff'
 
+" Vimでflappybirdをする
 NeoBundle 'mattn/flappyvird-vim'
 
+" マークダウンのプレビュー
+NeoBundle 'kannokanno/previm'
+NeoBundle 'tyru/open-browser.vim'
+" let g:previm_open_cmd = 'open -a Safari'
+nnoremap <silent><Space><Space>p :PrevimOpen<CR>
 
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {

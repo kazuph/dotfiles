@@ -205,7 +205,7 @@ alias dkd="docker run -d -P"
 alias dki="docker run -i -t -P"
 
 # Stop all containers
-dstop() { docker stop $(docker ps -a -q);}
+dstop() { docker stop $(docker ps -q);}
 
 # Remove all containers
 drm() { docker rm $(docker ps -a -q); }
