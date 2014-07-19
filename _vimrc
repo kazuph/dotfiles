@@ -69,18 +69,15 @@ set t_Co=256
 NeoBundle 'tomasr/molokai'
 colorscheme molokai
 
-" 翻訳
+" 文章の上でExciteTranslateで翻訳
 NeoBundleLazy 'mattn/excitetranslate-vim', {
       \ 'depends': 'mattn/webapi-vim',
       \ 'autoload' : { 'commands': ['ExciteTranslate']}
       \ }
 
-" カーソルキー使うってやっぱなんか、ありえない？みたいな
-NeoBundle 'https://github.com/kazuph/gips-vim.git'
-
-" ctrlpがないとかどんな苦行
+" ctrlpでいいと思う
 NeoBundle 'kien/ctrlp.vim.git'
-let g:ctrlp_map = '<c-f>' " yankringとかぶるんだよ・・・
+let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 let g:ctrlp_custom_ignore = {
@@ -93,8 +90,8 @@ nmap p <Plug>(yankround-p)
 nmap P <Plug>(yankround-P)
 nmap <C-p> <Plug>(yankround-prev)
 nmap <C-n> <Plug>(yankround-next)
-let g:yankround_max_history = 50
-nnoremap ,yp :<C-u>CtrlPYankRound<CR>
+let g:yankround_max_history = 100
+nnoremap <Space><Space>y :<C-u>CtrlPYankRound<CR>
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -106,22 +103,10 @@ NeoBundle "tpope/vim-surround"
 
 " テキストオブジェクトを使い倒す
 NeoBundle 'kana/vim-operator-user.git'
+
+" Rを使ってyankしてるものと置き換え
 NeoBundle 'kana/vim-operator-replace.git'
 map R  <Plug>(operator-replace)
-
-" キャメルケースをスネークケースに置き換える
-" ※Cは元々行末まで置き換えるキー
-NeoBundle 'tyru/operator-camelize.vim'
-map C <Plug>(operator-camelize-toggle)
-
-" キャメル・アンダースコア記法を扱いやすく
-" ,w ,e ,b
-" v,w
-" d,w
-NeoBundle 'bkad/CamelCaseMotion.git'
-map w ,w
-map e ,e
-map b ,b
 
 "  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
@@ -135,14 +120,8 @@ let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
-" ST2のようにテキスト操作
-" ctrl+nで選択
-" NeoBundle 'terryma/vim-multiple-cursors.git'
-
 " ヤンクの履歴を参照したい
 NeoBundle 'kana/vim-fakeclip.git'
-NeoBundle 'LeafCage/yankround.vim'
-nnoremap <space><space>y :YRShow<CR>
 
 " 正規表現をPerl風に
 " :%S///gc
@@ -163,6 +142,7 @@ nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
 " grep後に置換したい
+" gg/したあとにQf<TAB>後、編集、保存で一括置換
 NeoBundle 'thinca/vim-qfreplace'
 
 " 僕だってtag使ってみたい
@@ -181,11 +161,6 @@ NeoBundle "majutsushi/tagbar"
 nnoremap <C-t> :TagbarToggle<CR>
 nnoremap <C-]> g<C-]>
 
-" 爆速のgrepであるagを使いたい
-NeoBundle 'rking/ag.vim'
-nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
-vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
-
 " 賢いf
 NeoBundle 'rhysd/clever-f.vim'
 
@@ -203,6 +178,7 @@ let g:quickrun_config.markdown   = {
       \   'exec'      : '%c %s',
       \ }
 
+" CSは実行せずにJSにコンパイル
 let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
 " Programming perl
@@ -214,20 +190,10 @@ autocmd FileType perl PerlLocalLibPath
 nnoremap ,pt <Esc>:%! perltidy -se<CR>
 vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 
-" ()や''でくくったりするための補助
-" text-objectの支援
-" vi' で'の中身を選択
-" va' で'も含めて選択 だが
-" cs'" cs"' などと囲っているものに対する操作ができる
-" visualモードのときはSを代用
-NeoBundle "tpope/vim-surround"
-
 " Rubyでのコーディングを楽にする
 NeoBundle "tpope/vim-rails"
 NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'tpope/vim-cucumber'
 NeoBundle 'slim-template/vim-slim'
-NeoBundle "dbext.vim"
 autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
 autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
 " autocmd User Rails.view*                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.view.snip
@@ -246,110 +212,99 @@ autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\
 " autocmd User Rails.spec.routing          NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.routing.snip
 " autocmd User Rails/db/migrate/*          NeoSnippetSource ~/dotfiles/snippets/ruby.rails.migrate.snip
 
-
 " ノーマルモード時に-でswitch
+" { :foo => true } を { foo: true } にすぐ変換できたりする
 NeoBundle "AndrewRadev/switch.vim"
-nnoremap ! :Switch<cr>
-let s:switch_definition = {
-      \ '*': [
-      \   ['is', 'are']
-      \ ],
-      \ 'ruby,eruby,haml' : [
-      \   ['if', 'unless'],
-      \   ['while', 'until'],
-      \   ['.blank?', '.present?'],
-      \   ['include', 'extend'],
-      \   ['class', 'module'],
-      \   ['.inject', '.delete_if'],
-      \   ['.map', '.map!'],
-      \   ['attr_accessor', 'attr_reader', 'attr_writer'],
-      \ ],
-      \ 'Gemfile,Berksfile' : [
-      \   ['=', '<', '<=', '>', '>=', '~>'],
-      \ ],
-      \ 'ruby.application_template' : [
-      \   ['yes?', 'no?'],
-      \   ['lib', 'initializer', 'file', 'vendor', 'rakefile'],
-      \   ['controller', 'model', 'view', 'migration', 'scaffold'],
-      \ ],
-      \ 'erb,html,php' : [
-      \   { '<!--\([a-zA-Z0-9 /]\+\)--></\(div\|ul\|li\|a\)>' : '</\2><!--\1-->' },
-      \ ],
-      \ 'rails' : [
-      \   [100, ':continue', ':information'],
-      \   [101, ':switching_protocols'],
-      \   [102, ':processing'],
-      \   [200, ':ok', ':success'],
-      \   [201, ':created'],
-      \   [202, ':accepted'],
-      \   [203, ':non_authoritative_information'],
-      \   [204, ':no_content'],
-      \   [205, ':reset_content'],
-      \   [206, ':partial_content'],
-      \   [207, ':multi_status'],
-      \   [208, ':already_reported'],
-      \   [226, ':im_used'],
-      \   [300, ':multiple_choices'],
-      \   [301, ':moved_permanently'],
-      \   [302, ':found'],
-      \   [303, ':see_other'],
-      \   [304, ':not_modified'],
-      \   [305, ':use_proxy'],
-      \   [306, ':reserved'],
-      \   [307, ':temporary_redirect'],
-      \   [308, ':permanent_redirect'],
-      \   [400, ':bad_request'],
-      \   [401, ':unauthorized'],
-      \   [402, ':payment_required'],
-      \   [403, ':forbidden'],
-      \   [404, ':not_found'],
-      \   [405, ':method_not_allowed'],
-      \   [406, ':not_acceptable'],
-      \   [407, ':proxy_authentication_required'],
-      \   [408, ':request_timeout'],
-      \   [409, ':conflict'],
-      \   [410, ':gone'],
-      \   [411, ':length_required'],
-      \   [412, ':precondition_failed'],
-      \   [413, ':request_entity_too_large'],
-      \   [414, ':request_uri_too_long'],
-      \   [415, ':unsupported_media_type'],
-      \   [416, ':requested_range_not_satisfiable'],
-      \   [417, ':expectation_failed'],
-      \   [422, ':unprocessable_entity'],
-      \   [423, ':precondition_required'],
-      \   [424, ':too_many_requests'],
-      \   [426, ':request_header_fields_too_large'],
-      \   [500, ':internal_server_error'],
-      \   [501, ':not_implemented'],
-      \   [502, ':bad_gateway'],
-      \   [503, ':service_unavailable'],
-      \   [504, ':gateway_timeout'],
-      \   [505, ':http_version_not_supported'],
-      \   [506, ':variant_also_negotiates'],
-      \   [507, ':insufficient_storage'],
-      \   [508, ':loop_detected'],
-      \   [510, ':not_extended'],
-      \   [511, ':network_authentication_required'],
-      \ ],
-      \ 'rspec': [
-      \   ['describe', 'context', 'specific', 'example'],
-      \   ['before', 'after'],
-      \   ['be_true', 'be_false'],
-      \   ['get', 'post', 'put', 'delete'],
-      \   ['==', 'eql', 'equal'],
-      \   { '\.should_not': '\.should' },
-      \   ['\.to_not', '\.to'],
-      \   { '\([^. ]\+\)\.should\(_not\|\)': 'expect(\1)\.to\2' },
-      \   { 'expect(\([^. ]\+\))\.to\(_not\|\)': '\1.should\2' },
-      \ ],
-      \ 'markdown' : [
-      \   ['[ ]', '[x]']
-      \ ]
-      \ }
-
-" %の拡張
-NeoBundle "tmhedberg/matchit.git"
+nnoremap - :Switch<cr>
+let g:switch_custom_definitions =
+    \ [
+    \   {
+    \     '\<\(\l\)\(\l\+\(\u\l\+\)\+\)\>': '\=toupper(submatch(1)) . submatch(2)',
+    \     '\<\(\u\l\+\)\(\u\l\+\)\+\>': "\\=tolower(substitute(submatch(0), '\\(\\l\\)\\(\\u\\)', '\\1_\\2', 'g'))",
+    \     '\<\(\l\+\)\(_\l\+\)\+\>': '\U\0',
+    \     '\<\(\u\+\)\(_\u\+\)\+\>': "\\=tolower(substitute(submatch(0), '_', '-', 'g'))",
+    \     '\<\(\l\+\)\(-\l\+\)\+\>': "\\=substitute(submatch(0), '-\\(\\l\\)', '\\u\\1', 'g')",
+    \   },
+    \   ['is', 'are'],
+    \   ['if', 'unless'],
+    \   ['while', 'until'],
+    \   ['.blank?', '.present?'],
+    \   ['include', 'extend'],
+    \   ['class', 'module'],
+    \   ['.inject', '.delete_if'],
+    \   ['.map', '.map!'],
+    \   ['attr_accessor', 'attr_reader', 'attr_writer'],
+    \   ['=', '<', '<=', '>', '>=', '~>'],
+    \   ['yes?', 'no?'],
+    \   ['lib', 'initializer', 'file', 'vendor', 'rakefile'],
+    \   ['controller', 'model', 'view', 'migration', 'scaffold'],
+    \   { '<!--\([a-zA-Z0-9 /]\+\)--></\(div\|ul\|li\|a\)>' : '</\2><!--\1-->' },
+    \   [100, ':continue', ':information'],
+    \   [101, ':switching_protocols'],
+    \   [102, ':processing'],
+    \   [200, ':ok', ':success'],
+    \   [201, ':created'],
+    \   [202, ':accepted'],
+    \   [203, ':non_authoritative_information'],
+    \   [204, ':no_content'],
+    \   [205, ':reset_content'],
+    \   [206, ':partial_content'],
+    \   [207, ':multi_status'],
+    \   [208, ':already_reported'],
+    \   [226, ':im_used'],
+    \   [300, ':multiple_choices'],
+    \   [301, ':moved_permanently'],
+    \   [302, ':found'],
+    \   [303, ':see_other'],
+    \   [304, ':not_modified'],
+    \   [305, ':use_proxy'],
+    \   [306, ':reserved'],
+    \   [307, ':temporary_redirect'],
+    \   [308, ':permanent_redirect'],
+    \   [400, ':bad_request'],
+    \   [401, ':unauthorized'],
+    \   [402, ':payment_required'],
+    \   [403, ':forbidden'],
+    \   [404, ':not_found'],
+    \   [405, ':method_not_allowed'],
+    \   [406, ':not_acceptable'],
+    \   [407, ':proxy_authentication_required'],
+    \   [408, ':request_timeout'],
+    \   [409, ':conflict'],
+    \   [410, ':gone'],
+    \   [411, ':length_required'],
+    \   [412, ':precondition_failed'],
+    \   [413, ':request_entity_too_large'],
+    \   [414, ':request_uri_too_long'],
+    \   [415, ':unsupported_media_type'],
+    \   [416, ':requested_range_not_satisfiable'],
+    \   [417, ':expectation_failed'],
+    \   [422, ':unprocessable_entity'],
+    \   [423, ':precondition_required'],
+    \   [424, ':too_many_requests'],
+    \   [426, ':request_header_fields_too_large'],
+    \   [500, ':internal_server_error'],
+    \   [501, ':not_implemented'],
+    \   [502, ':bad_gateway'],
+    \   [503, ':service_unavailable'],
+    \   [504, ':gateway_timeout'],
+    \   [505, ':http_version_not_supported'],
+    \   [506, ':variant_also_negotiates'],
+    \   [507, ':insufficient_storage'],
+    \   [508, ':loop_detected'],
+    \   [510, ':not_extended'],
+    \   [511, ':network_authentication_required'],
+    \   ['describe', 'context', 'specific', 'example'],
+    \   ['before', 'after'],
+    \   ['be_true', 'be_false'],
+    \   ['get', 'post', 'put', 'delete'],
+    \   ['==', 'eql', 'equal'],
+    \   { '\.should_not': '\.should' },
+    \   ['\.to_not', '\.to'],
+    \   { '\([^. ]\+\)\.should\(_not\|\)': 'expect(\1)\.to\2' },
+    \   { 'expect(\([^. ]\+\))\.to\(_not\|\)': '\1.should\2' },
+    \   ['[ ]', '[x]']
+    \ ]
 
 " APIのドキュメントを参照する
 " Shift+K
@@ -391,7 +346,6 @@ if has("lua")
         \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
         \   'filetypes' : 'snippet',
         \   'insert' : 1,
-        \   'unite_sources' : ['snippet', 'neosnippet/user', 'neosnippet/runtime'],
         \ }}
 
   NeoBundle 'Shougo/neosnippet-snippets'
@@ -427,27 +381,6 @@ if has("lua")
         \ 'scheme'   : $HOME.'/.gosh_completions',
         \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
         \ }
-
-  " if !exists('g:neocomplete#text_mode_filetypes')
-  "   let g:neocomplete#text_mode_filetypes = {}
-  " endif
-  "
-  " let g:neocomplete#text_mode_filetypes = {
-  "       \ 'rst': 1,
-  "       \ 'vimrc': 1,
-  "       \ 'perl': 1,
-  "       \ 'ruby': 1,
-  "       \ 'javascript': 1,
-  "       \ 'coffee': 1,
-  "       \ 'markdown': 1,
-  "       \ 'gitrebase': 1,
-  "       \ 'gitcommit': 1,
-  "       \ 'vcs-commit': 1,
-  "       \ 'hybrid': 1,
-  "       \ 'text': 1,
-  "       \ 'help': 1,
-  "       \ 'tex': 1,
-  "       \ }
 
   " Define keyword.
   if !exists('g:neocomplete#keyword_patterns')
@@ -520,15 +453,7 @@ endif
 NeoBundle 'ujihisa/neco-look'
 
 " スペルチェック
-nnoremap <Space>s  :<C-u>setl spell!<CR>
-
-" すべてを破壊したいあなたに
-NeoBundle 'Shougo/unite.vim',  '',  'default'
-NeoBundle 'basyura/unite-rails'
-NeoBundle 'kmnk/vim-unite-giti'
-NeoBundle 'tsukkee/unite-tag'
-NeoBundle 'ujihisa/unite-colorscheme'
-NeoBundle 'h1mesuke/unite-outline'
+nnoremap <Space>s :<C-u>setl spell!<CR>
 
 " まーくだうん
 NeoBundle "tpope/vim-markdown"
@@ -537,7 +462,7 @@ autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
 NeoBundle 'h1mesuke/vim-alignta.git'
-xnoremap <silent> a: :Alignta  01 :<CR>
+xnoremap <silent> a: :Alignta 01 :<CR>
 xnoremap al :Alignta<Space>
 
 " シンタックスチェックを非同期で
@@ -562,14 +487,6 @@ NeoBundle 'mattn/livestyle-vim'
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
 
-" カーソルのある場所でfiletypeを適宜変更する
-" NeoBundle 'osyo-manga/vim-precious'
-" NeoBundle 'Shougo/context_filetype.vim'
-" NeoBundle 'kana/vim-textobj-user'
-" nmap <Space><Space>q <Plug>(precious-quickrun-op)
-" omap ic <Plug>(textobj-precious-i)
-" vmap ic <Plug>(textobj-precious-i)
-
 " 日本語固定モード
 NeoBundle 'fuenor/im_control.vim'
 "<C-^>でIM制御が行える場合の設定
@@ -577,51 +494,15 @@ let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
-" Vimのキーバインドでfiling
-NeoBundle 'Shougo/vimfiler'
-" let s:bundle = neobundle#get('vimfiler')
-" function! s:bundle.hooks.on_source(bundle)
-"   let g:vimfiler_as_default_explorer = 1
-"   let g:vimfiler_safe_mode_by_default = 0
-" endfunction
-
-" nnoremap <Space>v :VimFiler -split -simple -winwidth=35 -no-quit<CR>
-
+" ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
 NeoBundle 'scrooloose/nerdtree'
-nnoremap <Space>n :NERDTreeToggle<CR>
-
-" もう僕には何が起きてるかわからない
-NeoBundleLazy 'Shougo/vimshell', {
-\   'autoload' : { 'commands' : [ 'VimShell' ] },
-\   'depends': [ 'Shougo/vimproc' ],
-\ }
-let s:bundle = neobundle#get('vimshell')
-function! s:bundle.hooks.on_source(bundle)
-endfunction
-nnoremap ,vs :VimShell<CR>
-
-" Vimでプレゼンする？
-NeoBundle 'thinca/vim-showtime.git'
-
-" Vimshellしたい
-NeoBundle 'Shougo/vimshell.vim.git'
-
-" MATRIX的な
-NeoBundle 'matrix.vim--Yang'
-
-" 走り幅跳びする
-NeoBundle 'mattn/habatobi-vim'
-
-" 置換をかっこ良くする
-" NeoBundle 'osyo-manga/vim-over'
-" nnoremap <silent> ,vo :OverCommandLine<CR>%s/
+nnoremap <Space><Space>n :NERDTreeToggle<CR>
 
 " テンプレート集
 NeoBundle 'mattn/sonictemplate-vim'
 
 " codic
 NeoBundle 'koron/codic-vim'
-NeoBundle 'rhysd/unite-codic.vim'
 
 " gauche
 NeoBundle 'aharisu/vim_goshrepl'
@@ -642,32 +523,10 @@ let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s'
 " exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
 " NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
 auto BufWritePre *.go execute 'Fmt'
-" auto BufWritePost *.go execute 'Lint' | cwindow
-
-" 複数開いているウィンドウに瞬時に移動する
-NeoBundle 't9md/vim-choosewin'
-nmap  -  <Plug>(choosewin)
-let g:choosewin_overlay_enable = 1
-let g:choosewin_overlay_clear_multibyte = 1
-let g:choosewin_color_overlay = {
-      \ 'gui': ['DodgerBlue3', 'DodgerBlue3' ],
-      \ 'cterm': [ 25, 25 ]
-      \ }
-let g:choosewin_color_overlay_current = {
-      \ 'gui': ['firebrick1', 'firebrick1' ],
-      \ 'cterm': [ 124, 124 ]
-      \ }
-let g:choosewin_blink_on_land      = 0
-let g:choosewin_statusline_replace = 0
-let g:choosewin_tabline_replace    = 0
-
-NeoBundle 'aharisu/vim-gdev'
+auto BufWritePost *.go execute 'Lint' | cwindow
 
 " 同一ファイル内のdiffを確認する
 NeoBundle 'adie/BlockDiff'
-
-" Vimでflappybirdをする
-NeoBundle 'mattn/flappyvird-vim'
 
 " マークダウンのプレビュー
 NeoBundle 'kannokanno/previm'
@@ -690,74 +549,6 @@ syntax on
 
 " まだインストールしていないプラグインをインストールしてくれる
 NeoBundleCheck
-
-"------------------------------------------------------ unite.vim
-let s:bundle = neobundle#get('unite.vim')
-function! s:bundle.hooks.on_source(bundle)
-  let g:unite_update_time = 1000
-  let g:unite_enable_start_insert=1
-  let g:unite_source_file_mru_filename_format = ''
-  let g:unite_source_grep_default_opts = "-Hn --color=never"
-  let g:loaded_unite_source_bookmark = 1
-  let g:loaded_unite_source_tab = 1
-  let g:loaded_unite_source_window = 1
-  " the silver searcher を unite-grep のバックエンドにする
-  if executable('ag')
-    let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nocolor --nogroup --column'
-    let g:unite_source_grep_recursive_opt = ''
-    let g:unite_source_grep_max_candidates = 200
-  endif
-
-  " ウィンドウを分割して開く
-  au FileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-  au FileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-  " ウィンドウを縦に分割して開く
-  au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-  au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-  au FileType unite nnoremap <silent> <buffer> <ESC><ESC> q
-  au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
-
-  autocmd FileType unite call s:unite_my_settings()
-  function! s:unite_my_settings()
-    " Overwrite settings.
-    imap <buffer> jj <Plug>(unite_insert_leave)
-    imap <buffer> <ESC> <ESC><ESC>
-    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-    nnoremap <buffer> t G
-    startinsert
-  endfunction
-  call unite#custom_default_action('source/bookmark/directory', 'vimfiler')
-endfunction
-" source: Uniteから各種pluginへのinteface
-nnoremap <silent> ,us :Unite source<CR>
-" ファイル一覧
-" nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> ,f  :<C-u>Unite file_rec/async:!<CR>
-" ブックマーク一覧
-nnoremap <silent> ,ub :<C-u>Unite bookmark<CR>
-" ブックマーク追加
-nnoremap <silent> ,ua :<C-u>UniteBookmarkAdd<CR>
-" yank一覧
-nnoremap <silent> ,y :<C-u>Unite -buffer-name=register register<CR>
-" 常用セット
-nnoremap <silent> ,uu :<C-u>Unite buffer file_mru file_rec/async:!<CR>
-" tag
-nnoremap <silent> ,ut :Unite tag/include<CR>
-" unite-grep
-nnoremap <silent> ,ug :Unite -no-quit -winheight=15 grep<CR>
-" ref
-nnoremap <silent> ,ur :Unite ref/
-" color scheme の変更
-nnoremap <silent> ,uc :Unite colorscheme<CR>
-" outline表示
-nnoremap <silent> ,uo : <C-u>Unite -no-quit -vertical -winwidth=30 outline<CR>
-" git status
-nnoremap <silent> ,gs :Unite giti/status<CR>
-" git log
-nnoremap <silent> ,gl :Unite giti/log<CR>
-" codic
-nnoremap <silent> ,cd :Unite codic<CR>
 
 "--------------------------------------------------------------------------
 " BasicSetting
@@ -915,11 +706,6 @@ nnoremap ]Q :<C-u>clast<CR>
 nnoremap 0 ^
 nnoremap 9 $
 
-"カーソルを表示行で移動する。物理行移動は<C-n>, <C-p>
-" 今はaccelerated-jkがあるからいいや
-" nnoremap j gj
-" nnoremap k gk
-
 " visualmodeでインテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
 vnoremap > >gv
@@ -1020,11 +806,3 @@ function! s:ChangeCurrentDir(directory, bang)
   endif
 endfunction
 nnoremap <silent><Space>cd :<C-u>CD<CR>
-
-" peco
-function! PecoOpen()
-  for filename in split(system("find . -type f | peco"), "\n")
-    execute "e" filename
-  endfor
-endfunction
-nnoremap <Space><Space>op :call PecoOpen()<CR>
