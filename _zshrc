@@ -177,7 +177,7 @@ export DOCKER_HOST=tcp://192.168.59.103:2375
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
-alias dhip="boot2docker ip"
+alias dhip="boot2docker ip 2>& /dev/null"
 alias dhport="echo $DOCKER_HOST | cut -c7-19"
 
 # Get latest container ID
