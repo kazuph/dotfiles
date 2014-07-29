@@ -4,8 +4,8 @@
     ignore = dirty
 [submodule "z"]
     path = z
-    url = git://github.com/knu/z.git
+    url = https://github.com/knu/z.git
     ignore = dirty
 [submodule "zsh-completions"]
-	path = zsh-completions
-	url = https://github.com/zsh-users/zsh-completions.git
+    path = zsh-completions
+    url = https://github.com/zsh-users/zsh-completions.git
