@@ -81,7 +81,7 @@ let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle)$',
+  \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
   \ }
 
 " 依存が少ないyankringらしい
@@ -146,9 +146,9 @@ vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 NeoBundle 'thinca/vim-qfreplace'
 
 " 僕だってtag使ってみたい
-NeoBundle 'szw/vim-tags'
-let g:vim_tags_project_tags_command = "/usr/local/bin/ctags -R {OPTIONS} {DIRECTORY} 2>/dev/null"
-let g:vim_tags_gems_tags_command = "/usr/local/bin/ctags -R {OPTIONS} `bundle show --paths` 2>/dev/null"
+" NeoBundle 'szw/vim-tags'
+" let g:vim_tags_project_tags_command = "/usr/local/bin/ctags -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+" let g:vim_tags_gems_tags_command = "/usr/local/bin/ctags -R {OPTIONS} `bundle show --paths` 2>/dev/null"
 
 NeoBundle 'vim-scripts/taglist.vim'
 set tags=./tags,tags,../tags
@@ -303,7 +303,8 @@ let g:switch_custom_definitions =
     \   ['\.to_not', '\.to'],
     \   { '\([^. ]\+\)\.should\(_not\|\)': 'expect(\1)\.to\2' },
     \   { 'expect(\([^. ]\+\))\.to\(_not\|\)': '\1.should\2' },
-    \   ['[ ]', '[x]']
+    \   ['[ ]', '[x]'],
+    \   ['☐', '☑']
     \ ]
 
 " APIのドキュメントを参照する
