@@ -2,10 +2,3 @@
     path = neobundle.vim
     url = https://github.com/Shougo/neobundle.vim.git
     ignore = dirty
-[submodule "z"]
-    path = z
-    url = https://github.com/knu/z.git
-    ignore = dirty
-[submodule "zsh-completions"]
-    path = zsh-completions
-    url = https://github.com/zsh-users/zsh-completions.git
