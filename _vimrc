@@ -535,6 +535,9 @@ NeoBundle 'tyru/open-browser.vim'
 " let g:previm_open_cmd = 'open -a Safari'
 nnoremap <silent><Space><Space>p :PrevimOpen<CR>
 
+" Dockerfileのハイライト
+NeoBundle "ekalinin/Dockerfile.vim"
+
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {
 "       \     'mac' : 'git submodule update --init --recursive && ./install.sh',

@@ -18,6 +18,7 @@ alias v="vim -u NONE --noplugin"
 alias zshrc='source $HOME/.zshrc'
 alias vimzshrc='vim $HOME/.zshrc'
 alias vz='vim $HOME/.zshrc'
+alias vv='vim $HOME/.vimrc'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
