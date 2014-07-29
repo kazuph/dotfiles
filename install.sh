@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -u
 cd ~/.
 # install git
 which git > /dev/null 2>&1
@@ -29,38 +29,13 @@ else
     chsh -s /bin/zsh
 fi
 
-# # install tmux
-# which tmux > /dev/null 2>&1
-# if [ $? -eq 0 ] ; then
-#     echo Success!
-# else
-#     echo Install tmux! >&2
-#     cd /usr/local/src
-#     wget https://github.com/downloads/libevent/libevent/libevent-2.0.20-stable.tar.gz
-#     tar xzf libevent-2.0.20-stable.tar.gz
-#     cd libevent-2.0.20-stable
-#     ./configure
-#     make
-#     make install
-#     cd /usr/local/src
-#     wget downloads.sourceforge.net/tmux/tmux-1.7.tar.gz
-#     tar xzf tmux-1.7.tar.gz
-#     cd tmux-1.7
-#     ./configure
-#     make
-#     make install
-#     ln -s /usr/local/lib/libevent-2.0.so.5 /usr/lib64/libevent-2.0.so.5
-#     exit
-# fi
-# wait
-
 # install ore setting
 git clone --recursive https://kazuph@github.com/kazuph/dotfiles.git
 cd dotfiles
 # git submodule init
 # git submodule update
 cd ~/.
-ln -s dotfiles/_vimrc .vimrc
+ln -s ~/dotfiles/_vimrc .vimrc
 ln -s ~/dotfiles/_gitconfig .gitconfig
 ln -s ~/dotfiles/_zshrc .zshrc
 ln -s ~/dotfiles/_zshenv .zshenv
