@@ -810,3 +810,5 @@ function! s:ChangeCurrentDir(directory, bang)
   endif
 endfunction
 nnoremap <silent><Space>cd :<C-u>CD<CR>
+
+nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zsh_history \| perl -pe 's/^.+;//' \| fzf<CR>

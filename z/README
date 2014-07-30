@@ -1,0 +1,193 @@
+Z(1)                         User Commands Manual                         Z(1)
+
+NAME
+     z -- jump around
+
+SYNOPSIS
+     z [-hclrtx] [string ...]
+
+AVAILABILITY
+     bash, zsh
+
+DESCRIPTION
+     Tracks your most used directories, based on `frecency'.  After a short
+     learning phase, z will take you to the most `frecent' directory that
+     matches all of the patterns given on the command line.
+
+     Each pattern is a substring that the directory to look for must contain,
+     not a regular expression like in the original version nor a glob pattern
+     that you can use in shell completion described below.
+
+     For convenience, a trailing slash in a pattern is treated specially so
+     that the pattern also matches directories ending with the pattern string
+     minus the trailing slash.  That is, for instance, a pattern `log/'
+     matches /var/log as well as /service/nginx/log/main, but not
+     /home/user/logs.
+
+     In addition to this, a double slash at the beginning or at the end of a
+     pattern has special meanings.  A double slash at the beginning denotes
+     the root directory, and a double slash at the end denotes the end of a
+     path.  That is, a pattern `//var' matches /var/log but does not match
+     /home/user/var/log, and a pattern `src//' matches
+     /home/user/src/screen/src but does not match /home/user/src/screen.
+
+     The $HOME part in a directory name is excluded before matching so that a
+     word or substring that is in your account name does not hit every single
+     directory under your home directory.
+
+OPTIONS
+     -h  Show a brief help message.
+
+     -c  Restrict matches to subdirectories of the current directory.
+
+     -l  List only.
+
+     -r  Sort by rank instead of `frecency'.
+
+     -t  Sort by recency instead of `frecency'.
+
+     -x  Remove the current directory from the datafile.
+
+     Nonexistent directories are omitted from output and ignored in moving and
+     completion but kept in database for future use.
+
+     In listing, only top 20 directories are shown if stdout is a terminal.
+     To show all, run z with a pipe, like `z | cat' or `z | less'.
+
+EXAMPLES
+     z foo      cd to most frecent directory matching foo
+     z foo bar  cd to most frecent directory matching foo and bar
+     z -r foo   cd to highest ranked directory matching foo
+     z -t foo   cd to most recently accessed directory matching foo
+     z -l foo   list all directories matching foo (by frecency)
+
+NOTES
+   Installation:
+        1.   Source z.sh from your $HOME/.bashrc or $HOME/.zshrc like this:
+                   . /path/to/z.sh
+
+             Note that if you are using bash:
+
+              -   The line should go something like this:
+                        [[ -z $PS1 ]] || . /path/to/z.sh
+                  because bash(1) in some cases reads $HOME/.bashrc when the
+                  shell is not interactive and z.sh will emit an error message
+                  in that case.
+
+              -   The line should better be put after defining a completion
+                  method for cd if any, because z.sh tries to enhance an
+                  existing completion definition.
+
+        2.   cd around for a while to build up the db.
+
+        3.   PROFIT!!
+
+   Optionally:
+        Set _Z_CMD to change the command name (default `z').
+
+        Set _Z_DATA to change the data file name (default `$HOME/.z').
+
+        Set _Z_NO_COMPLETE_CD to disable advanced completion for cd.
+
+        Set _Z_NO_RESOLVE_SYMLINKS to prevent symlink resolution.
+
+        Set _Z_NO_PROMPT_COMMAND to handle PROMPT_COMMAND (bash) / precmd
+        (zsh) yourself.
+
+        Set _Z_EXCLUDE_DIRS to an array of directories to exclude.
+
+     These settings should go in .bashrc / .zshrc before the line added above.
+
+     Install the provided man page z.1 to somewhere in the man path like
+     /usr/local/man/man1.
+
+   Aging:
+     The rank of directories maintained by z undergoes aging based on a simple
+     formula.  The rank of each entry is incremented every time it is
+     accessed.  When the sum of ranks is greater than 6000, all ranks are
+     multiplied by 0.99.  Entries with a rank lower than 1 are forgotten.
+
+   Frecency:
+     Frecency is a portmanteau of `recent' and `frequency'.  It is a weighted
+     rank that depends on how often and how recently something occurred.  As
+     far as I know, Mozilla came up with the term.
+
+     To z, a directory that has low ranking but has been accessed recently
+     will quickly have higher rank than a directory accessed frequently a long
+     time ago.
+
+     Frecency is determined at runtime.
+
+   Common:
+     When multiple directories match all queries, and they all have a common
+     prefix, z will cd to the shortest matching directory, without regard to
+     priority.  This has been in effect, if undocumented, for quite some time,
+     but should probably be configurable or reconsidered.
+
+   Shell Completion:
+     z supports interactive shell completion.  After typing a string fragment,
+     press TAB to complete on directories that matches the pattern.  In
+     addition to the double slash notation described above, and glob matching
+     works here.
+
+     z also enhances the completion for the cd command so you don't even need
+     to learn about z at all.  If you don't like this feature, it can be
+     disabled.  See the next section.
+
+ENVIRONMENT
+     A function _z_cmd() is defined.
+
+     The contents of the variable _Z_CMD is aliased to `_z_cmd'.  If not set,
+     _Z_CMD defaults to z.  The environment variable _Z_DATA can be used to
+     control the data file location.  If it is not defined, the location
+     defaults to `$HOME/.z'.
+
+     The environment variable _Z_NO_RESOLVE_SYMLINKS can be set to prevent
+     resolving of symlinks.  If it is not set, symbolic links will be resolved
+     when added to the data file.
+
+     In bash, z prepends a command to the PROMPT_COMMAND environment variable
+     to maintain its database.  In zsh, z appends a function _z_precmd to the
+     precmd_functions array.
+
+     The environment variable _Z_NO_COMPLETE_CD can be set to disable advanced
+     completion for cd.
+
+     The environment variable _Z_NO_PROMPT_COMMAND can be set if you want to
+     handle PROMPT_COMMAND or precmd yourself.
+
+     The environment variable _Z_EXCLUDE_DIRS can be set to an array of
+     directories to exclude from tracking.  HOME is always excluded.  Each
+     element must be an absolute path, and if it ends with a slash, all its
+     subdirectories are also excluded.
+
+FILES
+     Data is stored in $HOME/.z. This can be overridden by setting the _Z_DATA
+     environment variable.  When initialized, z will raise an error if this
+     path is a directory, and not function correctly.
+
+     A man page (z.1) is provided.
+
+SEE ALSO
+     autojump(1), bash(1), cdargs(1), j(1), zshall(1)
+
+AUTHORS
+     rupa deadwyler <rupa@lrrr.us>
+     Akinori MUSHA <knu@iDaemons.org>
+
+HISTORY
+     z was originally deveoloped by rupa deadwyler as a successor to j(1), a
+     python free alternative to Joel Schaerer's autojump(1).  The original
+     version is maintained at <https://github.com/rupa/z>.
+
+     This fork was started by Akinori MUSHA in early 2013 to improve zsh/bash
+     completion usability and search results.
+
+     The pattern matching conventions described above are exclusive features
+     of this fork, while the data file format and the core algorithm are kept
+     compatible with those of the original version.
+
+BUGS
+     Please file bugs at <https://github.com/knu/z>.
+
+Unix                             June 24, 2013                            Unix

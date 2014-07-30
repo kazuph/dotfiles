@@ -1,3 +1,6 @@
+source ~/.fzf.zsh
+alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+
 # rbenv
 if [ -d ${HOME}/.rbenv  ] ; then
   export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"

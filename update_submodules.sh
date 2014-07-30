@@ -1,1 +1,5 @@
-git submodule foreach 'git fetch;git checkout origin/master'
+cd ~/dotfiles/z
+git pull origin master
+cd ~/dotfiles/zsh-completions
+git pull origin master
+cd ~/dotfiles

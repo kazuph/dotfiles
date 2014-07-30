@@ -30,10 +30,12 @@ else
 fi
 
 # install ore setting
-git clone --recursive https://kazuph@github.com/kazuph/dotfiles.git
+git clone https://kazuph@github.com/kazuph/dotfiles.git
 cd dotfiles
-# git submodule init
-# git submodule update
+
+git clone https://github.com/zsh-users/zsh-completions.git
+git clone https://github.com/knu/z.git
+
 cd ~/.
 ln -s ~/dotfiles/_vimrc .vimrc
 ln -s ~/dotfiles/_gitconfig .gitconfig

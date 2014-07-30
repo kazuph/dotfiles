@@ -10,6 +10,7 @@ fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 # export PATH=/usr/local/bin:/usr/bin:$PATH
 
 source $ZSH/oh-my-zsh.sh
+unalias history
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
 alias i='iqube'
@@ -18,6 +19,7 @@ alias v="vim -u NONE --noplugin"
 alias zshrc='source $HOME/.zshrc'
 alias vimzshrc='vim $HOME/.zshrc'
 alias vz='vim $HOME/.zshrc'
+alias ve='vim $HOME/.zshenv'
 alias vv='vim $HOME/.vimrc'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
@@ -46,6 +48,8 @@ alias ghql="ghq list -p | perl -nlpe 's[.*src/(.*)][$1\0$_]' | peco --null'"
 alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
+
+alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 
 function extract() {
 case $1 in
