@@ -534,9 +534,14 @@ NeoBundle 'kannokanno/previm'
 NeoBundle 'tyru/open-browser.vim'
 " let g:previm_open_cmd = 'open -a Safari'
 nnoremap <silent><Space><Space>p :PrevimOpen<CR>
+nnoremap <silent><Space><Space>l :!open http://localhost:3000<CR>
 
 " Dockerfileのハイライト
 NeoBundle "ekalinin/Dockerfile.vim"
+
+" arduino
+NeoBundle "git@github.com:jplaut/vim-arduino-ino.git"
+let g:vim_arduino_auto_open_serial = 1
 
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {
@@ -690,7 +695,7 @@ noremap : ;
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
 " 保存時にtabをスペースに変換する
-autocmd BufWritePre * :%s/\t/  /ge
+" autocmd BufWritePre * :%s/\t/  /ge
 
 " vimgrep検索時に結果一覧を自動的に開く
 augroup grepopen
@@ -812,3 +817,20 @@ endfunction
 nnoremap <silent><Space>cd :<C-u>CD<CR>
 
 nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zsh_history \| perl -pe 's/^.+;//' \| fzf<CR>
+
+let g:markdown_fenced_languages = [
+\  'coffee',
+\  'css',
+\  'erb=eruby',
+\  'javascript',
+\  'js=javascript',
+\  'json=javascript',
+\  'ruby',
+\  'c',
+\  'ino=c',
+\  'perl',
+\  'go',
+\  'sass',
+\  'xml',
+\]
+
