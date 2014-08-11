@@ -131,3 +131,5 @@
 
   # mergeされたbranchを一括削除
   rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
+[http]
+	postBuffer = 2M

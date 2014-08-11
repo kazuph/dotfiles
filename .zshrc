@@ -8,6 +8,7 @@ plugins=(svn git ruby linux osx docker mosh)
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
 # export PATH=/usr/local/bin:/usr/bin:$PATH
+alias git='/usr/local/bin/git'
 
 source $ZSH/oh-my-zsh.sh
 unalias history
@@ -27,9 +28,6 @@ alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
 alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
 alias t='tree'
-alias gipo='git push origin'
-alias gipom='git pull origin master'
-alias z='zeus'
 alias brake='bin/rake'
 alias brails='bin/rails'
 alias brspec='bin/rspec'
