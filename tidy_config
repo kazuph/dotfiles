@@ -1,0 +1,29 @@
+doctype: omit
+drop-empty-paras: no
+fix-backslash: no
+fix-bad-comments: no
+fix-uri:no
+# hide-endtags: yes   #?
+join-styles: no
+literal-attributes: yes
+lower-literals: no
+merge-divs: no
+output-html: yes
+quote-ampersand: no
+quote-nbsp: no
+show-errors: 0
+show-warnings: 0
+break-before-br: yes
+indent: yes
+indent-attributes: no   #default
+indent-spaces: 4
+tab-size: 4
+wrap: 132
+wrap-asp: no
+wrap-jste: no
+wrap-php: no
+wrap-sections: no
+char-encoding: utf8
+force-output: yes
+quiet: yes
+tidy-mark: no

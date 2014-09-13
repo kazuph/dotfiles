@@ -1,5 +1,6 @@
 source ~/.fzf.zsh
 alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+eval "$(hub alias -s)"
 
 # rbenv
 if [ -d ${HOME}/.rbenv  ] ; then
@@ -8,10 +9,10 @@ if [ -d ${HOME}/.rbenv  ] ; then
 fi
 
 # plenv
-# if [ -d ${HOME}/.plenv  ] ; then
-#   export PATH=${HOME}/.plenv/bin/:${HOME}/.plenv/shims:${PATH}
-#   eval "$(plenv init -)"
-# fi
+if [ -d ${HOME}/.plenv  ] ; then
+  export PATH=${HOME}/.plenv/bin/:${HOME}/.plenv/shims:${PATH}
+  eval "$(plenv init -)"
+fi
 
 # perlbrew
 # if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
@@ -33,3 +34,4 @@ fi
 
 skip_global_compinit=1
 # sudo rm -rf /private/var/log/asl/*.asl
+

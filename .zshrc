@@ -46,8 +46,8 @@ alias ghql="ghq list -p | perl -nlpe 's[.*src/(.*)][$1\0$_]' | peco --null'"
 alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
-
 alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 
 function extract() {
 case $1 in
@@ -230,3 +230,5 @@ dbu() {docker build -t=$1 .;}
 dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort;}
 source ~/.fzf.zsh
 
+ggr() {open "https://www.google.co.jp/search?q=$1";}
+ca() {git ca -m "$@";}

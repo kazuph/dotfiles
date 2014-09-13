@@ -540,9 +540,13 @@ nnoremap <silent><Space><Space>l :!open http://localhost:3000<CR>
 NeoBundle "ekalinin/Dockerfile.vim"
 
 " arduino
-NeoBundle "git@github.com:jplaut/vim-arduino-ino.git"
+" <Leader>ac - Compile the current sketch.
+" <Leader>ad - Compile and deploy the current sketch.
+" <Leader>as - Open a serial port in screen.
+NeoBundle "jplaut/vim-arduino-ino.git"
 let g:vim_arduino_auto_open_serial = 1
 
+NeoBundle "heavenshell/vim-jsdoc"
 " NeoBundle 'Valloric/YouCompleteMe',  {
 "       \ 'build' : {
 "       \     'mac' : 'git submodule update --init --recursive && ./install.sh',
@@ -550,6 +554,11 @@ let g:vim_arduino_auto_open_serial = 1
 "       \ }
 " let g:ycm_key_list_select_completion = ['',  '<Down>']
 " let g:ycm_key_list_previous_completion = ['',  '<Up>']
+
+" HTML5
+NeoBundle "othree/html5.vim"
+autocmd FileType html :compiler tidy
+autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs\ yes\ \"%\"
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
@@ -684,6 +693,7 @@ highlight CursorLine ctermbg=black guibg=black
 
 " コマンド実行中は再描画しない
 set lazyredraw
+set ttyfast
 
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 
@@ -779,6 +789,8 @@ nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
 " ビジュアルモードで選択した部分を置換
 vnoremap g/ y:<C-u>%s/<C-R>"//gc<Left><Left><Left>
 
+noremap  <Space><Space>ad y:<C-u>:g/^$/d<CR>
+
 " 行末までをヤンク
 nnoremap Y y$
 
@@ -797,6 +809,9 @@ inoremap <C-d> <Del>
 
 " バックアップを取らない
 set nobackup
+
+" insert mode時に以前編集した文字も削除できるようにする
+set bs=start
 
 " no bell
 set vb t_vb=
@@ -833,4 +848,44 @@ let g:markdown_fenced_languages = [
 \  'sass',
 \  'xml',
 \]
+
+command! CopyRelativePath
+\ let @*=join(remove( split( expand( '%:p' ), "/" ), len( split( getcwd(), "/" ) ), -1 ), "/") | echo "copied"
+
+command! CopyFullPath
+\ let @*=expand('%') | echo "copied"
+
+map <C-i> =
+
+
+function DeAmperfyAll() range"Step through each line in the range...
+    " for linenum in range(a:firstline, a:lastline)
+    "     let curr_line   = getline(linenum)
+    "     let replacement = substitute(curr_line,'^   \* ','◆','g')
+    "     call setline(linenum, replacement)
+    " endfor
+    " for linenum in range(a:firstline, a:lastline)
+    "     let curr_line   = getline(linenum)
+    "     let replacement = substitute(curr_line,'^      \* ','●','g')
+    "     call setline(linenum, replacement)
+    " endfor
+    " for linenum in range(a:firstline, a:lastline)
+    "     let curr_line   = getline(linenum)
+    "     let replacement = substitute(curr_line,'^         \* ','・','g')
+    "     call setline(linenum, replacement)
+    " endfor
+    " for linenum in range(a:firstline, a:lastline)
+    "     let curr_line   = getline(linenum)
+    "     let replacement = substitute(curr_line,'^            \* ','　・','g')
+    "     call setline(linenum, replacement)
+    " endfor
+    " for linenum in range(a:firstline, a:lastline)
+    "     let curr_line   = getline(linenum)
+    "     let replacement = substitute(curr_line,'^               \* ','　　・','g')
+    "     call setline(linenum, replacement)
+    " endfor
+    if a:lastline > a:firstline
+        echo "DeAmperfied" (a:lastline - a:firstline + 1) "lines"
+    endif
+endfunction
 

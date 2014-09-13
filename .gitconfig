@@ -56,7 +56,9 @@
   rbi5 = rebase -i HEAD^^^^^
   # merge
   mn  = merge --no-ff
+  nomerge = reset --hard ORIG_HEAD # マージを途中でやめる
   # comit
+  aa  = add .
   ad  = add
   c   = commit
   ci  = commit
@@ -132,4 +134,8 @@
   # mergeされたbranchを一括削除
   rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
 [http]
-	postBuffer = 2M
+  postBuffer = 2M
+#driver for merging XCode project files
+[merge "mergepbx"]
+  name = XCode project files merger
+  driver = mergepbx %O %A %B
