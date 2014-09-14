@@ -15,7 +15,7 @@
   # globalな.gitignoreの指定
   excludesfile = ~/.gitignore
   autoCRLF = false
-  editor = /Applications/MacVim.app/Contents/MacOS/Vim
+  editor = vim
   quotepath = false
   precomposeunicode = true
 [push]
