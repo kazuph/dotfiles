@@ -9,6 +9,7 @@ fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
 # export PATH=/usr/local/bin:/usr/bin:$PATH
 alias git='/usr/local/bin/git'
+alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 
 source $ZSH/oh-my-zsh.sh
 unalias history

@@ -178,6 +178,13 @@ let g:quickrun_config.markdown   = {
       \   'exec'      : '%c %s',
       \ }
 
+let g:quickrun_config.c   = {
+      \   "outputter" : "error:buffer:quickfix",
+      \   "runner" : "vimproc",
+      \   'command'   : './make',
+      \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
+      \ }
+
 " CSは実行せずにJSにコンパイル
 let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
