@@ -46,7 +46,7 @@ endif
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " ステータスラインに情報を表示 → もう力はいらない
-" NeoBundle 'Lokaltog/vim-powerline.git'
+NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
 let g:airline_theme='light'
 let g:airline_left_sep = '⮀'
@@ -56,10 +56,10 @@ let g:airline_right_alt_sep = '⮃'
 let g:airline_branch_prefix = '⭠'
 let g:airline_readonly_symbol = '⭤'
 let g:airline_linecolumn_prefix = '⭡'
-
-" ﾊｧﾊｧ...ﾊｧﾊｧ...
+"
+" " ﾊｧﾊｧ...ﾊｧﾊｧ...
 NeoBundle 'mattn/hahhah-vim'
-NeoBundle 'mattn/vim-airline-hahhah'
+" NeoBundle 'mattn/vim-airline-hahhah'
 
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
@@ -68,12 +68,6 @@ NeoBundle 'tomtom/tcomment_vim'
 set t_Co=256
 NeoBundle 'tomasr/molokai'
 colorscheme molokai
-
-" 文章の上でExciteTranslateで翻訳
-NeoBundleLazy 'mattn/excitetranslate-vim', {
-      \ 'depends': 'mattn/webapi-vim',
-      \ 'autoload' : { 'commands': ['ExciteTranslate']}
-      \ }
 
 " ctrlpでいいと思う
 NeoBundle 'kien/ctrlp.vim.git'
@@ -162,12 +156,12 @@ nnoremap <C-t> :TagbarToggle<CR>
 nnoremap <C-]> g<C-]>
 
 " 賢いf
-NeoBundle 'rhysd/clever-f.vim'
+" NeoBundle 'rhysd/clever-f.vim'
 
 " gitの差分を表示するぜ
-NeoBundle 'airblade/vim-gitgutter'
-nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
-nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
+" NeoBundle 'airblade/vim-gitgutter'
+" nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
+" nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
 " \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
@@ -189,20 +183,20 @@ let g:quickrun_config.c   = {
 let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
 " Programming perl
-NeoBundle "c9s/perlomni.vim"
-NeoBundle "mattn/perlvalidate-vim.git"
-NeoBundle "vim-perl/vim-perl"
-NeoBundle "y-uuki/perl-local-lib-path.vim"
-autocmd FileType perl PerlLocalLibPath
-nnoremap ,pt <Esc>:%! perltidy -se<CR>
-vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
+" NeoBundle "c9s/perlomni.vim"
+" NeoBundle "mattn/perlvalidate-vim.git"
+" NeoBundle "vim-perl/vim-perl"
+" NeoBundle "y-uuki/perl-local-lib-path.vim"
+" autocmd FileType perl PerlLocalLibPath
+" nnoremap ,pt <Esc>:%! perltidy -se<CR>
+" vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
 
 " Rubyでのコーディングを楽にする
-NeoBundle "tpope/vim-rails"
-NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'slim-template/vim-slim'
-autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
-autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
+" NeoBundle "tpope/vim-rails"
+" NeoBundle 'vim-ruby/vim-ruby'
+" NeoBundle 'slim-template/vim-slim'
+" autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
+" autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
 " autocmd User Rails.view*                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.view.snip
 " autocmd User Rails.view.haml             NeoSnippetSource ~/dotfiles/snippets/haml.rails.view.snip
 " autocmd User Rails.view.erb              NeoSnippetSource ~/dotfiles/snippets/eruby.rails.view.snip
@@ -487,10 +481,10 @@ xnoremap al :Alignta<Space>
 " call watchdogs#setup(g:quickrun_config)
 
 " ゲーム。結構難しい
-NeoBundle 'deris/vim-duzzle'
+" NeoBundle 'deris/vim-duzzle'
 
 " CSSのデザインをライブで行う
-NeoBundle 'mattn/livestyle-vim'
+" NeoBundle 'mattn/livestyle-vim'
 
 " 選択部分のキーワードを*を押して検索
 NeoBundle 'thinca/vim-visualstar'
@@ -534,7 +528,7 @@ auto BufWritePre *.go execute 'Fmt'
 auto BufWritePost *.go execute 'Lint' | cwindow
 
 " 同一ファイル内のdiffを確認する
-NeoBundle 'adie/BlockDiff'
+" NeoBundle 'adie/BlockDiff'
 
 " マークダウンのプレビュー
 NeoBundle 'kannokanno/previm'
@@ -863,36 +857,4 @@ command! CopyFullPath
 \ let @*=expand('%') | echo "copied"
 
 map <C-i> =
-
-
-function DeAmperfyAll() range"Step through each line in the range...
-    " for linenum in range(a:firstline, a:lastline)
-    "     let curr_line   = getline(linenum)
-    "     let replacement = substitute(curr_line,'^   \* ','◆','g')
-    "     call setline(linenum, replacement)
-    " endfor
-    " for linenum in range(a:firstline, a:lastline)
-    "     let curr_line   = getline(linenum)
-    "     let replacement = substitute(curr_line,'^      \* ','●','g')
-    "     call setline(linenum, replacement)
-    " endfor
-    " for linenum in range(a:firstline, a:lastline)
-    "     let curr_line   = getline(linenum)
-    "     let replacement = substitute(curr_line,'^         \* ','・','g')
-    "     call setline(linenum, replacement)
-    " endfor
-    " for linenum in range(a:firstline, a:lastline)
-    "     let curr_line   = getline(linenum)
-    "     let replacement = substitute(curr_line,'^            \* ','　・','g')
-    "     call setline(linenum, replacement)
-    " endfor
-    " for linenum in range(a:firstline, a:lastline)
-    "     let curr_line   = getline(linenum)
-    "     let replacement = substitute(curr_line,'^               \* ','　　・','g')
-    "     call setline(linenum, replacement)
-    " endfor
-    if a:lastline > a:firstline
-        echo "DeAmperfied" (a:lastline - a:firstline + 1) "lines"
-    endif
-endfunction
 
