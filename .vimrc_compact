@@ -1,0 +1,255 @@
+" ファイル名と内容をもとにファイルタイププラグインを有効にする
+filetype plugin indent on
+" ハイライトON
+syntax on
+
+"--------------------------------------------------------------------------
+" BasicSetting
+"--------------------------------------------------------------------------
+" ヘルプを3倍の速度で引く
+nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
+
+" 認識されないっぽいファイルタイプを追加
+au BufNewFile,BufRead *.psgi       set filetype=perl
+au BufNewFile,BufRead *.t          set filetype=perl
+au BufNewFile,BufRead *.ejs        set filetype=html
+au BufNewFile,BufRead *.ep         set filetype=html
+au BufNewFile,BufRead *.pde        set filetype=processing
+au BufNewFile,BufRead *.erb        set filetype=html
+au BufNewFile,BufRead *.tt         set filetype=html
+au BufNewFile,BufRead *.tx         set filetype=html
+au BufNewFile,BufRead *.tt2        set filetype=html
+au BufNewFile,BufRead *.scss       set filetype=css
+au BufNewFile,BufRead Guardfile    set filetype=ruby
+au BufNewFile,BufRead Vagrantfile  set filetype=ruby
+au BufNewFile,BufRead cpanfile     set filetype=perl
+au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
+
+" ファイルエンコーディング
+let $LANG='ja_JP.UTF-8'
+set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
+
+" 検索語を強調表示
+set hlsearch
+" 検索時に大文字・小文字を区別しない
+set ignorecase
+" ただし、検索後に大文字小文字が
+" 混在しているときは区別する
+set smartcase
+
+" 未保存のバッファでも裏に保持
+set hidden
+
+" コマンドラインでの補完候補が表示されるようになる
+set wildmenu
+
+" コマンドをステータス行に表示
+set showcmd
+
+" オートインデント
+set autoindent
+set smartindent
+
+" 10進法でインクリメント
+set nf=""
+
+" 画面最下行にルーラーを表示する
+set ruler
+
+" ステータスラインを常に表示する
+set laststatus=2
+
+" Ctrl+eで'paste'と'nopaste'を切り替える
+set pastetoggle=<C-e>
+set textwidth=0
+set cindent
+set tabstop=4
+set shiftwidth=4
+autocmd FileType apache     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType aspvbs     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType c          setlocal sw=4 sts=4 ts=4 et
+autocmd FileType cpp        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType cs         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType css        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
+autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
+autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType python     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType ruby       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType haml       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType sh         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType sql        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType vb         setlocal sw=4 sts=4 ts=4 et
+autocmd FileType vim        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType wsh        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType xhtml      setlocal sw=2 sts=2 ts=2 et
+autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType scala      setlocal sw=2 sts=2 ts=2 et
+autocmd FileType scheme     setlocal sw=2 sts=2 ts=2 et
+
+set autoread
+set expandtab
+set cmdheight=2
+set showmode                     " 現在のモードを表示
+set modelines=0                  " モードラインは無効
+set showmatch
+set number
+set list
+set listchars=tab:»-,trail:-,nbsp:%
+set display=uhex
+if exists("noimdisableactivate")
+  set noimdisableactivate
+endif
+
+" 全角スペースの表示
+highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
+match ZenkakuSpace /　/
+
+" カーソル行をハイライト
+set cursorline
+" カレントウィンドウにのみ罫線を引く
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
+
+hi clear CursorLine
+hi CursorLine gui=underline
+highlight CursorLine ctermbg=black guibg=black
+
+" コマンド実行中は再描画しない
+set lazyredraw
+set ttyfast
+
+nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
+
+" これで保存やコマンドを速く打てるようになる
+" 未設定のVimではもたつくので訓練すること
+noremap ; :
+noremap : ;
+
+" 保存時に行末の空白を除去する
+autocmd BufWritePre * :%s/\s\+$//ge
+" 保存時にtabをスペースに変換する
+" autocmd BufWritePre * :%s/\t/  /ge
+
+" vimgrep検索時に結果一覧を自動的に開く
+augroup grepopen
+  autocmd!
+  autocmd QuickFixCmdPost vimgrep cw
+  autocmd QuickFixCmdPost grep cw
+augroup END
+
+" quickfixの修正
+nnoremap ]q :cnext<CR>
+nnoremap [q :cprevious<CR>
+nnoremap [Q :<C-u>cfirst<CR>
+nnoremap ]Q :<C-u>clast<CR>
+
+" 0で行頭、9で行末
+" こういうのは記号じゃなくて数字がいい
+nnoremap 0 ^
+nnoremap 9 $
+
+" visualmodeでインテントを＞＜の連打で変更できるようにする
+vnoremap < <gv
+vnoremap > >gv
+
+" ファイルを開いた時に最後のカーソル位置を再現する
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+" 無限undo
+if has('persistent_undo')
+  set undodir=~/.vim/undo
+  set undofile
+endif
+
+" OS依存
+" OSのクリップボードを使用する
+" set clipboard=unnamed
+set clipboard+=unnamedplus,unnamed
+
+" ターミナルでマウスを使用できるようにする
+set mouse=a
+set guioptions+=a
+set ttymouse=xterm2
+
+" テンプレートの設定
+autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
+autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
+
+" .vimrcを瞬時に開く
+nnoremap <Space><Space>. :e $MYVIMRC<CR>
+
+" snippets/perl.snipを瞬時に開く
+nnoremap <Space><Space>ps :e $HOME/dotfiles/snippets/perl.snip<CR>
+nnoremap <Space><Space>pd :e $HOME/dotfiles/dict/perl.dict<CR>
+
+" snippets/ruby.snipを瞬時に開く
+nnoremap <Space><Space>rs :e $HOME/dotfiles/snippets/ruby.snip<CR>
+nnoremap <Space><Space>rd :e $HOME/dotfiles/dict/ruby.dict<CR>
+
+" snippets/go.snipを瞬時に開く
+nnoremap <Space><Space>gs :e $HOME/dotfiles/snippets/go.snip<CR>
+
+" vimrcの設定を反映
+nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
+
+" 念の為C-cでEsc
+inoremap <C-c> <Esc>
+
+" 検索語が真ん中に来るようにする
+nmap n nzz
+nmap N Nzz
+nmap * *zz
+nmap # #zz
+nmap g* g*zz
+nmap g# g#zz
+
+" ヘルプを日本語に
+set helplang=ja
+
+" カーソル下の単語を置換
+nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
+
+" ビジュアルモードで選択した部分を置換
+vnoremap g/ y:<C-u>%s/<C-R>"//gc<Left><Left><Left>
+
+noremap  <Space><Space>ad y:<C-u>:g/^$/d<CR>
+
+" 行末までをヤンク
+nnoremap Y y$
+
+" コマンドモードのマッピング
+cmap <C-a> <Home>
+cmap <C-b> <Left>
+cmap <C-f> <Right>
+cmap <C-d> <Del>
+
+" インサートモードのマッピング
+inoremap <C-e> <End>
+inoremap <C-a> <C-o>^
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-d> <Del>
+
+" バックアップを取らない
+set nobackup
+
+" insert mode時に以前編集した文字も削除できるようにする
+set bs=start
+
+" no bell
+set vb t_vb=
+
+map <C-i> =
+
