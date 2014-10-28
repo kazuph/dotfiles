@@ -1,2 +1,9 @@
 #!/usr/bin/env bash
-fontforge -script $HOME/.vim/vim-powerline/fontpatcher/fontpatcher ~/Library/Fonts/RictyDiminished-Regular.ttf
+# http://qiita.com/osakanafish/items/731dc31168e3330dbcd0
+brew update
+brew uninstall ricty
+brew tap sanemat/font
+brew install --vim-powerline ricty
+cp -f /usr/local/Cellar/ricty/*/share/fonts/Ricty*.ttf ~/Library/Fonts/
+fc-cache -vf
+exec $SHELL -l
