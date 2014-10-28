@@ -37,11 +37,11 @@ git clone https://github.com/zsh-users/zsh-completions.git
 git clone https://github.com/knu/z.git
 
 cd ~/.
-ln -s ~/dotfiles/_vimrc .vimrc
-ln -s ~/dotfiles/_gitconfig .gitconfig
-ln -s ~/dotfiles/_zshrc .zshrc
-ln -s ~/dotfiles/_zshenv .zshenv
-ln -s ~/dotfiles/_tmux.conf .tmux.conf
+ln -s ~/dotfiles/.vimrc .vimrc
+ln -s ~/dotfiles/.gitconfig .gitconfig
+ln -s ~/dotfiles/.zshrc .zshrc
+ln -s ~/dotfiles/.zshenv .zshenv
+ln -s ~/dotfiles/.tmux.conf .tmux.conf
 
 # NeoBundleInstall from commandline
 vim +NeoBundleInstall +qa
