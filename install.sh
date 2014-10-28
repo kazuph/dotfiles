@@ -30,7 +30,7 @@ else
 fi
 
 # install ore setting
-git clone https://kazuph@github.com/kazuph/dotfiles.git
+git clone git@github.com:kazuph/dotfiles.git
 cd dotfiles
 
 git clone https://github.com/zsh-users/zsh-completions.git
