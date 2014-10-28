@@ -1,33 +1,15 @@
 #!/bin/bash -u
-cd ~/.
-# install git
-which git > /dev/null 2>&1
-if [ $? -eq 0 ] ; then
-    echo Success!
-else
-    echo Install git! >&2
-    sudo yum install -y git
-fi
 
-# install vim
-which vim > /dev/null 2>&1
-if [ $? -eq 0 ] ; then
-    echo Success!
-else
-    echo Install vim! >&2
-    sudo yum install -y vim-enhanced
-fi
+# install homebrew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-# install zsh
-which zsh > /dev/null 2>&1
-if [ $? -eq 0 ] ; then
-    echo Success!
-else
-    echo Install zsh! >&2
-    sudo yum install -y zsh
-    curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
-    chsh -s /bin/zsh
-fi
+brew install git
+brew install zsh
+brew install reattach-to-user-namespace
+brew install tmux
+brew install wget
+brew install hub
+brew install macvim --with-cscope --with-lua --HEAD && brew install vim --with-lua
 
 # install ore setting
 git clone git@github.com:kazuph/dotfiles.git
@@ -37,11 +19,12 @@ git clone https://github.com/zsh-users/zsh-completions.git
 git clone https://github.com/knu/z.git
 
 cd ~/.
-ln -s ~/dotfiles/.vimrc .vimrc
-ln -s ~/dotfiles/.gitconfig .gitconfig
-ln -s ~/dotfiles/.zshrc .zshrc
-ln -s ~/dotfiles/.zshenv .zshenv
-ln -s ~/dotfiles/.tmux.conf .tmux.conf
+ln -sfv ~/dotfiles/.vimrc .vimrc
+ln -sfv ~/dotfiles/.gitconfig .gitconfig
+ln -sfv ~/dotfiles/.zshrc .zshrc
+ln -sfv ~/dotfiles/.zshenv .zshenv
+ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
 
 # NeoBundleInstall from commandline
-vim +NeoBundleInstall +qa
+curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh | sh
+vim +qa

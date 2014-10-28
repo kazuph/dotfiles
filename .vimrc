@@ -26,24 +26,30 @@
 "
 "----------------------------------------------------------------------------------------
 
-set nocompatible
-filetype plugin indent off
-
 " for go
-let s:goroot=substitute(system("go env GOROOT"),"\n", "", "g") . "/misc/vim"
-if s:goroot != ''
-  exe "set runtimepath+=".globpath("/", s:goroot)
-  set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
+" let s:goroot=substitute(system("go env GOROOT"),"\n", "", "g") . "/misc/vim"
+" if s:goroot != ''
+"   exe "set runtimepath+=".globpath("/", s:goroot)
+"   set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
+" endif
+
+" Note: Skip initialization for vim-tiny or vim-small.
+if !1 | finish | endif
+
+if has('vim_starting')
+  set nocompatible               " Be iMproved
+
+  " Required:
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
-set rtp+=~/dotfiles/neobundle.git/
-if has('vim_starting')
-  set runtimepath+=~/dotfiles/neobundle.vim
-  call neobundle#rc(expand('~/.vim/'))
-endif
+" Required:
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 " NeoBundle自体の管理
 NeoBundleFetch 'Shougo/neobundle.vim'
+
+call neobundle#end()
 
 " ステータスラインに情報を表示 → もう力はいらない
 NeoBundle 'Lokaltog/vim-powerline.git'
