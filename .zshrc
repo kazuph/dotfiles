@@ -94,7 +94,7 @@ fi
 
 # for go
 if which go >/dev/null 2>&1; then
-    export GOPATH=${HOME}/go
+    export GOPATH=${HOME}
     path=($GOPATH/bin $path)
 fi
 
@@ -159,14 +159,12 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 setopt no_share_history
 
-function gi() { curl http://gitignore.io/api/$@ ;}
-
 ### カレントディレクトリ以下を検索して移動
-function percol-get-current-dir() {
+function fzf-get-current-dir() {
     find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|public/uploads|/tmp)' | fzf
 }
-function percol-cdr() {
-    local destination="$(percol-get-current-dir)"
+function fzf-cdr() {
+    local destination="$(fzf-get-current-dir)"
     if [ -n "$destination" ]; then
         BUFFER="cd $destination"
         zle accept-line
@@ -174,8 +172,8 @@ function percol-cdr() {
         zle reset-prompt
     fi
 }
-zle -N percol-cdr
-bindkey '^q' percol-cdr
+zle -N fzf-cdr
+bindkey '^q' fzf-cdr
 
 # ------------------------------------
 # Docker alias and function
@@ -290,4 +288,11 @@ alias "505"="echo 'HTTP Version Not Supported'"
 # incremental
 p() { peco | while read LINE; do $@ $LINE; done }
 f() { fzf | while read LINE; do $@ $LINE; done }
-alias gh='ghq list -p | f cd'
+
+gh(){
+    ghq list -p | f cd;
+    zle accept-line
+}
+zle -N gh
+bindkey "^g" gh
+
