@@ -17,6 +17,7 @@ unalias history
 alias tmux="TERM=xterm-256color tmux -u"
 alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
+alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 alias v="vim -u $HOME/dotfiles/.vimrc_compact"
 alias zshrc='source $HOME/.zshrc'
 alias vimzshrc='vim $HOME/.zshrc'
@@ -44,7 +45,6 @@ alias vp='vim `ag . -l | peco`'
 alias vc='vim -o `git cl`'
 alias vm='vim -o `git ml`'
 alias vz='vim ~/.zshrc'
-alias ghql="ghq list -p | perl -nlpe 's[.*src/(.*)][$1\0$_]' | peco --null'"
 alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
@@ -286,3 +286,8 @@ alias "502"="echo 'Bad Gateway'"
 alias "503"="echo 'Service Unavailable'"
 alias "504"="echo 'Gateway Timeout'"
 alias "505"="echo 'HTTP Version Not Supported'"
+
+# incremental
+p() { peco | while read LINE; do $@ $LINE; done }
+f() { fzf | while read LINE; do $@ $LINE; done }
+alias gh='ghq list -p | f cd'

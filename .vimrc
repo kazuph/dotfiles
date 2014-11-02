@@ -26,13 +26,6 @@
 "
 "----------------------------------------------------------------------------------------
 
-" for go
-" let s:goroot=substitute(system("go env GOROOT"),"\n", "", "g") . "/misc/vim"
-" if s:goroot != ''
-"   exe "set runtimepath+=".globpath("/", s:goroot)
-"   set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
-" endif
-
 " Note: Skip initialization for vim-tiny or vim-small.
 if !1 | finish | endif
 
@@ -531,7 +524,7 @@ let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s'
 " exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
 " NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
 auto BufWritePre *.go execute 'Fmt'
-auto BufWritePost *.go execute 'Lint' | cwindow
+" auto BufWritePost *.go execute 'Lint' | cwindow
 
 " 同一ファイル内のdiffを確認する
 " NeoBundle 'adie/BlockDiff'
@@ -545,6 +538,14 @@ nnoremap <silent><Space><Space>l :!open http://localhost:3000<CR>
 
 " Dockerfileのハイライト
 NeoBundle "ekalinin/Dockerfile.vim"
+
+" gist
+NeoBundle "mattn/gist-vim"
+NeoBundle 'mattn/webapi-vim'
+
+" typescript
+NeoBundle 'leafgarland/typescript-vim'
+NeoBundle 'clausreinke/typescript-tools'
 
 " arduino
 " <Leader>ac - Compile the current sketch.
@@ -862,5 +863,5 @@ command! CopyRelativePath
 command! CopyFullPath
 \ let @*=expand('%') | echo "copied"
 
-map <C-i> =
+" map <C-i> =
 

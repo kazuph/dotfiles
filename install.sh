@@ -20,6 +20,7 @@ git clone https://github.com/knu/z.git
 
 cd ~/.
 ln -sfv ~/dotfiles/.vimrc .vimrc
+ln -sfv ~/dotfiles/.gvimrc .gvimrc
 ln -sfv ~/dotfiles/.gitconfig .gitconfig
 ln -sfv ~/dotfiles/.zshrc .zshrc
 ln -sfv ~/dotfiles/.zshenv .zshenv
