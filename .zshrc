@@ -50,7 +50,7 @@ alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
 alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
-alias get='git clone '
+alias get='ghq get '
 
 function extract() {
 case $1 in
