@@ -11,6 +11,10 @@ brew install wget
 brew install hub
 brew install macvim --with-cscope --with-lua --HEAD && brew install vim --with-lua
 
+# install oh-my-zsh
+curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+chsh -s /bin/zsh
+
 # install ore setting
 git clone git@github.com:kazuph/dotfiles.git
 cd dotfiles
