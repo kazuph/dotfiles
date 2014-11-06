@@ -101,6 +101,15 @@ NeoBundle 'kana/vim-operator-user.git'
 NeoBundle 'kana/vim-operator-replace.git'
 map R  <Plug>(operator-replace)
 
+" キャメル・アンダースコア記法を扱いやすく
+" , w , e , b
+" v, w
+" d, w
+NeoBundle 'bkad/CamelCaseMotion.git'
+map w ,w
+map e ,e
+map b ,b
+
 "  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
 inoremap <expr> , smartchr#one_of(', ', ',')
