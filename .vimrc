@@ -872,5 +872,5 @@ command! CopyRelativePath
 command! CopyFullPath
 \ let @*=expand('%') | echo "copied"
 
-" map <C-i> =
-
+set whichwrap=b,s,h,l,<,>,[,]
+set backspace=indent,eol,start
