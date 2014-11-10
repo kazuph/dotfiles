@@ -181,7 +181,10 @@ bindkey '^q' fzf-cdr
 # if [ `ps aux | grep dvm | grep -v grep | wc -l` == 1 ]; then
 #   eval $(dvm env)
 # fi
-export DOCKER_HOST=tcp://192.168.59.103:2375
+
+export DOCKER_TLS_VERIFY=1
+export DOCKER_HOST=tcp://192.168.59.103:2376
+export DOCKER_CERT_PATH=/Users/kazuph_org/.boot2docker/certs/boot2docker-vm
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
