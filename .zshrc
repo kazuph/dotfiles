@@ -1,17 +1,17 @@
 zmodload zsh/zle
 ZSH=$HOME/.oh-my-zsh
-export LANG=ja_JP.UTF-8
 ZSH_THEME="wedisagree"
-# ZSH_THEME="muse"
-plugins=(svn git ruby linux osx docker mosh)
-# plugins=(svn git ruby linux osx mosh)
+plugins=(git ruby linux osx docker mosh)
+source $ZSH/oh-my-zsh.sh
+
+zmodload zsh/zle
+export LANG=ja_JP.UTF-8
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
 # export PATH=/usr/local/bin:/usr/bin:$PATH
 alias git='/usr/local/bin/git'
 alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 
-source $ZSH/oh-my-zsh.sh
 unalias history
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"

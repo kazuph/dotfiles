@@ -14,24 +14,6 @@ if [ -d ${HOME}/.plenv  ] ; then
   eval "$(plenv init -)"
 fi
 
-# perlbrew
-# if [ -f ${HOME}/perl5/perlbrew/etc/bashrc ] ; then
-#     source ~/perl5/perlbrew/etc/bashrc
-# fi
-
-# macvim
-# if [ -f /Applications/MacVim.app/Contents/MacOS/Vim ]; then
-#     alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-#     alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-#     alias vless='/Applications/MacVim.app/Contents/Resources/vim/runtime/macros/less.sh'
-# else
-#     alias vi="vim"
-# fi
-# export EDITOR=vim
-# if ! type vim > /dev/null 2>&1; then
-#     alias vim=vi
-# fi
-
 skip_global_compinit=1
 # sudo rm -rf /private/var/log/asl/*.asl
 
