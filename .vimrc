@@ -180,12 +180,12 @@ let g:quickrun_config.markdown   = {
       \   'exec'      : '%c %s',
       \ }
 
-let g:quickrun_config.c   = {
-      \   "outputter" : "error:buffer:quickfix",
-      \   "runner" : "vimproc",
-      \   'command'   : './make',
-      \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
-      \ }
+" let g:quickrun_config.c   = {
+"       \   "outputter" : "error:buffer:quickfix",
+"       \   "runner" : "vimproc",
+"       \   'command'   : './make',
+"       \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
+"       \ }
 
 " CSは実行せずにJSにコンパイル
 let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
@@ -577,6 +577,17 @@ NeoBundle "othree/html5.vim"
 autocmd FileType html :compiler tidy
 autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs\ yes\ \"%\"
 
+NeoBundle 'rhysd/vim-clang-format'
+autocmd FileType c nnoremap ,cf <Esc>:ClangFormat<CR>
+
+NeoBundle 'maksimr/vim-jsbeautify'
+autocmd FileType javascript noremap <buffer> ,cf :call JsBeautify()<cr>
+
+NeoBundle 'scrooloose/syntastic.git'
+let g:syntastic_javascript_checker = 'jshint'
+let g:syntastic_check_on_save = 1
+let g:syntastic_auto_loc_list = 0
+
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
 " ハイライトON
@@ -658,7 +669,7 @@ autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
 autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
