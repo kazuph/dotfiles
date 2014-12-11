@@ -577,16 +577,13 @@ NeoBundle "othree/html5.vim"
 autocmd FileType html :compiler tidy
 autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs\ yes\ \"%\"
 
-NeoBundle 'rhysd/vim-clang-format'
-autocmd FileType c nnoremap ,cf <Esc>:ClangFormat<CR>
-
 NeoBundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer> ,cf :call JsBeautify()<cr>
 
-NeoBundle 'scrooloose/syntastic.git'
-let g:syntastic_javascript_checker = 'jshint'
-let g:syntastic_check_on_save = 1
-let g:syntastic_auto_loc_list = 0
+" NeoBundle 'scrooloose/syntastic.git'
+" let g:syntastic_javascript_checker = 'jshint'
+" let g:syntastic_check_on_save = 1
+" let g:syntastic_auto_loc_list = 0
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
