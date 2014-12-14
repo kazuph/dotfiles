@@ -579,6 +579,8 @@ autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs
 
 NeoBundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer> ,cf :call JsBeautify()<cr>
+autocmd FileType html       noremap <buffer> ,cf :call HtmlBeautify()<cr>
+autocmd FileType css        noremap <buffer> ,cf :call CSSBeautify()<cr>
 
 " NeoBundle 'scrooloose/syntastic.git'
 " let g:syntastic_javascript_checker = 'jshint'
