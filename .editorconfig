@@ -16,4 +16,3 @@ max_char = 2000
 indent_style = space
 indent_size = 4
 max_char = 2000
-brace_style = expand
