@@ -138,7 +138,8 @@
   postBuffer = 2M
 #driver for merging XCode project files
 [merge "mergepbx"]
-  name = XCode project files merger
-  driver = mergepbx %O %A %B
+	name = Xcode project files merger
+	driver = mergepbx %O %A %B
+	note = auto-generated configuration for mergepbx(1)
 [ghq]
-	root = /Users/kazuph_org/src
+	root = /Users/kazuph/src
