@@ -60,6 +60,7 @@
   # comit
   aa  = add .
   ad  = add
+  ap  = add -p
   c   = commit
   ci  = commit
   ca  = commit -a           # modifiedなファイルを全てstageへ
