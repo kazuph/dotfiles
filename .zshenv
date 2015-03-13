@@ -1,5 +1,10 @@
+if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprofile"
+fi
+
 source ~/.fzf.zsh
-alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+alias th='tail -10000 $HOME/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+
 eval "$(hub alias -s)"
 
 # rbenv
@@ -8,11 +13,7 @@ if [ -d ${HOME}/.rbenv  ] ; then
   eval "$(rbenv init -)"
 fi
 
-# plenv
-if [ -d ${HOME}/.plenv  ] ; then
-  export PATH=${HOME}/.plenv/bin/:${HOME}/.plenv/shims:${PATH}
-  eval "$(plenv init -)"
-fi
+# export PATH=/Users/kazuph_org/local/node-v0.10/bin:$PATH
 
 skip_global_compinit=1
 # sudo rm -rf /private/var/log/asl/*.asl

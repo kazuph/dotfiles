@@ -1,8 +1,16 @@
-zmodload zsh/zle
-ZSH=$HOME/.oh-my-zsh
-ZSH_THEME="wedisagree"
-plugins=(git ruby linux osx docker mosh)
-source $ZSH/oh-my-zsh.sh
+#
+# Executes commands at the start of an interactive session.
+#
+# Authors:
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# Customize to your needs...
 
 zmodload zsh/zle
 export LANG=ja_JP.UTF-8
@@ -24,6 +32,7 @@ alias vimzshrc='vim $HOME/.zshrc'
 alias vz='vim $HOME/.zshrc'
 alias ve='vim $HOME/.zshenv'
 alias vv='vim $HOME/.vimrc'
+alias vg='vim $HOME/.gitconfig'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
@@ -33,7 +42,7 @@ alias t='tree'
 alias brake='bin/rake'
 alias brails='bin/rails'
 alias brspec='bin/rspec'
-alias s='bin/rails server --binding=127.0.0.1'
+alias s='bin/rails server'
 alias console='brails c'
 alias reset='brake db:migrate:reset'
 alias migrate='brake db:migrate'
@@ -44,7 +53,6 @@ alias vf='vim `fzf`'
 alias vp='vim `ag . -l | peco`'
 alias vc='vim -o `git cl`'
 alias vm='vim -o `git ml`'
-alias vz='vim ~/.zshrc'
 alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
@@ -299,3 +307,4 @@ gh(){
 zle -N gh
 bindkey "^g" gh
 
+setopt ignoreeof
