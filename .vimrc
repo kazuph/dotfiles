@@ -65,6 +65,7 @@ NeoBundle 'tomtom/tcomment_vim'
 
 " やっぱりVimはかっこよくなければならない
 set t_Co=256
+
 NeoBundle 'tomasr/molokai'
 colorscheme molokai
 
