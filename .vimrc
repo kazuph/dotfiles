@@ -579,14 +579,24 @@ autocmd FileType html :compiler tidy
 autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs\ yes\ \"%\"
 
 NeoBundle 'maksimr/vim-jsbeautify'
-autocmd FileType javascript noremap <buffer> ,cf :call JsBeautify()<cr>
-autocmd FileType html       noremap <buffer> ,cf :call HtmlBeautify()<cr>
-autocmd FileType css        noremap <buffer> ,cf :call CSSBeautify()<cr>
+autocmd FileType javascript noremap <buffer>,cf :call JsBeautify()<cr>
+autocmd FileType html       noremap <buffer>,cf :call HtmlBeautify()<cr>
+autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
 
 " NeoBundle 'scrooloose/syntastic.git'
 " let g:syntastic_javascript_checker = 'jshint'
 " let g:syntastic_check_on_save = 1
 " let g:syntastic_auto_loc_list = 0
+
+" doxygen
+NeoBundle 'DoxygenToolkit.vim'
+let g:load_doxygen_syntax=1
+nnoremap <Space><Space>d :<C-u>Dox<CR>
+
+NeoBundle 'rhysd/vim-clang-format'
+autocmd FileType c,cpp,objc nnoremap <buffer>,cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer>,cf :ClangFormat<CR>
+
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
@@ -885,3 +895,53 @@ command! CopyFullPath
 
 set whichwrap=b,s,h,l,<,>,[,]
 set backspace=indent,eol,start
+
+" uncrustify
+" autocmd FileType c,cpp,objc nnoremap <buffer>,cf :call UncrustifyAuto()<CR>
+" autocmd BufWritePre <buffer> :call UncrustifyAuto()
+
+" uncrustifyの設定ファイル
+let g:uncrustify_cfg_file_path = '~/.uncrustifyconfig'
+
+" uncrustifyでフォーマットする言語
+let g:uncrustify_lang = ""
+autocmd FileType c let g:uncrustify_lang = "c"
+autocmd FileType cpp let g:uncrustify_lang = "cpp"
+autocmd FileType objc let g:uncrustify_lang = "oc"
+
+" Restore cursor position, window position, and last search after running a
+" command.
+function! Preserve(command)
+    " Save the last search.
+    let search = @/
+    " Save the current cursor position.
+    let cursor_position = getpos('.')
+    " Save the current window position.
+    normal! H
+    let window_position = getpos('.')
+    call setpos('.', cursor_position)
+    " Execute the command.
+    execute a:command
+    " Restore the last search.
+    let @/ = search
+    " Restore the previous window position.
+    call setpos('.', window_position)
+    normal! zt
+    " Restore the previous cursor position.
+    call setpos('.', cursor_position)
+endfunction
+
+" Don't forget to add Uncrustify executable to $PATH (on Unix) or
+" %PATH% (on Windows) for this command to work.
+function! Uncrustify(language)
+    call Preserve(':silent %!uncrustify'.' -q '.' -l '.a:language.' -c '.
+                \shellescape(fnamemodify(g:uncrustify_cfg_file_path, ':p')))
+endfunction
+
+function! UncrustifyAuto()
+    if g:uncrustify_lang != ""
+        call Uncrustify(g:uncrustify_lang)
+    endif
+endfunction
+
+

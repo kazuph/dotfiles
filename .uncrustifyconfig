@@ -1,0 +1,715 @@
+##### Uncrustify config
+
+### Preprocessor
+## http://qiita.com/items/dd7c5ffdff27451dae16
+# #if、#ifdef、#ifndef〜#else〜#endifブロック内のプロプロセッサをインデントするかどうか。{ ignore, add, remove, force }
+pp_indent = add
+# ソースコードのインデントレベルに合わせてインデントするかどうか。{ true, false }
+pp_indent_at_level = true
+# pp_indent_at_level=falseの場合のインデント幅 { number }
+pp_indent_count = 4
+# #if、#ifdef、#ifndef〜#else〜#endifブロック内のプリプロセッサの#の後から半角空白でインデントするかどうか { ignore, add, remove, force }
+pp_space = remove
+# #の後に加える半角空白数 { number }
+pp_space_count = 0
+# #regionと#endregion (C#言語)、#pragmra region (C/C++) に対するインデント { number }
+pp_indent_region = 0
+# #regionと#endregionの間のコードをインデントするかどうか { true, false }
+pp_region_indent_code = false
+# pp_indent_at_level=trueの場合: ファイルレベルにない'#if'、'#else'、'#endif'に対するインデント位置(N桁)を固定する { number }
+pp_indent_if = 0
+# ファイルレベルにない'#if'、'#else'、'#endif'の間のコードをインデントするかどうか { true, false }
+pp_if_indent_code = true
+# '#define'をブレースレベルに合わせてインデントするかどうか { true, false }
+pp_define_at_level = false
+
+### General
+## http://qiita.com/items/d8998dd5e90697744e3c
+# 出力に用いる改行コード { auto, lf, crlf, cr }
+newlines = auto
+# 入力ファイルのタブサイズ { number }
+input_tab_size = 4
+# 出力ファイルのタブサイズ { number }
+output_tab_size = 4
+# 文字列エスケープ文字に対するASCIIコード (通常は'\'(92)、Pawnの場合'^'(94)) { number }
+string_escape_char = 92
+# '>='と'>>='を'void f(list<list<B>>=val);'のテンプレートの一部と解釈させるかどうか { true, false }
+tok_split_gte = false
+# UTF-8ファイルのBOMコードへの対応 (推奨'remove') { ignore, add, remove, force }
+utf8_bom = add
+# 値128〜255を持つバイトを含むUTF-8でないファイルの場合、出力をUTF-8とするかどうか { true, false }
+utf8_byte = false
+# 出力エンコーディングを強制的にUTF-8にするかどうか { true, false }
+utf8_force = true
+
+### Indent
+## http://qiita.com/items/b3fee3560e4ae746b468
+# インデントレベルのインデント幅 (半角空白数) (通常 2、3、4、8) { number }
+indent_columns = 4
+# '('や'='の行送りの後のインデントを上書き。マイナスの場合はインデントを継続。 { number }
+indent_continue = 0
+# コードをインデントする時にどのようにインデントするか。 { 0: 半角空白のみ 1: インデントはタブ、位置揃えは半角空白 2: インデントも位置揃えもタブ (タブストップ以外は半角空白) }
+indent_with_tabs = 0
+# コードのインデントレベルでないコメントをタブ位置までタブ文字でインデントするか。falseの場合、半角空白のみ。 (indent_with_tabs=2の場合のみ) { true, false }
+indent_cmt_with_tabs = false
+# '\'-改行でされた文字列を位置揃えさせるかどうか。これ、いろいろ試したけど効かないな。 { true, false }
+indent_align_string = true
+# '{'をレベルからインデントさせる半角空白数 { number }
+indent_brace = 0
+# ボディレベルからブレースをインデントさせるかどうか { true, false }
+indent_braces = false
+# 関数ブレースのインデントの無効化 (indent_bracesがtrueの時のみ) { true, false }
+indent_braces_no_func = true
+# クラスブレースのインデントの無効化 (indent_bracesがtrueの時のみ) { true, false }
+indent_braces_no_class = true
+# 構造体ブレースのインデントの無効化 (indent_bracesがtrueの時のみ) { true, false }
+indent_braces_no_struct = true
+# ブレースオーナーの文字数ベースでインデントする (例: 'if'なら空白3文字、'for'なら空白4文字) { true, false}
+indent_brace_parent = false
+# 'namespace'のボディをインデントさせるかどうか { true, false }
+indent_namespace = true
+# 名前空間ブロックをインデントさせる空白数 { number } 0=>ベースインデント幅に依存
+indent_namespace_level = 0
+# 名前空間のボディがこの数字よりも長い場合、インデントしない。 (indent_namespace=trueの場合のみ) (0: 無制限) { number }
+indent_namespace_limit = 0
+# 'extern "C"'ボディをインデントさせるかどうか { true, false }
+indent_extern = true
+# 'class'ボディをインデントさせるかどうか { true, false }
+indent_class = true
+# クラス宣言の継承のコロンに続く文字をインデントさせるかどうか (indent_ctor_init_leading、indent_ctor_initと関連する) { true, false}
+indent_class_colon = true
+# コンストラクタのメンバーイニシャライザの先頭の':'の (仮想的な) インデント幅。 (indent_class_colon=trueの場合のみ) (デフォルト:2) { number }
+indent_ctor_init_leading = 4
+# コンストラクタのメンバーイニシャライザの残りのリストに対する追加インデント (indent_class_colon=trueの場合のみ) { number }
+indent_ctor_init = 0
+# 'else\nif'の'if'をインデントするかどうか { true, false }
+indent_else_if = false
+# '{'の後の行から始まる変数宣言のインデント幅の調整 (0: 調整なし、正値: カラム絶対値、負値: インデント相対値) { number }
+indent_var_def_blk = 0
+# 複数行に続く変数宣言を位置揃え (align) せずインデントする { true, false }
+indent_var_def_cont = false
+# 関数定義のインデントを行頭から強制的に開始するかどうか { true, false }
+indent_func_def_force_col1 = false
+# 複数行に続く関数コールの引数リストをインデントするか、位置揃えするか { true, false }
+indent_func_call_param = false
+# 複数行に続く関数定義の引数リストをインデントするか、位置揃えするか { true, false }
+indent_func_def_param = false
+# 複数行に続くプロトタイプ宣言の引数リストをインデントするか、位置揃えするか { true, false }
+indent_func_proto_param = false
+# 複数行に続くクラス宣言内のコンストラクタの引数リストをインデントするか、位置揃えするか { true, false }
+indent_func_class_param = false
+# 複数行に続くクラスコンストラクタコールの引数リストをインデントするか、位置揃えするか { true, false }
+indent_func_ctor_var_param = false
+# 複数行に続くテンプレートクラス宣言の引数リストをインデントするか、位置揃えするか { true, false }
+indent_template_param = false
+# indent_func_xxx_paramオプションのインデント幅を2倍にする { true, false }
+indent_func_param_double = false
+# 関数宣言/プロトタイプの単独でぶら下がる'const'修飾子の絶対カラム位置 { number }
+indent_func_const = 0
+# 関数宣言/プロトタイプの単独でぶら下がる'throw'修飾子の絶対カラム位置 { number }
+indent_func_throw = 0
+# '->'もしくは'.'に続く位置揃えの半角空白数 (通常は0) { number }
+indent_member = 0
+# コード直前にある、1行以上の一行コメント ('//') を位置揃えするための半角空白数 { number }
+indent_sing_line_comments = 0
+# コードの後ろに続く一行コメント ('//') を相対的にインデントするかどうか { true, false }
+indent_relative_single_line_comments = false
+# 'switch'から'case'をインデントする半角空白数 (通常は、0か、indent_columnsで設定した値) { number }
+indent_switch_case = 4
+# 'case'の中の他の行のインデントに影響を与えずに、'case'行だけを位置揃えするための半角空白数 (通常は0、インデント相対値) { number }
+indent_case_shift = 0
+# 'case'の'{'をインデントする半角空白数 (通常は0、インデント相対値) { number }
+indent_case_brace = 0
+# 行頭に見つけたコメントをインデントさせるかどうか { true, false }
+indent_col1_comment = true
+# gotoラベルのインデント方法 (正値: カラム絶対値、負値: インデント相対値) { number }
+indent_label = 1
+# コロンが続くアクセス指定子の場合 (正値: カラム絶対値、負値: インデント相対値) { number }
+indent_access_spec = -4
+# アクセス指定子の後のコードを1レベルインデントするかどうか (indent_access_specは0に強制的に上書きされる) { true, false }
+indent_access_spec_body = false
+# '('に続けて改行されている時、次行からは'('の後に整列するよう位置揃えする (非推奨) { true, false }
+indent_paren_nl = false
+# 改行後の')'のインデント方法 { 0: ボディレベルにインデントする 1: '('の位置に揃える 2: 直前の'{'レベルにインデントする }
+indent_paren_close = 0
+# '()'内の改行直後の','のインデント方法 (trueの場合、'('の直下に位置揃えされる) { true, false }
+indent_comma_paren = false
+# '()'内の改行直後のブール演算子のインデント方法 (trueの場合、'('の直下に位置揃えされる) { true, false }
+indent_bool_paren = false
+# indent_bool_paren=true時の、最初の評価式のインデント方法 (trueなら次の行以降と位置揃えする) { true, false }
+indent_first_bool_expr = false
+# '['に続けて改行されている時、次行からは'['の後に整列するよう位置揃えする (非推奨) { true, false }
+indent_square_nl = false
+# ESQL/Cの'EXEC SQL'ボディの相対インデントを変更しない { true, false }
+indent_preserve_sql = false
+# '='に続くステートメントをインデントするか、位置揃えするか (falseもしくは'='直後に改行場合、インデントする) { true, false }
+indent_align_assign = true
+# Objective-Cブロックを通常ルールの代わりブレースレベルまでインデントするかどうか { true, false }
+indent_oc_block = false
+# メッセージ内のObjective-Cブロックをパラメータ名に相対的にインデントする (0: indent_oc_blockルール >0: インデント半角空白数) { number }
+indent_oc_block_msg = 0
+# 継続するパラメータの最小インデント数 {number}
+indent_oc_msg_colon = 0
+
+### Alignment
+## http://qiita.com/items/aecf5d72a55eef7ed6fe
+# インデントではないタブ文字を残すか { true, false }
+align_keep_tabs = false
+# 整列位置合わせにタブ文字を利用するか { true, false }
+align_with_tabs = false
+# 整列位置合わせで次のタブストップ位置にするか { true, false }
+align_on_tabstop = false
+# 数値を左揃えにするかどうか (align_struct_init_spanと関連) { true, false }
+align_number_left = false
+# プロトタイプ宣言と関数定義で、変数定義の位置を揃えるかどうか { true, false }
+align_func_params = true
+# 同じ名前を持つシングルライン関数のパラメータの位置を揃えるかどうか (関数名はすでにそれぞれ位置合わせされていなければならない。) { true, false }
+align_same_func_call_params = false
+# 変数定義でのポインタの'*'の位置揃えの方法 { 0: 型の一部、1: 変数名の一部、2: ダングリング }
+align_var_def_star_style = 2
+# 変数定義での参照の'&'位置揃えの方法 { 0: 型の一部、1: 変数名の一部、2: ダングリング }
+align_var_def_amp_style = 2
+# 構造体ビットフィールドの':'を位置揃えするかどうか { true, false }
+align_var_def_colon = true
+# 変数名の後の属性を位置揃えするかどうか { true, false }
+align_var_def_attribute = true
+# struct/enum/unionのメンバ変数定義を位置揃えするかどうか { true, false }
+align_var_def_inline = true
+# 変数定義の位置揃えに対するラインスパン (0: 揃えない) { number }
+align_var_def_span = 1
+# 変数定義の位置揃えのカラム閾値 (0: 制限無し) { number }
+align_var_def_thresh = 0
+# 変数定義の位置揃えのカラムギャップ { number }
+align_var_def_gap = 0
+# 代入式の'='の位置揃えをするラインスパン (0: 揃えない) { number }
+align_assign_span = 1
+# 代入式の'='の位置揃えをするカラム閾値 (0: 制限無し) { number }
+align_assign_thresh = 0
+# enumの'='の位置揃えをするラインスパン (0: 揃えない) { number }
+align_enum_equ_span = 1
+# enumの'='の位置揃えをするカラム閾値 (0: 制限無し) { number }
+align_enum_equ_thresh = 0
+# struct/unionのメンバー定義の位置揃えをするラインスパン (0: 揃えない) { number }
+align_var_struct_span = 1
+# struct/unionのメンバー定義の位置揃えをするカラム閾値 (0: 制限無し) { number }
+align_var_struct_thresh = 0
+# struct/unionのメンバー定義のカラムギャップ { number }
+align_var_struct_gap = 0
+# structのメンバ変数の指定初期化の位置揃えのラインスパン (0: 揃えない) { number }
+align_struct_init_span = 1
+# typedefの型とシノニムの間の空白の最小数 { number }
+align_typedef_gap = 0
+# 一行typedefの位置揃えをするラインスパン (0: 揃えない) { number }
+align_typedef_span = 1
+# typedefされた関数とその他typedefの位置揃えの方法 { 0: ミックスして位置を揃えない、1: 開丸括弧と型の位置を揃える、2: 関数の型名とその他の型名の位置を揃える }
+align_typedef_func = 1
+# typedefの''の位置揃えの方法 { 0: typedef typeで揃える、1: ''を型名の一部とする、2: '*'を型名の一部としてダングリングする }
+align_typedef_star_style = 2
+# typedefの'&'の位置揃えの方法 { 0: typedef typeで揃える、1: '&'を型名の一部とする、2: '&'を型名の一部としてダングリングする }
+align_typedef_amp_style = 2
+# 行末コメントを位置揃えするラインスパン (0: 揃えない) { number }
+align_right_cmt_span = 1
+# If aligning comments, mix with comments after '}' and #endif with less than 3 spaces before the comment { true, false }
+align_right_cmt_mix = false
+# 行末コメントがこの桁数以上コードと離れている場合、位置揃えする (0: 揃えない) { number }
+align_right_cmt_gap = 1
+# 行末コメントの位置揃えするカラム位置 (嬉しい副産物 'pulls in' コメント) (0: 揃えない) { number }
+align_right_cmt_at_col = 0
+# プロトタイプ宣言の位置揃えのラインスパン (0: 揃えない) { number }
+align_func_proto_span = 2
+# プロトタイプ宣言の返値型と関数名の間のギャップカラム { number }
+align_func_proto_gap = 0
+# 'operator'キーワードでプロトタイプ宣言を位置揃えするかどうか { number }
+align_on_operator = true
+# プロトタイプと変数宣言のミックス整形するかどうか (trueの場合、align_var_def_XXXオプションがalign_func_proto_XXXオプションの代わりに使用される。) { true, false }
+align_mix_var_proto = false
+# 一行関数を関数プロトタイプと同様に位置揃えするかどうか (align_func_proto_spanを使用) { true, false }
+align_single_line_func = true
+# 一行関数のオープンブレースを位置揃えするかどうか (align_single_line_func=trueの場合のみ) (align_func_proto_spanを使用) { true, false }
+align_single_line_brace = true
+# align_single_line_braceに対するギャップ { number }
+align_single_line_brace_gap = 0
+# バックスラッシュ-改行で囲われた複数行マクロを位置揃えするかどうか (ただし、マクロが複数行コメントを内包している場合、うまく動かない) { true, false }
+align_nl_cont = true
+# プリプロセッサ定義のボディの位置揃えのスパン (0: 揃えない) { number }
+align_pp_define_span = 1
+# プリプロセッサ定義のラベルと値の間の空白の最小幅 { number }
+align_pp_define_gap = 0
+# マクロ関数とマクロ変数を一緒に位置揃えするかどうか { true, false }
+align_pp_define_together = false
+# '<<'で開始する行を前の行の'<<'の位置に揃えるかどうか (デフォルト: true) { true, false }
+align_left_shift = true
+# Objective-Cのメッセージ仕様宣言のスパン (0: 揃えない) { number }
+align_oc_msg_spec_span = 0
+# Objective-Cのメッセージコールにおけるパラメータ':'の位置揃えのスパン (0: 揃えない) { number }
+align_oc_msg_colon_span = 0
+# trueの場合、最初のパラメータの位置に後続パラメータの位置を揃える (メッセージが短くとも) { true, false }
+align_oc_msg_colon_first = false
+# Objective-Cの'+'もしくは'-'宣言行のパラメータを':'で位置揃えするかどうか { true, false }
+align_oc_decl_colon = false
+
+### Position
+## http://qiita.com/items/ce7269fe4aa9f34e9a8d
+# 式が折り返す時の算術演算子の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_arith = trail
+# 式が折り返す時の代入演算子の位置 '{'が続く'='には影響しない { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_assign = trail
+# 式が折り返す時のブール演算子の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_bool = trail
+# 式が折り返す時の比較演算子の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_compare = trail
+# 式が折り返す時の三項演算子 (b ? t : f) の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_conditional = ignore
+# 式が折り返す時の','の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_comma = trail
+# コンストラクタのメンバ初期化リストにおける','の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_class_comma = lead
+# コンストラクタとメンバ初期化の間の':'の位置 { ignore, join, lead, lead_break, lead_force, trail, trail_break, trail_force }
+pos_class_colon = lead
+
+### Break line
+## http://qiita.com/items/ee95487e79a2ca7fb375
+# 連続してもよい改行数。 (0: 制限なし) { number }
+nl_max = 0
+# 関数プロトタイプ宣言の後の改行数 (別のプロトタイプ宣言が続く場合) (0: 変更なし) { number }
+nl_after_func_proto = 1
+# 関数プロトタイプ宣言の後の改行数 (別のプロトタイプ宣言が続かない倍) { number }
+nl_after_func_proto_group = 2
+# 複数行の関数ボディの'}'の後の改行数 { number }
+nl_after_func_body = 2
+# クラス宣言内の複数行の関数ボディの'}'の後の改行数 { number }
+nl_after_func_body_class = 2
+# 一行関数ボディの'}'の後の改行数 { number }
+nl_after_func_body_one_liner = 1
+# 複数行コメントの前の最小改行数 ('{'もしくは別の複数行コメントの後の場合、適用されない。) { number }
+nl_before_block_comment = 0
+# 1行Cコメント ('/* ... */') の前の最小改行数 '{'もしくは別の1行Cコメントの後の場合、適用されない。 { number }
+nl_before_c_comment = 0
+# C++コメント ('// ...') の前の最小改行数 '{'もしくは別のC++コメントの後の場合、適用されない。 { number }
+nl_before_cpp_comment = 0
+# 複数行コメントの後に改行を強制するかどうか { false, true }
+nl_after_multiline_comment = true
+# struct/enum/unionの定義の'}'もしくは';'の後の改行数 { number }
+nl_after_struct = 2
+# class定義の'}'もしくは';'の後の改行数 { number }
+nl_after_class = 2
+# 'private:'、'public:'、'protected:'、'signals:'、'slots:'ラベルの前の改行数 '{'の後の場合、改行数は変更されない。 (0: 変更無し) { number }
+nl_before_access_spec = 1
+# 'private:'、'public:'、'protected:'、'signals:'、'slots:'ラベルの後の改行数 (0: 変更無し) { number }
+nl_after_access_spec = 1
+# 関数定義と関数コメントの間の改行数 (0: 変更無し) { number }
+nl_comment_func_def = 1
+# '}'が続かないtry-catch-finallyブロックの後の改行数 (0: 変更無し) { number }
+nl_after_try_catch_finally = 2
+# プロパティ、インデクサ、イベントの定義の前後の改行数 (0: 変更無し) { number }
+nl_around_cs_property = 0
+# get/set/add/removeハンドラの間の改行数 (C#言語) (0: 変更無し) { number }
+nl_between_get_set = 0
+# プロパティと'{'の間に改行を挿入/削除する (C#言語) { ignore, add, remove, force }
+nl_property_brace = ignore
+# '{'の後の改行を削除するかどうか { false, true }
+eat_blanks_after_open_brace = true
+# '}'の前の改行を削除するかどうか { false, true }
+eat_blanks_before_close_brace = true
+# プリプロセッサ以外の改行をどのぐらい積極的に削除するか 0: 変更しない 1: 他の設定でハンドルされない改行を可能な限り削除する 2: 全ての改行を一度削除して、設定から完全に整形しなおす { number }
+nl_remove_extra_newlines = 0
+# 'return'文の前に改行を挿入するかどうか ('{'直後の'return'以外) { false, true }
+nl_before_return = true
+# 'return'文の後に改行を挿入するかどうか ('}'が直後にある'return'以外) { false, true }
+nl_after_return = false
+# Java注釈文の後に改行を挿入するかどうか 改行後の注釈文にのみ適用される { ignore, add, remove, force }
+nl_after_annotation = ignore
+# 2つの注釈文の間に改行を挿入するかどうか { ignore, add, remove, force }
+nl_between_annotation = ignore
+# 関数宣言の')'と'{'の間に改行を挿入するかどうか { ignore, add, remove, force }
+nl_fdef_brace = force
+
+### Code transformation
+## http://qiita.com/items/d1289c116451b709f610
+# 単文の'do'/'while'文に'{}'を追加/削除する { ignore, add, remove, force }
+mod_full_brace_do = add
+# 単文の'for'文に'{}'を追加/削除する { ignore, add, remove, force }
+mod_full_brace_for = add
+# 単文の関数定義に'{}'を追加/削除する (Pawn) { ignore, add, remove, force }
+mod_full_brace_function = ignore
+# 単文の'if'文に'{}'を追加/削除する 'else'を含む場合、'{}'は削除されない。 { ignore, add, remove, force }
+mod_full_brace_if = add
+# 全ての'if'/'elseif'/'else'文のブロックを'{}'で囲うかどうか (1つでも'{}'で囲う必要があれば、全て'{}'で囲われ、全てが囲う必要がなければ、'{}'は削除される) { false, true } (mod_full_brace_ifを上書き)
+mod_full_brace_if_chain = false
+# mod_full_brace_xxxのボディがN行より長い場合、'{}'は削除しない { number }
+mod_full_brace_nl = 0
+# 単文の'while'文に'{}'を追加/削除する { ignore, add, remove, force }
+mod_full_brace_while = add
+# 単文の'using'文に'{}'を追加/削除する (C#言語) { ignore, add, remove, force }
+mod_full_brace_using = ignore
+# 'return'文の不要な'()'を追加/削除する { ignore, add, remove, force }
+mod_paren_on_return = remove
+# オプショナルなセミコロンをリアルなセミコロンに修正するかどうか (Pawn) { false, true }
+mod_pawn_semicolon = false
+# 'while'と'if'文のブール値の前後に括弧を追加する { false, true }
+mod_full_paren_if_bool = false
+# 余分なセミコロンを削除する { false, true }
+mod_remove_extra_semicolon = true
+# 関数ボディの行数が指定数を超えるような長い関数の場合、'}'の後にコメントが付く { number }
+mod_add_long_function_closebrace_comment = 0
+# 'switch'文のボディの行数が指定数を超えるような長いボディの場合、'}'の後にコメントが付く { number }
+mod_add_long_switch_closebrace_comment = 0
+# #ifdefのボディの行数が指定数を超えるような長いボディの場合、#endifの後にコメントが付く { number }
+mod_add_long_ifdef_endif_comment = 0
+# #ifdefもしくは#elseのボディが指定数を超えるような長いボディの場合、#elseの後にコメントが付く { number }
+mod_add_long_ifdef_else_comment = 0
+# 連続する1行の'import'文をソートするかどうか (Java言語、D言語) { false, true }
+mod_sort_import = false
+# 連続する1行の'using'文をソートするかどうか (C#言語) { false, true }
+mod_sort_using = false
+# 連続する1行の'#include'文もしくは'#import'文をソートするかどうか (Objective-C言語) コードを破壊する可能性があるので、一般的にソートしなおすのは良くない { false, true }
+mod_sort_include = false
+# '{}'で囲われた'case'の後にある'break'文を'}'の内側に移動する { false, true }
+mod_move_case_break = true
+# '{}'で囲われた'case'文の前後に'{}'を追加/削除する もし、ブロック内に変数宣言がない場合に限り、'{}'を削除できる { ignore, add, remove, force }
+mod_case_brace = ignore
+# 関数の最後の文に現れる、'return;'を削除するかどうか { false, true }
+mod_remove_empty_return = true
+
+### Comment transformation
+## http://qiita.com/items/cfeda8a49cf8efe48406
+# コメントを一定の幅で折り返す (桁数) { number }
+cmt_width = 240
+# コメントリフロー (テキストの流し込み、再配置) (0: 折り返しのみ (リフローしない) 1: リフローも折り返しもしない 2: フルリフロー) (0と2の差がわからない) { number }
+cmt_reflow_mode = 1
+# 複数行コメントの変更 (cmd_width、キーワード置換、先行文字列など含む) を無効化する { false, true }
+cmt_indent_multi = false
+# ブロックになっているCコメント ('/* ... */') をグループ化するかどうか { false, true }
+cmt_c_group = false
+# 結合したCコメントの最初の行に、'/*'単体を付けるかどうか { false, true }
+cmt_c_nl_start = false
+# 結合したCコメントの最後の行に、'*/'単体を付けるかどうか { false, true }
+cmt_c_nl_end = false
+# C++コメントをCコメントに変更するかどうか { false, true }
+cmt_cpp_to_c = false
+# ブロックになっているC++コメント ('// ....') をグループ化するかどうか (cmt_cpp_to_cがtrueの場合のみ) { false, true }
+cmt_cpp_group = false
+# 結合したC++コメント ('// ....') の最初の行に、'/*'単体を付けるかどうか (cmt_cpp_to_cがtrueの場合のみ) { false, true }
+cmt_cpp_nl_start = false
+# 結合したC++コメント ('// ....') の最後の行に、'*/'単体を付けるかどうか (cmt_cpp_to_cがtrueの場合のみ) { false, true }
+cmt_cpp_nl_end = false
+# コメント行にスター '*' を続けて付けるかどうか { false, true }
+cmt_star_cont = true
+# 連続するコメント行の開始位置と'*'の間に挿入する空白数 { number }
+cmt_sp_before_star_cont = 0
+# 連続するコメント行の'*'とコメントの間に挿入する空白数 { number }
+cmt_sp_after_star_cont = 0
+# '*'で始める複数行コメントに対し、最初と最後のコメント行が同じ長さの場合に、先頭にある空白を削除するかどうか (デフォルト: true) { false, true }
+cmt_multi_check_last = true
+
+### Line split
+## http://qiita.com/items/20a8143322e16d969ca8
+# コード幅の制限桁数 { number }
+code_width = 240
+# 長い'for'文を';'の位置でスプリットするかどうか { false, true }
+ls_for_split_full = true
+# 長い関数のプロトタイプ宣言/呼び出しを','の位置でスプリットするかどうか { false, true }
+ls_func_split_full = true
+# code_widthでスプリットするかどうか (だいたいcode_widthで少しはみ出す場合あり) { false, true }
+ls_code_width = true
+
+### Spacing
+## http://qiita.com/items/7b6564cebc60e26701f2
+# 算術演算子 '+'、'-'、'/'、'*'等の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_arith = add
+# 代入演算子 '='、'+='等の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_assign = add
+# C++11ラムダ式の外部変数キャプチャの'='演算子の前後に空白を挿入/削除する (sp_assignを上書き) { ignore, add, remove, force }
+sp_cpp_lambda_assign = ignore
+# C++11ラムダ式の変数キャプチャの']'と引数リストの'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_cpp_lambda_paren = remove
+# プロトタイプ宣言の'='の代入演算子の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_assign_default = remove
+# '='、'+='等の代入演算子の前に空白を挿入/削除する (sp_assignを上書き) { ignore, add, remove, force }
+sp_before_assign =add
+# '=', '+='等の代入演算子の後に空白を挿入/削除する (sp_assignを上書き) { ignore, add, remove, force }
+sp_after_assign = add
+# enumの'='代入演算子の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_enum_assign = add
+# enumの'='代入演算子の前に空白を挿入/削除する (sp_enum_assignを上書き) { ignore, add, remove, force }
+sp_enum_before_assign = add
+# enumの'='代入演算子の後に空白を挿入/削除する (sp_enum_assignを上書き) { ignore, add, remove, force }
+sp_enum_after_assign = add
+# プリプロセッサの'##'連結演算子の前後に空白を挿入/削除する (デフォルト: add) { ignore, add, remove, force }
+sp_pp_concat = add
+# プリプロセッサの'#'文字列化演算子の後に空白を挿入/削除する ('#@'文字化演算子にも適用される) { ignore, add, remove, force }
+sp_pp_stringify = remove
+# プリプロセッサの'#'文字列化演算子の前に空白を挿入/削除する (例: '#define x(y) L#y') { ignore, add, remove, force }
+sp_before_pp_stringify = ignore
+# '&&'と'||'の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_bool = add
+# '<'、'>'、'=='等の比較演算子の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_compare = add
+# '('と')'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_paren = remove
+# 入れ子の括弧の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_paren_paren = ignore
+# 入れ子の括弧の内側の空白の数を同じにするか、しないか { true,  false }
+sp_balance_nested_parens = false
+# ')'と'{'の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_paren_brace = ignore
+# ポインタの'*'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_ptr_star = add
+# 変数名が後に続かないポインタの'*'の前に空白を挿入/削除する 'ignore'の場合、sp_before_ptr_starが代わりに使用される。 { ignore, add, remove, force }
+sp_before_unnamed_ptr_star = add
+# ポインタの''と''の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_between_ptr_star = remove
+# 単語が続く場合、ポインタの'*'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_ptr_star = remove
+# 関数のプロトタイプ宣言や定義が続く場合、ポインタの'*'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_ptr_star_func = remove
+# (関数型の)開丸括弧が続く場合、ポインタの'*'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_ptr_star_paren = remove
+# 関数のプロトタイプ宣言や定義が続く場合、ポインタの'*'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_ptr_star_func = add
+# 参照の'&'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_byref = add
+# 変数名が後に続かない参照の'&'の前に空白を挿入/削除する 'ignore'の場合、spbefore_byrefが代わりに使用される。 { ignore, add, remove, force }
+sp_before_unnamed_byref = remove
+# 単語が続く場合、参照の'&'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_byref = remove
+# 関数のプロトタイプ宣言や定義が続く場合、参照の'&'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_byref_func = remove
+# 関数のプロトタイプ宣言や定義が続く場合、参照の'&'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_byref_func = add
+# 型と単語の間に空白を挿入/削除する (デフォルト: force) { ignore, add, remove, force }
+sp_after_type = force
+# D言語のテンプレート ('template Foo('と'class Foo(') において、丸括弧の前に空白を挿入/削除する { number }
+sp_before_template_paren = 0
+# 'template'と'<'の間に空白を挿入/削除する ignoreの場合、sp_before_angleが使用される。 { ignore, add, remove, force }
+sp_template_angle = force
+# '<>'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_angle = add
+# '<'と'>'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_angle = remove
+# '<>'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_angle = add
+# 'new List();'のように、'<>'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_angle_paren = remove
+# 'List m;'のように、'<>'と単語の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_angle_word = add
+# '>>'の'>'と'>'の間に空白を挿入/削除する (C++/C#のテンプレート関連のみ) (デフォルト: add) { ignore, add, remove, force }
+sp_angle_shift = add
+# 'foo >'の'> >'の間の空白の削除を許可する (C++11のみ) (デフォルト: false) このオプションなしで、sp_angle_shiftは空白を削除できない。 { true, false }
+sp_permit_cpp11_shift = false
+# 'if'、'for'、'switch'、'while'の'('の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_sparen = add
+# if条件の'('と')'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_sparen = remove
+# if条件の')'の前に空白を挿入/削除する (sp_inside_sparenを上書き) { ignore, add, remove, force }
+sp_inside_sparen_close = remove
+# if条件の'('の後に空白を挿入/削除する (sp_inside_sparenを上書き) { ignore, add, remove, force }
+sp_inside_sparen_open = remove
+# 'if'、'for'、'switch'、'while'の')'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_sparen = add
+# 'if'、'for'、'switch'、'while'の')'と'{'の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_sparen_brace = add
+# 'invariant'と'('の間に空白を追加/削除する (D言語) { ignore, add, remove, force }
+sp_invariant_paren = ignore
+# 'invariant (C) c'の')'の後に空白を追加/削除する (D言語) { ignore, add, remove, force }
+sp_after_invariant_paren = ignore
+# 'if'、'for'、'while'と同じ行の';'のみの空のステートメントの前に空白を挿入/削除する { ignore, add, remove, force }
+sp_special_semi = add
+# ';'の前に空白を挿入/削除する (デフォルト: remove) { ignore, add, remove, force }
+sp_before_semi = remove
+# 空でない'for'文の';'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_semi_for = remove
+# 'for'文の空のパートの';'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_semi_for_empty = ignore
+# コメントが後に続く場合を除いて、';'の後の空白を挿入/削除する (デフォルト: add) { ignore, add, remove, force }
+sp_after_semi = add
+# 空でない'for'文の';'の後に空白を挿入/削除する (デフォルト: force) { ignore, add, remove, force }
+sp_after_semi_for = add
+# 'for'文の空のパートの最後のセミコロンの後に空白を挿入/削除する (for ( ; ; )) { ignore, add, remove, force }
+sp_after_semi_for_empty = ignore
+# '['の前に空白を挿入/削除する ('[]'以外) { ignore, add, remove, force }
+sp_before_square = remove
+# '[]'の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_squares = ignore
+# 空でない'['と']'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_square = ignore
+# ','の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_comma = add
+# ','の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_comma = remove
+# 開丸括弧とカンマの間に空白を挿入/削除する ('(,'と'( ,') { ignore, add, remove, force }
+sp_paren_comma = ignore
+# 可変パラメータの'...'の前に空白を挿入/削除する (非句点が先行している時) { ignore, add, remove, force }
+sp_before_ellipsis = add
+# 'class'の':'の後に空白を挿入/削除する { ignore, add, remove, force }
+# sp_after_class_colon = ignore
+# 'class'の':'の前に空白を挿入/削除する { ignore, add, remove, force }
+# sp_before_class_colon = ignore
+# 'case'の':'の前に空白を挿入/削除する (デフォルト: remove) { ignore, add, remove, force }
+sp_before_case_colon = remove
+# 'operator'と演算子記号の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_operator = remove
+# オペレータシンボルと開丸括弧の間に空白を挿入/削除する (operator ++()) { ignore, add, remove, force }
+sp_after_operator_sym = remove
+# キャストの後に空白を挿入/削除する (C言語/D言語) ('cast(int)a' vs 'cast(int) a'、'(int)a' vs '(int) a') { ignore, add, remove, force }
+sp_after_cast = add
+# キャストの括弧の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_paren_cast = remove
+# キャストの型と開丸括弧の間に空白を挿入/削除する (C++言語) ('int(exp)' vs 'int (exp)') { ignore, add, remove, force }
+sp_cpp_cast_paren = remove
+# 'sizeof'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_sizeof_paren = remove
+# タグキーワードの後に空白を挿入/削除する (Pawn) { ignore, add, remove, force }
+sp_after_tag = ignore
+# enumの'{'と'}'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_braces_enum = add
+# struct/unionの'{'と'}'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_braces_struct = add
+# '{'と'}'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_braces = add
+# '{}'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_braces_empty = add
+# 戻り値の型と関数名の間に空白を挿入/削除する ポインタ型の戻り値を除いて、最低でも空白1文字が強制的に挿入される。 { ignore, add, remove, force }
+sp_type_func = add
+# 関数宣言の関数名と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_func_proto_paren = remove
+# 関数定義の関数名と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_func_def_paren = remove
+# 空の関数'()'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_fparens = remove
+# 関数の'('と')'の内側に空白を挿入/削除する { ignore, add, remove, force }
+sp_inside_fparen = remove
+# 関数タイプの最初の括弧の内側に空白を挿入/削除する ('void (*x)(...)') { ignore, add, remove, force }
+sp_inside_tparen = remove
+# 関数タイプの括弧どうしの間に空白を挿入/削除する ('void (*x)(...)') { ignore, add, remove, force }
+sp_after_tparen_close = remove
+# 関数コールパートで、']'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_square_fparen = remove
+# 関数の')'と'{'の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_fparen_brace = add
+# 関数コールで関数名と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_func_call_paren = remove
+# パラメータなしの関数コールで関数名と'()'の間に空白を挿入/削除する 'ignore'の場合、sp_func_call_parenが使用される。 { ignore, add, remove, force }
+sp_func_call_paren_empty = remove
+# 関数コールでユーザ関数名と'('の間に空白を挿入/削除する 設定ファイルの中に'set func_call_user _'のように、ユーザ関数であることであるキーワードを設定する必要がある。 { ignore, add, remove, force }
+sp_func_call_user_paren = remove
+# コンストラクタ/デストラクタと開丸括弧の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_func_class_paren = remove
+# 'return'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_return_paren = remove
+# 'attribute'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_attribute_paren = remove
+# '#if defined (FOO)'の'defined'と'('の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_defined_paren = remove
+# 'throw'と'('の間に空白を挿入/削除する ('throw (something)') { ignore, add, remove, force }
+sp_throw_paren = add
+# 'throw'と'('以外の文字の間に空白を挿入/削除する ('@throw [...]') { ignore, add, remove, force }
+sp_after_throw = add
+# 'catch'と'('の間に空白を挿入/削除する ('catch (something) { }') ignoreの場合、sp_before_sparenが使用される。 { ignore, add, remove, force }
+sp_catch_paren = add
+# 'version'と'('の間に空白を挿入/削除する ('version (something) { }') (D言語) ignoreの場合、sp_before_sparenが使用される。 { ignore, add, remove, force }
+sp_version_paren = ignore
+# 'scope'と'('の間に空白を挿入/削除する ('scope (something) { }') (D言語) ignoreの場合、sp_before_sparenが使用される。 { ignore, add, remove, force }
+sp_scope_paren = ignore
+# マクロと値の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_macro = add
+# マクロ関数の')'と値の間に空白を挿入/削除する { ignore, add, remove, force }
+sp_macro_func = add
+# 一行に'else'と'{'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_else_brace = add
+# 一行に'}'と'else'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_brace_else = add
+# 一行に'}'とtypedefの型名がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_brace_typedef = add
+# 一行に'catch'と'{'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_catch_brace = add
+# 一行に'}'と'catch'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_brace_catch = add
+# 一行に'finally'と'{'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_finally_brace = add
+# 一行に'}'と'finally'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_brace_finally = add
+# 一行に'try'と'{'がある場合、間に空白を挿入/削除する { ignore, add, remove, force }
+sp_try_brace = add
+# 一行に'get'/'set'と'{'がある場合、間に空白を挿入/削除する { false, true }
+sp_getset_brace = add
+# '::'演算子の前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_dc = remove
+# '::'演算子の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_dc = remove
+# 名前付き配列イニシャライザ':'の前後に空白を挿入/削除する (D言語) { ignore, add, remove, force }
+sp_d_array_colon = ignore
+# '!' (not) 演算子の後に空白を挿入/削除する (デフォルト: remove) { ignore, add, remove, force }
+sp_not = remove
+# '~' (invert) 演算子の後に空白を挿入/削除する (デフォルト: remove) { ignore, add, remove, force }
+sp_inv = remove
+# アドレス演算子'&'の後に空白を挿入/削除する (デフォルト: remove) 参照型の一部である'&'の後のスペーシングには影響しない。 { ignore, add, remove, force }
+sp_addr = remove
+# '.'や'->'演算子の前後に空白を挿入/削除する (デフォルト: remove) { ignore, add, remove, force }
+sp_member = remove
+# '' (dereference) 演算子の後に空白を挿入/削除する (デフォルト: remove) ポインタ型の一部である''の後のスペーシングには影響しない。 { ignore, add, remove, force }
+sp_deref = remove
+# 単項演算子'+'、'-'の後に空白を挿入/削除する ('x = -5'、'y = +7') (デフォルト: remove) { ignore, add, remove, force }
+sp_sign = remove
+# 単項演算子'++'、'--'の後に空白を挿入/削除する ('(--x)'、'y++;') (デフォルト: remove) { ignore, add, remove, force }
+sp_incdec = remove
+# 行末のバックスラッシュ('\')-改行の前に空白を挿入/削除する (デフォルト: add) { ignore, add, remove, force }
+sp_before_nl_cont = add
+# スコープ定義'+'、'-'の後に空白を挿入/削除する ('-(void) foo;'、'+(int) bar;') (Objective-C言語) { ignore, add, remove, force }
+sp_after_oc_scope = add
+# メッセージ仕様宣言の':'の後に空白を挿入/削除する (Objective-C言語) ('-(int) f:(int) x;' vs '-(int) f: (int) x;') { ignore, add, remove, force }
+sp_after_oc_colon = remove
+# メッセージ仕様宣言の':'の前に空白を挿入/削除する (Objective-C言語) ('-(int) f: (int) x;' vs '-(int) f : (int) x;') { ignore, add, remove, force }
+sp_before_oc_colon = remove
+# 不変ディクショナリ式における':'の後に空白を挿入/削除する (Objective-C言語) ('NSDictionary *test = @{@"foo" :@"bar"};') { ignore, add, remove, force }
+sp_after_oc_dict_colon = add
+# 不変ディクショナリ式における':'の前に空白を挿入/削除する (Objective-C言語) ('NSDictionary *test = @{@"foo" :@"bar"};') { ignore, add, remove, force }
+sp_before_oc_dict_colon = remove
+# メッセージ送信式の':'の後に空白を挿入/削除する (Objective-C言語) ('[object setValue:1];' vs '[object setValue: 1];') { ignore, add, remove, force }
+sp_after_send_oc_colon = remove
+# メッセージ送信式の':'の前に空白を挿入/削除する (Objective-C言語) ('[object setValue:1];' vs '[object setValue :1];') { ignore, add, remove, force }
+sp_before_send_oc_colon = remove
+# メッセージ仕様宣言の(type)の後に空白を挿入/削除する (Objective-C言語) ('-(int)f: (int) x;' vs '-(int)f: (int)x;') { ignore, add, remove, force }
+sp_after_oc_type = remove
+# メッセージ仕様宣言の最初の(type)の後に空白を挿入/削除する (Objective-C言語) ('-(int) f:(int)x;' vs '-(int)f:(int)x;') { ignore, add, remove, force }
+sp_after_oc_return_type = remove
+# '@selector'と'('の間に空白を挿入/削除する (Objective-C言語) ('@selector(msgName)' vs '@selector (msgName)') 同時に@protocol()ブロックにも提供される。 { ignore, add, remove, force }
+sp_after_oc_at_sel = remove
+# '@selector(x)'と続く単語の間に空白を挿入/削除する (Objective-C言語) ('@selector(foo) a:' vs '@selector(foo)a:') { ignore, add, remove, force }
+sp_after_oc_at_sel_parens = add
+# '@selector'の丸括弧の内側に空白を挿入/削除する (Objective-C言語) ('@selector(foo)' vs '@selector( foo )') Also applies to @protocol() constructs { false, true }
+sp_inside_oc_at_sel_parens = remove
+# ブロックポインタのキャレットの前に空白を挿入/削除する (Objective-C言語) ('^int (int arg){...}' vs. ' ^int (int arg){...}') { ignore, add, remove, force }
+sp_before_oc_block_caret = remove
+# ブロックポインタのキャレットの後に空白を挿入/削除する (Objective-C言語) ('^int (int arg){...}' vs. '^ int (int arg){...}') { ignore, add, remove, force }
+sp_after_oc_block_caret = remove
+# メッセージ内のレシーバとセレクタの間に空白を挿入/削除する (Objective-C言語) { ignore, add, remove, force }
+sp_after_oc_msg_receiver = add
+# @propertyの後に空白を挿入/削除する (Objective-C言語) { ignore, add, remove, force }
+sp_after_oc_property = add
+# 三項演算子の':'の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_cond_colon = add
+# 三項演算子の'?'の前後に空白を挿入/削除する { ignore, add, remove, force }
+sp_cond_question = add
+# 'case'とケースラベルの間のスペーシングを固定する ('ignore'と'force'のみ有効) { ignore, add, remove, force }
+sp_case_label = add
+# '..'演算子の前後に空白を挿入/削除する (D言語) { ignore, add, remove, force }
+sp_range = ignore
+# 'for'分の':'の後に空白を挿入/削除する ('for (TYPE VAR : EXPR)') (Java言語) { ignore, add, remove, force }
+sp_after_for_colon = add
+# 'for'分の':'の前に空白を挿入/削除する ('for (TYPE VAR : EXPR)') (Java言語) { ignore, add, remove, force }
+sp_before_for_colon = add
+# 'extern (C)'の'extern'と'('の間に空白を挿入/削除する (D言語) { ignore, add, remove, force }
+sp_extern_paren = ignore
+# C++コメントの開始の後に空白を挿入/削除する ('// A' vs '//A') { ignore, add, remove, force }
+sp_cmt_cpp_start = add
+# '#else'もしくは'#endif'とそれに続くコメントの間に空白を挿入/削除する { ignore, add, remove, force }
+sp_endif_cmt = add
+# 'new'、'delete'、'delete[]'の後に空白を挿入/削除する { ignore, add, remove, force }
+sp_after_new = add
+# 行末コメントもしくは文中コメントの前に空白を挿入/削除する { ignore, add, remove, force }
+sp_before_tr_emb_cmt = add
+# 行末コメントもしくは文中コメントの前に挿入する空白の数 { ignore, add, remove, force }
+sp_num_before_tr_emb_cmt = 0
+# Javaアノテーションと開丸括弧の間に空白を挿入/削除する (Java言語) { ignore, add, remove, force }
+sp_annotation_paren = ignore

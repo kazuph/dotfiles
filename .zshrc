@@ -59,6 +59,7 @@ alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
 alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
+alias usb='ls /dev/tty.*'
 
 function extract() {
 case $1 in
@@ -132,10 +133,10 @@ fi
 }
 
 # design
-ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
+# ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
+# ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+# ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
+# ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
 
 # 一定時間以上かかる処理の場合は終了時に通知してくれる
 local COMMAND=""
@@ -244,13 +245,6 @@ source ~/.fzf.zsh
 
 ggr() {open "https://www.google.co.jp/search?q=$1";}
 ca() {git ca -m "$@";}
-
-# The next line updates PATH for the Google Cloud SDK.
-source '/Users/kazuhiro.honma/google-cloud-sdk/path.zsh.inc'
-
-# The next line enables bash completion for gcloud.
-source '/Users/kazuhiro.honma/google-cloud-sdk/completion.zsh.inc'
-
 
 # https://github.com/Jxck/dotfiles/blob/master/zsh/.http_status
 # https://tools.ietf.org/html/rfc7231#section-6.1
