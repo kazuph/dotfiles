@@ -42,8 +42,6 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 " NeoBundle自体の管理
 NeoBundleFetch 'Shougo/neobundle.vim'
 
-call neobundle#end()
-
 " ステータスラインに情報を表示 → もう力はいらない
 NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
@@ -67,7 +65,6 @@ NeoBundle 'tomtom/tcomment_vim'
 set t_Co=256
 
 NeoBundle 'tomasr/molokai'
-colorscheme molokai
 
 " ctrlpでいいと思う
 NeoBundle 'kien/ctrlp.vim.git'
@@ -597,6 +594,7 @@ NeoBundle 'rhysd/vim-clang-format'
 autocmd FileType c,cpp,objc nnoremap <buffer>,cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer>,cf :ClangFormat<CR>
 
+call neobundle#end()
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
@@ -944,4 +942,4 @@ function! UncrustifyAuto()
     endif
 endfunction
 
-
+colorscheme molokai

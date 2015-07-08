@@ -20,7 +20,6 @@ git clone git@github.com:kazuph/dotfiles.git
 cd dotfiles
 
 git clone https://github.com/zsh-users/zsh-completions.git
-git clone https://github.com/knu/z.git
 
 cd ~/.
 ln -sfv ~/dotfiles/.vimrc .vimrc
