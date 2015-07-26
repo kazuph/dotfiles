@@ -594,6 +594,8 @@ NeoBundle 'rhysd/vim-clang-format'
 autocmd FileType c,cpp,objc nnoremap <buffer>,cf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer>,cf :ClangFormat<CR>
 
+NeoBundle 'elixir-lang/vim-elixir'
+
 call neobundle#end()
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする

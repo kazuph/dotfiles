@@ -25,7 +25,7 @@ unalias history
 alias tmux="TERM=xterm-256color tmux -u"
 alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
-alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+# alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 alias v="vim -u $HOME/dotfiles/.vimrc_compact"
 alias zshrc='source $HOME/.zshrc'
 alias vimzshrc='vim $HOME/.zshrc'

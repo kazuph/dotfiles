@@ -141,6 +141,5 @@
 [merge "mergepbx"]
 	name = Xcode project files merger
 	driver = mergepbx %O %A %B
-	note = auto-generated configuration for mergepbx(1)
 [ghq]
 	root = /Users/kazuph/src
