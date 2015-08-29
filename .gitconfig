@@ -21,9 +21,10 @@
 [push]
   default = matching
 [pull]
-  rebase = true
+    rebase = preserve
+    ff = only
 [merge]
-  ff = false
+    ff = false
   tool = vimdiff
 [alias]
   ignore = !"f() { local s=$1; shift; \
@@ -139,7 +140,7 @@
   postBuffer = 2M
 #driver for merging XCode project files
 [merge "mergepbx"]
-	name = Xcode project files merger
-	driver = mergepbx %O %A %B
+    name = Xcode project files merger
+    driver = mergepbx %O %A %B
 [ghq]
-	root = /Users/kazuph/src
+    root = /Users/kazuph/src

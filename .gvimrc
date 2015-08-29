@@ -188,9 +188,9 @@ if has('win32')
     set ambiwidth=auto
   endif
 elseif has('gui_macvim')
-  set guifont=Osaka-Mono:h14
+  set guifont=Hack:h14
 elseif has('mac')
-  set guifont=Osaka－等幅:h14
+  set guifont=Hack:h14
 elseif has('xfontset')
   " UNIX用 (xfontsetを使用)
   set guifontset=a14,r14,k14
@@ -241,7 +241,21 @@ set nomousefocus
 " 入力時にマウスポインタを隠す (nomousehide:隠さない)
 set mousehide
 " ビジュアル選択(D&D他)を自動的にクリップボードへ (:help guioptions_a)
-"set guioptions+=a
+set guioptions-=a
+"透明度を指定
+set transparency=20
+"ツールバーなし
+set guioptions-=T
+"メニューバーなし
+set guioptions-=m
+"右スクロールバーなし
+set guioptions-=r
+set guioptions-=R
+"左スクロールバーなし
+set guioptions-=l
+set guioptions-=
+"下スクロールバーなし
+set guioptions-=b
 
 "---------------------------------------------------------------------------
 " メニューに関する設定:

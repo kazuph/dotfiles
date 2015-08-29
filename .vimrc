@@ -43,16 +43,18 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 " ステータスラインに情報を表示 → もう力はいらない
-NeoBundle 'Lokaltog/vim-powerline.git'
+" NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+" NeoBundle 'Lokaltog/vim-powerline.git'
 NeoBundle 'bling/vim-airline'
+let g:airline_powerline_fonts = 1
 let g:airline_theme='light'
-let g:airline_left_sep = '⮀'
-let g:airline_left_alt_sep = '⮁'
-let g:airline_right_sep = '⮂'
-let g:airline_right_alt_sep = '⮃'
-let g:airline_branch_prefix = '⭠'
-let g:airline_readonly_symbol = '⭤'
-let g:airline_linecolumn_prefix = '⭡'
+" let g:airline_left_sep = '⮀'
+" let g:airline_left_alt_sep = '⮁'
+" let g:airline_right_sep = '⮂'
+" let g:airline_right_alt_sep = '⮃'
+" let g:airline_branch_prefix = '⭠'
+" let g:airline_readonly_symbol = '⭤'
+" let g:airline_linecolumn_prefix = '⭡'
 "
 " " ﾊｧﾊｧ...ﾊｧﾊｧ...
 NeoBundle 'mattn/hahhah-vim'
@@ -200,7 +202,6 @@ let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 " Rubyでのコーディングを楽にする
 " NeoBundle "tpope/vim-rails"
 " NeoBundle 'vim-ruby/vim-ruby'
-" NeoBundle 'slim-template/vim-slim'
 " autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
 " autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
 " autocmd User Rails.view*                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.view.snip
@@ -596,6 +597,8 @@ autocmd FileType c,cpp,objc vnoremap <buffer>,cf :ClangFormat<CR>
 
 NeoBundle 'elixir-lang/vim-elixir'
 
+NeoBundle 'slim-template/vim-slim'
+
 call neobundle#end()
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
@@ -662,6 +665,13 @@ set ruler
 
 " ステータスラインを常に表示する
 set laststatus=2
+" set showtabline=2
+" set noshowmode
+
+" for powerline
+" python from powerline.vim import setup as powerline_setup
+" python powerline_setup()
+" python del powerline_setup
 
 " Ctrl+eで'paste'と'nopaste'を切り替える
 set pastetoggle=<C-e>
@@ -945,3 +955,12 @@ function! UncrustifyAuto()
 endfunction
 
 colorscheme molokai
+
+if has('gui_macvim')
+    set showtabline=2	" タブを常に表示
+    set imdisable	" IMを無効化
+    set transparency=10	" 透明度を指定
+    set antialias
+    set guifont=Hack:h12
+    " colorscheme macvim
+endif
