@@ -84,6 +84,23 @@ then
     rehash
 fi
 }
+# z - jump around
+function load-if-exists() { test -e "$1" && source "$1" }
+source ~/dotfiles/z/z.sh
+_Z_CMD=j
+_Z_DATA=~/.z
+if is-at-least 4.3.9; then
+  load-if-exists ~/dotfiles/z/z.sh
+else
+  _Z_NO_PROMPT_COMMAND=1
+  load-if-exists ~/dotfiles/z/z.sh && {
+    function precmd_z() {
+      _z --add "$(pwd -P)"
+    }
+    precmd_functions+=precmd_z
+  }
+fi
+test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 
 # 一定時間以上かかる処理の場合は終了時に通知してくれる
 local COMMAND=""
@@ -250,6 +267,6 @@ bindkey "^g" gh
 setopt ignoreeof
 
 # enhancd
-if [ -f "/Users/kazuph/.enhancd/zsh/enhancd.zsh" ]; then
-    source "/Users/kazuph/.enhancd/zsh/enhancd.zsh"
-fi
+# if [ -f "/Users/kazuph/.enhancd/zsh/enhancd.zsh" ]; then
+#     source "/Users/kazuph/.enhancd/zsh/enhancd.zsh"
+# fi
