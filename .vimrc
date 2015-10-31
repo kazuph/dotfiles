@@ -530,7 +530,7 @@ let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s'
 
 " for golang
 " exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
-" NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
+NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
 auto BufWritePre *.go execute 'Fmt'
 " auto BufWritePost *.go execute 'Lint' | cwindow
 

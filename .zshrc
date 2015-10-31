@@ -16,7 +16,7 @@ zmodload zsh/zle
 export LANG=ja_JP.UTF-8
 fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 
-# export PATH=/usr/local/bin:/usr/bin:$PATH
+export PATH=~/dotfiles/bin:$PATH
 alias git='/usr/local/bin/git'
 alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 
@@ -64,6 +64,7 @@ alias usb='ls /dev/tty.*'
 for go
 if which go >/dev/null 2>&1; then
     export GOPATH=${HOME}
+    export GOBIN=~/bin
     path=($GOPATH/bin $path)
 fi
 
