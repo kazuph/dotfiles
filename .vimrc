@@ -599,6 +599,8 @@ NeoBundle 'elixir-lang/vim-elixir'
 
 NeoBundle 'slim-template/vim-slim'
 
+NeoBundle 'AlexKornitzer/cocoa.vim'
+
 call neobundle#end()
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする

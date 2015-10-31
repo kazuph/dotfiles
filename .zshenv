@@ -16,5 +16,4 @@ fi
 # export PATH=/Users/kazuph_org/local/node-v0.10/bin:$PATH
 
 skip_global_compinit=1
-# sudo rm -rf /private/var/log/asl/*.asl
 

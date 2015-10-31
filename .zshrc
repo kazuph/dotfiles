@@ -20,7 +20,7 @@ fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 alias git='/usr/local/bin/git'
 alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 
-unalias history
+# unalias history
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
 alias i='iqube'
@@ -61,47 +61,7 @@ alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
 alias usb='ls /dev/tty.*'
 
-function extract() {
-case $1 in
-    *.tar.gz|*.tgz) tar xzvf $1;;
-*.tar.xz) tar Jxvf $1;;
-    *.zip) unzip $1;;
-*.lzh) lha e $1;;
-    *.tar.bz2|*.tbz) tar xjvf $1;;
-*.tar.Z) tar zxvf $1;;
-    *.gz) gzip -dc $1;;
-*.bz2) bzip2 -dc $1;;
-    *.Z) uncompress $1;;
-*.tar) tar xvf $1;;
-    *.arj) unarj $1;;
-esac
-}
-alias -s {gz,tgz,zip,lzh,bz2,tbz,Z,tar,arj,xz}=extract
-
-show_buffer_stack() {
-    POSTDISPLAY="
-    stack: $LBUFFER"
-    zle push-line
-}
-zle -N show_buffer_stack
-bindkey "^[q" show_buffer_stack
-
-# for node
-if [[ -f ~/.nvm/nvm.sh ]]; then
-    source ~/.nvm/nvm.sh
-    wait
-    test nvm >/dev/null 2>&1
-    if [ $? -eq 0 ] ; then
-        _nodejs_use_version="v0.10.26"
-        if nvm ls | grep -F -e "${_nodejs_use_version}" >/dev/null 2>&1 ;then
-            nvm use "${_nodejs_use_version}" >/dev/null
-            export NODE_PATH=${NVM_PATH}_modules${NODE_PATH:+:}${NODE_PATH}
-        fi
-        unset _nodejs_use_version
-    fi
-fi
-
-# for go
+for go
 if which go >/dev/null 2>&1; then
     export GOPATH=${HOME}
     path=($GOPATH/bin $path)
@@ -115,14 +75,7 @@ export ANT_OPTS=-Dfile.encoding=UTF8
 export ANDROID_HOME=$HOME/Documents/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-# z.sh
-_Z_CMD=j
-source ~/dotfiles/z/z.sh
-precmd() {
-    _z --add "$(pwd -P)"
-}
-
-# auto rehash
+# # auto rehash
 function gem(){
 $HOME/.rbenv/shims/gem $*
 if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
@@ -132,12 +85,6 @@ then
 fi
 }
 
-# design
-# ZSH_THEME_GIT_PROMPT_PREFIX="[⭠ %{$fg[red]%}"
-# ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-# ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}] %{$fg[yellow]%}✗%{$reset_color%}"
-# ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%}]"
-
 # 一定時間以上かかる処理の場合は終了時に通知してくれる
 local COMMAND=""
 local COMMAND_TIME=""
@@ -145,7 +92,7 @@ precmd() {
     if [ "$COMMAND_TIME" -ne "0" ] ; then
         local d=`date +%s`
         d=`expr $d - $COMMAND_TIME`
-        if [ "$d" -ge "10" ] ; then
+        if [ "$d" -ge "5" ] ; then
             COMMAND="$COMMAND "
             which terminal-notifier > /dev/null 2>&1 && terminal-notifier -message "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
             # which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
@@ -161,7 +108,6 @@ preexec () {
         COMMAND_TIME=`date +%s`
     fi
 }
-
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
@@ -302,3 +248,8 @@ zle -N gh
 bindkey "^g" gh
 
 setopt ignoreeof
+
+# enhancd
+if [ -f "/Users/kazuph/.enhancd/zsh/enhancd.zsh" ]; then
+    source "/Users/kazuph/.enhancd/zsh/enhancd.zsh"
+fi
