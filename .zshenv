@@ -3,7 +3,7 @@ if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
 fi
 
 source ~/.fzf.zsh
-alias th='tail -10000 $HOME/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 eval "$(hub alias -s)"
 
