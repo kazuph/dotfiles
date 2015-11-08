@@ -135,7 +135,7 @@
   smup = submodule foreach "git checkout master; git pull origin master"
 
   # mergeされたbranchを一括削除
-  rmm = !git branch --merged | grep -v master | grep -v \\* | xargs -I % git branch -d %
+  rmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % git branch -d %
 [http]
   postBuffer = 2M
 #driver for merging XCode project files

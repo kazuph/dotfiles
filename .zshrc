@@ -50,12 +50,10 @@ alias seed='brake db:seed'
 alias rename='massren'
 alias dl='docker ps -l -q'
 alias vf='vim `fzf`'
-alias vp='vim `ag . -l | peco`'
 alias vc='vim -o `git cl`'
 alias vm='vim -o `git ml`'
 alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
-alias jp='cd `j | sort -nr | peco | awk '\''{print $2}'\''`'
 alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
@@ -253,9 +251,10 @@ alias "502"="echo 'Bad Gateway'"
 alias "503"="echo 'Service Unavailable'"
 alias "504"="echo 'Gateway Timeout'"
 alias "505"="echo 'HTTP Version Not Supported'"
+alias o='git ls-files | f open'
+alias e='ghq list -p | f cd'
 
 # incremental
-p() { peco | while read LINE; do $@ $LINE; done }
 f() { fzf | while read LINE; do $@ $LINE; done }
 
 gh(){
@@ -271,3 +270,26 @@ setopt ignoreeof
 # if [ -f "/Users/kazuph/.enhancd/zsh/enhancd.zsh" ]; then
 #     source "/Users/kazuph/.enhancd/zsh/enhancd.zsh"
 # fi
+
+## fzf commands
+# fshow - git commit browser (enter for show, ctrl-d for diff)
+fshow() {
+  local out shas sha q k
+  while out=$(
+      git log --graph --color=always \
+          --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+      fzf --ansi --multi --no-sort --reverse --query="$q" \
+          --print-query --expect=ctrl-d); do
+    q=$(head -1 <<< "$out")
+    k=$(head -2 <<< "$out" | tail -1)
+    shas=$(sed '1,2d;s/^[^a-z0-9]*//;/^$/d' <<< "$out" | awk '{print $1}')
+    [ -z "$shas" ] && continue
+    if [ "$k" = ctrl-d ]; then
+      git diff --color=always $shas | less -R
+    else
+      for sha in $shas; do
+        git show --color=always $sha | less -R
+      done
+    fi
+  done
+}
