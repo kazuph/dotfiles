@@ -1,0 +1,53 @@
+snippet im
+    import tensorflow as tf
+
+snippet tf
+    import tensorflow as tf
+
+snippet num
+    import numpy as np
+
+snippet np
+    import numpy as np
+
+snippet co
+    tf.constant(${1})
+
+snippet va
+    tf.Variable(${1})
+
+snippet matmul
+    tf.matmul(${1})
+
+snippet sess
+    sess = tf.Session()
+
+snippet se
+    sess = tf.Session()
+
+snippet run
+    sess.run(${1})
+
+snippet with
+    with tf.Session() as sess:
+
+snippet init
+    tf.initialize_all_variables()
+
+snippet mp
+    import multiprocessing as mp
+
+    core_num = mp.cpu_count()
+    config = tf.ConfigProto(
+        inter_op_parallelism_threads=core_num,
+        intra_op_parallelism_threads=core_num )
+    sess = tf.Session(config=config)
+
+snippet cpu
+    import multiprocessing as mp
+
+    core_num = mp.cpu_count()
+    config = tf.ConfigProto(
+        inter_op_parallelism_threads=core_num,
+        intra_op_parallelism_threads=core_num )
+    sess = tf.Session(config=config)

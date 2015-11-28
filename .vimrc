@@ -387,6 +387,8 @@ if has("lua")
         \ 'vimshell' : $HOME.'/.vimshell_hist',
         \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
         \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
+        \ 'python'   : $HOME . '/dotfiles/dict/python.dict',
+        \ 'go'       : $HOME . '/dotfiles/dict/go.dict',
         \ 'scheme'   : $HOME.'/.gosh_completions',
         \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
         \ }
@@ -801,20 +803,26 @@ set ttymouse=xterm2
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
 autocmd BufNewFile *.pl 0r ~/dotfiles/templates/pl.tpl
+autocmd BufNewFile *.py 0r ~/dotfiles/templates/py.tpl
 
 " .vimrcを瞬時に開く
 nnoremap <Space><Space>. :e $MYVIMRC<CR>
 
 " snippets/perl.snipを瞬時に開く
-nnoremap <Space><Space>ps :e $HOME/dotfiles/snippets/perl.snip<CR>
-nnoremap <Space><Space>pd :e $HOME/dotfiles/dict/perl.dict<CR>
+nnoremap <Space><Space>pls :e $HOME/dotfiles/snippets/perl.snip<CR>
+nnoremap <Space><Space>pld :e $HOME/dotfiles/dict/perl.dict<CR>
 
 " snippets/ruby.snipを瞬時に開く
-nnoremap <Space><Space>rs :e $HOME/dotfiles/snippets/ruby.snip<CR>
-nnoremap <Space><Space>rd :e $HOME/dotfiles/dict/ruby.dict<CR>
+nnoremap <Space><Space>rbs :e $HOME/dotfiles/snippets/ruby.snip<CR>
+nnoremap <Space><Space>rbd :e $HOME/dotfiles/dict/ruby.dict<CR>
+
+" snippets/python.snipを瞬時に開く
+nnoremap <Space><Space>pys :e $HOME/dotfiles/snippets/python.snip<CR>
+nnoremap <Space><Space>pyd :e $HOME/dotfiles/dict/python.dict<CR>
 
 " snippets/go.snipを瞬時に開く
-nnoremap <Space><Space>gs :e $HOME/dotfiles/snippets/go.snip<CR>
+nnoremap <Space><Space>gos :e $HOME/dotfiles/snippets/go.snip<CR>
+nnoremap <Space><Space>god :e $HOME/dotfiles/dict/go.dict<CR>
 
 " vimrcの設定を反映
 nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>

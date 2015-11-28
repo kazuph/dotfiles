@@ -11,6 +11,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
+export EDITOR=vim
 
 zmodload zsh/zle
 export LANG=ja_JP.UTF-8
@@ -153,9 +154,7 @@ bindkey '^q' fzf-cdr
 #   eval $(dvm env)
 # fi
 
-export DOCKER_TLS_VERIFY=1
-export DOCKER_HOST=tcp://192.168.59.103:2376
-export DOCKER_CERT_PATH=/Users/kazuph_org/.boot2docker/certs/boot2docker-vm
+eval "$(docker-machine env default)"
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
