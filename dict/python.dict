@@ -1,320 +1,326 @@
-AbortedError
-AdagradOptimizer
-AdamOptimizer
-AggregationMethod
-AlreadyExistsError
-Assert
-CancelledError
-Coordinator
-DType
-DataLossError
-DeadlineExceededError
-Dimension
-ExponentialMovingAverage
-FIFOQueue
-FailedPreconditionError
-FixedLengthRecordReader
-FtrlOptimizer
-GradientDescentOptimizer
-Graph
-GraphKeys
-IdentityReader
-IndexedSlices
-InteractiveSession
-InternalError
-InvalidArgumentError
-MomentumOptimizer
-NoGradient
-NotFoundError
-OpError
-Operation
-Optimizer
-OutOfRangeError
-PermissionDeniedError
-Print
-QueueBase
-QueueRunner
-RMSPropOptimizer
-RandomShuffleQueue
-ReaderBase
-RegisterGradient
-RegisterShape
-ResourceExhaustedError
-Saver
-Session
-SparseTensor
-SparseTensorValue
-SummaryWriter
-TFRecordReader
-TFRecordWriter
-Tensor
-TensorShape
-TextLineReader
-UnauthenticatedError
-UnavailableError
-UnimplementedError
-UnknownError
-Variable
-WholeFileReader
-abs
-accumulate_n
-add
-add_check_numerics_ops
-add_n
-add_queue_runner
-add_to_collection
-adjust_brightness
-adjust_contrast
-all_variables
-argmax
-argmin
-as_dtype
-assert_variables_initialized
-assign
-assign_add
-assign_sub
-avg_pool
-batch
-batch_cholesky
-batch_join
-batch_matmul
-batch_matrix_determinant
-batch_matrix_inverse
-bias_add
-cast
-ceil
-check_numerics
-cholesky
-clip_by_average_norm
-clip_by_global_norm
-clip_by_norm
-clip_by_value
-complex
-complex_abs
-compute_accidental_hits
-concat
-conj
-constant
-constant_initializer
-control_dependencies
-conv2d
-convert_to_tensor
-cos
-count_up_to
-count_up_to
-crop_to_bounding_box
-decode_csv
-decode_jpeg
-decode_png
-decode_raw
-depthwise_conv2d
-device
-device
-diag
-div
-dropout
-dynamic_partition
-dynamic_stitch
-edit_distance
-embedding_lookup
-encode_jpeg
-encode_png
-equal
-exp
-expand_dims
-exponential_decay
-extract_glimpse
-fill
-fixed_unigram_candidate_sampler
-flip_left_right
-flip_up_down
-floor
-floordiv
-gather
-get_checkpoint_state
-get_collection
-get_default_graph
-get_default_session
-get_seed
-get_variable
-get_variable_scope
-global_norm
-global_step
-gradients
-greater
-greater_equal
-group
-histogram_summary
-identity
-imag
-image_summary
-import_graph_def
-in_top_k
-initialize_all_variables
-initialize_variables
-inv
-invert_permutation
-is_finite
-is_inf
-is_nan
-l2_loss
-l2_normalize
-latest_checkpoint
-learned_unigram_candidate_sampler
-less
-less_equal
-limit_epochs
-linspace
-listdiff
-local_response_normalization
-log
-log_uniform_candidate_sampler
-logical_and
-logical_not
-logical_or
-logical_xor
-match_filenames_once
-matching_files
-matmul
-matrix_determinant
-matrix_inverse
-max_pool
-max_pool_with_argmax
-maximum
-merge_all_summaries
-merge_summary
-minimum
-mod
-moments
-mul
-name_scope
-nce_loss
-neg
-no_op
-not_equal
-ones
-ones_like
-op_scope
-pack
-pad
-pad_to_bounding_box
-parse_example
-parse_single_example
-per_image_whitening
-placeholder
-pow
-random_brightness
-random_contrast
-random_crop
-random_flip_left_right
-random_flip_up_down
-random_normal
-random_normal_initializer
-random_shuffle
-random_uniform
-random_uniform_initializer
-range
-range_input_producer
-rank
-read_file
-real
-reduce_all
-reduce_any
-reduce_max
-reduce_mean
-reduce_min
-reduce_prod
-reduce_sum
-relu
-relu6
-reshape
-resize_area
-resize_bicubic
-resize_bilinear
-resize_image_with_crop_or_pad
-resize_images
-resize_nearest_neighbor
-reverse
-reverse_sequence
-round
-rsqrt
-sampled_softmax_loss
-scalar_summary
-scatter_add
-scatter_sub
-scatter_update
-segment_max
-segment_mean
-segment_min
-segment_prod
-segment_sum
-select
-separable_conv2d
-set_random_seed
-shape
-shape
-shuffle_batch
-shuffle_batch_join
-sigmoid
-sigmoid_cross_entropy_with_logits
-sign
-sin
-size
-size
-slice
-slice_input_producer
-softmax
-softmax_cross_entropy_with_logits
-softplus
-sparse_concat
-sparse_fill_empty_rows
-sparse_mask
-sparse_reorder
-sparse_retain
-sparse_segment_mean
-sparse_segment_sum
-sparse_tensor_to_dense
-sparse_to_dense
-sparse_to_indicator
-split
-sqrt
-square
-squeeze
-start_queue_runners
-stop_gradient
-string_input_producer
-string_to_number
-sub
-summary_iterator
-tanh
-tf_record_iterator
-tile
-to_bfloat16
-to_double
-to_float
-to_int32
-to_int64
-top_k
-trainable_variables
-transpose
-transpose
-transpose_image
-truediv
-truncated_normal
-truncated_normal_initializer
-tuple
-uniform_candidate_sampler
-uniform_unit_scaling_initializer
-unique
-unpack
-unsorted_segment_sum
-update_checkpoint_state
-variable_scope
-verify_tensor_all_finite
-where
-where
-write_graph
-zero_fraction
-zeros
-zeros_initializer
-zeros_like
+tf.AggregationMethod
+tf.Assert(condition, data, summarize=None, name=None)
+tf.DType
+tf.Dimension
+tf.FIFOQueue
+tf.FixedLengthRecordReader
+tf.Graph
+tf.GraphKeys
+tf.IdentityReader
+tf.IndexedSlices
+tf.InteractiveSession
+tf.NoGradient(op_type)
+tf.OpError
+tf.Operation
+tf.Print(input_, data, message=None, first_n=None, summarize=None, name=None)
+tf.QueueBase
+tf.RandomShuffleQueue
+tf.ReaderBase
+tf.RegisterGradient
+tf.RegisterShape
+tf.Session
+tf.SparseTensor
+tf.SparseTensorValue
+tf.TFRecordReader
+tf.Tensor
+tf.TensorShape
+tf.TextLineReader
+tf.Variable
+tf.WholeFileReader
+tf.abs(x, name=None)
+tf.accumulate_n(inputs, shape=None, tensor_dtype=None, name=None)
+tf.add(x, y, name=None)
+tf.add_check_numerics_ops()
+tf.add_n(inputs, name=None)
+tf.add_to_collection(name, value)
+tf.all_variables()
+tf.argmax(input, dimension, name=None)
+tf.argmin(input, dimension, name=None)
+tf.as_dtype(type_value)
+tf.assert_variables_initialized(var_list=None)
+tf.batch_cholesky(input, name=None)
+tf.batch_matmul(x, y, adj_x=None, adj_y=None, name=None)
+tf.batch_matrix_determinant(input, name=None)
+tf.batch_matrix_inverse(input, name=None)
+tf.bool
+tf.cast(x, dtype, name=None)
+tf.ceil(x, name=None)
+tf.check_numerics(tensor, message, name=None)
+tf.cholesky(input, name=None)
+tf.clip_by_average_norm(t, clip_norm, name=None)
+tf.clip_by_global_norm(t_list, clip_norm, use_norm=None, name=None)
+tf.clip_by_norm(t, clip_norm, name=None)
+tf.clip_by_value(t, clip_value_min, clip_value_max, name=None)
+tf.complex(real, imag, name=None)
+tf.complex64
+tf.complex_abs(x, name=None)
+tf.concat(concat_dim, values, name='concat')
+tf.conj(in_, name=None)
+tf.constant(value, dtype=None, shape=None, name='Const')
+tf.constant_initializer(value=0.0)
+tf.control_dependencies(control_inputs)
+tf.convert_to_tensor(value, dtype=None, name=None)
+tf.cos(x, name=None)
+tf.count_up_to(ref, limit, name=None)
+tf.decode_csv(records, record_defaults, field_delim=None, name=None)
+tf.decode_raw(bytes, out_type, little_endian=None, name=None)
+tf.device(dev)
+tf.diag(diagonal, name=None)
+tf.div(x, y, name=None)
+tf.dynamic_partition(data, partitions, num_partitions, name=None)
+tf.dynamic_stitch(indices, data, name=None)
+tf.edit_distance(hypothesis, truth, normalize=True, name='edit_distance')
+tf.equal(x, y, name=None)
+tf.errors.AbortedError
+tf.errors.AlreadyExistsError
+tf.errors.CancelledError
+tf.errors.DataLossError
+tf.errors.DeadlineExceededError
+tf.errors.FailedPreconditionError
+tf.errors.InternalError
+tf.errors.InvalidArgumentError
+tf.errors.NotFoundError
+tf.errors.OutOfRangeError
+tf.errors.PermissionDeniedError
+tf.errors.ResourceExhaustedError
+tf.errors.UnauthenticatedError
+tf.errors.UnavailableError
+tf.errors.UnimplementedError
+tf.errors.UnknownError
+tf.exp(x, name=None)
+tf.expand_dims(input, dim, name=None)
+tf.fill(dims, value, name=None)
+tf.float32
+tf.float64
+tf.floor(x, name=None)
+tf.floordiv(x, y, name=None)
+tf.gather(params, indices, name=None)
+tf.get_collection(key, scope=None)
+tf.get_default_graph()
+tf.get_default_session()
+tf.get_seed(op_seed)
+tf.get_variable(name, shape=None, dtype=tf.float32, initializer=None, trainable=True, collections=None)
+tf.get_variable_scope()
+tf.global_norm(t_list, name=None)
+tf.gradients(ys, xs, grad_ys=None, name='gradients', colocate_gradients_with_ops=False, gate_gradients=False, aggregation_method=None)
+tf.greater(x, y, name=None)
+tf.greater_equal(x, y, name=None)
+tf.group(*inputs, **kwargs)
+tf.histogram_summary(tag, values, collections=None, name=None)
+tf.identity(input, name=None)
+tf.imag(in_, name=None)
+tf.image.adjust_brightness(image, delta, min_value=None, max_value=None)
+tf.image.adjust_contrast(images, contrast_factor, min_value=None, max_value=None)
+tf.image.crop_to_bounding_box(image, offset_height, offset_width, target_height, target_width)
+tf.image.decode_jpeg(contents, channels=None, ratio=None, fancy_upscaling=None, try_recover_truncated=None, acceptable_fraction=None, name=None)
+tf.image.decode_png(contents, channels=None, name=None)
+tf.image.encode_jpeg(image, format=None, quality=None, progressive=None, optimize_size=None, chroma_downsampling=None, density_unit=None, x_density=None, y_density=None, xmp_metadata=None, name=None)
+tf.image.encode_png(image, compression=None, name=None)
+tf.image.extract_glimpse(input, size, offsets, centered=None, normalized=None, uniform_noise=None, name=None)
+tf.image.flip_left_right(image)
+tf.image.flip_up_down(image)
+tf.image.pad_to_bounding_box(image, offset_height, offset_width, target_height, target_width)
+tf.image.per_image_whitening(image)
+tf.image.random_brightness(image, max_delta, seed=None)
+tf.image.random_contrast(image, lower, upper, seed=None)
+tf.image.random_crop(image, size, seed=None, name=None)
+tf.image.random_flip_left_right(image, seed=None)
+tf.image.random_flip_up_down(image, seed=None)
+tf.image.resize_area(images, size, name=None)
+tf.image.resize_bicubic(images, size, name=None)
+tf.image.resize_bilinear(images, size, name=None)
+tf.image.resize_image_with_crop_or_pad(image, target_height, target_width)
+tf.image.resize_images(images, new_height, new_width, method=0)
+tf.image.resize_nearest_neighbor(images, size, name=None)
+tf.image.transpose_image(image)
+tf.image_summary(tag, tensor, max_images=None, collections=None, name=None)
+tf.import_graph_def(graph_def, input_map=None, return_elements=None, name=None, op_dict=None)
+tf.initialize_all_variables()
+tf.initialize_variables(var_list, name='init')
+tf.int16
+tf.int32
+tf.int64
+tf.int8
+tf.inv(x, name=None)
+tf.invert_permutation(x, name=None)
+tf.is_finite(x, name=None)
+tf.is_inf(x, name=None)
+tf.is_nan(x, name=None)
+tf.less(x, y, name=None)
+tf.less_equal(x, y, name=None)
+tf.linspace(start, stop, num, name=None)
+tf.listdiff(x, y, name=None)
+tf.log(x, name=None)
+tf.logical_and(x, y, name=None)
+tf.logical_not(x, name=None)
+tf.logical_or(x, y, name=None)
+tf.logical_xor(x, y, name='LogicalXor')
+tf.matching_files(pattern, name=None)
+tf.matmul(a, b, transpose_a=False, transpose_b=False, a_is_sparse=False, b_is_sparse=False, name=None)
+tf.matrix_determinant(input, name=None)
+tf.matrix_inverse(input, name=None)
+tf.maximum(x, y, name=None)
+tf.merge_all_summaries(key='summaries')
+tf.merge_summary(inputs, collections=None, name=None)
+tf.minimum(x, y, name=None)
+tf.mod(x, y, name=None)
+tf.mul(x, y, name=None)
+tf.name_scope(name)
+tf.neg(x, name=None)
+tf.nn.avg_pool(value, ksize, strides, padding, name=None)
+tf.nn.bias_add(value, bias, name=None)
+tf.nn.compute_accidental_hits(true_classes, sampled_candidates, num_true, seed=None, name=None)
+tf.nn.conv2d(input, filter, strides, padding, use_cudnn_on_gpu=None, name=None)
+tf.nn.depthwise_conv2d(input, filter, strides, padding, name=None)
+tf.nn.dropout(x, keep_prob, noise_shape=None, seed=None, name=None)
+tf.nn.embedding_lookup(params, ids, name=None)
+tf.nn.fixed_unigram_candidate_sampler(true_classes, num_true, num_sampled, unique, range_max, vocab_file='', distortion=0.0, num_reserved_ids=0, num_shards=1, shard=0, unigrams=[], seed=None, name=None)
+tf.nn.in_top_k(predictions, targets, k, name=None)
+tf.nn.l2_loss(t, name=None)
+tf.nn.l2_normalize(x, dim, epsilon=1e-12, name=None)
+tf.nn.learned_unigram_candidate_sampler(true_classes, num_true, num_sampled, unique, range_max, seed=None, name=None)
+tf.nn.local_response_normalization(input, depth_radius=None, bias=None, alpha=None, beta=None, name=None)
+tf.nn.log_uniform_candidate_sampler(true_classes, num_true, num_sampled, unique, range_max, seed=None, name=None)
+tf.nn.max_pool(value, ksize, strides, padding, name=None)
+tf.nn.max_pool_with_argmax(input, ksize, strides, padding, Targmax=None, name=None)
+tf.nn.moments(x, axes, name=None)
+tf.nn.nce_loss(weights, biases, inputs, labels, num_sampled, num_classes, num_true=1, sampled_values=None, remove_accidental_hits=False, name='nce_loss')
+tf.nn.relu(features, name=None)
+tf.nn.relu6(features, name=None)
+tf.nn.sampled_softmax_loss(weights, biases, inputs, labels, num_sampled, num_classes, num_true=1, sampled_values=None, remove_accidental_hits=True, name='sampled_softmax_loss')
+tf.nn.separable_conv2d(input, depthwise_filter, pointwise_filter, strides, padding, name=None)
+tf.nn.sigmoid_cross_entropy_with_logits(logits, targets, name=None)
+tf.nn.softmax(logits, name=None)
+tf.nn.softmax_cross_entropy_with_logits(logits, labels, name=None)
+tf.nn.softplus(features, name=None)
+tf.nn.top_k(input, k, name=None)
+tf.nn.uniform_candidate_sampler(true_classes, num_true, num_sampled, unique, range_max, seed=None, name=None)
+tf.nn.zero_fraction(value, name=None)
+tf.no_op(name=None)
+tf.not_equal(x, y, name=None)
+tf.ones(shape, dtype=tf.float32, name=None)
+tf.ones_like(tensor, dtype=None, name=None)
+tf.op_scope(values, name, default_name)
+tf.pack(values, name='pack')
+tf.pad(input, paddings, name=None)
+tf.parse_example(serialized, names=None, sparse_keys=None, sparse_types=None, dense_keys=None, dense_types=None, dense_defaults=None, dense_shapes=None, name='ParseExample')
+tf.parse_single_example(serialized, names=None, sparse_keys=None, sparse_types=None, dense_keys=None, dense_types=None, dense_defaults=None, dense_shapes=None, name='ParseSingleExample')
+tf.placeholder(dtype, shape=None, name=None)
+tf.pow(x, y, name=None)
+tf.python_io.TFRecordWriter
+tf.python_io.tf_record_iterator(path)
+tf.qint32
+tf.qint8
+tf.quint8
+tf.random_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32, seed=None, name=None)
+tf.random_normal_initializer(mean=0.0, stddev=1.0, seed=None)
+tf.random_shuffle(value, seed=None, name=None)
+tf.random_uniform(shape, minval=0.0, maxval=1.0, dtype=tf.float32, seed=None, name=None)
+tf.random_uniform_initializer(minval=0.0, maxval=1.0, seed=None)
+tf.range(start, limit=None, delta=1, name='range')
+tf.rank(input, name=None)
+tf.read_file(filename, name=None)
+tf.real(in_, name=None)
+tf.reduce_all(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_any(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_max(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_mean(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_min(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_prod(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reduce_sum(input_tensor, reduction_indices=None, keep_dims=False, name=None)
+tf.reshape(tensor, shape, name=None)
+tf.reverse(tensor, dims, name=None)
+tf.reverse_sequence(input, seq_lengths, seq_dim, name=None)
+tf.round(x, name=None)
+tf.rsqrt(x, name=None)
+tf.scalar_summary(tags, values, collections=None, name=None)
+tf.scatter_add(ref, indices, updates, use_locking=None, name=None)
+tf.scatter_sub(ref, indices, updates, use_locking=None, name=None)
+tf.scatter_update(ref, indices, updates, use_locking=None, name=None)
+tf.segment_max(data, segment_ids, name=None)
+tf.segment_mean(data, segment_ids, name=None)
+tf.segment_min(data, segment_ids, name=None)
+tf.segment_prod(data, segment_ids, name=None)
+tf.segment_sum(data, segment_ids, name=None)
+tf.select(condition, t, e, name=None)
+tf.set_random_seed(seed)
+tf.shape(input, name=None)
+tf.sigmoid(x, name=None)
+tf.sign(x, name=None)
+tf.sin(x, name=None)
+tf.size(input, name=None)
+tf.slice(input_, begin, size, name=None)
+tf.sparse_concat(concat_dim, sp_inputs, name=None)
+tf.sparse_fill_empty_rows(sp_input, default_value, name=None)
+tf.sparse_mask(a, mask_indices, name=None)
+tf.sparse_reorder(sp_input, name=None)
+tf.sparse_retain(sp_input, to_retain)
+tf.sparse_segment_mean(data, indices, segment_ids, name=None)
+tf.sparse_segment_sum(data, indices, segment_ids, name=None)
+tf.sparse_tensor_to_dense(sp_input, default_value, name=None)
+tf.sparse_to_dense(sparse_indices, output_shape, sparse_values, default_value, name=None)
+tf.sparse_to_indicator(sp_input, vocab_size, name=None)
+tf.split(split_dim, num_split, value, name='split')
+tf.sqrt(x, name=None)
+tf.square(x, name=None)
+tf.squeeze(input, squeeze_dims=None, name=None)
+tf.stop_gradient(input, name=None)
+tf.string
+tf.string_to_number(string_tensor, out_type=None, name=None)
+tf.sub(x, y, name=None)
+tf.tanh(x, name=None)
+tf.tile(input, multiples, name=None)
+tf.to_bfloat16(x, name='ToBFloat16')
+tf.to_double(x, name='ToDouble')
+tf.to_float(x, name='ToFloat')
+tf.to_int32(x, name='ToInt32')
+tf.to_int64(x, name='ToInt64')
+tf.train.AdagradOptimizer
+tf.train.AdamOptimizer
+tf.train.Coordinator
+tf.train.ExponentialMovingAverage
+tf.train.FtrlOptimizer
+tf.train.GradientDescentOptimizer
+tf.train.MomentumOptimizer
+tf.train.Optimizer
+tf.train.QueueRunner
+tf.train.RMSPropOptimizer
+tf.train.Saver
+tf.train.SummaryWriter
+tf.train.add_queue_runner(qr, collection='queue_runners')
+tf.train.batch(tensor_list, batch_size, num_threads=1, capacity=32, enqueue_many=False, shapes=None, name=None)
+tf.train.batch_join(tensor_list_list, batch_size, capacity=32, enqueue_many=False, shapes=None, name=None)
+tf.train.exponential_decay(learning_rate, global_step, decay_steps, decay_rate, staircase=False, name=None)
+tf.train.get_checkpoint_state(checkpoint_dir, latest_filename=None)
+tf.train.global_step(sess, global_step_tensor)
+tf.train.latest_checkpoint(checkpoint_dir, latest_filename=None)
+tf.train.limit_epochs(tensor, num_epochs=None, name=None)
+tf.train.match_filenames_once(pattern, name=None)
+tf.train.range_input_producer(limit, num_epochs=None, shuffle=True, seed=None, capacity=32, name=None)
+tf.train.shuffle_batch(tensor_list, batch_size, capacity, min_after_dequeue, num_threads=1, seed=None, enqueue_many=False, shapes=None, name=None)
+tf.train.shuffle_batch_join(tensor_list_list, batch_size, capacity, min_after_dequeue, seed=None, enqueue_many=False, shapes=None, name=None)
+tf.train.slice_input_producer(tensor_list, num_epochs=None, shuffle=True, seed=None, capacity=32, name=None)
+tf.train.start_queue_runners(sess=None, coord=None, daemon=True, start=True, collection='queue_runners')
+tf.train.string_input_producer(string_tensor, num_epochs=None, shuffle=True, seed=None, capacity=32, name=None)
+tf.train.summary_iterator(path)
+tf.train.update_checkpoint_state(save_dir, model_checkpoint_path, all_model_checkpoint_paths=None, latest_filename=None)
+tf.train.write_graph(graph_def, logdir, name, as_text=True)
+tf.trainable_variables()
+tf.transpose(a, perm=None, name='transpose')
+tf.transpose(a, perm=None, name='transpose')
+tf.truediv(x, y, name=None)
+tf.truncated_normal(shape, mean=0.0, stddev=1.0, dtype=tf.float32, seed=None, name=None)
+tf.truncated_normal_initializer(mean=0.0, stddev=1.0, seed=None)
+tf.tuple(tensors, name=None, control_inputs=None)
+tf.uint8
+tf.uniform_unit_scaling_initializer(factor=1.0, seed=None)
+tf.unique(x, name=None)
+tf.unpack(value, num=None, name='unpack')
+tf.unsorted_segment_sum(data, segment_ids, num_segments, name=None)
+tf.variable_scope(name_or_scope, reuse=None, initializer=None)
+tf.verify_tensor_all_finite(t, msg, name=None)
+tf.where(input, name=None)
+tf.where(input, name=None)
+tf.zeros(shape, dtype=tf.float32, name=None)
+tf.zeros_initializer(shape, dtype=tf.float32)
+tf.zeros_like(tensor, dtype=None, name=None)
