@@ -75,7 +75,13 @@ export ANT_OPTS=-Dfile.encoding=UTF8
 export ANDROID_HOME=$HOME/Documents/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
-# # auto rehash
+# rbenv
+if [ -d ${HOME}/.rbenv  ] ; then
+  export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
+  eval "$(rbenv init -)"
+fi
+
+# auto rehash
 function gem(){
 $HOME/.rbenv/shims/gem $*
 if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
@@ -84,6 +90,7 @@ then
     rehash
 fi
 }
+
 # z - jump around
 function load-if-exists() { test -e "$1" && source "$1" }
 source ~/dotfiles/z/z.sh

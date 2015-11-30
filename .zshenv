@@ -11,5 +11,5 @@ if [ -d ${HOME}/.rbenv  ] ; then
   eval "$(rbenv init -)"
 fi
 
-skip_global_compinit=1
+# skip_global_compinit=1
 
