@@ -60,7 +60,7 @@ alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
 alias usb='ls /dev/tty.*'
 
-for go
+# for go
 if which go >/dev/null 2>&1; then
     export GOPATH=${HOME}
     export GOBIN=~/bin
@@ -72,7 +72,7 @@ export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 # for android
 export ANT_OPTS=-Dfile.encoding=UTF8
-export ANDROID_HOME=$HOME/Documents/sdk
+export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 # rbenv

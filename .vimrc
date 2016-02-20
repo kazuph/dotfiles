@@ -315,6 +315,8 @@ let g:switch_custom_definitions =
     \   ['☐', '☑']
     \ ]
 
+NeoBundle 'mattn/vim-rubyfmt'
+
 " APIのドキュメントを参照する
 " Shift+K
 NeoBundle 'thinca/vim-ref'
