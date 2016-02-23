@@ -12,8 +12,8 @@ set cmdheight=2
 set mouse=a
 set list
 set tw=0
-noremap ; :
-noremap : ;
+" noremap ; :
+" noremap : ;
 
 " コンマの後に自動的にスペースを挿入
 inoremap , ,<Space>

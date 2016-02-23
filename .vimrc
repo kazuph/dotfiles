@@ -315,7 +315,7 @@ let g:switch_custom_definitions =
     \   ['☐', '☑']
     \ ]
 
-NeoBundle 'mattn/vim-rubyfmt'
+" NeoBundle 'mattn/vim-rubyfmt'
 
 " APIのドキュメントを参照する
 " Shift+K
@@ -753,8 +753,8 @@ nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 
 " これで保存やコマンドを速く打てるようになる
 " 未設定のVimではもたつくので訓練すること
-noremap ; :
-noremap : ;
+" noremap ; :
+" noremap : ;
 
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
