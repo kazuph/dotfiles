@@ -299,3 +299,5 @@ fshow() {
     fi
   done
 }
+
+unset PYTHONPATH

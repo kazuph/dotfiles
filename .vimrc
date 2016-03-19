@@ -26,6 +26,68 @@
 "
 "----------------------------------------------------------------------------------------
 
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
+endif
+
+" Required:
+set runtimepath^=/Users/kazuph/.dein/repos/github.com/Shougo/dein.vim
+
+" Required:
+call dein#begin(expand('/Users/kazuph/.dein'))
+
+" Required:
+call dein#add('Shougo/dein.vim')
+call dein#add('Shougo/vimproc.vim', {
+    \ 'build': {
+    \     'windows': 'tools\\update-dll-mingw',
+    \     'cygwin': 'make -f make_cygwin.mak',
+    \     'mac': 'make -f make_mac.mak',
+    \     'linux': 'make',
+    \     'unix': 'gmake',
+    \    },
+    \ })
+call dein#add('Shougo/neocomplete.vim')
+call dein#add('Shougo/neomru.vim')
+call dein#add('Shougo/neosnippet.vim')
+call dein#add('Shougo/neosnippet-snippets')
+call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
+call dein#add('scrooloose/syntastic')
+call dein#add('thinca/vim-quickrun')
+call dein#add('Shougo/deoplete.nvim')
+call dein#add('landaire/deoplete-swift')
+call dein#add('kballard/vim-swift')
+call dein#add('keith/swift.vim')
+
+" Required:
+call dein#end()
+
+" Required:
+filetype plugin indent on
+
+" quickrun
+" normalモードで \r で実行
+let g:quickrun_config = {}
+let g:quickrun_config['swift'] = {
+\ 'command': 'xcrun',
+\ 'cmdopt': 'swift',
+\ 'exec': '%c %o %s',
+\}
+
+" deopleteの自動補完on
+let g:deoplete#enable_at_startup = 1
+" swiftの自動補完on
+let g:deoplete#sources#swift#daemon_autostart = 1
+
+
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+ call dein#install()
+endif
+
+"End dein Scripts-------------------------
+
 " Note: Skip initialization for vim-tiny or vim-small.
 if !1 | finish | endif
 
@@ -45,7 +107,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 " ステータスラインに情報を表示 → もう力はいらない
 " NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 " NeoBundle 'Lokaltog/vim-powerline.git'
-NeoBundle 'bling/vim-airline'
+NeoBundle 'vim-airline/vim-airline'
+NeoBundle 'vim-airline/vim-airline-themes'
 let g:airline_powerline_fonts = 1
 let g:airline_theme='light'
 " let g:airline_left_sep = '⮀'
@@ -99,16 +162,21 @@ NeoBundle 'kana/vim-operator-user.git'
 
 " Rを使ってyankしてるものと置き換え
 NeoBundle 'kana/vim-operator-replace.git'
-map R  <Plug>(operator-replace)
+map R <Plug>(operator-replace)
 
 " キャメル・アンダースコア記法を扱いやすく
 " , w , e , b
 " v, w
 " d, w
 NeoBundle 'bkad/CamelCaseMotion.git'
-map w ,w
-map e ,e
-map b ,b
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
 
 "  ","と押して", "としてくれる優しさ
 NeoBundle "smartchr"
@@ -173,22 +241,22 @@ nnoremap <C-]> g<C-]>
 
 " \rで開いているコードを実行
 NeoBundle "thinca/vim-quickrun.git"
-let g:quickrun_config            = {}
-let g:quickrun_config.markdown   = {
-      \   'outputter' : 'null',
-      \   'command'   : 'open',
-      \   'exec'      : '%c %s',
-      \ }
-
-" let g:quickrun_config.c   = {
-"       \   "outputter" : "error:buffer:quickfix",
-"       \   "runner" : "vimproc",
-"       \   'command'   : './make',
-"       \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
+" let g:quickrun_config            = {}
+" let g:quickrun_config.markdown   = {
+"       \   'outputter' : 'null',
+"       \   'command'   : 'open',
+"       \   'exec'      : '%c %s',
 "       \ }
-
-" CSは実行せずにJSにコンパイル
-let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
+"
+" " let g:quickrun_config.c   = {
+" "       \   "outputter" : "error:buffer:quickfix",
+" "       \   "runner" : "vimproc",
+" "       \   'command'   : './make',
+" "       \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
+" "       \ }
+"
+" " CSは実行せずにJSにコンパイル
+" let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
 " Programming perl
 " NeoBundle "c9s/perlomni.vim"
@@ -530,7 +598,7 @@ vnoremap cd y:<C-u>Codic <C-R>"<CR>
 " coffee break!
 NeoBundle 'kchmck/vim-coffee-script.git'
 au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
-let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
+" let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
 " for golang
 " exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
@@ -605,6 +673,10 @@ NeoBundle 'slim-template/vim-slim'
 
 NeoBundle 'AlexKornitzer/cocoa.vim'
 
+" for swift
+NeoBundle 'mitsuse/autocomplete-swift'
+
+
 call neobundle#end()
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
@@ -636,6 +708,7 @@ au BufNewFile,BufRead Guardfile    set filetype=ruby
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead cpanfile     set filetype=perl
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
+au BufNewFile,BufRead *.es6        set filetype=javascript
 
 " ファイルエンコーディング
 let $LANG='ja_JP.UTF-8'
@@ -800,7 +873,7 @@ set clipboard+=unnamedplus,unnamed
 " ターミナルでマウスを使用できるようにする
 set mouse=a
 set guioptions+=a
-set ttymouse=xterm2
+" set ttymouse=xterm2
 
 " テンプレートの設定
 autocmd BufNewFile *.rb 0r ~/dotfiles/templates/rb.tpl
@@ -976,3 +1049,5 @@ if has('gui_macvim')
     set guifont=Hack:h12
     " colorscheme macvim
 endif
+
+set wildignore+=**/tmp/,*.so,*.swp,*.zip
