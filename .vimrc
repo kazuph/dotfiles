@@ -652,6 +652,8 @@ NeoBundle 'maksimr/vim-jsbeautify'
 autocmd FileType javascript noremap <buffer>,cf :call JsBeautify()<cr>
 autocmd FileType html       noremap <buffer>,cf :call HtmlBeautify()<cr>
 autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
+autocmd FileType json       noremap <buffer>,cf :call JsonBeautify()<cr>
+autocmd FileType jsx        noremap <buffer>,cf :call JsxBeautify()<cr>
 
 " NeoBundle 'scrooloose/syntastic.git'
 " let g:syntastic_javascript_checker = 'jshint'
@@ -676,6 +678,10 @@ NeoBundle 'AlexKornitzer/cocoa.vim'
 " for swift
 NeoBundle 'mitsuse/autocomplete-swift'
 
+" for PlantUML
+NeoBundle "aklt/plantuml-syntax"
+let g:plantuml_executable_script = "~/dotfiles/plantuml"
+NeoBundle "tex/vimpreviewpandoc"
 
 call neobundle#end()
 
@@ -763,10 +769,10 @@ autocmd FileType aspvbs     setlocal sw=4 sts=4 ts=4 et
 autocmd FileType c          setlocal sw=4 sts=4 ts=4 et
 autocmd FileType cpp        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType cs         setlocal sw=4 sts=4 ts=4 et
-autocmd FileType css        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType css        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
-autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
+autocmd FileType html       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
 autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
@@ -780,7 +786,7 @@ autocmd FileType sql        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType vb         setlocal sw=4 sts=4 ts=4 et
 autocmd FileType vim        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType wsh        setlocal sw=4 sts=4 ts=4 et
-autocmd FileType xhtml      setlocal sw=2 sts=2 ts=2 et
+autocmd FileType xhtml      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
@@ -1051,3 +1057,4 @@ if has('gui_macvim')
 endif
 
 set wildignore+=**/tmp/,*.so,*.swp,*.zip
+

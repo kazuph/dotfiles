@@ -1,18 +1,31 @@
-; .editorconfig
+;.editorconfig
 
 root = true
 
 [**.js]
 indent_style = space
-indent_size = 4
-max_char = 2000
+indent_size = 2
+brace_style = collapse
+
+[**.json]
+indent_style = space
+indent_size = 2
+brace_style = collapse
+
+[**.jsx]
+e4x = true
+indent_style = space
+indent_size = 2
+brace_style = collapse
 
 [**.css]
 indent_style = space
-indent_size = 4
-max_char = 2000
+indent_size = 2
+brace_style = collapse
 
 [**.html]
+indent-inner-html = true
+extra_liners = null
 indent_style = space
-indent_size = 4
-max_char = 2000
+indent_size = 2
+brace_style = collapse
