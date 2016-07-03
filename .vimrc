@@ -204,6 +204,7 @@ nnoremap ,mn :MemoNew<cr>
 nnoremap ,mg :MemoGrep<cr>
 nnoremap ,ml :MemoList<CR>
 nnoremap ,mf :exe "CtrlP" g:memolist_path<cr><f5>
+let g:memolist_ex_cmd = 'NERDTree'
 let g:memolist_path = "~/Dropbox/memo"
 
 " 爆速のgrepであるagを使いたい
@@ -291,7 +292,7 @@ NeoBundle "thinca/vim-quickrun.git"
 " ノーマルモード時に-でswitch
 " { :foo => true } を { foo: true } にすぐ変換できたりする
 NeoBundle "AndrewRadev/switch.vim"
-nnoremap - :Switch<cr>
+let g:switch_mapping = "-"
 let g:switch_custom_definitions =
     \ [
     \   {
@@ -459,6 +460,7 @@ if has("lua")
         \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
         \ 'python'   : $HOME . '/dotfiles/dict/python.dict',
         \ 'go'       : $HOME . '/dotfiles/dict/go.dict',
+        \ 'js'       : $HOME . '/dotfiles/dict/js.dict',
         \ 'scheme'   : $HOME.'/.gosh_completions',
         \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
         \ }
@@ -577,7 +579,7 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
 " ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
 NeoBundle 'scrooloose/nerdtree'
-nnoremap <Space><Space>n :NERDTreeToggle<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
 
 " テンプレート集
 NeoBundle 'mattn/sonictemplate-vim'
@@ -601,16 +603,14 @@ au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
 " let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
 
 " for golang
-" exe "set runtimepath+=".globpath($GOPATH,  "src/github.com/nsf/gocode/vim")
-NeoBundleLazy 'Blackrush/vim-gocode', {"autoload": {"filetypes": ['go']}}
-auto BufWritePre *.go execute 'Fmt'
-" auto BufWritePost *.go execute 'Lint' | cwindow
+NeoBundle 'fatih/vim-go'
 
 " 同一ファイル内のdiffを確認する
 " NeoBundle 'adie/BlockDiff'
 
 " マークダウンのプレビュー
-NeoBundle 'kannokanno/previm'
+" NeoBundle 'kannokanno/previm'
+NeoBundle 'kazuph/previm', 'feature/add-plantuml-plugin'
 NeoBundle 'tyru/open-browser.vim'
 " let g:previm_open_cmd = 'open -a Safari'
 nnoremap <silent><Space><Space>p :PrevimOpen<CR>
@@ -707,6 +707,7 @@ au BufNewFile,BufRead *.ep         set filetype=html
 au BufNewFile,BufRead *.pde        set filetype=processing
 au BufNewFile,BufRead *.erb        set filetype=html
 au BufNewFile,BufRead *.tt         set filetype=html
+au BufNewFile,BufRead *.tmpl       set filetype=html
 au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=css
@@ -759,7 +760,7 @@ set laststatus=2
 " python del powerline_setup
 
 " Ctrl+eで'paste'と'nopaste'を切り替える
-set pastetoggle=<C-e>
+" set pastetoggle=<C-e>
 set textwidth=0
 set cindent
 set tabstop=4
@@ -769,16 +770,16 @@ autocmd FileType aspvbs     setlocal sw=4 sts=4 ts=4 et
 autocmd FileType c          setlocal sw=4 sts=4 ts=4 et
 autocmd FileType cpp        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType cs         setlocal sw=4 sts=4 ts=4 et
-autocmd FileType css        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType css        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
-autocmd FileType html       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
+autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
 autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
-autocmd FileType perl       setlocal sw=4 sts=4 ts=4 et
+autocmd FileType perl       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
-autocmd FileType python     setlocal sw=4 sts=4 ts=4 et
+autocmd FileType python     setlocal sw=2 sts=2 ts=2 et
 autocmd FileType ruby       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType haml       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType sh         setlocal sw=4 sts=4 ts=4 et
@@ -786,8 +787,8 @@ autocmd FileType sql        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType vb         setlocal sw=4 sts=4 ts=4 et
 autocmd FileType vim        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType wsh        setlocal sw=4 sts=4 ts=4 et
-autocmd FileType xhtml      setlocal sw=4 sts=4 ts=4 et
-autocmd FileType xml        setlocal sw=4 sts=4 ts=4 et
+autocmd FileType xhtml      setlocal sw=2 sts=2 ts=2 et
+autocmd FileType xml        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType yaml       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType zsh        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType scala      setlocal sw=2 sts=2 ts=2 et
@@ -904,6 +905,10 @@ nnoremap <Space><Space>pyd :e $HOME/dotfiles/dict/python.dict<CR>
 " snippets/go.snipを瞬時に開く
 nnoremap <Space><Space>gos :e $HOME/dotfiles/snippets/go.snip<CR>
 nnoremap <Space><Space>god :e $HOME/dotfiles/dict/go.dict<CR>
+
+" snippets/js.snipを瞬時に開く
+nnoremap <Space><Space>jss :e $HOME/dotfiles/snippets/js.snip<CR>
+nnoremap <Space><Space>jsd :e $HOME/dotfiles/dict/js.dict<CR>
 
 " vimrcの設定を反映
 nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>

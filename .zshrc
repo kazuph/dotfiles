@@ -75,6 +75,9 @@ export ANT_OPTS=-Dfile.encoding=UTF8
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
+# for nordic
+export PATH=$PATH:$HOME/nRF5_SDK/tools/nrfjprog
+
 # rbenv
 if [ -d ${HOME}/.rbenv  ] ; then
   export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
@@ -301,3 +304,5 @@ fshow() {
 }
 
 unset PYTHONPATH
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
