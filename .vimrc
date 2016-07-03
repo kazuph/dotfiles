@@ -442,15 +442,15 @@ if has("lua")
   " Use smartcase.
   let g:neocomplete#enable_smart_case = 1
   " Set minimum syntax keyword length.
-  let g:neocomplete#sources#syntax#min_keyword_length = 4
-  let g:neocomplete#auto_completion_start_length = 4
+  let g:neocomplete#sources#syntax#min_keyword_length = 2
+  let g:neocomplete#auto_completion_start_length = 2
   " let g:neocomplete#skip_auto_completion_time = '5.0'
   let g:neocomplete#skip_auto_completion_time = ''
   let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
   " for snippets
   let g:neosnippet#enable_snipmate_compatibility = 1
-  let g:neosnippet#snippets_directory='~/.vim/vim-snippets, ~/dotfiles/snippets'
+  let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,~/.vim/bundle/vim-snippets/snippets/javascript,~/dotfiles/snippets,~/.vim/bundle/neosnippet-snippets/neosnippets'
 
   " Define dictionary.
   let g:neocomplete#sources#dictionary#dictionaries = {
@@ -518,6 +518,7 @@ if has("lua")
   " Plugin key-mappings.
   imap <C-k>     <Plug>(neosnippet_expand_or_jump)
   smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k>     <Plug>(neosnippet_expand_target)
 
   " For snippet_complete marker.
   if has('conceal')
@@ -655,6 +656,13 @@ autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
 autocmd FileType json       noremap <buffer>,cf :call JsonBeautify()<cr>
 autocmd FileType jsx        noremap <buffer>,cf :call JsxBeautify()<cr>
 
+NeoBundle 'millermedeiros/vim-esformatter'
+nnoremap <silent> <buffer>,es :Esformatter<CR>
+vnoremap <silent> <buffer>,es :EsformatterVisual<CR>
+
+NeoBundle 'mxw/vim-jsx'
+let g:jsx_pragma_required = 1
+
 " NeoBundle 'scrooloose/syntastic.git'
 " let g:syntastic_javascript_checker = 'jshint'
 " let g:syntastic_check_on_save = 1
@@ -716,6 +724,7 @@ au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead cpanfile     set filetype=perl
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 au BufNewFile,BufRead *.es6        set filetype=javascript
+" au BufNewFile,BufRead *.jsx        set filetype=jsx syntax=javascript
 
 " ファイルエンコーディング
 let $LANG='ja_JP.UTF-8'
