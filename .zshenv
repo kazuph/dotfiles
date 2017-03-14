@@ -12,7 +12,3 @@ if [ -d ${HOME}/.rbenv  ] ; then
 fi
 
 # skip_global_compinit=1
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"

@@ -443,6 +443,9 @@ tr_s!
 unpack
 upcase
 upcase!
+resources
+resource
+mount_uploader
 upto
 abort_on_exception
 assert

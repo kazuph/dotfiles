@@ -15,7 +15,8 @@ export EDITOR=vim
 
 zmodload zsh/zle
 export LANG=ja_JP.UTF-8
-fpath=($HOME/dotfiles/zsh-completions/src $fpath)
+# fpath=($HOME/dotfiles/zsh-completions/src $fpath)
+fpath=(/usr/local/share/zsh-completions $fpath)
 
 export PATH=~/dotfiles/bin:$PATH
 alias git='/usr/local/bin/git'
@@ -48,7 +49,7 @@ alias console='brails c'
 alias reset='brake db:migrate:reset'
 alias migrate='brake db:migrate'
 alias seed='brake db:seed'
-alias rename='massren'
+alias rename='massren --config editor vim && massren'
 alias dl='docker ps -l -q'
 alias vf='vim `fzf`'
 alias vc='vim -o `git cl`'
@@ -59,6 +60,8 @@ alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
 alias usb='ls /dev/tty.*'
+alias rn='react-native'
+alias sub=subl
 
 # for go
 if which go >/dev/null 2>&1; then
@@ -164,7 +167,7 @@ bindkey '^q' fzf-cdr
 #   eval $(dvm env)
 # fi
 
-eval "$(docker-machine env default)"
+# eval "$(docker-machine env default)"
 
 # Get DOCKER_HOST IP:PORT
 alias dh="echo $DOCKER_HOST"
@@ -306,3 +309,5 @@ fshow() {
 unset PYTHONPATH
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+export PATH="$(yarn global bin):$PATH"

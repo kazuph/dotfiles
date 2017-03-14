@@ -123,6 +123,9 @@ let g:airline_theme='light'
 NeoBundle 'mattn/hahhah-vim'
 " NeoBundle 'mattn/vim-airline-hahhah'
 
+" YAML
+NeoBundle 'stephpy/vim-yaml'
+
 " gcc or C-_でトグル
 NeoBundle 'tomtom/tcomment_vim'
 
@@ -132,7 +135,7 @@ set t_Co=256
 NeoBundle 'tomasr/molokai'
 
 " ctrlpでいいと思う
-NeoBundle 'kien/ctrlp.vim.git'
+NeoBundle 'ctrlpvim/ctrlp.vim'
 let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
@@ -211,6 +214,8 @@ let g:memolist_path = "~/Dropbox/memo"
 NeoBundle 'rking/ag.vim'
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+
+NeoBundle 'digitaltoad/vim-pug'
 
 " grep後に置換したい
 " gg/したあとにQf<TAB>後、編集、保存で一括置換
@@ -402,8 +407,8 @@ NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
       \ }}
 
 " 括弧入力するのだるい時
-NeoBundle "kana/vim-smartinput"
-NeoBundle 'cohama/vim-smartinput-endwise'
+" NeoBundle "kana/vim-smartinput"
+" NeoBundle 'cohama/vim-smartinput-endwise'
 
 " vimでzencodingする
 " Ctrl+y,で展開
@@ -587,16 +592,15 @@ NeoBundle 'mattn/sonictemplate-vim'
 
 " codic
 NeoBundle 'koron/codic-vim'
-
-" gauche
-NeoBundle 'aharisu/vim_goshrepl'
-NeoBundle 'aharisu/vim-gdev'
-
 " カーソル下の単語を検索
 nnoremap cd :<C-u>Codic<CR>
 
 " ビジュアルモードで選択した部分を検索
 vnoremap cd y:<C-u>Codic <C-R>"<CR>
+
+" gauche
+NeoBundle 'aharisu/vim_goshrepl'
+NeoBundle 'aharisu/vim-gdev'
 
 " coffee break!
 NeoBundle 'kchmck/vim-coffee-script.git'
@@ -605,6 +609,7 @@ au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
 
 " for golang
 NeoBundle 'fatih/vim-go'
+" let g:go_fmt_command = "goimports"
 
 " 同一ファイル内のdiffを確認する
 " NeoBundle 'adie/BlockDiff'
@@ -686,10 +691,30 @@ NeoBundle 'AlexKornitzer/cocoa.vim'
 " for swift
 NeoBundle 'mitsuse/autocomplete-swift'
 
+" keynoteへのソースのシンタックスハイライトの貼り付け用 source syntax highlight
+" :CopyRTF
+NeoBundle 'zerowidth/vim-copy-as-rtf'
+
+" dayone
+NeoBundle 'glidenote/newdayone.vim'
+nnoremap ,nn :MemoNew<cr>
+nnoremap ,ng :MemoGrep<cr>
+nnoremap ,nl :MemoList<CR>
+
 " for PlantUML
 NeoBundle "aklt/plantuml-syntax"
 let g:plantuml_executable_script = "~/dotfiles/plantuml"
 NeoBundle "tex/vimpreviewpandoc"
+
+NeoBundle 'chrisbra/csv.vim'
+if exists("did_load_csvfiletype")
+  finish
+endif
+let did_load_csvfiletype=1
+
+augroup filetypedetect
+  au! BufRead,BufNewFile *.csv,*.dat	setfiletype csv
+augroup END
 
 call neobundle#end()
 
@@ -724,7 +749,8 @@ au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead cpanfile     set filetype=perl
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 au BufNewFile,BufRead *.es6        set filetype=javascript
-" au BufNewFile,BufRead *.jsx        set filetype=jsx syntax=javascript
+au BufRead,BufNewFile,BufReadPre *.pug set filetype=pug
+au BufNewFile,BufRead *.jsx        set filetype=jsx syntax=javascript
 
 " ファイルエンコーディング
 let $LANG='ja_JP.UTF-8'
@@ -785,6 +811,8 @@ autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType pug        setlocal sw=2 sts=2 ts=2 et
+autocmd FileType jsx        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
@@ -1071,4 +1099,4 @@ if has('gui_macvim')
 endif
 
 set wildignore+=**/tmp/,*.so,*.swp,*.zip
-
+set scrolloff=3

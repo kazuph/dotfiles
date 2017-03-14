@@ -71,6 +71,7 @@
   ct  = checkout --track    # remoteのbranchを追跡
   cm  = checkout master
   cd  = checkout develop
+  cs  = checkout staging
   # branch関連
   br  = branch
   ba  = branch -a           # originも含めた全てのbranchを表示
@@ -135,7 +136,10 @@
   smup = submodule foreach "git checkout master; git pull origin master"
 
   # mergeされたbranchを一括削除
-  rmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % git branch -d %
+  rmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % echo %
+  rmmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % git branch -d %
+  # rmm = !git branch | grep -vE '(master|develop)' | cut -c3- | xargs -L1 sh -c '[ `git diff $1 | wc -l` -eq 0 ] && git branch -D $1' sh
+  b = !"(for i in `git branch | colrm 1 2` ; do echo `git log --date=iso8601 -n 1 --pretty=\"format:[%ai] %h\" $i` $i ; done) | sort -r"
 [http]
   postBuffer = 2M
 #driver for merging XCode project files
