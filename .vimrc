@@ -32,7 +32,7 @@ if &compatible
 endif
 
 " Required:
-set runtimepath^=/Users/kazuph/.dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=/Users/kazuph/.dein/repos/github.com/Shougo/dein.vim
 
 " Required:
 call dein#begin(expand('/Users/kazuph/.dein'))
@@ -46,96 +46,27 @@ call dein#add('Shougo/vimproc.vim', {
     \     'mac': 'make -f make_mac.mak',
     \     'linux': 'make',
     \     'unix': 'gmake',
-    \    },
+    \    }
     \ })
-call dein#add('Shougo/neocomplete.vim')
-call dein#add('Shougo/neomru.vim')
-call dein#add('Shougo/neosnippet.vim')
-call dein#add('Shougo/neosnippet-snippets')
-call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
-call dein#add('scrooloose/syntastic')
-call dein#add('thinca/vim-quickrun')
-call dein#add('Shougo/deoplete.nvim')
-call dein#add('landaire/deoplete-swift')
-call dein#add('kballard/vim-swift')
-call dein#add('keith/swift.vim')
-
-" Required:
-call dein#end()
-
-" Required:
-filetype plugin indent on
-
-" quickrun
-" normalモードで \r で実行
-let g:quickrun_config = {}
-let g:quickrun_config['swift'] = {
-\ 'command': 'xcrun',
-\ 'cmdopt': 'swift',
-\ 'exec': '%c %o %s',
-\}
-
-" deopleteの自動補完on
-let g:deoplete#enable_at_startup = 1
-" swiftの自動補完on
-let g:deoplete#sources#swift#daemon_autostart = 1
-
-
-" If you want to install not installed plugins on startup.
-if dein#check_install()
- call dein#install()
-endif
-
-"End dein Scripts-------------------------
-
-" Note: Skip initialization for vim-tiny or vim-small.
-if !1 | finish | endif
-
-if has('vim_starting')
-  set nocompatible               " Be iMproved
-
-  " Required:
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
-endif
-
-" Required:
-call neobundle#begin(expand('~/.vim/bundle/'))
-
-" NeoBundle自体の管理
-NeoBundleFetch 'Shougo/neobundle.vim'
 
 " ステータスラインに情報を表示 → もう力はいらない
-" NeoBundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
-" NeoBundle 'Lokaltog/vim-powerline.git'
-NeoBundle 'vim-airline/vim-airline'
-NeoBundle 'vim-airline/vim-airline-themes'
+call dein#add('vim-airline/vim-airline')
 let g:airline_powerline_fonts = 1
-let g:airline_theme='light'
-" let g:airline_left_sep = '⮀'
-" let g:airline_left_alt_sep = '⮁'
-" let g:airline_right_sep = '⮂'
-" let g:airline_right_alt_sep = '⮃'
-" let g:airline_branch_prefix = '⭠'
-" let g:airline_readonly_symbol = '⭤'
-" let g:airline_linecolumn_prefix = '⭡'
-"
-" " ﾊｧﾊｧ...ﾊｧﾊｧ...
-NeoBundle 'mattn/hahhah-vim'
-" NeoBundle 'mattn/vim-airline-hahhah'
+" let g:airline_theme='light'
 
 " YAML
-NeoBundle 'stephpy/vim-yaml'
+call dein#add('stephpy/vim-yaml')
 
 " gcc or C-_でトグル
-NeoBundle 'tomtom/tcomment_vim'
+call dein#add('tomtom/tcomment_vim')
 
 " やっぱりVimはかっこよくなければならない
 set t_Co=256
 
-NeoBundle 'tomasr/molokai'
+call dein#add('tomasr/molokai')
 
 " ctrlpでいいと思う
-NeoBundle 'ctrlpvim/ctrlp.vim'
+call dein#add('ctrlpvim/ctrlp.vim')
 let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
@@ -144,7 +75,7 @@ let g:ctrlp_custom_ignore = {
   \ }
 
 " 依存が少ないyankringらしい
-NeoBundle 'LeafCage/yankround.vim'
+call dein#add('LeafCage/yankround.vim')
 nmap p <Plug>(yankround-p)
 nmap P <Plug>(yankround-P)
 nmap <C-p> <Plug>(yankround-prev)
@@ -158,20 +89,20 @@ nnoremap <Space><Space>y :<C-u>CtrlPYankRound<CR>
 " da' で'も含めて削df
 " cs'" cs"' などと囲っているものに対する操作ができる
 " visualモードのときはSを代用
-NeoBundle "tpope/vim-surround"
+call dein#add("tpope/vim-surround")
 
 " テキストオブジェクトを使い倒す
-NeoBundle 'kana/vim-operator-user.git'
+call dein#add('kana/vim-operator-user.git')
 
 " Rを使ってyankしてるものと置き換え
-NeoBundle 'kana/vim-operator-replace.git'
+call dein#add('kana/vim-operator-replace.git')
 map R <Plug>(operator-replace)
 
 " キャメル・アンダースコア記法を扱いやすく
 " , w , e , b
 " v, w
 " d, w
-NeoBundle 'bkad/CamelCaseMotion.git'
+call dein#add('bkad/CamelCaseMotion.git')
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
@@ -182,27 +113,25 @@ sunmap e
 sunmap ge
 
 "  ","と押して", "としてくれる優しさ
-NeoBundle "smartchr"
+call dein#add("smartchr")
 inoremap <expr> , smartchr#one_of(', ', ',')
-autocmd FileType perl inoremap <buffer> <expr> . smartchr#loop('.',  '->')
-autocmd FileType perl inoremap <buffer> <expr> = smartchr#loop('=',  '=>', '==')
 
 " カーソルジェットコースター
-NeoBundle 'rhysd/accelerated-jk.git'
+call dein#add('rhysd/accelerated-jk.git')
 let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
 
 " ヤンクの履歴を参照したい
-NeoBundle 'kana/vim-fakeclip.git'
+call dein#add('kana/vim-fakeclip.git')
 
 " 正規表現をPerl風に
 " :%S///gc
-NeoBundle 'kazuph/eregex.vim'
+call dein#add('kazuph/eregex.vim')
 nnoremap / :<C-u>M/
 
 " memoはやっぱりVimからやろ
-NeoBundle 'glidenote/memolist.vim'
+call dein#add('glidenote/memolist.vim')
 nnoremap ,mn :MemoNew<cr>
 nnoremap ,mg :MemoGrep<cr>
 nnoremap ,ml :MemoList<CR>
@@ -211,92 +140,29 @@ let g:memolist_ex_cmd = 'NERDTree'
 let g:memolist_path = "~/Dropbox/memo"
 
 " 爆速のgrepであるagを使いたい
-NeoBundle 'rking/ag.vim'
+call dein#add('rking/ag.vim')
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
-NeoBundle 'digitaltoad/vim-pug'
+" git操作
+call dein#add('tpope/vim-fugitive')
+call dein#add('gregsexton/gitv')
 
 " grep後に置換したい
 " gg/したあとにQf<TAB>後、編集、保存で一括置換
-NeoBundle 'thinca/vim-qfreplace'
-
-" 僕だってtag使ってみたい
-" NeoBundle 'szw/vim-tags'
-" let g:vim_tags_project_tags_command = "/usr/local/bin/ctags -R {OPTIONS} {DIRECTORY} 2>/dev/null"
-" let g:vim_tags_gems_tags_command = "/usr/local/bin/ctags -R {OPTIONS} `bundle show --paths` 2>/dev/null"
-
-NeoBundle 'vim-scripts/taglist.vim'
-set tags=./tags,tags,../tags
-let Tlist_Show_One_File = 1
-let Tlist_Use_Right_Window = 1
-let Tlist_Exit_OnlyWindow = 1
-nnoremap <silent> <Space><Space>t :TlistToggle<CR>
-
-NeoBundle "majutsushi/tagbar"
-nnoremap <C-t> :TagbarToggle<CR>
-nnoremap <C-]> g<C-]>
+call dein#add('thinca/vim-qfreplace')
 
 " 賢いf
-" NeoBundle 'rhysd/clever-f.vim'
+call dein#add('rhysd/clever-f.vim')
 
 " gitの差分を表示するぜ
-" NeoBundle 'airblade/vim-gitgutter'
-" nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
-" nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
-
-" \rで開いているコードを実行
-NeoBundle "thinca/vim-quickrun.git"
-" let g:quickrun_config            = {}
-" let g:quickrun_config.markdown   = {
-"       \   'outputter' : 'null',
-"       \   'command'   : 'open',
-"       \   'exec'      : '%c %s',
-"       \ }
-"
-" " let g:quickrun_config.c   = {
-" "       \   "outputter" : "error:buffer:quickfix",
-" "       \   "runner" : "vimproc",
-" "       \   'command'   : './make',
-" "       \   'exec'      : '%c %s:t:r-BCM920736TAG_Q32 download',
-" "       \ }
-"
-" " CSは実行せずにJSにコンパイル
-" let g:quickrun_config.coffee = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
-
-" Programming perl
-" NeoBundle "c9s/perlomni.vim"
-" NeoBundle "mattn/perlvalidate-vim.git"
-" NeoBundle "vim-perl/vim-perl"
-" NeoBundle "y-uuki/perl-local-lib-path.vim"
-" autocmd FileType perl PerlLocalLibPath
-" nnoremap ,pt <Esc>:%! perltidy -se<CR>
-" vnoremap ,pt <Esc>:'<,'>! perltidy -se<CR>
-
-" Rubyでのコーディングを楽にする
-" NeoBundle "tpope/vim-rails"
-" NeoBundle 'vim-ruby/vim-ruby'
-" autocmd BufEnter * if exists("b:rails_root") | NeoCompleteSetFileType ruby.rails | endif
-" autocmd BufEnter * if (expand("%") =~ "_spec\.rb$") || (expand("%") =~ "^spec.*\.rb$") | NeoCompleteSetFileType ruby.rspec | endif
-" autocmd User Rails.view*                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.view.snip
-" autocmd User Rails.view.haml             NeoSnippetSource ~/dotfiles/snippets/haml.rails.view.snip
-" autocmd User Rails.view.erb              NeoSnippetSource ~/dotfiles/snippets/eruby.rails.view.snip
-" autocmd User Rails.model                 NeoSnippetSource ~/dotfiles/snippets/ruby.rails.model.snip
-" autocmd User Rails.controller            NeoSnippetSource ~/dotfiles/snippets/ruby.rails.controller.snip
-" autocmd User Rails.db.migration          NeoSnippetSource ~/dotfiles/snippets/ruby.rails.migrate.snip
-" autocmd User Rails/config/environment.rb NeoSnippetSource ~/dotfiles/snippets/ruby.rails.environment.snip
-" autocmd User Rails/config/routes.rb      NeoSnippetSource ~/dotfiles/snippets/ruby.rails.route.snip
-" autocmd User Rails.fixtures.replacement  NeoSnippetSource ~/dotfiles/snippets/ruby.factory_girl.snip
-" autocmd User Rails.spec.controller       NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.controller.snip
-" autocmd User Rails.spec.model            NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.model.snip
-" autocmd User Rails.spec.helper           NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.helper.snip
-" autocmd User Rails.spec.feature          NeoSnippetSource ~/dotfiles/snippets/ruby.capybara.snip
-" autocmd User Rails.spec.routing          NeoSnippetSource ~/dotfiles/snippets/ruby.rspec.routing.snip
-" autocmd User Rails/db/migrate/*          NeoSnippetSource ~/dotfiles/snippets/ruby.rails.migrate.snip
+call dein#add('airblade/vim-gitgutter')
+nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
+nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 
 " ノーマルモード時に-でswitch
 " { :foo => true } を { foo: true } にすぐ変換できたりする
-NeoBundle "AndrewRadev/switch.vim"
+call dein#add("AndrewRadev/switch.vim")
 let g:switch_mapping = "-"
 let g:switch_custom_definitions =
     \ [
@@ -389,52 +255,34 @@ let g:switch_custom_definitions =
     \   ['☐', '☑']
     \ ]
 
-" NeoBundle 'mattn/vim-rubyfmt'
-
-" APIのドキュメントを参照する
-" Shift+K
-NeoBundle 'thinca/vim-ref'
-let g:ref_open = 'vsplit'
-let g:ref_refe_cmd = "rurema"
-let g:ref_refe_version = 2
-
 " endを自動挿入
-NeoBundle 'tpope/vim-endwise.git'
+call dein#add('tpope/vim-endwise.git')
 
 " do endを%移動
-NeoBundleLazy 'edsono/vim-matchit', { 'autoload' : {
+call dein#add('adelarsq/vim-matchit', { 'autoload' : {
       \ 'filetypes': ['ruby', 'html'],
-      \ }}
+      \ }})
 
 " 括弧入力するのだるい時
-" NeoBundle "kana/vim-smartinput"
-" NeoBundle 'cohama/vim-smartinput-endwise'
+call dein#add("kana/vim-smartinput")
+call dein#add('cohama/vim-smartinput-endwise')
 
-" vimでzencodingする
 " Ctrl+y,で展開
-NeoBundle "mattn/emmet-vim"
+call dein#add("mattn/emmet-vim")
 let g:user_zen_settings = { 'indentation' : '    ', }
-
-" ついに闇の力に手を染めるとき
-NeoBundle 'Shougo/vimproc', {
-      \ 'build' : {
-      \     'mac' : 'make -f make_mac.mak',
-      \     'unix' : 'make -f make_unix.mak',
-      \    },
-      \ }
 
 " NeoComplate {{{
 if has("lua")
-  NeoBundle 'Shougo/neocomplete'
-  NeoBundleLazy 'Shougo/neosnippet', {
+  call dein#add('Shougo/neocomplete')
+  call dein#add('Shougo/neosnippet', {
         \ 'autoload' : {
         \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
         \   'filetypes' : 'snippet',
         \   'insert' : 1,
-        \ }}
+        \ }})
 
-  NeoBundle 'Shougo/neosnippet-snippets'
-  NeoBundle 'honza/vim-snippets'
+  call dein#add('Shougo/neosnippet-snippets')
+  call dein#add('honza/vim-snippets')
 
   "--------------------------------------------------------------------------
   " neocomplate
@@ -539,192 +387,105 @@ endif
 " NeoComplate end}}}
 
 " 英語補完
-NeoBundle 'ujihisa/neco-look'
+call dein#add('ujihisa/neco-look')
 
 " スペルチェック
 nnoremap <Space>s :<C-u>setl spell!<CR>
 
 " まーくだうん
-NeoBundle "tpope/vim-markdown"
+call dein#add("tpope/vim-markdown")
 autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
-NeoBundle 'h1mesuke/vim-alignta.git'
+call dein#add('h1mesuke/vim-alignta.git')
 xnoremap <silent> a: :Alignta 01 :<CR>
 xnoremap al :Alignta<Space>
 
-" シンタックスチェックを非同期で
-" 他vim-quickrunとvimprocに依存
-" NeoBundle "osyo-manga/vim-watchdogs"
-" NeoBundle "osyo-manga/shabadou.vim"
-" NeoBundle "cohama/vim-hier"
-" let g:watchdogs_check_BufWritePost_enable = 1
-" let g:quickrun_config = {
-"       \   'watchdogs_checker/_' : {
-"       \       'outputter/quickfix/open_cmd' : '',
-"       \   }
-"       \ }
-" call watchdogs#setup(g:quickrun_config)
-
-" ゲーム。結構難しい
-" NeoBundle 'deris/vim-duzzle'
-
-" CSSのデザインをライブで行う
-" NeoBundle 'mattn/livestyle-vim'
-
 " 選択部分のキーワードを*を押して検索
-NeoBundle 'thinca/vim-visualstar'
+call dein#add('thinca/vim-visualstar')
 
 " 日本語固定モード
-NeoBundle 'fuenor/im_control.vim'
+call dein#add('fuenor/im_control.vim')
 "<C-^>でIM制御が行える場合の設定
 let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
 " ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
-NeoBundle 'scrooloose/nerdtree'
+call dein#add('scrooloose/nerdtree')
 nnoremap <C-n> :NERDTreeToggle<CR>
 
-" テンプレート集
-NeoBundle 'mattn/sonictemplate-vim'
-
 " codic
-NeoBundle 'koron/codic-vim'
+call dein#add('koron/codic-vim')
 " カーソル下の単語を検索
 nnoremap cd :<C-u>Codic<CR>
-
-" ビジュアルモードで選択した部分を検索
 vnoremap cd y:<C-u>Codic <C-R>"<CR>
 
-" gauche
-NeoBundle 'aharisu/vim_goshrepl'
-NeoBundle 'aharisu/vim-gdev'
-
-" coffee break!
-NeoBundle 'kchmck/vim-coffee-script.git'
-au BufRead, BufNewFile, BufReadPre *.coffee   set filetype=coffee
-" let g:quickrun_config['coffee'] = {'command' : 'coffee',  'exec' : ['%c -cbp %s']}
-
-" for golang
-NeoBundle 'fatih/vim-go'
+" golang
+call dein#add('fatih/vim-go')
 " let g:go_fmt_command = "goimports"
 
-" 同一ファイル内のdiffを確認する
-" NeoBundle 'adie/BlockDiff'
-
 " マークダウンのプレビュー
-" NeoBundle 'kannokanno/previm'
-NeoBundle 'kazuph/previm', 'feature/add-plantuml-plugin'
-NeoBundle 'tyru/open-browser.vim'
-" let g:previm_open_cmd = 'open -a Safari'
+" call dein#add('kannokanno/previm')
+call dein#add('kazuph/previm', {'rev': 'feature/add-plantuml-plugin'})
+call dein#add('tyru/open-browser.vim')
 nnoremap <silent><Space><Space>p :PrevimOpen<CR>
 nnoremap <silent><Space><Space>l :!open http://localhost:3000<CR>
 
 " Dockerfileのハイライト
-NeoBundle "ekalinin/Dockerfile.vim"
-
-" gist
-NeoBundle "mattn/gist-vim"
-NeoBundle 'mattn/webapi-vim'
-
-" typescript
-NeoBundle 'leafgarland/typescript-vim'
-NeoBundle 'clausreinke/typescript-tools'
-
-" arduino
-" <Leader>ac - Compile the current sketch.
-" <Leader>ad - Compile and deploy the current sketch.
-" <Leader>as - Open a serial port in screen.
-NeoBundle "jplaut/vim-arduino-ino.git"
-let g:vim_arduino_auto_open_serial = 1
-
-NeoBundle "heavenshell/vim-jsdoc"
-" NeoBundle 'Valloric/YouCompleteMe',  {
-"       \ 'build' : {
-"       \     'mac' : 'git submodule update --init --recursive && ./install.sh',
-"       \    },
-"       \ }
-" let g:ycm_key_list_select_completion = ['',  '<Down>']
-" let g:ycm_key_list_previous_completion = ['',  '<Up>']
+call dein#add("ekalinin/Dockerfile.vim")
 
 " HTML5
-NeoBundle "othree/html5.vim"
+call dein#add("othree/html5.vim")
 autocmd FileType html :compiler tidy
 autocmd FileType html :setlocal makeprg=tidy\ -raw\ -quiet\ -errors\ --gnu-emacs\ yes\ \"%\"
 
-NeoBundle 'maksimr/vim-jsbeautify'
+call dein#add('maksimr/vim-jsbeautify')
 autocmd FileType javascript noremap <buffer>,cf :call JsBeautify()<cr>
 autocmd FileType html       noremap <buffer>,cf :call HtmlBeautify()<cr>
 autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
 autocmd FileType json       noremap <buffer>,cf :call JsonBeautify()<cr>
 autocmd FileType jsx        noremap <buffer>,cf :call JsxBeautify()<cr>
 
-NeoBundle 'millermedeiros/vim-esformatter'
+call dein#add('millermedeiros/vim-esformatter')
 nnoremap <silent> <buffer>,es :Esformatter<CR>
 vnoremap <silent> <buffer>,es :EsformatterVisual<CR>
 
-NeoBundle 'mxw/vim-jsx'
+call dein#add('mxw/vim-jsx')
 let g:jsx_pragma_required = 1
 
-" NeoBundle 'scrooloose/syntastic.git'
-" let g:syntastic_javascript_checker = 'jshint'
-" let g:syntastic_check_on_save = 1
-" let g:syntastic_auto_loc_list = 0
-
-" doxygen
-NeoBundle 'DoxygenToolkit.vim'
-let g:load_doxygen_syntax=1
-nnoremap <Space><Space>d :<C-u>Dox<CR>
-
-NeoBundle 'rhysd/vim-clang-format'
-autocmd FileType c,cpp,objc nnoremap <buffer>,cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer>,cf :ClangFormat<CR>
-
-NeoBundle 'elixir-lang/vim-elixir'
-
-NeoBundle 'slim-template/vim-slim'
-
-NeoBundle 'AlexKornitzer/cocoa.vim'
-
-" for swift
-NeoBundle 'mitsuse/autocomplete-swift'
-
-" keynoteへのソースのシンタックスハイライトの貼り付け用 source syntax highlight
+" keynoteへのソースのシンタックスハイライトの貼り付け用
 " :CopyRTF
-NeoBundle 'zerowidth/vim-copy-as-rtf'
-
-" dayone
-NeoBundle 'glidenote/newdayone.vim'
-nnoremap ,nn :MemoNew<cr>
-nnoremap ,ng :MemoGrep<cr>
-nnoremap ,nl :MemoList<CR>
+call dein#add('zerowidth/vim-copy-as-rtf')
 
 " for PlantUML
-NeoBundle "aklt/plantuml-syntax"
+call dein#add("aklt/plantuml-syntax")
 let g:plantuml_executable_script = "~/dotfiles/plantuml"
-NeoBundle "tex/vimpreviewpandoc"
+call dein#add("tex/vimpreviewpandoc")
 
-NeoBundle 'chrisbra/csv.vim'
-if exists("did_load_csvfiletype")
-  finish
-endif
-let did_load_csvfiletype=1
+" 常駐化する
+call dein#add("thinca/vim-singleton")
 
 augroup filetypedetect
   au! BufRead,BufNewFile *.csv,*.dat	setfiletype csv
 augroup END
 
-call neobundle#end()
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+ call dein#install()
+endif
+
+" Required:
+call dein#end()
+call dein#save_state()
+
+"End dein Scripts-------------------------
 
 " ファイル名と内容をもとにファイルタイププラグインを有効にする
 filetype plugin indent on
 " ハイライトON
 syntax on
-
-" まだインストールしていないプラグインをインストールしてくれる
-NeoBundleCheck
 
 "--------------------------------------------------------------------------
 " BasicSetting
@@ -733,8 +494,6 @@ NeoBundleCheck
 nnoremap <C-h>  :<C-u>help<Space><C-r><C-w><CR>
 
 " 認識されないっぽいファイルタイプを追加
-au BufNewFile,BufRead *.psgi       set filetype=perl
-au BufNewFile,BufRead *.t          set filetype=perl
 au BufNewFile,BufRead *.ejs        set filetype=html
 au BufNewFile,BufRead *.ep         set filetype=html
 au BufNewFile,BufRead *.pde        set filetype=processing
@@ -746,7 +505,6 @@ au BufNewFile,BufRead *.tt2        set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=css
 au BufNewFile,BufRead Guardfile    set filetype=ruby
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
-au BufNewFile,BufRead cpanfile     set filetype=perl
 au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
 au BufNewFile,BufRead *.es6        set filetype=javascript
 au BufRead,BufNewFile,BufReadPre *.pug set filetype=pug
@@ -813,7 +571,6 @@ autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
 autocmd FileType pug        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType jsx        setlocal sw=2 sts=2 ts=2 et
-autocmd FileType coffee     setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType php        setlocal sw=4 sts=4 ts=4 et
 autocmd FileType python     setlocal sw=2 sts=2 ts=2 et
@@ -1015,7 +772,6 @@ nnoremap <silent><Space>cd :<C-u>CD<CR>
 nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zsh_history \| perl -pe 's/^.+;//' \| fzf<CR>
 
 let g:markdown_fenced_languages = [
-\  'coffee',
 \  'css',
 \  'erb=eruby',
 \  'javascript',
@@ -1100,3 +856,8 @@ endif
 
 set wildignore+=**/tmp/,*.so,*.swp,*.zip
 set scrolloff=3
+
+if has('nvim')
+  set termguicolors
+  tnoremap <silent> <ESC> <C-\><C-n>
+endif
