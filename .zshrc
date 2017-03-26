@@ -62,6 +62,8 @@ alias get='ghq get '
 alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
+alias vim=nvim
+alias vi=nvim
 
 # for go
 if which go >/dev/null 2>&1; then
@@ -311,3 +313,9 @@ unset PYTHONPATH
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH="$(yarn global bin):$PATH"
+
+function pe() {
+  vim -o `ag "$@" . | peco --exec 'awk -F : '"'"'{print "+" $2 " " $1}'"'"''`
+}
+
+
