@@ -30,5 +30,6 @@ ln -sfv ~/dotfiles/.zshenv .zshenv
 ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
 
 # NeoBundleInstall from commandline
-curl https://raw.githubusercontent.com/Shougo/neobundle.vim/master/bin/install.sh | sh
+curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > installer.sh
+sh ./installer.sh ~/.dein
 vim +qa

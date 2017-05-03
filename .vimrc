@@ -50,18 +50,19 @@ call dein#add('Shougo/vimproc.vim', {
     \ })
 
 " ステータスラインに情報を表示 → もう力はいらない
-call dein#add('vim-airline/vim-airline')
-let g:airline_powerline_fonts = 1
-" let g:airline_theme='light'
-
+call dein#add('itchyny/lightline.vim')
+let g:lightline = {
+      \ 'component': {
+      \   'readonly': '%{&readonly?"⭤":""}',
+      \ },
+      \ 'separator': { 'left': '⮀', 'right': '⮂' },
+      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+      \ }
 " YAML
 call dein#add('stephpy/vim-yaml')
 
 " gcc or C-_でトグル
 call dein#add('tomtom/tcomment_vim')
-
-" やっぱりVimはかっこよくなければならない
-set t_Co=256
 
 call dein#add('tomasr/molokai')
 
@@ -124,11 +125,6 @@ nmap k <Plug>(accelerated_jk_gk)
 
 " ヤンクの履歴を参照したい
 call dein#add('kana/vim-fakeclip.git')
-
-" 正規表現をPerl風に
-" :%S///gc
-call dein#add('kazuph/eregex.vim')
-nnoremap / :<C-u>M/
 
 " memoはやっぱりVimからやろ
 call dein#add('glidenote/memolist.vim')
@@ -272,118 +268,116 @@ call dein#add("mattn/emmet-vim")
 let g:user_zen_settings = { 'indentation' : '    ', }
 
 " NeoComplate {{{
-if has("lua")
-  call dein#add('Shougo/neocomplete')
-  call dein#add('Shougo/neosnippet', {
-        \ 'autoload' : {
-        \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
-        \   'filetypes' : 'snippet',
-        \   'insert' : 1,
-        \ }})
+call dein#add('Shougo/neocomplete')
+call dein#add('Shougo/neosnippet', {
+      \ 'autoload' : {
+      \   'commands' : ['NeoSnippetEdit', 'NeoSnippetSource'],
+      \   'filetypes' : 'snippet',
+      \   'insert' : 1,
+      \ }})
 
-  call dein#add('Shougo/neosnippet-snippets')
-  call dein#add('honza/vim-snippets')
+call dein#add('Shougo/neosnippet-snippets')
+call dein#add('honza/vim-snippets')
 
-  "--------------------------------------------------------------------------
-  " neocomplate
-  "--------------------------------------------------------------------------
-  " let g:neocomplete#force_overwrite_completefunc = 1
-  " Disable AutoComplPop.
-  let g:acp_enableAtStartup = 0
-  " Use neocomplete.
-  let g:neocomplete#enable_at_startup = 1
-  " Use smartcase.
-  let g:neocomplete#enable_smart_case = 1
-  " Set minimum syntax keyword length.
-  let g:neocomplete#sources#syntax#min_keyword_length = 2
-  let g:neocomplete#auto_completion_start_length = 2
-  " let g:neocomplete#skip_auto_completion_time = '5.0'
-  let g:neocomplete#skip_auto_completion_time = ''
-  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+"--------------------------------------------------------------------------
+" neocomplate
+"--------------------------------------------------------------------------
+" let g:neocomplete#force_overwrite_completefunc = 1
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 2
+let g:neocomplete#auto_completion_start_length = 2
+" let g:neocomplete#skip_auto_completion_time = '5.0'
+let g:neocomplete#skip_auto_completion_time = ''
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
-  " for snippets
-  let g:neosnippet#enable_snipmate_compatibility = 1
-  let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,~/.vim/bundle/vim-snippets/snippets/javascript,~/dotfiles/snippets,~/.vim/bundle/neosnippet-snippets/neosnippets'
+" for snippets
+let g:neosnippet#enable_snipmate_compatibility = 1
+let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets,~/.vim/bundle/vim-snippets/snippets/javascript,~/dotfiles/snippets,~/.vim/bundle/neosnippet-snippets/neosnippets'
 
-  " Define dictionary.
-  let g:neocomplete#sources#dictionary#dictionaries = {
-        \ 'default' : '',
-        \ 'vimshell' : $HOME.'/.vimshell_hist',
-        \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
-        \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
-        \ 'python'   : $HOME . '/dotfiles/dict/python.dict',
-        \ 'go'       : $HOME . '/dotfiles/dict/go.dict',
-        \ 'js'       : $HOME . '/dotfiles/dict/js.dict',
-        \ 'scheme'   : $HOME.'/.gosh_completions',
-        \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
-        \ }
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+      \ 'default' : '',
+      \ 'vimshell' : $HOME.'/.vimshell_hist',
+      \ 'perl'     : $HOME . '/dotfiles/dict/perl.dict',
+      \ 'ruby'     : $HOME . '/dotfiles/dict/ruby.dict',
+      \ 'python'   : $HOME . '/dotfiles/dict/python.dict',
+      \ 'go'       : $HOME . '/dotfiles/dict/go.dict',
+      \ 'js'       : $HOME . '/dotfiles/dict/js.dict',
+      \ 'scheme'   : $HOME.'/.gosh_completions',
+      \ 'cpanfile' : $HOME . '/.vim/bundle/vim-cpanfile/dict/cpanfile.dict'
+      \ }
 
-  " Define keyword.
-  if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-  endif
-  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-  let g:neocomplete#keyword_patterns['perl'] = '\h\w*->\h\w*\|\h\w*::\w*'
-  let g:neocomplete#keyword_patterns['gosh-repl'] = "[[:alpha:]+*/@$_=.!?-][[:alnum:]+*/@$_:=.!?-]*"
-
-  " Plugin key-mappings.
-  inoremap <expr><C-g>     neocomplete#undo_completion()
-  inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-  " Recommended key-mappings.
-  " <CR>: close popup and save indent.
-  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-    return neocomplete#smart_close_popup() . "\<CR>"
-    " For no inserting <CR> key.
-    "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-  endfunction
-  " <TAB>: completion.
-  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-  " <C-h>, <BS>: close popup and delete backword char.
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><C-y>  neocomplete#close_popup()
-  inoremap <expr><C-e>  neocomplete#cancel_popup()
-
-  " Enable omni completion.
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-  " Enable heavy omni completion.
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  " let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
-
-  " For perlomni.vim setting.
-  " https://github.com/c9s/perlomni.vim
-  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-
-  " <TAB>: completion.
-  imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-  smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-  inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
-
-  " Plugin key-mappings.
-  imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-  smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-  xmap <C-k>     <Plug>(neosnippet_expand_target)
-
-  " For snippet_complete marker.
-  if has('conceal')
-    set conceallevel=2 concealcursor=i
-  endif
-
-  " ctags
-  let g:neocomplcache_ctags_arguments_list = {
-        \ 'perl' : '-R -h ".pm"',
-        \ }
-
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+  let g:neocomplete#keyword_patterns = {}
 endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+let g:neocomplete#keyword_patterns['perl'] = '\h\w*->\h\w*\|\h\w*::\w*'
+let g:neocomplete#keyword_patterns['gosh-repl'] = "[[:alpha:]+*/@$_=.!?-][[:alnum:]+*/@$_:=.!?-]*"
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplete#smart_close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplete#close_popup()
+inoremap <expr><C-e>  neocomplete#cancel_popup()
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+" let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+" <TAB>: completion.
+imap <expr><TAB> pumvisible() ? "\<C-n>" : neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+" Plugin key-mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" For snippet_complete marker.
+if has('conceal')
+  set conceallevel=2 concealcursor=i
+endif
+
+" ctags
+let g:neocomplcache_ctags_arguments_list = {
+      \ 'perl' : '-R -h ".pm"',
+      \ }
+
 " NeoComplate end}}}
 
 " 英語補完
@@ -412,9 +406,20 @@ let IM_CtrlMode = 4
 ""ctrl+jで日本語入力固定モードをOnOff
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 
+" devicon ;)
+call dein#add('ryanoasis/vim-devicons')
+let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 0
+let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
+
 " ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
 call dein#add('scrooloose/nerdtree')
 nnoremap <C-n> :NERDTreeToggle<CR>
+call dein#add('tiagofumo/vim-nerdtree-syntax-highlight')
+call dein#add('Xuyuanp/nerdtree-git-plugin')
+
+" The fancy start screen for Vim.
+call dein#add('mhinz/vim-startify')
 
 " codic
 call dein#add('koron/codic-vim')
@@ -452,7 +457,9 @@ call dein#add('millermedeiros/vim-esformatter')
 nnoremap <silent> <buffer>,es :Esformatter<CR>
 vnoremap <silent> <buffer>,es :EsformatterVisual<CR>
 
+call dein#add('pangloss/vim-javascript')
 call dein#add('mxw/vim-jsx')
+let g:jsx_ext_required = 0
 let g:jsx_pragma_required = 1
 
 " keynoteへのソースのシンタックスハイライトの貼り付け用
@@ -503,17 +510,18 @@ au BufNewFile,BufRead *.tmpl       set filetype=html
 au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=css
-au BufNewFile,BufRead Guardfile    set filetype=ruby
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
-au BufRead, BufNewFile jquery.*.js set ft=javascript syntax=jquery
-au BufNewFile,BufRead *.es6        set filetype=javascript
+au BufNewFile,BufRead *.es6        set filetype=javascript.jsx
+au BufNewFile,BufRead *.js        set filetype=javascript.jsx
 au BufRead,BufNewFile,BufReadPre *.pug set filetype=pug
-au BufNewFile,BufRead *.jsx        set filetype=jsx syntax=javascript
 
 " ファイルエンコーディング
 let $LANG='ja_JP.UTF-8'
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
+
+" やっぱりVimはかっこよくなければならない
+set t_Co=256
 
 " 検索語を強調表示
 set hlsearch
@@ -647,11 +655,6 @@ nnoremap ]q :cnext<CR>
 nnoremap [q :cprevious<CR>
 nnoremap [Q :<C-u>cfirst<CR>
 nnoremap ]Q :<C-u>clast<CR>
-
-" 0で行頭、9で行末
-" こういうのは記号じゃなくて数字がいい
-nnoremap 0 ^
-nnoremap 9 $
 
 " visualmodeでインテントを＞＜の連打で変更できるようにする
 vnoremap < <gv
@@ -845,14 +848,14 @@ endfunction
 
 colorscheme molokai
 
-if has('gui_macvim')
-    set showtabline=2	" タブを常に表示
-    set imdisable	" IMを無効化
-    set transparency=10	" 透明度を指定
-    set antialias
-    set guifont=Hack:h12
-    " colorscheme macvim
-endif
+" if has('gui_macvim')
+"     set showtabline=2	" タブを常に表示
+"     set imdisable	" IMを無効化
+"     set transparency=10	" 透明度を指定
+"     set antialias
+"     " colorscheme macvim
+"     set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete:h14
+" endif
 
 set wildignore+=**/tmp/,*.so,*.swp,*.zip
 set scrolloff=3

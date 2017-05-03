@@ -40,7 +40,7 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
 alias notify='perl -nle '\''print "display notification \"$_\" with title \"Terminal\""'\'' | osascript'
-alias t='tree'
+alias t='tree -I "node_modules|bundle"'
 alias brake='bin/rake'
 alias brails='bin/rails'
 alias brspec='bin/rspec'
@@ -62,7 +62,7 @@ alias get='ghq get '
 alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
-alias vim=nvim
+alias vim=vim
 alias vi=nvim
 
 # for go
