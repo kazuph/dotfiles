@@ -64,7 +64,11 @@ call dein#add('stephpy/vim-yaml')
 " gcc or C-_でトグル
 call dein#add('tomtom/tcomment_vim')
 
-call dein#add('tomasr/molokai')
+call dein#add('flazz/vim-colorschemes')
+colorscheme molokai
+" set background=light
+" let g:solarized_termcolors=256
+" colorscheme solarized
 
 " ctrlpでいいと思う
 call dein#add('ctrlpvim/ctrlp.vim')
@@ -461,6 +465,7 @@ call dein#add('pangloss/vim-javascript')
 call dein#add('mxw/vim-jsx')
 let g:jsx_ext_required = 0
 let g:jsx_pragma_required = 1
+" call dein#add('posva/vim-vue')
 
 " keynoteへのソースのシンタックスハイライトの貼り付け用
 " :CopyRTF
@@ -509,11 +514,13 @@ au BufNewFile,BufRead *.tt         set filetype=html
 au BufNewFile,BufRead *.tmpl       set filetype=html
 au BufNewFile,BufRead *.tx         set filetype=html
 au BufNewFile,BufRead *.tt2        set filetype=html
+au BufNewFile,BufRead *.vue*       set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=css
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead *.es6        set filetype=javascript.jsx
-au BufNewFile,BufRead *.js        set filetype=javascript.jsx
-au BufRead,BufNewFile,BufReadPre *.pug set filetype=pug
+au BufNewFile,BufRead *.js         set filetype=javascript.jsx
+au BufNewFile,BufRead *.pug set filetype=pug
+" au BufNewFile,BufRead *.vue        set filetype=javascript.jsx.css
 
 " ファイルエンコーディング
 let $LANG='ja_JP.UTF-8'
@@ -604,7 +611,7 @@ set modelines=0                  " モードラインは無効
 set showmatch
 set number
 set list
-set listchars=tab:»-,trail:-,nbsp:%
+set listchars=tab:»-,trail:-
 set display=uhex
 if exists("noimdisableactivate")
   set noimdisableactivate
@@ -616,6 +623,7 @@ match ZenkakuSpace /　/
 
 " カーソル行をハイライト
 set cursorline
+
 " カレントウィンドウにのみ罫線を引く
 augroup cch
   autocmd! cch
@@ -846,21 +854,6 @@ function! UncrustifyAuto()
     endif
 endfunction
 
-colorscheme molokai
-
-" if has('gui_macvim')
-"     set showtabline=2	" タブを常に表示
-"     set imdisable	" IMを無効化
-"     set transparency=10	" 透明度を指定
-"     set antialias
-"     " colorscheme macvim
-"     set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete:h14
-" endif
-
 set wildignore+=**/tmp/,*.so,*.swp,*.zip
 set scrolloff=3
 
-if has('nvim')
-  set termguicolors
-  tnoremap <silent> <ESC> <C-\><C-n>
-endif
