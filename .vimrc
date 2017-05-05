@@ -118,7 +118,7 @@ sunmap e
 sunmap ge
 
 "  ","と押して", "としてくれる優しさ
-call dein#add("smartchr")
+call dein#add("vim-scripts/smartchr")
 inoremap <expr> , smartchr#one_of(', ', ',')
 
 " カーソルジェットコースター
