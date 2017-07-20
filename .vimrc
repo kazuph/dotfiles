@@ -88,6 +88,11 @@ nmap <C-n> <Plug>(yankround-next)
 let g:yankround_max_history = 100
 nnoremap <Space><Space>y :<C-u>CtrlPYankRound<CR>
 
+" 正規表現をPerl風に
+" :%S///gc
+call dein#add('kazuph/eregex.vim')
+nnoremap / :<C-u>M/
+
 " ()や''でくくったりするための補助
 " text-objectの支援
 " di' で'の中身を削除
@@ -457,10 +462,13 @@ autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
 autocmd FileType json       noremap <buffer>,cf :call JsonBeautify()<cr>
 autocmd FileType jsx        noremap <buffer>,cf :call JsxBeautify()<cr>
 
+call dein#add('editorconfig/editorconfig-vim')
+
 call dein#add('millermedeiros/vim-esformatter')
 nnoremap <silent> <buffer>,es :Esformatter<CR>
 vnoremap <silent> <buffer>,es :EsformatterVisual<CR>
 
+call dein#add('mattn/vim-rubyfmt')
 call dein#add('pangloss/vim-javascript')
 call dein#add('mxw/vim-jsx')
 let g:jsx_ext_required = 0
@@ -622,7 +630,7 @@ highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
 match ZenkakuSpace /　/
 
 " カーソル行をハイライト
-set cursorline
+" set cursorline
 
 " カレントウィンドウにのみ罫線を引く
 augroup cch

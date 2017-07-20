@@ -318,4 +318,7 @@ function pe() {
   vim -o `ag "$@" . | peco --exec 'awk -F : '"'"'{print "+" $2 " " $1}'"'"''`
 }
 
-
+# if (which zprof > /dev/null) ;then
+#   zprof | less
+# fi
+export PATH="/usr/local/opt/node@6/bin:$PATH"

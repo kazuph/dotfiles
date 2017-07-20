@@ -2,31 +2,39 @@
 
 root = true
 
+[**.rb]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
 [**.js]
 e4x = true
 indent_style = space
-indent_size = 2
+indent_size = 4
 brace_style = collapse
 
 [**.json]
 indent_style = space
-indent_size = 2
+indent_size = 4
 brace_style = collapse
 
 [**.jsx]
 e4x = true
 indent_style = space
-indent_size = 2
+indent_size = 4
 brace_style = collapse
 
 [**.css]
 indent_style = space
-indent_size = 2
+indent_size = 4
 brace_style = collapse
 
 [**.html]
 indent-inner-html = true
 extra_liners = null
 indent_style = space
-indent_size = 2
+indent_size = 4
 brace_style = collapse
