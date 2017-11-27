@@ -117,30 +117,6 @@ else
 fi
 test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 
-# 一定時間以上かかる処理の場合は終了時に通知してくれる
-local COMMAND=""
-local COMMAND_TIME=""
-precmd() {
-    if [ "$COMMAND_TIME" -ne "0" ] ; then
-        local d=`date +%s`
-        d=`expr $d - $COMMAND_TIME`
-        if [ "$d" -ge "5" ] ; then
-            COMMAND="$COMMAND "
-            which terminal-notifier > /dev/null 2>&1 && terminal-notifier -message "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
-            # which growlnotify > /dev/null 2>&1 && growlnotify -t "${${(s: :)COMMAND}[1]}" -m "$COMMAND";
-            # which notify > /dev/null 2>&1 && echo "$COMMAND" | notify;
-        fi
-    fi
-    COMMAND="0"
-    COMMAND_TIME="0"
-}
-preexec () {
-    COMMAND="${1}"
-    if [ "`perl -e 'print($ARGV[0]=~/ssh|^vi/)' $COMMAND`" -ne 1 ] ; then
-        COMMAND_TIME=`date +%s`
-    fi
-}
-
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
 
@@ -312,7 +288,6 @@ unset PYTHONPATH
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-export PATH="$(yarn global bin):$PATH"
 
 function pe() {
   vim -o `ag "$@" . | peco --exec 'awk -F : '"'"'{print "+" $2 " " $1}'"'"''`
@@ -322,3 +297,6 @@ function pe() {
 #   zprof | less
 # fi
 export PATH="/usr/local/opt/node@6/bin:$PATH"
+export PATH="$(yarn global bin):$PATH"
+export PATH="/usr/local/opt/node@6/bin:$PATH"
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"

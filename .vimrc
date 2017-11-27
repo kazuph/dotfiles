@@ -79,19 +79,52 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
   \ }
 
+" 文法チェック
+call dein#add('vim-syntastic/syntastic')
+
+" quickrunする
+call dein#add('thinca/vim-quickrun')
+let g:quickrun_config = get(g:, 'quickrun_config', {})
+let g:quickrun_config._ = {
+      \ 'runner'    : 'vimproc',
+      \ 'runner/vimproc/updatetime' : 60,
+      \ 'outputter' : 'error',
+      \ 'outputter/error/success' : 'buffer',
+      \ 'outputter/error/error'   : 'quickfix',
+      \ 'outputter/buffer/split'  : ':rightbelow 8sp',
+      \ 'outputter/buffer/close_on_empty' : 1,
+      \ }
+let g:quickrun_config.python = {'command' : 'python3'}
+" q でquickfixを閉じれるようにする。
+au FileType qf nnoremap <silent><buffer>q :quit<CR>
+
+" \r で保存してからquickrunを実行する。
+" let g:quickrun_no_default_key_mappings = 1
+" nnoremap \r :write<CR>:QuickRun -mode n<CR>
+" xnoremap \r :<C-U>write<CR>gv:QuickRun -mode v<CR>
+
+" \r でquickfixを閉じて、保存してからquickrunを実行する。
+let g:quickrun_no_default_key_mappings = 1
+nnoremap \r :cclose<CR>:write<CR>:QuickRun -mode n<CR>
+xnoremap \r :<C-U>cclose<CR>:write<CR>gv:QuickRun -mode v<CR>
+
+" <C-c> でquickrunを停止
+nnoremap <expr><silent> <C-c> quickrun#is_running() ? quickrun#sweep_sessions() : "\<C-c>"
+
 " 依存が少ないyankringらしい
-call dein#add('LeafCage/yankround.vim')
-nmap p <Plug>(yankround-p)
-nmap P <Plug>(yankround-P)
-nmap <C-p> <Plug>(yankround-prev)
-nmap <C-n> <Plug>(yankround-next)
-let g:yankround_max_history = 100
-nnoremap <Space><Space>y :<C-u>CtrlPYankRound<CR>
+" call dein#add('LeafCage/yankround.vim')
+" nmap p <Plug>(yankround-p)
+" nmap P <Plug>(yankround-P)
+" nmap <C-p> <Plug>(yankround-prev)
+" nmap <C-n> <Plug>(yankround-next)
+" let g:yankround_max_history = 100
+" nnoremap <Space><Space>y :<C-u>CtrlPYankRound<CR>
 
 " 正規表現をPerl風に
 " :%S///gc
-call dein#add('kazuph/eregex.vim')
-nnoremap / :<C-u>M/
+call dein#add('othree/eregex.vim')
+call dein#add('haya14busa/incsearch.vim')
+map /  <Plug>(incsearch-forward)
 
 " ()や''でくくったりするための補助
 " text-objectの支援
@@ -152,6 +185,9 @@ vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 " git操作
 call dein#add('tpope/vim-fugitive')
 call dein#add('gregsexton/gitv')
+
+" sftp
+call dein#add('naoyuki1019/vim-ftpautoupload')
 
 " grep後に置換したい
 " gg/したあとにQf<TAB>後、編集、保存で一括置換
@@ -269,8 +305,8 @@ call dein#add('adelarsq/vim-matchit', { 'autoload' : {
       \ }})
 
 " 括弧入力するのだるい時
-call dein#add("kana/vim-smartinput")
-call dein#add('cohama/vim-smartinput-endwise')
+" call dein#add("kana/vim-smartinput")
+" call dein#add('cohama/vim-smartinput-endwise')
 
 " Ctrl+y,で展開
 call dein#add("mattn/emmet-vim")
@@ -361,7 +397,7 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplete#sources#omni#input_patterns')
   let g:neocomplete#sources#omni#input_patterns = {}
 endif
-" let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
+let g:neocomplete#sources#omni#input_patterns.go = '\h\w*\.\?'
 
 " For perlomni.vim setting.
 " https://github.com/c9s/perlomni.vim
@@ -438,7 +474,8 @@ vnoremap cd y:<C-u>Codic <C-R>"<CR>
 
 " golang
 call dein#add('fatih/vim-go')
-" let g:go_fmt_command = "goimports"
+let g:go_fmt_command = "goimports"
+"
 
 " マークダウンのプレビュー
 " call dein#add('kannokanno/previm')
@@ -468,11 +505,11 @@ call dein#add('millermedeiros/vim-esformatter')
 nnoremap <silent> <buffer>,es :Esformatter<CR>
 vnoremap <silent> <buffer>,es :EsformatterVisual<CR>
 
-call dein#add('mattn/vim-rubyfmt')
+" call dein#add('mattn/vim-rubyfmt')
 call dein#add('pangloss/vim-javascript')
-call dein#add('mxw/vim-jsx')
-let g:jsx_ext_required = 0
-let g:jsx_pragma_required = 1
+" call dein#add('mxw/vim-jsx')
+" let g:jsx_ext_required = 0
+" let g:jsx_pragma_required = 1
 " call dein#add('posva/vim-vue')
 
 " keynoteへのソースのシンタックスハイライトの貼り付け用
@@ -526,8 +563,8 @@ au BufNewFile,BufRead *.vue*       set filetype=html
 au BufNewFile,BufRead *.scss       set filetype=css
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead *.es6        set filetype=javascript.jsx
-au BufNewFile,BufRead *.js         set filetype=javascript.jsx
-au BufNewFile,BufRead *.pug set filetype=pug
+au BufNewFile,BufRead *.pug        set filetype=pug
+" au BufNewFile,BufRead *.js         set filetype=javascript.jsx
 " au BufNewFile,BufRead *.vue        set filetype=javascript.jsx.css
 
 " ファイルエンコーディング
@@ -591,7 +628,7 @@ autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
+autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
 autocmd FileType pug        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType jsx        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=2 sts=2 ts=2 et
@@ -630,7 +667,7 @@ highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
 match ZenkakuSpace /　/
 
 " カーソル行をハイライト
-" set cursorline
+set cursorline
 
 " カレントウィンドウにのみ罫線を引く
 augroup cch
@@ -793,10 +830,12 @@ nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zsh_history \| perl -pe 's/^.
 let g:markdown_fenced_languages = [
 \  'css',
 \  'erb=eruby',
-\  'javascript',
 \  'js=javascript',
 \  'json=javascript',
-\  'ruby',
+\  'rb=ruby',
+\  'py=python',
+\  'sh',
+\  'sql',
 \  'c',
 \  'ino=c',
 \  'perl',
