@@ -37,6 +37,8 @@ set runtimepath+=/Users/kazuph/.dein/repos/github.com/Shougo/dein.vim
 " Required:
 call dein#begin(expand('/Users/kazuph/.dein'))
 
+let mapleader = "\<Space>"
+
 " Required:
 call dein#add('Shougo/dein.vim')
 call dein#add('Shougo/vimproc.vim', {
@@ -164,6 +166,20 @@ call dein#add('rhysd/accelerated-jk.git')
 let g:accelerated_jk_acceleration_table = [10,5,3]
 nmap j <Plug>(accelerated_jk_gj)
 nmap k <Plug>(accelerated_jk_gk)
+
+" jkがいないなら
+call dein#add('easymotion/vim-easymotion')
+nmap s <Plug>(easymotion-s2)
+xmap s <Plug>(easymotion-s2)
+omap z <Plug>(easymotion-s2)
+let g:EasyMotion_smartcase = 1
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+let g:EasyMotion_startofline = 0
+let g:EasyMotion_keys = ';HKLYUIOPNM,QWERTASDGZXCVBJF'
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
 
 " ヤンクの履歴を参照したい
 call dein#add('kana/vim-fakeclip.git')
@@ -842,6 +858,8 @@ let g:markdown_fenced_languages = [
 \  'go',
 \  'sass',
 \  'xml',
+\  'yml=yaml',
+\  'Dockerfile',
 \]
 
 command! CopyRelativePath
