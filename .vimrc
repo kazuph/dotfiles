@@ -482,12 +482,6 @@ call dein#add('Xuyuanp/nerdtree-git-plugin')
 " The fancy start screen for Vim.
 call dein#add('mhinz/vim-startify')
 
-" codic
-call dein#add('koron/codic-vim')
-" カーソル下の単語を検索
-nnoremap cd :<C-u>Codic<CR>
-vnoremap cd y:<C-u>Codic <C-R>"<CR>
-
 " golang
 call dein#add('fatih/vim-go')
 let g:go_fmt_command = "goimports"
