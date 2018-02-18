@@ -638,7 +638,8 @@ autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
+" autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
+autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
 autocmd FileType pug        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType jsx        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType perl       setlocal sw=2 sts=2 ts=2 et

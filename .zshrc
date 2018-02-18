@@ -301,3 +301,6 @@ export PATH="$(yarn global bin):$PATH"
 export PATH="/usr/local/opt/node@6/bin:$PATH"
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
+
+# neovim
+export XDG_CONFIG_HOME=~/.config
