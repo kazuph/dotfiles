@@ -52,14 +52,15 @@ call dein#add('Shougo/vimproc.vim', {
     \ })
 
 " ステータスラインに情報を表示 → もう力はいらない
-call dein#add('itchyny/lightline.vim')
-let g:lightline = {
-      \ 'component': {
-      \   'readonly': '%{&readonly?"⭤":""}',
-      \ },
-      \ 'separator': { 'left': '⮀', 'right': '⮂' },
-      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
-      \ }
+" call dein#add('itchyny/lightline.vim')
+" let g:lightline = {
+"       \ 'component': {
+"       \   'readonly': '%{&readonly?"⭤":""}',
+"       \ },
+"       \ 'separator': { 'left': '⮀', 'right': '⮂' },
+"       \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+"       \ }
+
 " YAML
 call dein#add('stephpy/vim-yaml')
 

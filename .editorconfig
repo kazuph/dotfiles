@@ -13,7 +13,7 @@ insert_final_newline = true
 [**.js]
 e4x = true
 indent_style = space
-indent_size = 4
+indent_size = 2
 brace_style = collapse
 
 [**.json]
