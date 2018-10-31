@@ -25,6 +25,10 @@ zstyle ':prezto:*:*' color 'yes'
 # The order matters.
 zstyle ':prezto:load' pmodule \
   'environment' \
+  'syntax-highlighting' \
+  'history-substring-search' \
+  'autosuggestions' \
+  'archive' \
   'terminal' \
   'editor' \
   'history' \
@@ -34,7 +38,11 @@ zstyle ':prezto:load' pmodule \
   'completion' \
   'git' \
   'homebrew' \
+  'docker' \
   'node' \
+  'ruby' \
+  'rails' \
+  'python' \
   'ssh' \
   'osx' \
   'fasd' \
@@ -49,7 +57,7 @@ zstyle ':prezto:load' pmodule \
 zstyle ':prezto:module:editor' key-bindings 'emacs'
 
 # Auto convert .... to ../..
-# zstyle ':prezto:module:editor' dot-expansion 'yes'
+zstyle ':prezto:module:editor' dot-expansion 'yes'
 
 #
 # Git
@@ -155,10 +163,16 @@ zstyle ':prezto:module:terminal:tab-title' format '%m: %s'
 #
 
 # Auto start a session when Zsh is launched in a local terminal.
-# zstyle ':prezto:module:tmux:auto-start' local 'yes'
+zstyle ':prezto:module:tmux:auto-start' local 'yes'
 
 # Auto start a session when Zsh is launched in a SSH connection.
-# zstyle ':prezto:module:tmux:auto-start' remote 'yes'
+zstyle ':prezto:module:tmux:auto-start' remote 'yes'
 
 # Integrate with iTerm2.
-# zstyle ':prezto:module:tmux:iterm' integrate 'yes'
+zstyle ':prezto:module:tmux:iterm' integrate 'yes'
+
+#
+# autosuggestions
+#
+zstyle ':prezto:module:autosuggestions' color 'yes'
+zstyle ':prezto:module:autosuggestions:color' found ''

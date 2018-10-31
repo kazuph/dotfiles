@@ -13,7 +13,7 @@
   grep = auto
 [core]
   # globalな.gitignoreの指定
-  excludesfile = ~/.gitignore
+  excludesfile = /Users/kazuph/.gitignore_global
   autoCRLF = false
   editor = vim
   quotepath = false

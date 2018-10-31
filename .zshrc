@@ -50,19 +50,19 @@ alias reset='brake db:migrate:reset'
 alias migrate='brake db:migrate'
 alias seed='brake db:seed'
 alias rename='massren --config editor vim && massren'
-alias dl='docker ps -l -q'
 alias vf='vim `fzf`'
 alias vc='vim -o `git cl`'
 alias vm='vim -o `git ml`'
-alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
+# alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
+alias todo="todo.sh"
 alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
-alias th='tail -10000 ~/.zsh_history|perl -pe '\''s/^.+;//'\''|fzf'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
 alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
 alias vim=vim
+alias vi=nvim
 alias vi=nvim
 
 # for go
@@ -71,9 +71,6 @@ if which go >/dev/null 2>&1; then
     export GOBIN=~/bin
     path=($GOPATH/bin $path)
 fi
-
-# for python
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH
 
 # for android
 export ANT_OPTS=-Dfile.encoding=UTF8
@@ -117,14 +114,11 @@ else
 fi
 test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
-
 setopt no_share_history
 
 ### カレントディレクトリ以下を検索して移動
 function fzf-get-current-dir() {
-    find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|public/uploads|/tmp)' | fzf
+    find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes)' | fzf
 }
 function fzf-cdr() {
     local destination="$(fzf-get-current-dir)"
@@ -138,65 +132,11 @@ function fzf-cdr() {
 zle -N fzf-cdr
 bindkey '^q' fzf-cdr
 
-# ------------------------------------
-# Docker alias and function
-# ------------------------------------
-# if [ `ps aux | grep dvm | grep -v grep | wc -l` == 1 ]; then
-#   eval $(dvm env)
-# fi
-
-# eval "$(docker-machine env default)"
-
 # Get DOCKER_HOST IP:PORT
-alias dh="echo $DOCKER_HOST"
-alias dhip="boot2docker ip 2>& /dev/null"
-alias dhport="echo $DOCKER_HOST | cut -c7-19"
+alias dc='docker-compose'
 
-# Get latest container ID
-alias dl="docker ps -l -q"
-
-# Get container process
-alias dps="docker ps"
-
-# Get process included stop container
-alias dpa="docker ps -a"
-
-# Get images
-alias di="docker images"
-
-# Get container IP
-alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
-
-# Get latest container IP
-# alias dlip="docker inspect --format '{{ .NetworkSettings.IPAddress }}' `dl`"
-
-# Run deamonized container, e.g., $dkd base /bin/echo hello
-alias dkd="docker run -d -P"
-
-# Run interactive container, e.g., $dki base /bin/bash
-alias dki="docker run -i -t -P"
-
-# Stop all containers
-dstop() { docker stop $(docker ps -q);}
-
-# Remove all containers
-drm() { docker rm $(docker ps -a -q); }
-
-# Stop and Remove all containers
-alias drmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
-
-# Remove all images
-dri() { docker rmi $(docker images -q); }
-
-# Dockerfile build, e.g., $dbu tcnksm/test
-dbu() {docker build -t=$1 .;}
-
-# Show all alias related docker
-dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort;}
-source ~/.fzf.zsh
-
+# ググれる
 ggr() {open "https://www.google.co.jp/search?q=$1";}
-ca() {git ca -m "$@";}
 
 # https://github.com/Jxck/dotfiles/blob/master/zsh/.http_status
 # https://tools.ietf.org/html/rfc7231#section-6.1
@@ -256,48 +196,25 @@ bindkey "^g" gh
 
 setopt ignoreeof
 
-# enhancd
-# if [ -f "/Users/kazuph/.enhancd/zsh/enhancd.zsh" ]; then
-#     source "/Users/kazuph/.enhancd/zsh/enhancd.zsh"
-# fi
-
-## fzf commands
-# fshow - git commit browser (enter for show, ctrl-d for diff)
-fshow() {
-  local out shas sha q k
-  while out=$(
-      git log --graph --color=always \
-          --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-      fzf --ansi --multi --no-sort --reverse --query="$q" \
-          --print-query --expect=ctrl-d); do
-    q=$(head -1 <<< "$out")
-    k=$(head -2 <<< "$out" | tail -1)
-    shas=$(sed '1,2d;s/^[^a-z0-9]*//;/^$/d' <<< "$out" | awk '{print $1}')
-    [ -z "$shas" ] && continue
-    if [ "$k" = ctrl-d ]; then
-      git diff --color=always $shas | less -R
-    else
-      for sha in $shas; do
-        git show --color=always $sha | less -R
-      done
-    fi
-  done
-}
-
-unset PYTHONPATH
+# unset PYTHONPATH
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-
+# インクリメンタルにソースコードの中身を検索する
 function pe() {
   vim -o `ag "$@" . | peco --exec 'awk -F : '"'"'{print "+" $2 " " $1}'"'"''`
 }
 
-# if (which zprof > /dev/null) ;then
-#   zprof | less
-# fi
-export PATH="$(yarn global bin):$PATH"
+export PATH="$PATH:$(yarn global bin)"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 
 # neovim
 export XDG_CONFIG_HOME=~/.config
+export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
+# export PATH="/usr/local/opt/node@8/bin:$PATH"
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

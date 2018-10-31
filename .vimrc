@@ -455,7 +455,7 @@ autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる
 call dein#add('h1mesuke/vim-alignta.git')
-xnoremap <silent> a: :Alignta 01 :<CR>
+xnoremap <silent> a: :Alignta 00 \s<CR>
 xnoremap al :Alignta<Space>
 
 " 選択部分のキーワードを*を押して検索
@@ -527,6 +527,16 @@ call dein#add('pangloss/vim-javascript')
 " :CopyRTF
 call dein#add('zerowidth/vim-copy-as-rtf')
 
+" fzf
+call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 })
+call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
+let g:fzf_command_prefix = 'F'
+nnoremap <Leader>b :FBuffers<CR>
+nnoremap <Leader>x :FCommands<CR>
+nnoremap <Leader>f :FGFiles<CR>
+nnoremap <Leader>a :FAg<CR>
+nnoremap <Leader>k :Fbd<CR>
+
 " for PlantUML
 call dein#add("aklt/plantuml-syntax")
 let g:plantuml_executable_script = "~/dotfiles/plantuml"
@@ -575,6 +585,7 @@ au BufNewFile,BufRead *.scss       set filetype=css
 au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead *.es6        set filetype=javascript.jsx
 au BufNewFile,BufRead *.pug        set filetype=pug
+au BufNewFile,BufRead *.conf       set filetype=dosini
 " au BufNewFile,BufRead *.js         set filetype=javascript.jsx
 " au BufNewFile,BufRead *.vue        set filetype=javascript.jsx.css
 
@@ -639,7 +650,6 @@ autocmd FileType diff       setlocal sw=4 sts=4 ts=4 et
 autocmd FileType eruby      setlocal sw=4 sts=4 ts=4 et
 autocmd FileType html       setlocal sw=2 sts=2 ts=2 et
 autocmd FileType java       setlocal sw=4 sts=4 ts=4 et
-" autocmd FileType javascript setlocal sw=4 sts=4 ts=4 et
 autocmd FileType javascript setlocal sw=2 sts=2 ts=2 et
 autocmd FileType pug        setlocal sw=2 sts=2 ts=2 et
 autocmd FileType jsx        setlocal sw=2 sts=2 ts=2 et
@@ -837,7 +847,7 @@ function! s:ChangeCurrentDir(directory, bang)
 endfunction
 nnoremap <silent><Space>cd :<C-u>CD<CR>
 
-nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zsh_history \| perl -pe 's/^.+;//' \| fzf<CR>
+nnoremap <silent><Space><Space>h :r!tail -10000 ~/.zhistory \| perl -pe 's/^.+;//' \| fzf<CR>
 
 let g:markdown_fenced_languages = [
 \  'css',
@@ -855,6 +865,7 @@ let g:markdown_fenced_languages = [
 \  'sass',
 \  'xml',
 \  'yml=yaml',
+\  'conf=dosini',
 \  'Dockerfile',
 \]
 
