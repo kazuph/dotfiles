@@ -46,7 +46,6 @@ zstyle ':prezto:load' pmodule \
   'ssh' \
   'osx' \
   'fasd' \
-  'tmux' \
   'prompt'
 
 #
@@ -163,16 +162,16 @@ zstyle ':prezto:module:terminal:tab-title' format '%m: %s'
 #
 
 # Auto start a session when Zsh is launched in a local terminal.
-zstyle ':prezto:module:tmux:auto-start' local 'yes'
+# zstyle ':prezto:module:tmux:auto-start' local 'yes'
 
 # Auto start a session when Zsh is launched in a SSH connection.
-zstyle ':prezto:module:tmux:auto-start' remote 'yes'
+# zstyle ':prezto:module:tmux:auto-start' remote 'yes'
 
 # Integrate with iTerm2.
-zstyle ':prezto:module:tmux:iterm' integrate 'yes'
+# zstyle ':prezto:module:tmux:iterm' integrate 'yes'
 
 #
 # autosuggestions
 #
-zstyle ':prezto:module:autosuggestions' color 'yes'
-zstyle ':prezto:module:autosuggestions:color' found ''
+# zstyle ':prezto:module:autosuggestions' color 'yes'
+# zstyle ':prezto:module:autosuggestions:color' found ''

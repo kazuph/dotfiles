@@ -14,7 +14,7 @@ fi
 export EDITOR=vim
 
 zmodload zsh/zle
-export LANG=ja_JP.UTF-8
+# export LANG=ja_JP.UTF-8
 # fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 fpath=(/usr/local/share/zsh-completions $fpath)
 
@@ -132,7 +132,55 @@ function fzf-cdr() {
 zle -N fzf-cdr
 bindkey '^q' fzf-cdr
 
-# Get DOCKER_HOST IP:PORT
+# ------------------------------------
+# Docker alias and function
+# ------------------------------------
+
+# Get latest container ID
+alias dl="docker ps -l -q"
+
+# Get container process
+alias dps="docker ps"
+
+# Get process included stop container
+alias dpa="docker ps -a"
+
+# Get images
+alias di="docker images"
+
+# Get container IP
+alias dip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+# Run deamonized container, e.g., $dkd base /bin/echo hello
+alias dkd="docker run -d -P"
+
+# Run interactive container, e.g., $dki base /bin/bash
+alias dki="docker run -i -t -P"
+
+# Execute interactive container, e.g., $dex base /bin/bash
+alias dex="docker exec -i -t"
+
+# Stop all containers
+dstop() { docker stop $(docker ps -a -q); }
+
+# Remove all containers
+drm() { docker rm $(docker ps -a -q); }
+
+# Stop and Remove all containers
+alias drmf='docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)'
+
+# Remove all images
+drmi() { docker rmi $(docker images -q); }
+
+# Dockerfile build, e.g., $dbu tcnksm/test
+dbu() { docker build -t=$1 .; }
+
+# Show all alias related docker
+dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/['|\']//g" | sort; }
+
+# Bash into running container
+dbash() { docker exec -it $(docker ps -aqf "name=$1") bash; }
+
 alias dc='docker-compose'
 
 # ググれる
@@ -205,7 +253,7 @@ function pe() {
   vim -o `ag "$@" . | peco --exec 'awk -F : '"'"'{print "+" $2 " " $1}'"'"''`
 }
 
-export PATH="$PATH:$(yarn global bin)"
+# export PATH="$PATH:$(yarn global bin)"
 export PATH="/usr/local/opt/openssl/bin:$PATH"
 
 # neovim
@@ -213,8 +261,18 @@ export XDG_CONFIG_HOME=~/.config
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 # export PATH="/usr/local/opt/node@8/bin:$PATH"
 
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# export PATH="$HOME/.pyenv/bin:$PATH"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export PATH="/usr/local/opt/ncurses/bin:$PATH"
+export PATH="$PATH:$HOME/flutter/flutter/bin"
+
+# ARM gcc
+export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg ' 

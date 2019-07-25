@@ -185,6 +185,10 @@ let g:EasyMotion_space_jump_first = 1
 " ヤンクの履歴を参照したい
 call dein#add('kana/vim-fakeclip.git')
 
+" Vim上でgitを使いたい
+call dein#add('lambdalisue/gina.vim')
+
+
 " memoはやっぱりVimからやろ
 call dein#add('glidenote/memolist.vim')
 nnoremap ,mn :MemoNew<cr>
@@ -193,6 +197,7 @@ nnoremap ,ml :MemoList<CR>
 nnoremap ,mf :exe "CtrlP" g:memolist_path<cr><f5>
 let g:memolist_ex_cmd = 'NERDTree'
 let g:memolist_path = "~/Dropbox/memo"
+let g:memolist_fzf = 1
 
 " 爆速のgrepであるagを使いたい
 call dein#add('rking/ag.vim')
@@ -535,7 +540,6 @@ nnoremap <Leader>b :FBuffers<CR>
 nnoremap <Leader>x :FCommands<CR>
 nnoremap <Leader>f :FGFiles<CR>
 nnoremap <Leader>a :FAg<CR>
-nnoremap <Leader>k :Fbd<CR>
 
 " for PlantUML
 call dein#add("aklt/plantuml-syntax")
@@ -863,6 +867,7 @@ let g:markdown_fenced_languages = [
 \  'perl',
 \  'go',
 \  'sass',
+\  'html',
 \  'xml',
 \  'yml=yaml',
 \  'conf=dosini',
