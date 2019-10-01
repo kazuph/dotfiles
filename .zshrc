@@ -19,7 +19,7 @@ zmodload zsh/zle
 fpath=(/usr/local/share/zsh-completions $fpath)
 
 export PATH=~/dotfiles/bin:$PATH
-alias git='/usr/local/bin/git'
+# alias git='/usr/local/bin/git'
 alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 
 # unalias history
@@ -275,4 +275,7 @@ export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg ' 
+export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
+
+# export DOCKER_HOST=raspberrypi.local:2375
+

@@ -209,7 +209,7 @@ call dein#add('tpope/vim-fugitive')
 call dein#add('gregsexton/gitv')
 
 " sftp
-call dein#add('naoyuki1019/vim-ftpautoupload')
+" call dein#add('naoyuki1019/vim-ftpautoupload')
 
 " grep後に置換したい
 " gg/したあとにQf<TAB>後、編集、保存で一括置換

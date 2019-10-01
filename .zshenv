@@ -16,5 +16,8 @@ fi
 # skip_global_compinit=1
 export PATH=$PATH:$HOME/esp/xtensa-esp32-elf/bin
 export IDF_PATH=~/esp/esp-idf
-export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
+
+if [ -d ${HOME}/.anyenv  ] ; then
+  export PATH="$HOME/.anyenv/bin:$PATH"
+  eval "$(anyenv init -)"
+fi
