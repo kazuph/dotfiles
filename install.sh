@@ -9,10 +9,17 @@ brew install reattach-to-user-namespace
 brew install tmux
 brew install wget
 brew install hub
-brew install macvim --with-cscope --with-lua --HEAD && brew install vim --with-lua
+brew install macvim vim
+brew tap homebrew/cask-fonts
+brew cask install font-hack-nerd-font
 
 # install oh-my-zsh
-curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+zsh
+git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+setopt EXTENDED_GLOB
+for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
+  ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+done
 chsh -s /bin/zsh
 
 # install ore setting
@@ -28,6 +35,10 @@ ln -sfv ~/dotfiles/.gitconfig .gitconfig
 ln -sfv ~/dotfiles/.zshrc .zshrc
 ln -sfv ~/dotfiles/.zshenv .zshenv
 ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
+ln -sfv ~/dotfiles/.zpreztorc .zpreztorc
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+tmux source ~/.tmux.conf
 
 # NeoBundleInstall from commandline
 curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > installer.sh

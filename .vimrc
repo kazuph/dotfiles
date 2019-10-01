@@ -32,10 +32,10 @@ if &compatible
 endif
 
 " Required:
-set runtimepath+=/Users/kazuph/.dein/repos/github.com/Shougo/dein.vim
+set runtimepath+=$HOME/.dein/repos/github.com/Shougo/dein.vim
 
 " Required:
-call dein#begin(expand('/Users/kazuph/.dein'))
+call dein#begin(expand($HOME . '/.dein'))
 
 let mapleader = "\<Space>"
 
