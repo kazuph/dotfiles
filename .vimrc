@@ -456,6 +456,7 @@ nnoremap <Space>s :<C-u>setl spell!<CR>
 " まーくだうん
 call dein#add("tpope/vim-markdown")
 autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
+let g:markdown_syntax_conceal = 0
 
 " 整列を割と自動でやってくれる
 " 例えば:Alignta = で=でそろえてくれる

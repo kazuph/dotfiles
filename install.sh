@@ -36,6 +36,7 @@ ln -sfv ~/dotfiles/.zshrc .zshrc
 ln -sfv ~/dotfiles/.zshenv .zshenv
 ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
 ln -sfv ~/dotfiles/.zpreztorc .zpreztorc
+ln -sfv ~/dotfiles/.ideavimrc .ideavimrc
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 tmux source ~/.tmux.conf
