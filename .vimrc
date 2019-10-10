@@ -516,6 +516,10 @@ autocmd FileType css        noremap <buffer>,cf :call CSSBeautify()<cr>
 autocmd FileType json       noremap <buffer>,cf :call JsonBeautify()<cr>
 autocmd FileType jsx        noremap <buffer>,cf :call JsxBeautify()<cr>
 
+
+call dein#add('elzr/vim-json')
+let g:vim_json_syntax_conceal = 0
+
 call dein#add('editorconfig/editorconfig-vim')
 
 call dein#add('millermedeiros/vim-esformatter')
