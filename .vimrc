@@ -869,6 +869,8 @@ let g:markdown_fenced_languages = [
 \  'sql',
 \  'c',
 \  'ino=c',
+\  'java',
+\  'kt=kotlin',
 \  'perl',
 \  'go',
 \  'sass',

@@ -279,3 +279,6 @@ export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
 
 # export DOCKER_HOST=raspberrypi.local:2375
 
+export PATH=$PATH:/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home/bin
+export JAVA_HOME=/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home
+
