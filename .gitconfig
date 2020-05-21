@@ -147,6 +147,6 @@
     name = Xcode project files merger
     driver = mergepbx %O %A %B
 [ghq]
-    root = /Users/kazuph/src
+    root = "~/src"
 [url "git@github.com:"]
     insteadOf = https://github.com/

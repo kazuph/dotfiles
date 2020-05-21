@@ -38,6 +38,7 @@ set runtimepath+=$HOME/.dein/repos/github.com/Shougo/dein.vim
 call dein#begin(expand($HOME . '/.dein'))
 
 let mapleader = "\<Space>"
+" let mapleader = ","
 
 " Required:
 call dein#add('Shougo/dein.vim')
@@ -81,6 +82,15 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
   \ }
+
+" fzf
+call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 })
+call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
+let g:fzf_command_prefix = 'F'
+nnoremap <Leader>b :FBuffers<CR>
+nnoremap <Leader>c :FCommands<CR>
+nnoremap <Leader>f :FGFiles<CR>
+nnoremap <Leader>g :FAg<CR>
 
 " 文法チェック
 call dein#add('vim-syntastic/syntastic')
@@ -170,17 +180,29 @@ nmap k <Plug>(accelerated_jk_gk)
 
 " jkがいないなら
 call dein#add('easymotion/vim-easymotion')
-nmap s <Plug>(easymotion-s2)
-xmap s <Plug>(easymotion-s2)
-omap z <Plug>(easymotion-s2)
-let g:EasyMotion_smartcase = 1
+
+" <Leader>f{char} to move to {char}
+map  <Leader>F <Plug>(easymotion-bd-f)
+nmap <Leader>F <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+vmap s <Plug>(easymotion-bd-f2)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+let g:EasyMotion_smartcase = 1
 let g:EasyMotion_startofline = 0
 let g:EasyMotion_keys = ';HKLYUIOPNM,QWERTASDGZXCVBJF'
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1
+let g:EasyMotion_do_mapping = 0
 
 " ヤンクの履歴を参照したい
 call dein#add('kana/vim-fakeclip.git')
@@ -193,11 +215,12 @@ call dein#add('lambdalisue/gina.vim')
 call dein#add('glidenote/memolist.vim')
 nnoremap ,mn :MemoNew<cr>
 nnoremap ,mg :MemoGrep<cr>
-nnoremap ,ml :MemoList<CR>
-nnoremap ,mf :exe "CtrlP" g:memolist_path<cr><f5>
+nnoremap ,mf :MemoList<CR>
+" nnoremap ,mf :exe "CtrlP" g:memolist_path<cr><f5>
 let g:memolist_ex_cmd = 'NERDTree'
 let g:memolist_path = "~/Dropbox/memo"
 let g:memolist_fzf = 1
+let g:memolist_ex_cmd = 'CtrlP'
 
 " 爆速のgrepであるagを使いたい
 call dein#add('rking/ag.vim')
@@ -537,15 +560,6 @@ call dein#add('pangloss/vim-javascript')
 " :CopyRTF
 call dein#add('zerowidth/vim-copy-as-rtf')
 
-" fzf
-call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 })
-call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
-let g:fzf_command_prefix = 'F'
-nnoremap <Leader>b :FBuffers<CR>
-nnoremap <Leader>x :FCommands<CR>
-nnoremap <Leader>f :FGFiles<CR>
-nnoremap <Leader>a :FAg<CR>
-
 " for PlantUML
 call dein#add("aklt/plantuml-syntax")
 let g:plantuml_executable_script = "~/dotfiles/plantuml"
@@ -595,6 +609,7 @@ au BufNewFile,BufRead Vagrantfile  set filetype=ruby
 au BufNewFile,BufRead *.es6        set filetype=javascript.jsx
 au BufNewFile,BufRead *.pug        set filetype=pug
 au BufNewFile,BufRead *.conf       set filetype=dosini
+au BufNewFile,BufRead Dockerfile*  set filetype=Dockerfile
 " au BufNewFile,BufRead *.js         set filetype=javascript.jsx
 " au BufNewFile,BufRead *.vue        set filetype=javascript.jsx.css
 
@@ -870,7 +885,6 @@ let g:markdown_fenced_languages = [
 \  'c',
 \  'ino=c',
 \  'java',
-\  'kt=kotlin',
 \  'perl',
 \  'go',
 \  'sass',

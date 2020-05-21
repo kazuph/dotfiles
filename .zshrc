@@ -80,22 +80,6 @@ export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 # for nordic
 export PATH=$PATH:$HOME/nRF5_SDK/tools/nrfjprog
 
-# rbenv
-if [ -d ${HOME}/.rbenv  ] ; then
-  export PATH="${HOME}/.rbenv/bin:${HOME}/.rbenv/shims:${PATH}"
-  eval "$(rbenv init -)"
-fi
-
-# auto rehash
-function gem(){
-$HOME/.rbenv/shims/gem $*
-if [ "$1" = "install" ] || [ "$1" = "i" ] || [ "$1" = "uninstall" ] || [ "$1" = "uni" ]
-then
-    rbenv rehash
-    rehash
-fi
-}
-
 # z - jump around
 function load-if-exists() { test -e "$1" && source "$1" }
 source ~/dotfiles/z/z.sh
@@ -259,11 +243,6 @@ export PATH="/usr/local/opt/openssl/bin:$PATH"
 # neovim
 export XDG_CONFIG_HOME=~/.config
 export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
-# export PATH="/usr/local/opt/node@8/bin:$PATH"
-
-# export PATH="$HOME/.pyenv/bin:$PATH"
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -274,7 +253,8 @@ export PATH="$PATH:$HOME/flutter/flutter/bin"
 export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
 
 export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+# export LANG=en_US.UTF-8
+export LANG=ja_JP.UTF-8
 export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
 
 # export DOCKER_HOST=raspberrypi.local:2375
@@ -282,3 +262,26 @@ export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
 export PATH=$PATH:/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home/bin
 export JAVA_HOME=/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home
 
+export AWS_PROFILE=600
+
+# for ddbcli
+export $(cat ~/.aws/credentials | grep -v 600 | sed -e 's/ //g' | perl -pe "s/(aws\w+)=/\U\1=/g")
+export AWS_REGION=ap-northeast-1
+
+export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
+
+export PATH="$PATH:$HOME/development/flutter/bin"
+
+# function balena {
+#   if [ -f .gitignore.balena ] ; then
+#     echo cp .gitignore.balena .gitignore
+#     \cp .gitignore .gitignore.org
+#     \cp .gitignore.balena .gitignore
+#     /usr/local/bin/balena "$@"
+#     echo cp .gitignore.org .gitignore
+#     \cp .gitignore.org .gitignore
+#     rm -rf .gitignore.org
+#   else
+#     /usr/local/bin/balena "$@"
+#   fi
+# }
