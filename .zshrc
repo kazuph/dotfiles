@@ -272,6 +272,10 @@ export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
 
 export PATH="$PATH:$HOME/development/flutter/bin"
 
+function simc() {
+  xcrun instruments -w $(xcrun simctl list | grep -v unavailable | grep -E "^\s" | grep -v ":" | fzf | grep -oE "\((.+?)\)" | grep -oE ".{20,}" | head -n1 | perl -pe "s/(\(|\))//g" )
+}
+
 # function balena {
 #   if [ -f .gitignore.balena ] ; then
 #     echo cp .gitignore.balena .gitignore
