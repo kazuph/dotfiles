@@ -357,6 +357,9 @@ call dein#add('adelarsq/vim-matchit', { 'autoload' : {
 call dein#add("mattn/emmet-vim")
 let g:user_zen_settings = { 'indentation' : '    ', }
 
+" tabnine
+call dein#add('tbodt/deoplete-tabnine', { 'build': './install.sh' })
+
 " NeoComplate {{{
 call dein#add('Shougo/neocomplete')
 call dein#add('Shougo/neosnippet', {
@@ -509,6 +512,10 @@ nnoremap <C-n> :NERDTreeToggle<CR>
 call dein#add('tiagofumo/vim-nerdtree-syntax-highlight')
 call dein#add('Xuyuanp/nerdtree-git-plugin')
 
+" Firestore
+call dein#add('delphinus/vim-firestore')
+autocmd BufNewFile,BufRead firestore.rules set filetype=firestore
+
 " The fancy start screen for Vim.
 call dein#add('mhinz/vim-startify')
 
@@ -567,6 +574,9 @@ call dein#add("tex/vimpreviewpandoc")
 
 " 常駐化する
 call dein#add("thinca/vim-singleton")
+
+" re:view
+call dein#add("tokorom/vim-review")
 
 augroup filetypedetect
   au! BufRead,BufNewFile *.csv,*.dat	setfiletype csv
@@ -883,6 +893,7 @@ let g:markdown_fenced_languages = [
 \  'sh',
 \  'sql',
 \  'c',
+\  'cpp',
 \  'ino=c',
 \  'java',
 \  'perl',
@@ -890,6 +901,7 @@ let g:markdown_fenced_languages = [
 \  'sass',
 \  'html',
 \  'xml',
+\  'firestore',
 \  'yml=yaml',
 \  'conf=dosini',
 \  'Dockerfile',

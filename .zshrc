@@ -12,6 +12,8 @@ fi
 
 # Customize to your needs...
 export EDITOR=vim
+HISTSIZE=1000000
+SAVEHIST=1000000
 
 zmodload zsh/zle
 # export LANG=ja_JP.UTF-8
@@ -64,6 +66,9 @@ alias sub=subl
 alias vim=vim
 alias vi=nvim
 alias vi=nvim
+
+# atcoder
+alias acctest="oj t -d tests -c 'ruby main.rb'"
 
 # for go
 if which go >/dev/null 2>&1; then
@@ -289,3 +294,11 @@ function simc() {
 #     /usr/local/bin/balena "$@"
 #   fi
 # }
+#
+source ~/.cargo/env
+
+# M5Stack Moddable
+export MODDABLE="/Users/kazuph600/src/github.com/Moddable-OpenSource/moddable"
+export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
+export IDF_PATH=$HOME/esp32/esp-idf
+export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools

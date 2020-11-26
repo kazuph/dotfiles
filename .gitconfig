@@ -29,7 +29,7 @@
 [alias]
     ignore = !"f() { local s=$1; shift; \
         while [ $# -gt 0 ]; do s="$s, $1"; shift; done;\
-        curl "https://www.gitignore.io/api/$s"; }; f"
+        curl "https://www.toptal.com/developers/gitignore/api/$s"; }; f"
     s   = status
     st  = status
     ss  = status -s

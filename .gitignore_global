@@ -26,3 +26,5 @@ tags
 .idea/code-comments.xml
 .DS_Store
 .env
+
+.vscode/
