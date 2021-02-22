@@ -565,7 +565,9 @@ call dein#add('pangloss/vim-javascript')
 
 " keynoteへのソースのシンタックスハイライトの貼り付け用
 " :CopyRTF
-call dein#add('zerowidth/vim-copy-as-rtf')
+if has("mac")
+  call dein#add('zerowidth/vim-copy-as-rtf')
+endif
 
 " for PlantUML
 call dein#add("aklt/plantuml-syntax")

@@ -296,11 +296,13 @@ function simc() {
 # }
 
 if [ -d ${HOME}/.cargo/env ] ; then
-    source ~/.cargo/env
-end
+  source ~/.cargo/env
+fi
 
 # M5Stack Moddable
 export MODDABLE="/Users/kazuph600/src/github.com/Moddable-OpenSource/moddable"
 export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
 export IDF_PATH=$HOME/esp32/esp-idf
 export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
+
+export TMUX_TMPDIR=/tmp
