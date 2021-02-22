@@ -294,8 +294,10 @@ function simc() {
 #     /usr/local/bin/balena "$@"
 #   fi
 # }
-#
-source ~/.cargo/env
+
+if [ -d ${HOME}/.cargo/env ] ; then
+    source ~/.cargo/env
+end
 
 # M5Stack Moddable
 export MODDABLE="/Users/kazuph600/src/github.com/Moddable-OpenSource/moddable"

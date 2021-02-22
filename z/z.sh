@@ -52,7 +52,7 @@ _z() {
         while read line; do
             # only count directories
             [ -d "${line%%\|*}" ] && echo $line
-        done < "$datafile" | awk -v path="$*" -v now="$(unixtime)" -F"|" '
+        done < "$datafile" | awk -v path="$*" -v now="$(date +%s)" -F"|" '
             BEGIN {
                 rank[path] = 1
                 time[path] = now
@@ -128,7 +128,7 @@ _z() {
         local cd
         cd="$(while read line; do
             [ -d "${line%%\|*}" ] && echo $line
-        done < "$datafile" | awk -v t="$(unixtime)" -v list="$list" -v typ="$typ" -v q="$fnd" -F"|" '
+        done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -F"|" '
             function frecent(rank, time) {
                 # relate frequency and time
                 dx = t - time
