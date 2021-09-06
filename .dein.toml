@@ -1,0 +1,280 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/vimproc.vim'
+build = 'make'
+
+[[plugins]]
+repo = 'ctrlpvim/ctrlp.vim'
+hook_add = '''
+let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
+let g:ctrlp_max_height = &lines
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
+  \ }
+'''
+
+[[plugins]]
+repo = 'glidenote/memolist.vim'
+hook_add = '''
+nnoremap ,mn :MemoNew<cr>
+nnoremap ,mg :MemoGrep<cr>
+nnoremap ,mf :MemoList<CR>
+" nnoremap ,mf :exe "CtrlP# g:memolist_path<cr><f5>
+let g:memolist_ex_cmd = 'NERDTree'
+let g:memolist_path = "~/Dropbox/memo"
+let g:memolist_fzf = 1
+let g:memolist_ex_cmd = 'CtrlP'
+'''
+
+[[plugins]]
+repo = 'junegunn/fzf'
+build = './install --bin'
+merged = '0'
+
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+depends = 'fzf'
+hook_add = '''
+let g:fzf_command_prefix = 'F'
+nnoremap <Leader>b :FBuffers<CR>
+nnoremap <Leader>c :FCommands<CR>
+nnoremap <Leader>f :FGFiles<CR>
+nnoremap <Leader>g :FAg<CR>
+'''
+
+[[plugins]] # 爆速のgrepであるagを使いたい
+repo = 'rking/ag.vim'
+hook_add = '''
+nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+'''
+
+[[plugins]] # YAML
+repo = 'stephpy/vim-yaml'
+
+[[plugins]]# gcc or C-_でトグル
+repo = 'tomtom/tcomment_vim'
+
+[[plugins]]
+repo = 'tpope/vim-endwise'
+
+[[plugins]]
+repo = 'Townk/vim-autoclose'
+
+[[plugins]]
+repo = 'joshdick/onedark.vim'
+hook_add = '''
+  colorscheme onedark
+'''
+
+[[plugins]]
+repo = 'w0rp/ale'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+  set signcolumn=yes
+  set updatetime=1000
+  nnoremap [gitgutter] <Nop>
+  nmap <C-h> [gitgutter]
+  nmap [gitgutter]j <Plug>GitGutterNextHunk
+  nmap [gitgutter]k <Plug>GitGutterPrevHunk
+  nmap [gitgutter]u <Plug>GitGutterUndoHunk
+'''
+
+[[plugins]]
+repo = 'tpope/vim-fugitive'
+hook_add = '''
+  command Gst :Gstatus
+  command Gdf :Gdiff
+  command Gbl :Gblame
+'''
+
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+hook_add = '''
+  nnoremap [denite] <Nop>
+  nmap <C-n> [denite]
+  nnoremap <silent> [denite]g :<C-u>Denite grep -buffer-name=search-buffer-denite<CR>
+  nnoremap <silent> [denite]r :<C-u>Denite -resume -buffer-name=search-buffer-denite<CR>
+  nnoremap <silent> [denite]p :<C-u>Denite file_rec<CR>
+  call denite#custom#option('default', 'prompt', '>')
+  call denite#custom#option('_', 'highlight_matched_range', 'None')
+  call denite#custom#option('_', 'highlight_matched_char', 'None')
+  call denite#custom#map('insert', "<Tab>", '<denite:move_to_next_line>')
+  call denite#custom#map('insert', "<S-Tab>", '<denite:move_to_previous_line>')
+  call denite#custom#map('insert', "<C-t>", '<denite:do_action:tabopen>')
+  call denite#custom#map('insert', "<C-v>", '<denite:do_action:vsplit>')
+  call denite#custom#map('normal', "v", '<denite:do_action:vsplit>')
+  call denite#custom#var('grep', 'command', ['pt', '--follow', '--nogroup', '--nocolor', '--hidden'])
+  call denite#custom#var('grep', 'default_opts', [])
+  call denite#custom#var('grep', 'recursive_opts', [])
+  call denite#custom#var('file_rec', 'command', ['pt', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+hook_add = '''
+  nmap n <Plug>(anzu-n-with-echo)
+  nmap N <Plug>(anzu-N-with-echo)
+  nmap * <Plug>(anzu-star)
+  nmap # <Plug>(anzu-sharp)
+'''
+
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
+on_event = 'InsertEnter'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  inoremap <expr><Tab> pumvisible() ? "\<DOWN># : "\<Tab>"
+  inoremap <expr><S-Tab> pumvisible() ? "\<UP># : "\<S-Tab>"
+'''
+
+[[plugins]]
+repo = 'lighttiger2505/deoplete-vim-lsp'
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+
+[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
+repo = 'osyo-manga/vim-precious'
+depends = ['context_filetype.vim']
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]] # 選択部分のキーワードを*を押して検索
+repo = 'thinca/vim-visualstar'
+
+[[plugins]] # devicon ;)
+repo = 'ryanoasis/vim-devicons'
+hook_add = '''
+let g:webdevicons_conceal_nerdtree_brackets = 1
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 0
+let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
+'''
+
+[[plugins]] # ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
+repo = 'scrooloose/nerdtree'
+hook_add = '''
+nnoremap <C-n> :NERDTreeToggle<CR>
+'''
+
+[[plugins]]
+repo = 'tiagofumo/vim-nerdtree-syntax-highlight'
+
+[[plugins]]
+repo = 'Xuyuanp/nerdtree-git-plugin'
+
+[[plugins]] # Firestore
+repo = 'delphinus/vim-firestore'
+hook_add = '''
+autocmd BufNewFile,BufRead firestore.rules set filetype=firestore
+'''
+
+[[plugins]] # The fancy start screen for Vim.
+repo = 'mhinz/vim-startify'
+
+[[plugins]]
+# 正規表現をPerl風に
+# :%S///gc
+repo = 'othree/eregex.vim'
+
+[[plugins]]
+repo = 'haya14busa/incsearch.vim'
+hook_add = '''
+map /  <Plug>(incsearch-forward)
+'''
+
+[[plugins]]
+# ()や''でくくったりするための補助
+# text-objectの支援
+# di' で'の中身を削除
+# da' で'も含めて削df
+# cs'# cs"' などと囲っているものに対する操作ができる
+# visualモードのときはSを代用
+repo = "tpope/vim-surround"
+
+[[plugins]]
+# テキストオブジェクトを使い倒す
+repo = 'kana/vim-operator-user.git'
+
+[[plugins]]
+# Rを使ってyankしてるものと置き換え
+repo = 'kana/vim-operator-replace.git'
+hook_add = '''
+map R <Plug>(operator-replace)
+'''
+
+[[plugins]]
+# キャメル・アンダースコア記法を扱いやすく
+# , w , e , b
+# v, w
+# d, w
+repo = 'bkad/CamelCaseMotion.git'
+hook_add = '''
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+'''
+
+[[plugins]]
+#  ","と押して", "としてくれる優しさ
+repo = "vim-scripts/smartchr"
+hook_add = '''
+inoremap <expr> , smartchr#one_of(', ', ',')
+'''
+
+[[plugins]]
+# カーソルジェットコースター
+repo = 'rhysd/accelerated-jk.git'
+hook_add = '''
+let g:accelerated_jk_acceleration_table = [10,5,3]
+nmap j <Plug>(accelerated_jk_gj)
+nmap k <Plug>(accelerated_jk_gk)
+'''
+
+[[plugins]]
+# jkがいないなら
+repo = 'easymotion/vim-easymotion'
+
+# <Leader>f{char} to move to {char}
+hook_add = '''
+map  <Leader>F <Plug>(easymotion-bd-f)
+nmap <Leader>F <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+vmap s <Plug>(easymotion-bd-f2)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
+let g:EasyMotion_smartcase = 1
+let g:EasyMotion_startofline = 0
+let g:EasyMotion_keys = ';HKLYUIOPNM,QWERTASDGZXCVBJF'
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
+let g:EasyMotion_do_mapping = 0
+'''
