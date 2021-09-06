@@ -5,6 +5,7 @@ let mapleader = "\<Space>"
 if &compatible
   set nocompatible
 endif
+
 " dein.vimのディレクトリ
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -27,6 +28,7 @@ if dein#load_state(s:dein_dir)
   call dein#end()
   call dein#save_state()
 endif
+
 " プラグインの追加・削除やtomlファイルの設定を変更した後は
 " 適宜 call dein#update や call dein#clear_state を呼んでください。
 " そもそもキャッシュしなくて良いならload_state/save_stateを呼ばないようにしてください。
@@ -82,10 +84,10 @@ inoremap <C-b> <Left>
 inoremap <C-d> <Del>
 
 " .vimrcを瞬時に開く
-nnoremap <Space><Space>. :e $MYVIMRC<CR>
+nnoremap <Space><Space>. :e '~/.config/nvim/init.vim'<CR>
 
 " vimrcの設定を反映
-nnoremap <Space><Space>.. :<C-u>source $MYVIMRC<CR>
+nnoremap <Space><Space>.. :<C-u>source '~/.config/nvim/init.vim'<CR>
 
 " カーソル下の単語を置換
 nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
@@ -121,7 +123,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " 無限undo
 if has('persistent_undo')
-  set undodir=~/.vim/undo
+  set undodir=~/.config/nvim/undo
   set undofile
 endif
 
@@ -146,3 +148,32 @@ nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
+
+" Set internal encoding of vim, not needed on neovim, since coc.nvim using some
+" unicode characters in the file autoload/float.vim
+set encoding=utf-8
+
+" TextEdit might fail if hidden is not set.
+set hidden
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set signcolumn=yes
+
+" set completeopt+=noselect
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
+
+" 爆速のgrepであるagを使いたい
+nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+vnoremap gg/ y:<C-u>Ag <C-R>"<CR>

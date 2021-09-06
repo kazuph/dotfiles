@@ -6,11 +6,219 @@ repo = 'Shougo/vimproc.vim'
 build = 'make'
 
 [[plugins]]
+repo = 'joshdick/onedark.vim'
+hook_add = '''
+  colorscheme onedark
+'''
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+hook_add = '''
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+'''
+
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
+on_event = 'InsertEnter'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  " <TAB>: completion.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ deoplete#manual_complete()
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+  endfunction
+
+  " <S-TAB>: completion back.
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+  " <C-e>: popup cancel
+  inoremap <expr><C-e> deoplete#cancel_popup()
+'''
+
+[[plugins]]
+repo = 'ncm2/float-preview.nvim'
+hook_source = '''
+" let g:float_preview#docked = 1
+let g:float_preview#docked = 0
+'''
+
+[[plugins]]
+repo = 'lighttiger2505/deoplete-vim-lsp'
+
+[[plugins]]
+repo = 'tbodt/deoplete-tabnine'
+build= './install.sh'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo =  'rust-lang/rust.vim'
+
+[[plugins]]
+repo = 'Shougo/neosnippet'
+on_i  = 1
+on_ft = ['snippet']
+depends = ['neosnippet-snippets']
+hook_source = '''
+  let g:neosnippet#enable_snipmate_compatibility = 1
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+  " if has('conceal')
+  "   set conceallevel=2 concealcursor=niv
+  " endif
+'''
+
+# [[plugins]]
+# repo = 'autozimu/LanguageClient-neovim'
+# build = 'bash install.sh'
+# rev = 'next'
+# hook_add = '''
+#   set hidden
+#   let g:LanguageClient_serverCommands = {
+#       \ 'go': ['gopls']
+#       \ }
+#   let g:LanguageClient_loadSettings = 1
+#   nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+#   nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+# '''
+#
+# [[plugins]]
+# repo = 'fatih/vim-go'
+# hook_add = '''
+#   " 保存時に必要なimportを自動的に挿入
+#   let g:go_fmt_command = "goimports"
+#   " LSPに任せる機能をOFFにする
+#   let g:go_def_mapping_enabled = 0
+#   let g:go_doc_keywordprg_enabled = 0
+# '''
+
+[[plugins]]
+repo = 'mattn/vim-goimports'
+
+[[plugins]]
+repo = 'prettier/vim-prettier'
+build = 'npm install'
+on_ft = ['javascript', 'typescript', 'jsx', 'css', 'scss', 'json', 'markdown']
+hook_add = '''
+" @formatアノテーションを持ったファイルの自動フォーマットを無効にする
+let g:prettier#autoformat = 0
+
+" Prettierのパースエラーをquickfixに表示しない
+let g:prettier#quickfix_enabled = 0
+
+autocmd BufWritePre *.js,*.ts,*.jsx,*.css,*.scss,*.json,*.md PrettierAsync
+'''
+
+[[plugins]]
+repo = 'leafgarland/typescript-vim'
+
+[[plugins]]
+repo = 'vim-syntastic/syntastic'
+hook_add = '''
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_mode_map = {
+      \ 'mode': 'active',
+      \ 'active_filetypes': ['javascript'],
+      \ 'passive_filetypes': []
+      \ }
+
+let g:syntastic_enable_signs = 1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+'''
+
+[[plugins]]
+repo = 'Shougo/neco-vim'
+
+[[plugins]]
+repo = 'Shougo/neco-syntax'
+
+[[plugins]]
+repo = 'ujihisa/neco-look'
+
+[[plugins]]
+repo = 'deoplete-plugins/deoplete-jedi'
+
+[[plugins]]
+repo = 'deoplete-plugins/deoplete-go'
+build = 'make'
+
+[[plugins]]
+repo = 'sebastianmarkow/deoplete-rust'
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+hook_add = '''
+  nmap n <Plug>(anzu-n-with-echo)
+  nmap N <Plug>(anzu-N-with-echo)
+  nmap * <Plug>(anzu-star)
+  nmap # <Plug>(anzu-sharp)
+'''
+
+[[plugins]]
 repo = 'ctrlpvim/ctrlp.vim'
 hook_add = '''
 let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
   \ }
@@ -39,10 +247,20 @@ repo = 'junegunn/fzf.vim'
 depends = 'fzf'
 hook_add = '''
 let g:fzf_command_prefix = 'F'
+
+" fzf settings
+let $FZF_DEFAULT_OPTS="--layout=reverse"
+let $FZF_DEFAULT_COMMAND="rg --files --hidden --glob '!.git/**'"
+let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'border': 'sharp' } }
+
 nnoremap <Leader>b :FBuffers<CR>
 nnoremap <Leader>c :FCommands<CR>
 nnoremap <Leader>f :FGFiles<CR>
 nnoremap <Leader>g :FAg<CR>
+nnoremap <Leader>r :FRg<CR>
+
+nnoremap rr/  :<C-u>FRg <C-R><C-w><CR>
+vnoremap rr/ y:<C-u>FRg <C-R>"<CR>
 '''
 
 [[plugins]] # 爆速のgrepであるagを使いたい
@@ -63,12 +281,6 @@ repo = 'tpope/vim-endwise'
 
 [[plugins]]
 repo = 'Townk/vim-autoclose'
-
-[[plugins]]
-repo = 'joshdick/onedark.vim'
-hook_add = '''
-  colorscheme onedark
-'''
 
 [[plugins]]
 repo = 'w0rp/ale'
@@ -93,59 +305,27 @@ hook_add = '''
   command Gbl :Gblame
 '''
 
-[[plugins]]
-repo = 'Shougo/denite.nvim'
-hook_add = '''
-  nnoremap [denite] <Nop>
-  nmap <C-n> [denite]
-  nnoremap <silent> [denite]g :<C-u>Denite grep -buffer-name=search-buffer-denite<CR>
-  nnoremap <silent> [denite]r :<C-u>Denite -resume -buffer-name=search-buffer-denite<CR>
-  nnoremap <silent> [denite]p :<C-u>Denite file_rec<CR>
-  call denite#custom#option('default', 'prompt', '>')
-  call denite#custom#option('_', 'highlight_matched_range', 'None')
-  call denite#custom#option('_', 'highlight_matched_char', 'None')
-  call denite#custom#map('insert', "<Tab>", '<denite:move_to_next_line>')
-  call denite#custom#map('insert', "<S-Tab>", '<denite:move_to_previous_line>')
-  call denite#custom#map('insert', "<C-t>", '<denite:do_action:tabopen>')
-  call denite#custom#map('insert', "<C-v>", '<denite:do_action:vsplit>')
-  call denite#custom#map('normal', "v", '<denite:do_action:vsplit>')
-  call denite#custom#var('grep', 'command', ['pt', '--follow', '--nogroup', '--nocolor', '--hidden'])
-  call denite#custom#var('grep', 'default_opts', [])
-  call denite#custom#var('grep', 'recursive_opts', [])
-  call denite#custom#var('file_rec', 'command', ['pt', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
-'''
-
-[[plugins]]
-repo = 'osyo-manga/vim-anzu'
-hook_add = '''
-  nmap n <Plug>(anzu-n-with-echo)
-  nmap N <Plug>(anzu-N-with-echo)
-  nmap * <Plug>(anzu-star)
-  nmap # <Plug>(anzu-sharp)
-'''
-
-[[plugins]]
-repo = 'prabirshrestha/vim-lsp'
-
-[[plugins]]
-repo = 'mattn/vim-lsp-settings'
-
-[[plugins]]
-repo = 'Shougo/deoplete.nvim'
-if = 'has("nvim")'
-on_i = 1
-on_event = 'InsertEnter'
-hook_add = '''
-  let g:deoplete#enable_at_startup = 1
-  inoremap <expr><Tab> pumvisible() ? "\<DOWN># : "\<Tab>"
-  inoremap <expr><S-Tab> pumvisible() ? "\<UP># : "\<S-Tab>"
-'''
-
-[[plugins]]
-repo = 'lighttiger2505/deoplete-vim-lsp'
-
-[[plugins]]
-repo = 'cespare/vim-toml'
+# [[plugins]]
+# repo = 'Shougo/denite.nvim'
+# hook_add = '''
+#   nnoremap [denite] <Nop>
+#   nmap <C-n> [denite]
+#   nnoremap <silent> [denite]g :<C-u>Denite grep -buffer-name=search-buffer-denite<CR>
+#   nnoremap <silent> [denite]r :<C-u>Denite -resume -buffer-name=search-buffer-denite<CR>
+#   nnoremap <silent> [denite]p :<C-u>Denite file_rec<CR>
+#   call denite#custom#option('default', 'prompt', '>')
+#   call denite#custom#option('_', 'highlight_matched_range', 'None')
+#   call denite#custom#option('_', 'highlight_matched_char', 'None')
+#   call denite#custom#map('insert', "<Tab>", '<denite:move_to_next_line>')
+#   call denite#custom#map('insert', "<S-Tab>", '<denite:move_to_previous_line>')
+#   call denite#custom#map('insert', "<C-t>", '<denite:do_action:tabopen>')
+#   call denite#custom#map('insert', "<C-v>", '<denite:do_action:vsplit>')
+#   call denite#custom#map('normal', "v", '<denite:do_action:vsplit>')
+#   call denite#custom#var('grep', 'command', ['pt', '--follow', '--nogroup', '--nocolor', '--hidden'])
+#   call denite#custom#var('grep', 'default_opts', [])
+#   call denite#custom#var('grep', 'recursive_opts', [])
+#   call denite#custom#var('file_rec', 'command', ['pt', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
+# '''
 
 [[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
 repo = 'osyo-manga/vim-precious'
@@ -277,4 +457,37 @@ let g:EasyMotion_use_upper = 1
 let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1
 let g:EasyMotion_do_mapping = 0
+'''
+
+[[plugins]]
+repo = 'vim-airline/vim-airline'
+hook_add = '''
+    " タブラインの表示
+    let g:airline#extensions#tabline#enabled = 1
+    " （タブが一個の場合）バッファのリストをタブラインに表示する機能をオフ
+    let g:airline#extensions#tabline#show_buffers = 0
+    " 0でそのタブで開いてるウィンドウ数、1で左のタブから連番
+    let g:airline#extensions#tabline#tab_nr_type = 1
+    " パワーラインフォントの使用
+    let g:airline_powerline_fonts = 1
+    " aleの表示
+    let g:airline#extensions#ale#enabled = 1
+    " Do not collapse the status line while having multiple windows
+    let g:airline_inactive_collapse = 0
+    " tagbarの表示
+    let g:airline#extensions#tagbar#enabled = 1
+    " virtualenvを有効
+    let g:airline#extensions#virtualenv#enabled = 1
+'''
+
+[[plugins]] #括弧とかを自動で閉じてくれる
+repo = 'jiangmiao/auto-pairs'
+
+[[plugins]] #同じインデントのところに縦線を引いてくれる奴
+repo = 'Yggdroot/indentLine'
+hook_add = '''
+"indentline"
+let g:indentLine_color_term =239
+let g:indentLine_color_gui = '#708090'
+let g:indentLine_char = '¦'
 '''

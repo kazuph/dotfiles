@@ -8,8 +8,10 @@ brew install zsh
 brew install reattach-to-user-namespace
 brew install tmux
 brew install wget
+brew install fd
+brew install ripgrep
 brew install hub
-brew install macvim vim
+brew install macvim vim nvim
 brew tap homebrew/cask-fonts
 brew cask install font-hack-nerd-font
 
