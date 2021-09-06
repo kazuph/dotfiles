@@ -10,6 +10,8 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+# source /usr/local/aws/bin/aws_zsh_completer.sh
+
 # Customize to your needs...
 export EDITOR=vim
 HISTSIZE=1000000
@@ -75,6 +77,7 @@ if which go >/dev/null 2>&1; then
     export GOPATH=${HOME}
     export GOBIN=~/bin
     path=($GOPATH/bin $path)
+    export GOENV_DISABLE_GOPATH=1 # for goenv
 fi
 
 # for android
@@ -252,7 +255,7 @@ export PATH="/usr/local/opt/imagemagick@6/bin:$PATH"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
-export PATH="$PATH:$HOME/flutter/flutter/bin"
+export PATH="$PATH:$HOME/development/flutter/bin"
 
 # ARM gcc
 export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
@@ -260,18 +263,19 @@ export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
 export LC_ALL=en_US.UTF-8
 # export LANG=en_US.UTF-8
 export LANG=ja_JP.UTF-8
-export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
+# export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
+export GIT_EDITOR='vim'
 
 # export DOCKER_HOST=raspberrypi.local:2375
 
 export PATH=$PATH:/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home/bin
 export JAVA_HOME=/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home
 
-export AWS_PROFILE=600
+export AWS_PROFILE=default
 
 # for ddbcli
-export $(cat ~/.aws/credentials | grep -v 600 | sed -e 's/ //g' | perl -pe "s/(aws\w+)=/\U\1=/g")
-export AWS_REGION=ap-northeast-1
+# export $(cat ~/.aws/credentials | grep -v 600 | sed -e 's/ //g' | perl -pe "s/(aws\w+)=/\U\1=/g")
+# export AWS_REGION=ap-northeast-1
 
 export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
 

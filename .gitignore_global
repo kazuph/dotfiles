@@ -28,3 +28,5 @@ tags
 .env
 
 .vscode/
+.devcontainer/
+/tmp

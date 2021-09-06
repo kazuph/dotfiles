@@ -15,7 +15,7 @@
     # globalな.gitignoreの指定
     excludesfile = /Users/kazuph600/.gitignore_global
     autoCRLF = false
-    editor = vim
+	editor = vim
     quotepath = false
     precomposeunicode = true
 [push]
