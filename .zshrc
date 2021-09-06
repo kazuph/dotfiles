@@ -59,7 +59,6 @@ alias vc='vim -o `git cl`'
 alias vm='vim -o `git ml`'
 # alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias todo="todo.sh"
-alias jf='cd `j | fzf  | awk '\''{print $2}'\''`'
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
 alias get='ghq get '
 alias usb='ls /dev/tty.*'
@@ -108,7 +107,8 @@ test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 
 setopt no_share_history
 
-### カレントディレクトリ以下を検索して移動
+### fzf集
+# export FZF_DEFAULT_OPTS='--preview "bat --style=numbers --color=always --line-range :500 {}"'
 function fzf-get-current-dir() {
     find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes)' | fzf
 }
@@ -123,6 +123,41 @@ function fzf-cdr() {
 }
 zle -N fzf-cdr
 bindkey '^q' fzf-cdr
+
+# fbr - checkout git branch
+function fzf-checkout-branch() {
+  local branches branch
+  branches=$(git branch | sed -e 's/\(^\* \|^  \)//g' | cut -d " " -f 1) &&
+  branch=$(echo "$branches" | fzf --preview "git show --color=always {}") &&
+  git checkout $(echo "$branch")
+}
+zle     -N   fzf-checkout-branch
+bindkey "^b" fzf-checkout-branch
+
+# incremental
+f() { fzf | while read LINE; do $@ $LINE; done }
+fp() { fzf --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*" | while read LINE; do $@ $LINE; done }
+
+gcd() {
+  ghq list -p | fp cd
+  zle accept-line
+}
+zle -N gcd
+bindkey "^g" gcd
+
+jf() {
+  j | sort -rn | awk '{print $2}' | f cd;
+  zle accept-line
+}
+zle -N jf
+bindkey "^f" jf
+
+# gh(){
+#     ghq list -p | f cd;
+#     zle accept-line
+# }
+# zle -N gh
+# bindkey "^g" gh
 
 # ------------------------------------
 # Docker alias and function
@@ -224,15 +259,6 @@ alias "505"="echo 'HTTP Version Not Supported'"
 alias o='git ls-files | f open'
 alias e='ghq list -p | f cd'
 
-# incremental
-f() { fzf | while read LINE; do $@ $LINE; done }
-
-gh(){
-    ghq list -p | f cd;
-    zle accept-line
-}
-zle -N gh
-bindkey "^g" gh
 
 setopt ignoreeof
 
