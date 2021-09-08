@@ -1,0 +1,57 @@
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+if = 'has("nvim")'
+on_i = 1
+on_event = 'InsertEnter'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  " <TAB>: completion.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ deoplete#manual_complete()
+  function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+  endfunction
+
+  " <S-TAB>: completion back.
+  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+  " <C-e>: popup cancel
+  inoremap <expr><C-e> deoplete#cancel_popup()
+'''
+
+[[plugins]]
+repo = 'lighttiger2505/deoplete-vim-lsp'
+
+[[plugins]]
+repo = 'tbodt/deoplete-tabnine'
+build= './install.sh'
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/neosnippet'
+on_i  = 1
+depends = ['neosnippet-snippets']
+hook_add = '''
+  let g:neosnippet#enable_snipmate_compatibility = 1
+  imap <C-k> <Plug>(neosnippet_expand_or_jump)
+  smap <C-k> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-k> <Plug>(neosnippet_expand_target)
+  if has('conceal')
+    set conceallevel=2 concealcursor=niv
+  endif
+'''
+
+[[plugins]]
+repo = 'deoplete-plugins/deoplete-jedi'
+
+[[plugins]]
+repo = 'deoplete-plugins/deoplete-go'
+build = 'make'
+
+[[plugins]]
+repo = 'sebastianmarkow/deoplete-rust'
+

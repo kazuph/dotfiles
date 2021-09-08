@@ -12,196 +12,45 @@ hook_add = '''
 '''
 
 [[plugins]]
+repo = 'markonm/traces.vim'
+
+# [[plugins]] # neovim not supported
+# repo = 'skanehira/docker.vim'
+
+[[plugins]]
 repo = 'cespare/vim-toml'
 
-[[plugins]]
-repo = 'prabirshrestha/vim-lsp'
+[[plugins]] # まーくだうん
+repo = "tpope/vim-markdown"
 hook_add = '''
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'allowlist': ['python'],
-        \ })
-endif
+autocmd BufNewFile, BufRead *.{md, mdwn, mkd, mkdn, mark*} set filetype=markdown
+let g:markdown_syntax_conceal = 0
+let g:markdown_fenced_languages = [
+\  'css',
+\  'erb=eruby',
+\  'js=javascript',
+\  'ts=javascript',
+\  'json=javascript',
+\  'rb=ruby',
+\  'py=python',
+\  'sh',
+\  'sql',
+\  'c',
+\  'cpp',
+\  'ino=c',
+\  'java',
+\  'perl',
+\  'go',
+\  'sass',
+\  'html',
+\  'xml',
+\  'firestore',
+\  'yml=yaml',
+\  'conf=dosini',
+\  'Dockerfile',
+\]
 
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> <leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    nmap <buffer> K <plug>(lsp-hover)
-    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
-
-    let g:lsp_format_sync_timeout = 1000
-    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
-
-    " refer to doc to add more commands
-endfunction
-
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
 '''
-
-[[plugins]]
-repo = 'mattn/vim-lsp-settings'
-
-[[plugins]]
-repo = 'Shougo/deoplete.nvim'
-if = 'has("nvim")'
-on_i = 1
-on_event = 'InsertEnter'
-hook_add = '''
-  let g:deoplete#enable_at_startup = 1
-  " <TAB>: completion.
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ deoplete#manual_complete()
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~ '\s'
-  endfunction
-
-  " <S-TAB>: completion back.
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-  " <C-e>: popup cancel
-  inoremap <expr><C-e> deoplete#cancel_popup()
-'''
-
-[[plugins]]
-repo = 'ncm2/float-preview.nvim'
-hook_source = '''
-" let g:float_preview#docked = 1
-let g:float_preview#docked = 0
-'''
-
-[[plugins]]
-repo = 'lighttiger2505/deoplete-vim-lsp'
-
-[[plugins]]
-repo = 'tbodt/deoplete-tabnine'
-build= './install.sh'
-
-[[plugins]]
-repo = 'Shougo/neosnippet-snippets'
-
-[[plugins]]
-repo =  'rust-lang/rust.vim'
-
-[[plugins]]
-repo = 'Shougo/neosnippet'
-on_i  = 1
-on_ft = ['snippet']
-depends = ['neosnippet-snippets']
-hook_source = '''
-  let g:neosnippet#enable_snipmate_compatibility = 1
-  imap <C-k> <Plug>(neosnippet_expand_or_jump)
-  smap <C-k> <Plug>(neosnippet_expand_or_jump)
-  xmap <C-k> <Plug>(neosnippet_expand_target)
-  " if has('conceal')
-  "   set conceallevel=2 concealcursor=niv
-  " endif
-'''
-
-# [[plugins]]
-# repo = 'autozimu/LanguageClient-neovim'
-# build = 'bash install.sh'
-# rev = 'next'
-# hook_add = '''
-#   set hidden
-#   let g:LanguageClient_serverCommands = {
-#       \ 'go': ['gopls']
-#       \ }
-#   let g:LanguageClient_loadSettings = 1
-#   nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-#   nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-# '''
-#
-# [[plugins]]
-# repo = 'fatih/vim-go'
-# hook_add = '''
-#   " 保存時に必要なimportを自動的に挿入
-#   let g:go_fmt_command = "goimports"
-#   " LSPに任せる機能をOFFにする
-#   let g:go_def_mapping_enabled = 0
-#   let g:go_doc_keywordprg_enabled = 0
-# '''
-
-[[plugins]]
-repo = 'mattn/vim-goimports'
-
-[[plugins]]
-repo = 'prettier/vim-prettier'
-build = 'npm install'
-on_ft = ['javascript', 'typescript', 'jsx', 'css', 'scss', 'json', 'markdown']
-hook_add = '''
-" @formatアノテーションを持ったファイルの自動フォーマットを無効にする
-let g:prettier#autoformat = 0
-
-" Prettierのパースエラーをquickfixに表示しない
-let g:prettier#quickfix_enabled = 0
-
-autocmd BufWritePre *.js,*.ts,*.jsx,*.css,*.scss,*.json,*.md PrettierAsync
-'''
-
-[[plugins]]
-repo = 'leafgarland/typescript-vim'
-
-[[plugins]]
-repo = 'vim-syntastic/syntastic'
-hook_add = '''
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_mode_map = {
-      \ 'mode': 'active',
-      \ 'active_filetypes': ['javascript'],
-      \ 'passive_filetypes': []
-      \ }
-
-let g:syntastic_enable_signs = 1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-'''
-
-[[plugins]]
-repo = 'Shougo/neco-vim'
-
-[[plugins]]
-repo = 'Shougo/neco-syntax'
-
-[[plugins]]
-repo = 'ujihisa/neco-look'
-
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-jedi'
-
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-go'
-build = 'make'
-
-[[plugins]]
-repo = 'sebastianmarkow/deoplete-rust'
 
 [[plugins]]
 repo = 'osyo-manga/vim-anzu'
@@ -256,6 +105,7 @@ let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffse
 nnoremap <Leader>b :FBuffers<CR>
 nnoremap <Leader>c :FCommands<CR>
 nnoremap <Leader>f :FGFiles<CR>
+nnoremap <Leader>h :FHistory<CR>
 nnoremap <Leader>g :FAg<CR>
 nnoremap <Leader>r :FRg<CR>
 
@@ -281,55 +131,6 @@ repo = 'tpope/vim-endwise'
 
 [[plugins]]
 repo = 'Townk/vim-autoclose'
-
-[[plugins]]
-repo = 'w0rp/ale'
-
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-hook_add = '''
-  set signcolumn=yes
-  set updatetime=1000
-  nnoremap [gitgutter] <Nop>
-  nmap <C-h> [gitgutter]
-  nmap [gitgutter]j <Plug>GitGutterNextHunk
-  nmap [gitgutter]k <Plug>GitGutterPrevHunk
-  nmap [gitgutter]u <Plug>GitGutterUndoHunk
-'''
-
-[[plugins]]
-repo = 'tpope/vim-fugitive'
-hook_add = '''
-  command Gst :Gstatus
-  command Gdf :Gdiff
-  command Gbl :Gblame
-'''
-
-# [[plugins]]
-# repo = 'Shougo/denite.nvim'
-# hook_add = '''
-#   nnoremap [denite] <Nop>
-#   nmap <C-n> [denite]
-#   nnoremap <silent> [denite]g :<C-u>Denite grep -buffer-name=search-buffer-denite<CR>
-#   nnoremap <silent> [denite]r :<C-u>Denite -resume -buffer-name=search-buffer-denite<CR>
-#   nnoremap <silent> [denite]p :<C-u>Denite file_rec<CR>
-#   call denite#custom#option('default', 'prompt', '>')
-#   call denite#custom#option('_', 'highlight_matched_range', 'None')
-#   call denite#custom#option('_', 'highlight_matched_char', 'None')
-#   call denite#custom#map('insert', "<Tab>", '<denite:move_to_next_line>')
-#   call denite#custom#map('insert', "<S-Tab>", '<denite:move_to_previous_line>')
-#   call denite#custom#map('insert', "<C-t>", '<denite:do_action:tabopen>')
-#   call denite#custom#map('insert', "<C-v>", '<denite:do_action:vsplit>')
-#   call denite#custom#map('normal', "v", '<denite:do_action:vsplit>')
-#   call denite#custom#var('grep', 'command', ['pt', '--follow', '--nogroup', '--nocolor', '--hidden'])
-#   call denite#custom#var('grep', 'default_opts', [])
-#   call denite#custom#var('grep', 'recursive_opts', [])
-#   call denite#custom#var('file_rec', 'command', ['pt', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
-# '''
-
-[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
-repo = 'osyo-manga/vim-precious'
-depends = ['context_filetype.vim']
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
@@ -491,3 +292,162 @@ let g:indentLine_color_term =239
 let g:indentLine_color_gui = '#708090'
 let g:indentLine_char = '¦'
 '''
+
+[[plugins]]
+repo = 'ncm2/float-preview.nvim'
+hook_source = '''
+" let g:float_preview#docked = 1
+let g:float_preview#docked = 0
+'''
+
+[[plugins]]
+repo = 'prettier/vim-prettier'
+build = 'npm install'
+on_ft = ['javascript', 'typescript', 'jsx', 'css', 'scss', 'json', 'markdown']
+hook_add = '''
+" @formatアノテーションを持ったファイルの自動フォーマットを無効にする
+let g:prettier#autoformat = 0
+
+" Prettierのパースエラーをquickfixに表示しない
+let g:prettier#quickfix_enabled = 0
+
+autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.md PrettierAsync
+'''
+
+[[plugins]]
+repo = 'vim-syntastic/syntastic'
+hook_add = '''
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_mode_map = {
+      \ 'mode': 'active',
+      \ 'active_filetypes': ['javascript'],
+      \ 'passive_filetypes': []
+      \ }
+
+let g:syntastic_enable_signs = 1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+'''
+
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+hook_add = '''
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
+if executable("typescript-language-server")
+  " グローバルインストールされたnpmモジュールの保存場所
+  let s:npm_root = trim(system("npm root -g"))
+
+  " vim-lspのinitialization_optionsを使用して、typescript-deno-pluginのインストール場所をtypescript-language-serverへ伝えます
+  let s:has_typescript_deno_plugin = isdirectory(s:npm_root . "/typescript-deno-plugin")
+  let s:plugins = s:has_typescript_deno_plugin
+    \ ? [{ "name": "typescript-deno-plugin", "location": s:npm_root }]
+    \ : []
+  augroup LspTypeScript
+    autocmd!
+    autocmd User lsp_setup call lsp#register_server({
+    \   "name": "typescript-language-server",
+    \   "cmd": {server_info -> ["typescript-language-server", "--stdio"]},
+    \   "root_uri": {server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), 'tsconfig.json'))},
+    \   "whitelist": ["typescript", "typescript.tsx", 'javascript', 'javascript.jsx'],
+    \   "initialization_options": { "plugins": s:plugins },
+    \ })
+  augroup END
+endif
+
+let g:lsp_diagnostics_echo_cursor = 1
+let g:lsp_settings = {
+\ 'efm-langserver': {
+\   'disabled': v:false
+\ }
+\ }
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+'''
+
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
+
+[[plugins]]
+repo = 'Shougo/neco-vim'
+
+[[plugins]]
+repo = 'Shougo/neco-syntax'
+
+[[plugins]]
+repo = 'ujihisa/neco-look'
+
+[[plugins]]
+repo =  'rust-lang/rust.vim'
+
+[[plugins]]
+repo = 'mattn/vim-goimports'
+
+[[plugins]]
+repo = 'elzr/vim-json'
+on_ft = ['json']
+
+[[plugins]]
+repo = 'yuezk/vim-js'
+on_ft = ['javascript', 'javascript.jsx']
+
+[[plugins]]
+repo = 'maxmellon/vim-jsx-pretty'
+on_ft = ['javascript', 'javascript.jsx']
+
+[[plugins]]
+repo = 'leafgarland/typescript-vim'
+
+[[plugins]]
+repo = 'HerringtonDarkholme/yats.vim'
+
+[[plugins]]
+repo = 'peitalin/vim-jsx-typescript'
+
+[[plugins]]
+repo = 'styled-components/vim-styled-components'
+
+[[plugins]]
+repo = 'jparise/vim-graphql'

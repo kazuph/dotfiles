@@ -6,6 +6,11 @@ if &compatible
   set nocompatible
 endif
 
+" reset augroup
+augroup MyAutoCmd
+  autocmd!
+augroup END
+
 " dein.vimのディレクトリ
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -21,8 +26,10 @@ if dein#load_state(s:dein_dir)
 
   " 管理するプラグインを記述したファイル
   let s:toml = '~/.dein.toml'
+  let s:comp = '~/.dein.comp.toml'
   let s:lazy_toml = '~/.dein_lazy.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
+  call dein#load_toml(s:comp, {'lazy': 0})
   call dein#load_toml(s:lazy_toml, {'lazy': 1})
 
   call dein#end()
@@ -68,7 +75,9 @@ set expandtab          "タブ入力を空白に変換
 set splitright         "画面を縦分割する際に右に開く
 set clipboard=unnamed  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
-set ambiwidth=double
+set ambiwidth=single
+set guifont=Hack\ Regular\ Nerd\ Font\ Complete:h15
+
 
 " コマンドモードのマッピング
 cmap <C-a> <Home>
