@@ -135,6 +135,20 @@ repo = 'Townk/vim-autoclose'
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
 
+[[plugins]] # カーソル位置のコンテキストに合わせてftを切り替える
+repo = 'osyo-manga/vim-precious'
+depends = ['context_filetype.vim']
+hook_add = '''
+" NORMALモードのカーソル移動中に頻繁に切り替わるとうざいのでデフォは無効化しておく(helpは例外)
+let g:precious_enable_switch_CursorMoved = { '*': 0, 'help': 1 }
+" INSERTモードのON／OFFに合わせてトグル
+augroup ContextFiletype
+	autocmd!
+	autocmd InsertEnter * :PreciousSwitch
+	autocmd InsertLeave * :PreciousReset
+augroup END
+'''
+
 [[plugins]] # 選択部分のキーワードを*を押して検索
 repo = 'thinca/vim-visualstar'
 
@@ -222,14 +236,14 @@ hook_add = '''
 inoremap <expr> , smartchr#one_of(', ', ',')
 '''
 
-[[plugins]]
-# カーソルジェットコースター
-repo = 'rhysd/accelerated-jk.git'
-hook_add = '''
-let g:accelerated_jk_acceleration_table = [10,5,3]
-nmap j <Plug>(accelerated_jk_gj)
-nmap k <Plug>(accelerated_jk_gk)
-'''
+#  [[plugins]]
+# # カーソルジェットコースター
+# repo = 'rhysd/accelerated-jk.git'
+# hook_add = '''
+# let g:accelerated_jk_acceleration_table = [10,5,3]
+# nmap j <Plug>(accelerated_jk_gj)
+# nmap k <Plug>(accelerated_jk_gk)
+# '''
 
 [[plugins]]
 # jkがいないなら
@@ -451,3 +465,7 @@ repo = 'styled-components/vim-styled-components'
 
 [[plugins]]
 repo = 'jparise/vim-graphql'
+
+[[plugins]]
+repo = 'simeji/winresizer'
+

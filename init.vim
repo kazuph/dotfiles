@@ -1,15 +1,15 @@
 " let g:dein#auto_recache = 1
 let mapleader = "\<Space>"
 
-" dein settings {{{
-if &compatible
-  set nocompatible
-endif
-
 " reset augroup
 augroup MyAutoCmd
   autocmd!
 augroup END
+
+" dein settings {{{
+if &compatible
+  set nocompatible
+endif
 
 " dein.vimのディレクトリ
 let s:dein_dir = expand('~/.cache/dein')
@@ -25,9 +25,10 @@ if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir)
 
   " 管理するプラグインを記述したファイル
-  let s:toml = '~/.dein.toml'
-  let s:comp = '~/.dein.comp.toml'
-  let s:lazy_toml = '~/.dein_lazy.toml'
+  let s:toml = '~/dotfiles/.dein.toml'
+  " let s:comp = '~/dotfiles/.dein.comp.toml'
+  let s:comp = '~/dotfiles/.dein.comp.toml'
+  let s:lazy_toml = '~/dotfiles/.dein_lazy.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
   call dein#load_toml(s:comp, {'lazy': 0})
   call dein#load_toml(s:lazy_toml, {'lazy': 1})
@@ -36,34 +37,20 @@ if dein#load_state(s:dein_dir)
   call dein#save_state()
 endif
 
-" プラグインの追加・削除やtomlファイルの設定を変更した後は
-" 適宜 call dein#update や call dein#clear_state を呼んでください。
-" そもそもキャッシュしなくて良いならload_state/save_stateを呼ばないようにしてください。
-
-" 2016.04.16 追記
-" load_cache -> load_state
-" save_cache -> save_state
-" となり書き方が少し変わりました。
-" 追記終わり
-
-" vimprocだけは最初にインストールしてほしい
-" if dein#check_install(['vimproc'])
-"   call dein#install(['vimproc'])
-" endif
-" その他インストールしていないものはこちらに入れる
 if dein#check_install()
   call dein#install()
 endif
 " }}}
-"
+
 "" plugin remove check {{{
 let s:removed_plugins = dein#check_clean()
 if len(s:removed_plugins) > 0
+  " call map(dein#check_clean(), "delete(v:val, 'rf')")
   call map(s:removed_plugins, "delete(v:val, 'rf')")
   call dein#recache_runtimepath()
 endif
 " }}}
-"
+
 filetype plugin indent on
 syntax enable
 set termguicolors
@@ -93,10 +80,10 @@ inoremap <C-b> <Left>
 inoremap <C-d> <Del>
 
 " .vimrcを瞬時に開く
-nnoremap <Space><Space>. :e '~/.config/nvim/init.vim'<CR>
+nnoremap <Space><Space>. :e ~/.config/nvim/init.vim<CR>
 
 " vimrcの設定を反映
-nnoremap <Space><Space>.. :<C-u>source '~/.config/nvim/init.vim'<CR>
+nnoremap <Space><Space>.. :<C-u>source ~/.config/nvim/init.vim<CR>
 
 " カーソル下の単語を置換
 nnoremap g/ :<C-u>%s/<C-R><C-w>//gc<Left><Left><Left>
@@ -132,7 +119,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " 無限undo
 if has('persistent_undo')
-  set undodir=~/.config/nvim/undo
+  set undodir=~/.cache/undo
   set undofile
 endif
 
@@ -186,3 +173,30 @@ set shortmess+=c
 " 爆速のgrepであるagを使いたい
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+
+let s:stop_time = 10
+
+function! s:down(timer) abort
+  execute "normal! 3\<C-e>3j"
+endfunction
+
+function! s:up(timer) abort
+  execute "normal! 3\<C-y>3k"
+endfunction
+
+function! s:smooth_scroll(fn) abort
+  let working_timer = get(s:, 'smooth_scroll_timer', 0)
+  if !empty(timer_info(working_timer))
+    call timer_stop(working_timer)
+  endif
+  if (a:fn ==# 'down' && line('$') == line('w$')) ||
+        \ (a:fn ==# 'up' && line('w0') == 1)
+    return
+  endif
+  let s:smooth_scroll_timer = timer_start(s:stop_time, function('s:' . a:fn), {'repeat' : &scroll/3})
+endfunction
+
+nnoremap <silent> <C-u> <cmd>call <SID>smooth_scroll('up')<CR>
+nnoremap <silent> <C-d> <cmd>call <SID>smooth_scroll('down')<CR>
+vnoremap <silent> <C-u> <cmd>call <SID>smooth_scroll('up')<CR>
+vnoremap <silent> <C-d> <cmd>call <SID>smooth_scroll('down')<CR>

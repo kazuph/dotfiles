@@ -150,7 +150,7 @@ jf() {
   zle accept-line
 }
 zle -N jf
-bindkey "^f" jf
+bindkey "^j" jf
 
 # gh(){
 #     ghq list -p | f cd;
