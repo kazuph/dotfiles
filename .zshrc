@@ -338,7 +338,7 @@ export PATH="$PATH:$IDF_PATH/tools"
 
 export TMUX_TMPDIR=/tmp
 
-source $HOME/.deepl.env
+# source $HOME/.deepl.env
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kazuph600/Downloads/google-cloud-sdk/path.zsh.inc'; fi
@@ -346,6 +346,6 @@ if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/U
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kazuph600/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
-if [ -f ~/.anyenv/bin/anyenv ] ; then
+if [[ -f ~/.anyenv/bin/anyenv || -f /opt/homebrew/bin/anyenv ]] ; then
   eval "$(anyenv init -)"
 fi

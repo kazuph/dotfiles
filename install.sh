@@ -17,11 +17,14 @@ brew install fzf
 brew install ripgrep
 brew install hub
 brew install git-delta
+brew install bat
 brew install silicon
 brew install macvim neovim
 brew install font-hack-nerd-font
 brew install ghq
 brew install anyenv
+anyenv init
+anyenv install --init
 mkdir -p $(anyenv root)/plugins
 git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
 
