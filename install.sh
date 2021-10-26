@@ -1,7 +1,11 @@
 #!/bin/bash -u
 
 # install homebrew
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/kazuph/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+curl -sL https://gist.github.com/kawaz/d95fb3b547351e01f0f3f99783180b9f/raw/install-pam_tid-and-pam_reattach.sh | bash
 
 brew install git
 brew install zsh
@@ -9,13 +13,13 @@ brew install reattach-to-user-namespace
 brew install tmux
 brew install wget
 brew install fd
+brew install fzf
 brew install ripgrep
 brew install hub
-brew install macvim vim nvim
-brew tap homebrew/cask-fonts
-brew cask install font-hack-nerd-font
 brew install git-delta
 brew install silicon
+brew install macvim neovim
+brew install font-hack-nerd-font
 
 # install oh-my-zsh
 zsh
