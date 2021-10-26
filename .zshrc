@@ -131,8 +131,8 @@ function fzf-checkout-branch() {
   branch=$(echo "$branches" | fzf --preview "git show --color=always {}") &&
   git checkout $(echo "$branch")
 }
-zle     -N   fzf-checkout-branch
-bindkey "^b" fzf-checkout-branch
+# zle     -N   fzf-checkout-branch
+# bindkey "^b" fzf-checkout-branch
 
 # incremental
 f() { fzf | while read LINE; do $@ $LINE; done }
