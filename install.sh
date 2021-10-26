@@ -37,7 +37,7 @@ cd dotfiles
 git clone https://github.com/zsh-users/zsh-completions.git
 
 cd ~/.
-ln -sfv ~/dotfiles/.vimrc .vimrc
+# ln -sfv ~/dotfiles/.vimrc .vimrc
 ln -sfv ~/dotfiles/.gvimrc .gvimrc
 ln -sfv ~/dotfiles/.gitconfig .gitconfig
 ln -sfv ~/dotfiles/.zshrc .zshrc
@@ -45,11 +45,12 @@ ln -sfv ~/dotfiles/.zshenv .zshenv
 ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
 ln -sfv ~/dotfiles/.zpreztorc .zpreztorc
 ln -sfv ~/dotfiles/.ideavimrc .ideavimrc
+mkdir -p ~/.config/nvim/
+ln -sfv  ~/dotfiles/init.vim ~/.config/nvim/init.vim
 
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 tmux source ~/.tmux.conf
 
-# NeoBundleInstall from commandline
-curl https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > installer.sh
-sh ./installer.sh ~/.dein
-vim +qa
+python3 -m pip install --user --upgrade pynvim
+
+
