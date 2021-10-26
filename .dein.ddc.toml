@@ -63,6 +63,10 @@ let g:ddc_nvim_lsp_doc_config = {
 '''
 
 [[plugins]]
+repo = 'vim-denops/denops.vim'
+on_source = 'ddc.vim'
+
+[[plugins]]
 repo = 'Shougo/ddc-around'
 on_source = 'ddc.vim'
 

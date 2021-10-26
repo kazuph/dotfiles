@@ -49,23 +49,23 @@ hook_add = '''
 #   call denite#custom#var('file_rec', 'command', ['pt', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
 # '''
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-depends = ['vim-vsnip-integ', 'friendly-snippets']
-on_event = 'InsertEnter'
-hook_add = '''
-" Expand
-imap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
-smap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
-" Jump forward or backward
-imap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
-smap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
-imap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
-smap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
-'''
-
-[[plugins]]
-repo = 'matsui54/vim-vsnip-integ'
-
-[[plugins]]
-repo = 'rafamadriz/friendly-snippets'
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# depends = ['vim-vsnip-integ', 'friendly-snippets']
+# on_event = 'InsertEnter'
+# hook_add = '''
+# " Expand
+# imap <expr> <C-k> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-k>'
+# smap <expr> <C-k> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-k>'
+# " Jump forward or backward
+# imap <expr> <C-k> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-k>'
+# smap <expr> <C-k> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-k>'
+# " imap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
+# " smap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
+# '''
+#
+# [[plugins]]
+# repo = 'matsui54/vim-vsnip-integ'
+#
+# [[plugins]]
+# repo = 'rafamadriz/friendly-snippets'

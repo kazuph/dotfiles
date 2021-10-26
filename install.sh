@@ -14,6 +14,8 @@ brew install hub
 brew install macvim vim nvim
 brew tap homebrew/cask-fonts
 brew cask install font-hack-nerd-font
+brew install git-delta
+brew install silicon
 
 # install oh-my-zsh
 zsh

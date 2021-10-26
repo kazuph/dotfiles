@@ -332,7 +332,20 @@ fi
 # M5Stack Moddable
 export MODDABLE="/Users/kazuph600/src/github.com/Moddable-OpenSource/moddable"
 export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
-export IDF_PATH=$HOME/esp32/esp-idf
-export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
+export IDF_PATH=~/esp/esp-idf
+export PATH="$PATH:$IDF_PATH/tools"
+# export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
 
 export TMUX_TMPDIR=/tmp
+
+source $HOME/.deepl.env
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kazuph600/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kazuph600/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+if [ -f ~/.anyenv/bin/anyenv ] ; then
+  eval "$(anyenv init -)"
+fi

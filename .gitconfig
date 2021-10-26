@@ -18,6 +18,10 @@
 	editor = vim
     quotepath = false
     precomposeunicode = true
+    pager = delta --plus-color="#012800" --minus-color="#340001" --theme='Monokai Extended'
+	symlinks = true
+[interactive]
+    diffFilter = delta --color-only
 [push]
     default = matching
 [pull]
@@ -38,13 +42,9 @@
     ftp = fetch --prune
     # pull rebase
     up = !git fetch && git branch | grep \\* | cut -d' ' -f 2 | xargs -I% git pull --rebase origin %
-    po  = push origin         # push origin
-    pom = push origin master  # push origin master
     # push origin and set upstream
     pu  = !git push -u origin `git branch | grep \\* | cut -d' ' -f 2`
     # rebase
-    rbm = rebase master       # masterへのrebaseはよく使うのでalias
-    rbd = rebase develop
     rbc = rebase --continue
     rba = rebase --abort
     rbi = rebase -i
@@ -67,7 +67,8 @@
     co  = checkout
     cb  = checkout -b         # branch切ってcheckoutする
     ct  = checkout --track    # remoteのbranchを追跡
-    cm  = checkout master
+    cmain  = checkout main
+    cmaster  = checkout master
     cd  = checkout develop
     cs  = checkout staging
     # branch関連
@@ -107,7 +108,7 @@
     ml = !git status | grep 'modified' | perl -pe 's/ +/ /g' | cut -d' ' -f2
     # diff関連
     di = diff
-    dm = diff master           # masterとのdiff
+    dm = diff main           # masterとのdiff
     dw = diff --color-words    # 単語単位でいろつけてdiff
     dc = diff --cached         # addされているものとのdiff
     ds = diff --staged         # 同上(1.6.1移行)
@@ -131,12 +132,11 @@
     gr = grep
     gn = grep -n
     sm = submodule
-    smup = submodule foreach "git checkout master; git pull origin master"
+    # smup = submodule foreach "git checkout master; git pull origin master"
 
     # mergeされたbranchを一括削除
-    rmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % echo %
-    rmmm = !git branch --merged | grep -v master | grep -v develop | grep -v \\* | xargs -I % git branch -d %
-    # rmm = !git branch | grep -vE '(master|develop)' | cut -c3- | xargs -L1 sh -c '[ `git diff $1 | wc -l` -eq 0 ] && git branch -D $1' sh
+    rmm = !git branch --merged | grep -vE '(master|main)' | grep -v develop | grep -v \\* | xargs -I % echo %
+    rmmm = !git branch --merged | grep -vE '(master|main)' | grep -v develop | grep -v \\* | xargs -I % git branch -d %
     b = !"(for i in `git branch | colrm 1 2` ; do echo `git log --date=iso8601 -n 1 --pretty=\"format:[%ai] %h\" $i` $i ; done) | sort -r"
 
     pushf = "push --force-with-lease"

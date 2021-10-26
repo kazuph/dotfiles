@@ -363,6 +363,16 @@ if executable('pyls')
         \ })
 endif
 
+if executable('solargraph')
+    " gem install solargraph
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'solargraph',
+        \ 'cmd': {server_info->[&shell, &shellcmdflag, 'solargraph stdio']},
+        \ 'initialization_options': {"diagnostics": "true"},
+        \ 'whitelist': ['ruby'],
+        \ })
+endif
+
 if executable("typescript-language-server")
   " グローバルインストールされたnpmモジュールの保存場所
   let s:npm_root = trim(system("npm root -g"))
@@ -405,11 +415,11 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
     nmap <buffer> K <plug>(lsp-hover)
-    inoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    inoremap <buffer> <expr><c-d> lsp#scroll(-4)
+    " inoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    " inoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
     let g:lsp_format_sync_timeout = 1000
-    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    autocmd! BufWritePre *.rs,*.go,*.rb call execute('LspDocumentFormatSync')
 
     " refer to doc to add more commands
 endfunction
@@ -435,6 +445,19 @@ repo = 'ujihisa/neco-look'
 
 [[plugins]]
 repo =  'rust-lang/rust.vim'
+
+[[plugins]]
+repo = 'yangby/vim-rust-cargoclippy'
+hook_add = '''
+let g:syntastic_rust_checkers = ['cargoclippy', 'rustc']
+'''
+
+[[plugins]]
+repo = 'ruby-formatter/rufo-vim'
+build = 'gem install rufo'
+hook_add = '''
+let g:rufo_auto_formatting = 1
+'''
 
 [[plugins]]
 repo = 'mattn/vim-goimports'
@@ -468,4 +491,32 @@ repo = 'jparise/vim-graphql'
 
 [[plugins]]
 repo = 'simeji/winresizer'
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+hook_add = '''
+nnoremap <silent><leader>q :QuickRun<CR>  " キーマップの設定
+let g:quickrun_config = {}
+
+let g:quickrun_config._ = {
+    \ 'outputter/error/success': 'buffer',
+    \ 'outputter/error/error': 'quickfix',
+    \ 'outputter/quickfix/open_cmd': 'copen',
+    \ 'runner': 'vimproc',
+    \ 'runner/vimproc/updatetime': 60,
+    \ 'hook/time/enable': 1
+    \ }
+
+" おまけの設定 for Python
+let g:quickrun_config.python = {
+    \ 'command': '~/.pyenv/shims/python',
+    \ 'cmdopt': '-u'
+    \ }
+
+let g:quickrun_config.cpp = {
+    \ 'command': 'g++',
+    \ 'input': 'input',
+    \ 'runner': 'system'
+    \ }
+'''
 

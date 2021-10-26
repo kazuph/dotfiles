@@ -26,8 +26,8 @@ if dein#load_state(s:dein_dir)
 
   " 管理するプラグインを記述したファイル
   let s:toml = '~/dotfiles/.dein.toml'
-  " let s:comp = '~/dotfiles/.dein.comp.toml'
   let s:comp = '~/dotfiles/.dein.comp.toml'
+  " let s:comp = '~/dotfiles/.dein.ddc.toml'
   let s:lazy_toml = '~/dotfiles/.dein_lazy.toml'
   call dein#load_toml(s:toml, {'lazy': 0})
   call dein#load_toml(s:comp, {'lazy': 0})
@@ -144,6 +144,7 @@ nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
+" autocmd BufWritePre * :%s/\//g
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
@@ -200,3 +201,19 @@ nnoremap <silent> <C-u> <cmd>call <SID>smooth_scroll('up')<CR>
 nnoremap <silent> <C-d> <cmd>call <SID>smooth_scroll('down')<CR>
 vnoremap <silent> <C-u> <cmd>call <SID>smooth_scroll('up')<CR>
 vnoremap <silent> <C-d> <cmd>call <SID>smooth_scroll('down')<CR>
+
+if exists('$WAYLAND_DISPLAY')
+  " clipboard on wayland with newline fix
+  let g:clipboard = {
+    \   'name': 'WL-Clipboard with ^M Trim',
+    \   'copy': {
+    \      '+': 'wl-copy --foreground --type text/plain',
+    \      '*': 'wl-copy --foreground --type text/plain --primary',
+    \    },
+    \   'paste': {
+    \      '+': {-> systemlist('wl-paste --no-newline | sed -e "s/\r$//"', '', 1)},
+    \      '*': {-> systemlist('wl-paste --no-newline --primary | sed -e "s/\r$//"', '', 1)},
+    \   },
+    \   'cache_enabled': 1,
+    \ }
+endif
