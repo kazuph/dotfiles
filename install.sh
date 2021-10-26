@@ -20,6 +20,10 @@ brew install git-delta
 brew install silicon
 brew install macvim neovim
 brew install font-hack-nerd-font
+brew install ghq
+brew install anyenv
+mkdir -p $(anyenv root)/plugins
+git clone https://github.com/znz/anyenv-update.git $(anyenv root)/plugins/anyenv-update
 
 # install oh-my-zsh
 zsh
