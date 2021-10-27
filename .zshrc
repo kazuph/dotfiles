@@ -304,6 +304,12 @@ export AWS_PROFILE=default
 # export AWS_REGION=ap-northeast-1
 
 export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
+function select-history() {
+  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+  CURSOR=$#BUFFER
+}
+zle -N select-history
+bindkey '^r' select-history
 
 export PATH="$PATH:$HOME/development/flutter/bin"
 

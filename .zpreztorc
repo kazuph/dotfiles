@@ -26,12 +26,10 @@ zstyle ':prezto:*:*' color 'yes'
 zstyle ':prezto:load' pmodule \
   'environment' \
   'syntax-highlighting' \
-  'history-substring-search' \
   'autosuggestions' \
   'archive' \
   'terminal' \
   'editor' \
-  'history' \
   'directory' \
   'spectrum' \
   'utility' \
