@@ -19,9 +19,11 @@ brew install hub
 brew install git-delta
 brew install bat
 brew install silicon
+brew install ag
 brew install macvim neovim
 brew install font-hack-nerd-font
 brew install ghq
+brew install jq
 brew install anyenv
 anyenv init
 anyenv install --init

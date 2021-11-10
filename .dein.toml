@@ -352,6 +352,12 @@ let g:syntastic_warning_symbol = '⚠'
 '''
 
 [[plugins]]
+repo = 'elzr/vim-json'
+hook_add = '''
+let g:vim_json_syntax_conceal = 0
+'''
+
+[[plugins]]
 repo = 'prabirshrestha/vim-lsp'
 hook_add = '''
 if executable('pyls')
@@ -419,7 +425,7 @@ function! s:on_lsp_buffer_enabled() abort
     " inoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
     let g:lsp_format_sync_timeout = 1000
-    autocmd! BufWritePre *.rs,*.go,*.rb call execute('LspDocumentFormatSync')
+    autocmd! BufWritePre *.rs,*.go,*.rb,*.py call execute('LspDocumentFormatSync')
 
     " refer to doc to add more commands
 endfunction

@@ -10,6 +10,13 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
 # source /usr/local/aws/bin/aws_zsh_completer.sh
 
 # Customize to your needs...
@@ -108,7 +115,56 @@ test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 setopt no_share_history
 
 ### fzf集
+FZF_ALT_C_COMMAND="fd --type d"
+# デフォルトオプテョンの指定方法
 # export FZF_DEFAULT_OPTS='--preview "bat --style=numbers --color=always --line-range :500 {}"'
+# export FZF_DEFAULT_OPTS="
+#     --height 90% --reverse --border
+#     --prompt='➜  ' --margin=0,1 --inline-info
+#     --tiebreak=index --no-mouse --filepath-word
+#     --color fg:-1,bg:-1,hl:33,fg+:250,bg+:235,hl+:33
+#     --color info:37,prompt:37,pointer:230,marker:230,spinner:37
+#     --bind='ctrl-w:backward-kill-word,ctrl-x:jump,down:preview-page-down'
+#     --bind='ctrl-z:ignore,ctrl-]:replace-query,up:preview-page-up'
+#     --bind='ctrl-a:toggle-all,?:toggle-preview'
+#     --preview 'bat --style=numbers --color=always --line-range :500 {}'
+
+# ファイル名検索
+export FZF_CTRL_T_COMMAND="fd --type f "
+export FZF_CTRL_T_OPTS="
+    --height 90%
+    --select-1 --exit-0
+    --bind 'ctrl-o:execute(vim {1} < /dev/tty)'
+    --bind '>:reload($FZF_CTRL_T_COMMAND -H -E .git )'
+    --bind '<:reload($FZF_CTRL_T_COMMAND)'
+    --preview 'bat -r :300 --color=always --style=header,grid {}'"
+
+# 全文検索
+__fzf_ripgrep() {
+  emulate -L zsh
+  rg_cmd="rg --smart-case --line-number --color=always --trim"
+  selected=$(FZF_DEFAULT_COMMAND=":" \
+      fzf --bind="change:top+reload($rg_cmd {q} || true)" \
+          --bind="ctrl-l:execute(tmux splitw -h -- nvim +/{q} {1} +{2})" \
+          --ansi --phony \
+          --delimiter=":" \
+          --preview="bat -H {2} --color=always --style=header,grid {1}" \
+          --preview-window='down:60%:+{2}-10')
+
+  local ret=$?
+  [[ -n "$selected" ]] && echo ${${(@s/:/)selected}[1]}
+  return $ret
+}
+fzf-ripgrep-widget() {
+  LBUFFER="${LBUFFER}$(__fzf_ripgrep)"
+  local ret=$?
+  zle reset-prompt
+  return $ret
+}
+zle -N fzf-ripgrep-widget
+bindkey '^q' fzf-ripgrep-widget
+
+# ディレクトリを検索して移動
 function fzf-get-current-dir() {
     find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes)' | fzf
 }
@@ -121,9 +177,10 @@ function fzf-cdr() {
         zle reset-prompt
     fi
 }
-zle -N fzf-cdr
-bindkey '^q' fzf-cdr
+# zle -N fzf-cdr
+# bindkey '^q' fzf-cdr
 
+# ブランチを検索して移動
 # fbr - checkout git branch
 function fzf-checkout-branch() {
   local branches branch
@@ -134,10 +191,9 @@ function fzf-checkout-branch() {
 # zle     -N   fzf-checkout-branch
 # bindkey "^b" fzf-checkout-branch
 
-# incremental
+# ghqで管理しているリポジトリをプレビュー付きで検索して移動
 f() { fzf | while read LINE; do $@ $LINE; done }
 fp() { fzf --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*" | while read LINE; do $@ $LINE; done }
-
 gcd() {
   ghq list -p | fp cd
   zle accept-line
@@ -145,6 +201,7 @@ gcd() {
 zle -N gcd
 bindkey "^g" gcd
 
+# 最近cdしたディレクトリを検索して移動
 jf() {
   j | sort -rn | awk '{print $2}' | f cd;
   zle accept-line
@@ -303,13 +360,13 @@ export AWS_PROFILE=default
 # export $(cat ~/.aws/credentials | grep -v 600 | sed -e 's/ //g' | perl -pe "s/(aws\w+)=/\U\1=/g")
 # export AWS_REGION=ap-northeast-1
 
-export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
-function select-history() {
-  BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
-  CURSOR=$#BUFFER
-}
-zle -N select-history
-bindkey '^r' select-history
+# export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
+# function select-history() {
+#   BUFFER=$(history -n -r 1 | fzf --no-sort +m --query "$LBUFFER" --prompt="History > ")
+#   CURSOR=$#BUFFER
+# }
+# zle -N select-history
+# bindkey '^r' select-history
 
 export PATH="$PATH:$HOME/development/flutter/bin"
 
@@ -355,3 +412,5 @@ if [ -f '/Users/kazuph600/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then
 if [[ -f ~/.anyenv/bin/anyenv || -f /opt/homebrew/bin/anyenv ]] ; then
   eval "$(anyenv init -)"
 fi
+
+. $(brew --prefix asdf)/libexec/asdf.sh

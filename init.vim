@@ -63,7 +63,7 @@ set splitright         "画面を縦分割する際に右に開く
 set clipboard=unnamed  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
 set ambiwidth=single
-set guifont=Hack\ Regular\ Nerd\ Font\ Complete:h15
+set guifont=Hack\ Nerd\ Font:h15
 
 
 " コマンドモードのマッピング
@@ -217,3 +217,10 @@ if exists('$WAYLAND_DISPLAY')
     \   'cache_enabled': 1,
     \ }
 endif
+
+
+tnoremap <Esc> <C-\><C-n>
+command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
+autocmd TermOpen * startinsert
+
+
