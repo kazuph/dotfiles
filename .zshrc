@@ -39,13 +39,13 @@ alias tmux="TERM=xterm-256color tmux -u"
 alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
 # alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-alias v="vim -u $HOME/dotfiles/.vimrc_compact"
+alias v="vi -u $HOME/dotfiles/.vimrc_compact"
 alias zshrc='source $HOME/.zshrc'
 alias vimzshrc='vim $HOME/.zshrc'
-alias vz='vim $HOME/.zshrc'
-alias ve='vim $HOME/.zshenv'
-alias vv='vim $HOME/.vimrc'
-alias vg='vim $HOME/.gitconfig'
+alias vz='vi $HOME/.zshrc'
+alias ve='vi $HOME/.zshenv'
+alias vv='vi $HOME/.vimrc'
+alias vg='vi $HOME/.gitconfig'
 alias sshconfig='vim $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
@@ -61,9 +61,9 @@ alias reset='brake db:migrate:reset'
 alias migrate='brake db:migrate'
 alias seed='brake db:seed'
 alias rename='massren --config editor vim && massren'
-alias vf='vim `fzf`'
-alias vc='vim -o `git cl`'
-alias vm='vim -o `git ml`'
+alias vf='vi `fzf`'
+alias vc='vi -o `git cl`'
+alias vm='vi -o `git ml`'
 # alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias todo="todo.sh"
 alias tidy='tidy -config $HOME/dotfiles/tidy_config'
@@ -71,9 +71,13 @@ alias get='ghq get '
 alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
-alias vim=vim
 alias vi=nvim
-alias vi=nvim
+alias tn='twnyan'
+alias tw='twnyan tw'
+alias to='twnyan user own'
+alias ts='twnyan search'
+alias tt='twnyan timeline 100'
+alias tm='twnyan mention'
 
 # atcoder
 alias acctest="oj t -d tests -c 'ruby main.rb'"
@@ -329,7 +333,7 @@ function pe() {
 }
 
 # export PATH="$PATH:$(yarn global bin)"
-export PATH="/usr/local/opt/openssl/bin:$PATH"
+# export PATH="/usr/local/opt/openssl/bin:$PATH"
 
 # neovim
 export XDG_CONFIG_HOME=~/.config

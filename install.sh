@@ -49,6 +49,7 @@ cd ~/.
 # ln -sfv ~/dotfiles/.vimrc .vimrc
 ln -sfv ~/dotfiles/.gvimrc .gvimrc
 ln -sfv ~/dotfiles/.gitconfig .gitconfig
+ln -sfv ~/dotfiles/.gitignore_global .gitignore_global
 ln -sfv ~/dotfiles/.zshrc .zshrc
 ln -sfv ~/dotfiles/.zshenv .zshenv
 ln -sfv ~/dotfiles/.tmux.conf .tmux.conf
