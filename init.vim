@@ -142,6 +142,9 @@ set ttyfast
 " 検索時のハイライトを解除する
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 
+" 検索時に次にいかないようにする
+nmap * *N
+
 " 保存時に行末の空白を除去する
 autocmd BufWritePre * :%s/\s\+$//ge
 " autocmd BufWritePre * :%s/\//g
@@ -170,6 +173,10 @@ set signcolumn=yes
 " set completeopt+=noselect
 set completeopt=menuone,noinsert,noselect
 set shortmess+=c
+
+" 検索
+set ignorecase
+set smartcase
 
 " 爆速のgrepであるagを使いたい
 nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
@@ -222,5 +229,4 @@ endif
 tnoremap <Esc> <C-\><C-n>
 command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
 autocmd TermOpen * startinsert
-
 

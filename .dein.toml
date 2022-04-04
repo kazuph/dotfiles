@@ -20,6 +20,33 @@ repo = 'markonm/traces.vim'
 [[plugins]]
 repo = 'cespare/vim-toml'
 
+[[plugins]]
+repo = 'octol/vim-cpp-enhanced-highlight'
+hook_add = '''
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_posix_standard = 1
+let g:cpp_experimental_simple_template_highlight = 1
+let g:cpp_experimental_template_highlight = 1
+let g:cpp_concepts_highlight = 1
+'''
+
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+hook_add = '''
+let g:vista_sidebar_width = 40
+let g:vista_echo_cursor = 0
+
+" let g:vista_default_executive = 'vim_lsp'
+let g:vista_executive_for = {
+    \ 'c': 'vim_lsp',
+    \ 'cpp': 'vim_lsp',
+    \ }
+
+nnoremap <silent> <Leader>o :<C-u>Vista!!<CR>
+'''
+
 [[plugins]] # まーくだうん
 repo = "tpope/vim-markdown"
 hook_add = '''
@@ -64,9 +91,9 @@ hook_add = '''
 [[plugins]]
 repo = 'ctrlpvim/ctrlp.vim'
 hook_add = '''
-let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
+let g:ctrlp_map = '<c-p>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.cache,*html/*
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
@@ -129,8 +156,8 @@ repo = 'tomtom/tcomment_vim'
 [[plugins]]
 repo = 'tpope/vim-endwise'
 
-[[plugins]]
-repo = 'Townk/vim-autoclose'
+# [[plugins]]
+# repo = 'Townk/vim-autoclose'
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
@@ -164,7 +191,21 @@ let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
 repo = 'scrooloose/nerdtree'
 hook_add = '''
 nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
 '''
+
+[[plugins]]
+repo = 'APZelos/blamer.nvim'
+hook_add = '''
+let g:blamer_enabled = 1
+let g:blamer_date_format = '%y/%m/%d %H:%M'
+'''
+
+[[plugins]]
+repo = 'skanehira/code2img.vim'
 
 [[plugins]]
 repo = 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -295,7 +336,7 @@ hook_add = '''
     let g:airline#extensions#virtualenv#enabled = 1
 '''
 
-[[plugins]] #括弧とかを自動で閉じてくれる
+# [[plugins]] #括弧とかを自動で閉じてくれる
 repo = 'jiangmiao/auto-pairs'
 
 [[plugins]] #同じインデントのところに縦線を引いてくれる奴
@@ -328,28 +369,28 @@ let g:prettier#quickfix_enabled = 0
 autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.md PrettierAsync
 '''
 
-[[plugins]]
-repo = 'vim-syntastic/syntastic'
-hook_add = '''
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_mode_map = {
-      \ 'mode': 'active',
-      \ 'active_filetypes': ['javascript'],
-      \ 'passive_filetypes': []
-      \ }
-
-let g:syntastic_enable_signs = 1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-'''
+# [[plugins]]
+# repo = 'vim-syntastic/syntastic'
+# hook_add = '''
+# " set statusline+=%#warningmsg#
+# " set statusline+=%{SyntasticStatuslineFlag()}
+# " set statusline+=%*
+#
+# let g:syntastic_always_populate_loc_list = 1
+# let g:syntastic_auto_loc_list = 1
+# let g:syntastic_check_on_open = 1
+# let g:syntastic_check_on_wq = 0
+# let g:syntastic_javascript_checkers = ['eslint']
+# let g:syntastic_mode_map = {
+#       \ 'mode': 'active',
+#       \ 'active_filetypes': ['javascript'],
+#       \ 'passive_filetypes': []
+#       \ }
+#
+# let g:syntastic_enable_signs = 1
+# let g:syntastic_error_symbol = '✗'
+# let g:syntastic_warning_symbol = '⚠'
+# '''
 
 [[plugins]]
 repo = 'elzr/vim-json'
@@ -526,3 +567,108 @@ let g:quickrun_config.cpp = {
     \ }
 '''
 
+[[plugins]]
+repo = 'AndrewRadev/switch.vim'
+hook_add = '''
+let g:switch_mapping = "-"
+let g:switch_custom_definitions =
+    \ [
+    \   {
+    \     '\<\(\l\)\(\l\+\(\u\l\+\)\+\)\>': '\=toupper(submatch(1)) . submatch(2)',
+    \     '\<\(\u\l\+\)\(\u\l\+\)\+\>': "\\=tolower(substitute(submatch(0), '\\(\\l\\)\\(\\u\\)', '\\1_\\2', 'g'))",
+    \     '\<\(\l\+\)\(_\l\+\)\+\>': '\U\0',
+    \     '\<\(\u\+\)\(_\u\+\)\+\>': "\\=tolower(substitute(submatch(0), '_', '-', 'g'))",
+    \     '\<\(\l\+\)\(-\l\+\)\+\>': "\\=substitute(submatch(0), '-\\(\\l\\)', '\\u\\1', 'g')",
+    \   },
+    \   ['is', 'are'],
+    \   ['if', 'unless'],
+    \   ['while', 'until'],
+    \   ['.blank?', '.present?'],
+    \   ['include', 'extend'],
+    \   ['class', 'module'],
+    \   ['.inject', '.delete_if'],
+    \   ['.map', '.map!'],
+    \   ['attr_accessor', 'attr_reader', 'attr_writer'],
+    \   ['=', '<', '<=', '>', '>=', '~>'],
+    \   ['yes?', 'no?'],
+    \   ['lib', 'initializer', 'file', 'vendor', 'rakefile'],
+    \   ['controller', 'model', 'view', 'migration', 'scaffold'],
+    \   { '<!--\([a-zA-Z0-9 /]\+\)--></\(div\|ul\|li\|a\)>' : '</\2><!--\1-->' },
+    \   [100, ':continue', ':information'],
+    \   [101, ':switching_protocols'],
+    \   [102, ':processing'],
+    \   [200, ':ok', ':success'],
+    \   [201, ':created'],
+    \   [202, ':accepted'],
+    \   [203, ':non_authoritative_information'],
+    \   [204, ':no_content'],
+    \   [205, ':reset_content'],
+    \   [206, ':partial_content'],
+    \   [207, ':multi_status'],
+    \   [208, ':already_reported'],
+    \   [226, ':im_used'],
+    \   [300, ':multiple_choices'],
+    \   [301, ':moved_permanently'],
+    \   [302, ':found'],
+    \   [303, ':see_other'],
+    \   [304, ':not_modified'],
+    \   [305, ':use_proxy'],
+    \   [306, ':reserved'],
+    \   [307, ':temporary_redirect'],
+    \   [308, ':permanent_redirect'],
+    \   [400, ':bad_request'],
+    \   [401, ':unauthorized'],
+    \   [402, ':payment_required'],
+    \   [403, ':forbidden'],
+    \   [404, ':not_found'],
+    \   [405, ':method_not_allowed'],
+    \   [406, ':not_acceptable'],
+    \   [407, ':proxy_authentication_required'],
+    \   [408, ':request_timeout'],
+    \   [409, ':conflict'],
+    \   [410, ':gone'],
+    \   [411, ':length_required'],
+    \   [412, ':precondition_failed'],
+    \   [413, ':request_entity_too_large'],
+    \   [414, ':request_uri_too_long'],
+    \   [415, ':unsupported_media_type'],
+    \   [416, ':requested_range_not_satisfiable'],
+    \   [417, ':expectation_failed'],
+    \   [422, ':unprocessable_entity'],
+    \   [423, ':precondition_required'],
+    \   [424, ':too_many_requests'],
+    \   [426, ':request_header_fields_too_large'],
+    \   [500, ':internal_server_error'],
+    \   [501, ':not_implemented'],
+    \   [502, ':bad_gateway'],
+    \   [503, ':service_unavailable'],
+    \   [504, ':gateway_timeout'],
+    \   [505, ':http_version_not_supported'],
+    \   [506, ':variant_also_negotiates'],
+    \   [507, ':insufficient_storage'],
+    \   [508, ':loop_detected'],
+    \   [510, ':not_extended'],
+    \   [511, ':network_authentication_required'],
+    \   ['describe', 'context', 'specific', 'example'],
+    \   ['before', 'after'],
+    \   ['be_true', 'be_false'],
+    \   ['get', 'post', 'put', 'delete'],
+    \   ['==', 'eql', 'equal'],
+    \   { '\.should_not': '\.should' },
+    \   ['\.to_not', '\.to'],
+    \   { '\([^. ]\+\)\.should\(_not\|\)': 'expect(\1)\.to\2' },
+    \   { 'expect(\([^. ]\+\))\.to\(_not\|\)': '\1.should\2' },
+    \   ['[ ]', '[x]'],
+    \   ['☐', '☑']
+    \ ]
+'''
+
+[[plugins]]
+repo = 'rhysd/clever-f.vim'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
+nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
+'''

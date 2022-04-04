@@ -30,3 +30,5 @@ tags
 .vscode/
 .devcontainer/
 /tmp
+.cache
+freertos
