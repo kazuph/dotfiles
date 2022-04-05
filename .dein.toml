@@ -522,6 +522,13 @@ repo = 'maxmellon/vim-jsx-pretty'
 on_ft = ['javascript', 'javascript.jsx']
 
 [[plugins]]
+repo = 'vim-scripts/applescript.vim'
+on_ft = ['applescript']
+hook_add = '''
+autocmd bufnewfile,bufread *.osascript,*.scpt,*.applescript :setl filetype=applescript
+'''
+
+[[plugins]]
 repo = 'leafgarland/typescript-vim'
 
 [[plugins]]
