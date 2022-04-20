@@ -26,6 +26,7 @@ brew install ghq
 brew install jq
 brew install ms-jpq/sad/sad
 brew install anyenv
+brew install trash
 anyenv init
 anyenv install --init
 mkdir -p $(anyenv root)/plugins
