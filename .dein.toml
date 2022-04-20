@@ -107,7 +107,7 @@ nnoremap ,mn :MemoNew<cr>
 nnoremap ,mg :MemoGrep<cr>
 nnoremap ,mf :MemoList<CR>
 " nnoremap ,mf :exe "CtrlP# g:memolist_path<cr><f5>
-let g:memolist_ex_cmd = 'NERDTree'
+" let g:memolist_ex_cmd = 'NERDTree'
 let g:memolist_path = "~/Dropbox/memo"
 let g:memolist_fzf = 1
 let g:memolist_ex_cmd = 'CtrlP'
@@ -187,14 +187,23 @@ let g:WebDevIconsNerdTreeGitPluginForceVAlign = 0
 let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
 '''
 
-[[plugins]] # ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
-repo = 'scrooloose/nerdtree'
+# [[plugins]] # ファイルツリーを表示する。mを押すと、ファイル・ディレクトリの追加・削除・移動ができるのも便利
+# repo = 'scrooloose/nerdtree'
+# hook_add = '''
+# nnoremap <C-n> :NERDTreeToggle<CR>
+# nnoremap <C-f> :NERDTreeFind<CR>
+# autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+# autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+#     \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+# '''
+
+[[plugins]]
+repo = 'ms-jpq/chadtree'
+rev = 'chad'
+build = 'python3 -m chadtree deps'
 hook_add = '''
-nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
-    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+nnoremap <C-n> :CHADopen<cr>
+" nnoremap <C-f> :NERDTreeFind<CR>
 '''
 
 [[plugins]]
@@ -394,6 +403,7 @@ autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.scss,*.json,*.md PrettierAsync
 
 [[plugins]]
 repo = 'elzr/vim-json'
+on_ft = ['json']
 hook_add = '''
 let g:vim_json_syntax_conceal = 0
 '''
@@ -508,10 +518,6 @@ let g:rufo_auto_formatting = 1
 
 [[plugins]]
 repo = 'mattn/vim-goimports'
-
-[[plugins]]
-repo = 'elzr/vim-json'
-on_ft = ['json']
 
 [[plugins]]
 repo = 'yuezk/vim-js'
@@ -673,9 +679,3 @@ let g:switch_custom_definitions =
 [[plugins]]
 repo = 'rhysd/clever-f.vim'
 
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-hook_add = '''
-nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
-nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
-'''

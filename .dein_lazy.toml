@@ -14,9 +14,8 @@ hook_add = '''
   set updatetime=1000
   nnoremap [gitgutter] <Nop>
   nmap <C-h> [gitgutter]
-  nmap [gitgutter]j <Plug>GitGutterNextHunk
-  nmap [gitgutter]k <Plug>GitGutterPrevHunk
-  nmap [gitgutter]u <Plug>GitGutterUndoHunk
+  nnoremap <silent> ,gg :<C-u>GitGutterToggle<CR>
+  nnoremap <silent> ,gh :<C-u>GitGutterLineHighlightsToggle<CR>
 '''
 
 [[plugins]]

@@ -206,12 +206,12 @@ zle -N gcd
 bindkey "^g" gcd
 
 # 最近cdしたディレクトリを検索して移動
-jf() {
-  j | sort -rn | awk '{print $2}' | f cd;
-  zle accept-line
-}
-zle -N jf
-bindkey "^j" jf
+# jf() {
+#   j | sort -rn | awk '{print $2}' | f cd;
+#   zle accept-line
+# }
+# zle -N jf
+# bindkey "^j" jf
 
 # gh(){
 #     ghq list -p | f cd;

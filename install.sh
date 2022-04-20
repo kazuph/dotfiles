@@ -24,6 +24,7 @@ brew install macvim neovim
 brew install font-hack-nerd-font
 brew install ghq
 brew install jq
+brew install ms-jpq/sad/sad
 brew install anyenv
 anyenv init
 anyenv install --init

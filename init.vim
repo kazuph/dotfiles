@@ -140,7 +140,9 @@ set lazyredraw
 set ttyfast
 
 " 検索時のハイライトを解除する
-nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
+" and
+" quickfixを閉じる
+nnoremap <ESC><ESC> :nohlsearch<CR> <cmd>ccl<cr><ESC>
 
 " 検索時に次にいかないようにする
 nmap * *N
