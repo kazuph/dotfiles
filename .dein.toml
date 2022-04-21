@@ -131,7 +131,7 @@ let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.8, 'height': 0.8,'yoffse
 
 nnoremap <Leader>b :FBuffers<CR>
 nnoremap <Leader>c :FCommands<CR>
-nnoremap <Leader>f :FGFiles<CR>
+" nnoremap <Leader>f :FGFiles<CR>
 nnoremap <Leader>h :FHistory<CR>
 nnoremap <Leader>g :FAg<CR>
 nnoremap <Leader>r :FRg<CR>
@@ -199,7 +199,7 @@ let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
 
 [[plugins]]
 repo = 'ms-jpq/chadtree'
-rev = 'chad'
+# rev = 'chad'
 build = 'python3 -m chadtree deps'
 hook_add = '''
 nnoremap <C-n> :CHADopen<cr>
@@ -216,8 +216,8 @@ let g:blamer_date_format = '%y/%m/%d %H:%M'
 [[plugins]]
 repo = 'skanehira/code2img.vim'
 
-[[plugins]]
-repo = 'tiagofumo/vim-nerdtree-syntax-highlight'
+# [[plugins]]
+# repo = 'tiagofumo/vim-nerdtree-syntax-highlight'
 
 [[plugins]]
 repo = 'Xuyuanp/nerdtree-git-plugin'
@@ -388,6 +388,14 @@ let g:vim_json_syntax_conceal = 0
 [[plugins]]
 repo = 'prabirshrestha/vim-lsp'
 hook_add = '''
+let g:lsp_preview_float = 1
+let g:lsp_preview_autoclose=1
+let g:lsp_preview_keep_focus = 1
+" Close preview window with <C-c>
+autocmd User lsp_float_opened nmap <buffer> <silent> <C-c>
+        \ <Plug>(lsp-preview-close)
+autocmd User lsp_float_closed nunmap <buffer> <C-c>
+
 if executable('pyls')
     " pip install python-language-server
     au User lsp_setup call lsp#register_server({
@@ -454,7 +462,7 @@ function! s:on_lsp_buffer_enabled() abort
 
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.rs,*.go,*.rb,*.py call execute('LspDocumentFormatSync')
-
+    autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
     " refer to doc to add more commands
 endfunction
 
@@ -656,3 +664,15 @@ let g:switch_custom_definitions =
 [[plugins]]
 repo = 'rhysd/clever-f.vim'
 
+[[plugins]]
+repo = 'voldikss/vim-floaterm'
+hook_add = '''
+noremap <silent> <leader>[ <C-\><C-n>:FloatermToggle<CR>
+tnoremap <silent> <leader>[ <C-\><C-n>:FloatermToggle<CR>
+noremap  <silent> <leader>] <C-\><C-n>:FloatermNew<CR>=
+tnoremap <silent> <leader>] <C-\><C-n>:FloatermNext<CR>
+augroup vimrc_floaterm
+  autocmd!
+  autocmd QuitPre * FloatermKill!
+augroup END
+'''

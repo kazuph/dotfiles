@@ -150,7 +150,7 @@ set ttyfast
 " 検索時のハイライトを解除する
 " and
 " quickfixを閉じる
-nnoremap <ESC><ESC> :nohlsearch<CR> <cmd>ccl<cr><ESC>
+nnoremap <ESC><ESC> :nohlsearch<CR> <cmd>ccl<CR> :lua for _, win in ipairs(vim.api.nvim_list_wins()) do local config = vim.api.nvim_win_get_config(win); if config.relative ~= "" then vim.api.nvim_win_close(win, false); print('Closing window', win) end end<CR><ESC>
 
 " 検索時に次にいかないようにする
 nmap * *N
@@ -240,3 +240,12 @@ tnoremap <Esc> <C-\><C-n>
 command! -nargs=* T split | wincmd j | resize 20 | terminal <args>
 autocmd TermOpen * startinsert
 
+set pumblend=10      " 0 〜 100 が指定できます。ドキュメントによると 5 〜 30 くらいが適当だそうです。
+
+" 以下はおまけ。ここでは Denite の設定を載せていますが、
+" 同様の仕組みで任意のウィンドウを半透明化できるでしょう。
+augroup transparent-windows
+  autocmd!
+  autocmd FileType denite set winblend=10  " こちらも 5 〜 30 で試してみてください。
+  autocmd FileType denite-filter set winblend=10
+augroup END
