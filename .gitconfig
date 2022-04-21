@@ -18,7 +18,7 @@
 	editor = vim
     quotepath = false
     precomposeunicode = true
-    pager = delta --plus-color="#012800" --minus-color="#340001" --theme='Monokai Extended'
+    pager = delta
 	symlinks = true
 [interactive]
     diffFilter = delta --color-only

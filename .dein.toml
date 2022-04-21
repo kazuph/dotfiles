@@ -234,7 +234,7 @@ repo = 'mhinz/vim-startify'
 [[plugins]]
 # 正規表現をPerl風に
 # :%S///gc
-repo = 'othree/eregex.vim'
+# repo = 'othree/eregex.vim'
 
 [[plugins]]
 repo = 'haya14busa/incsearch.vim'
@@ -346,7 +346,7 @@ hook_add = '''
 '''
 
 # [[plugins]] #括弧とかを自動で閉じてくれる
-repo = 'jiangmiao/auto-pairs'
+# repo = 'jiangmiao/auto-pairs'
 
 [[plugins]] #同じインデントのところに縦線を引いてくれる奴
 repo = 'Yggdroot/indentLine'
