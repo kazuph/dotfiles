@@ -46,7 +46,7 @@ alias vz='vi $HOME/.zshrc'
 alias ve='vi $HOME/.zshenv'
 alias vv='vi $HOME/.vimrc'
 alias vg='vi $HOME/.gitconfig'
-alias sshconfig='vim $HOME/.ssh/config'
+alias sshconfig='vi $HOME/.ssh/config'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl'
 alias vimupdate="vim +NeoBundleUpdate +qa"
 alias viminstall="vim +NeoBundleInstall +qa"
@@ -72,6 +72,7 @@ alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
 alias vi=nvim
+alias vim=vi
 alias tn='twnyan'
 alias tw='twnyan tw'
 alias to='twnyan user own'
@@ -350,8 +351,7 @@ export PATH=$PATH:/opt/gnuarmemb/gcc-arm-none-eabi-7-2018-q2-update/bin
 export LC_ALL=en_US.UTF-8
 # export LANG=en_US.UTF-8
 export LANG=ja_JP.UTF-8
-# export GIT_EDITOR='/Applications/MacVim.app/Contents/MacOS/Vim -fg '
-export GIT_EDITOR='vim'
+export GIT_EDITOR=vi
 
 # export DOCKER_HOST=raspberrypi.local:2375
 

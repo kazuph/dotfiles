@@ -357,12 +357,12 @@ let g:indentLine_color_gui = '#708090'
 let g:indentLine_char = '¦'
 '''
 
-[[plugins]]
-repo = 'ncm2/float-preview.nvim'
-hook_source = '''
-" let g:float_preview#docked = 1
-let g:float_preview#docked = 0
-'''
+# [[plugins]]
+# repo = 'ncm2/float-preview.nvim'
+# hook_source = '''
+# " let g:float_preview#docked = 1
+# let g:float_preview#docked = 0
+# '''
 
 [[plugins]]
 repo = 'prettier/vim-prettier'
