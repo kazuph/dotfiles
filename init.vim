@@ -60,11 +60,19 @@ set tabstop=2          "タブを何文字の空白に変換するか
 set shiftwidth=2       "自動インデント時に入力する空白の数
 set expandtab          "タブ入力を空白に変換
 set splitright         "画面を縦分割する際に右に開く
-set clipboard=unnamed  "yank した文字列をクリップボードにコピー
+set clipboard=unnamed,unnamedplus  "yank した文字列をクリップボードにコピー
 set hls                "検索した文字をハイライトする
 set ambiwidth=single
 set guifont=Hack\ Nerd\ Font:h15
 
+" WSL yank support
+let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+if executable(s:clip)
+    augroup WSLYank
+        autocmd!
+        autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+    augroup END
+endif
 
 " コマンドモードのマッピング
 cmap <C-a> <Home>

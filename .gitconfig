@@ -13,13 +13,13 @@
     grep = auto
 [core]
     # globalな.gitignoreの指定
-    excludesfile = /Users/kazuph/.gitignore_global
+    excludesfile = ~/.gitignore_global
     autoCRLF = false
-	editor = vim
+    editor = vi
     quotepath = false
     precomposeunicode = true
     pager = delta
-	symlinks = true
+    symlinks = true
 [interactive]
     diffFilter = delta --color-only
 [push]
@@ -79,7 +79,7 @@
     bo  = branch -r           # remote branchを表示
     sb = show-branch          # branchの進捗とかも表示
     # log関連
-    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vi `f`"
     wc  = whatchanged         # logに変更されたファイルも一緒に出す
     ls  = log --stat          # logに変更されたファイルも一緒に出す
     lp  = log -p              # diffも一緒に出す
@@ -120,14 +120,14 @@
     d10 = diff HEAD~~~~~~~~~~  # HEADから10前とdiff
     # edit関連
     # modified or untrackedなファイルを編集する
-    edit = "!f() { git status -s | cut -b 4- | grep -v '\\/$' | uniq ; }; vim `f`"
+    edit = "!f() { git status -s | cut -b 4- | grep -v '\\/$' | uniq ; }; vi `f`"
     # mergeの際にconflictが起きたファイルを編集
-    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vi `f`"
     # mergeの際にconflictが起きたファイルをadd
     add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
     delete-unmerged =  "!f() { git ls-files --deleted | cut -f2 | sort -u ; }; git rm `f`"
     # 指定したコミットで変更されたファイルを編集する
-    modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'vim "$@" < /dev/tty' - ;}; f"
+    modified = "!f() { git diff $1..$1\\^ --name-only | xargs sh -c 'vi "$@" < /dev/tty' - ;}; f"
     # grep関連
     gr = grep
     gn = grep -n
