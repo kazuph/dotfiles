@@ -372,7 +372,7 @@ export AWS_PROFILE=default
 # zle -N select-history
 # bindkey '^r' select-history
 
-export PATH="$PATH:$HOME/development/flutter/bin"
+test -e $HOME/development/flutter/bin && export PATH="$PATH:$HOME/development/flutter/bin"
 
 function simc() {
   xcrun instruments -w $(xcrun simctl list | grep -v unavailable | grep -E "^\s" | grep -v ":" | fzf | grep -oE "\((.+?)\)" | grep -oE ".{20,}" | head -n1 | perl -pe "s/(\(|\))//g" )

@@ -91,7 +91,7 @@ hook_add = '''
 [[plugins]]
 repo = 'ctrlpvim/ctrlp.vim'
 hook_add = '''
-let g:ctrlp_map = '<c-p>' " yankringとかぶるので・・・
+let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.cache,*html/*
 let g:ctrlp_show_hidden = 1
@@ -138,14 +138,16 @@ nnoremap <Leader>r :FRg<CR>
 
 nnoremap rr/  :<C-u>FRg <C-R><C-w><CR>
 vnoremap rr/ y:<C-u>FRg <C-R>"<CR>
+nnoremap gg/  :<C-u>FAg <C-R><C-w><CR>
+vnoremap gg/ y:<C-u>FAg <C-R>"<CR>
 '''
 
-[[plugins]] # 爆速のgrepであるagを使いたい
-repo = 'rking/ag.vim'
-hook_add = '''
-nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
-vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
-'''
+# [[plugins]] # 爆速のgrepであるagを使いたい
+# repo = 'rking/ag.vim'
+# hook_add = '''
+# nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+# vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+# '''
 
 [[plugins]] # YAML
 repo = 'stephpy/vim-yaml'
@@ -199,7 +201,7 @@ let g:WebDevIconsNerdTreeAfterGlyphPadding = ' '
 
 [[plugins]]
 repo = 'ms-jpq/chadtree'
-# rev = 'chad'
+rev = 'chad'
 build = 'python3 -m chadtree deps'
 hook_add = '''
 nnoremap <C-n> :CHADopen<cr>
@@ -210,7 +212,7 @@ nnoremap <C-n> :CHADopen<cr>
 repo = 'APZelos/blamer.nvim'
 hook_add = '''
 let g:blamer_enabled = 1
-let g:blamer_date_format = '%y/%m/%d %H:%M'
+let g:blamer_date_format = '%Y/%m/%d %H:%M'
 '''
 
 [[plugins]]
@@ -669,10 +671,15 @@ repo = 'voldikss/vim-floaterm'
 hook_add = '''
 noremap <silent> <leader>[ <C-\><C-n>:FloatermToggle<CR>
 tnoremap <silent> <leader>[ <C-\><C-n>:FloatermToggle<CR>
-noremap  <silent> <leader>] <C-\><C-n>:FloatermNew<CR>=
+noremap  <silent> <leader>] <C-\><C-n>:FloatermNew<CR>
 tnoremap <silent> <leader>] <C-\><C-n>:FloatermNext<CR>
-augroup vimrc_floaterm
-  autocmd!
-  autocmd QuitPre * FloatermKill!
-augroup END
+let g:floaterm_autoclose = 1
+let g:floaterm_wintype = 'split'
+" let g:floaterm_width = 0.8
+let g:floaterm_height = 0.4
+" augroup vimrc_floaterm
+"   autocmd!
+"   autocmd QuitPre * FloatermKill!
+" augroup END
 '''
+

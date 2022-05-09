@@ -26,6 +26,14 @@ hook_add = '''
   command Gbl :Gblame
 '''
 
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
+repo = 'akinsho/flutter-tools.nvim'
+on_source = ['plenary.nvim']
+hook_source = 'source ~/.config/nvim/flutter-tools.lua'
+
 # [[plugins]]
 # repo = 'Shougo/denite.nvim'
 # hook_add = '''
@@ -68,3 +76,4 @@ hook_add = '''
 #
 # [[plugins]]
 # repo = 'rafamadriz/friendly-snippets'
+
