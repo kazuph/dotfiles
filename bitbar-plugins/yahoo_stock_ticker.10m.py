@@ -20,7 +20,7 @@ import subprocess
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Enter your stock symbols here in the format: ["symbol1", "symbol2", ...]
-symbols = ["FB", "AAPL", "AMZN", "NFLX", "GOOG",
+symbols = ["META", "AAPL", "AMZN", "NFLX", "GOOG",
            "BIDU", "BABA", "TCEHY", "VTI", "VT",
            "4379.T", "^GSPC", "^DJI", "^IXIC"]
 

@@ -28,6 +28,7 @@ zmodload zsh/zle
 # export LANG=ja_JP.UTF-8
 # fpath=($HOME/dotfiles/zsh-completions/src $fpath)
 fpath=(/usr/local/share/zsh-completions $fpath)
+fpath=(~/.zsh-soracom-cli-completion $fpath)
 
 export PATH=~/dotfiles/bin:$PATH
 # alias git='/usr/local/bin/git'
@@ -397,7 +398,7 @@ if [ -d ${HOME}/.cargo/env ] ; then
 fi
 
 # M5Stack Moddable
-export MODDABLE="/Users/kazuph600/src/github.com/Moddable-OpenSource/moddable"
+export MODDABLE="/Users/kazuph/src/github.com/Moddable-OpenSource/moddable"
 export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
 # export IDF_PATH=~/esp/esp-idf
 # export PATH="$PATH:$IDF_PATH/tools"
@@ -411,11 +412,38 @@ if [[ -f ~/.anyenv/bin/anyenv || -f /opt/homebrew/bin/anyenv ]] ; then
   eval "$(anyenv init -)"
 fi
 
-# . $(brew --prefix asdf)/libexec/asdf.sh
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+fpath=(${ASDF_DIR}/completions $fpath)
+autoload -Uz compinit && compinit
+
+export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+
+# bun completions
+[ -s "/Users/kazuph/.bun/_bun" ] && source "/Users/kazuph/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/kazuph/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kazuph/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/kazuph/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kazuph/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/kazuph/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kazuph/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/kazuph/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kazuph/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniforge/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+source $HOME/.openai.env

@@ -150,3 +150,10 @@
     root = "~/src"
 [url "git@github.com:"]
     insteadOf = https://github.com/
+[init]
+	defaultBranch = main
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

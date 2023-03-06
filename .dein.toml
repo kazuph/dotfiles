@@ -89,9 +89,14 @@ hook_add = '''
 '''
 
 [[plugins]]
+repo = 'mattn/ctrlp-matchfuzzy'
+
+[[plugins]]
 repo = 'ctrlpvim/ctrlp.vim'
 hook_add = '''
+let g:ctrlp_match_func = {'match': 'ctrlp_matchfuzzy#matcher'}
 let g:ctrlp_map = '<c-f>' " yankringとかぶるので・・・
+let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_max_height = &lines
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.cache,*html/*
 let g:ctrlp_show_hidden = 1
@@ -99,6 +104,12 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.?(local|extlib|git|hg|svn|bundle|node_modules)$',
   \ }
 '''
+
+[[plugins]]
+repo = 'vim-denops/denops.vim'
+
+[[plugins]]
+repo = 'skanehira/denops-docker.vim'
 
 [[plugins]]
 repo = 'glidenote/memolist.vim'
@@ -134,7 +145,7 @@ nnoremap <Leader>c :FCommands<CR>
 " nnoremap <Leader>f :FGFiles<CR>
 nnoremap <Leader>h :FHistory<CR>
 nnoremap <Leader>g :FAg<CR>
-nnoremap <Leader>r :FRg<CR>
+" nnoremap <Leader>r :FRg<CR>
 
 nnoremap rr/  :<C-u>FRg <C-R><C-w><CR>
 vnoremap rr/ y:<C-u>FRg <C-R>"<CR>
@@ -142,12 +153,12 @@ nnoremap gg/  :<C-u>FAg <C-R><C-w><CR>
 vnoremap gg/ y:<C-u>FAg <C-R>"<CR>
 '''
 
-# [[plugins]] # 爆速のgrepであるagを使いたい
-# repo = 'rking/ag.vim'
-# hook_add = '''
-# nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
-# vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
-# '''
+[[plugins]] # 爆速のgrepであるagを使いたい
+repo = 'rking/ag.vim'
+hook_add = '''
+" nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+" vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+'''
 
 [[plugins]] # YAML
 repo = 'stephpy/vim-yaml'
@@ -683,3 +694,5 @@ let g:floaterm_height = 0.4
 " augroup END
 '''
 
+[[plugins]]
+repo = 'ziglang/zig.vim'

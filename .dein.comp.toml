@@ -29,6 +29,9 @@ repo = 'tbodt/deoplete-tabnine'
 build= './install.sh'
 
 [[plugins]]
+repo = 'github/copilot.vim'
+
+[[plugins]]
 repo = 'Shougo/neosnippet-snippets'
 
 [[plugins]]

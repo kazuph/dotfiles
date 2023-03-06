@@ -189,8 +189,8 @@ set ignorecase
 set smartcase
 
 " 爆速のgrepであるagを使いたい
-nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
-vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
+" nnoremap gg/  :<C-u>Ag <C-R><C-w><CR>
+" vnoremap gg/ y:<C-u>Ag <C-R>"<CR>
 
 let s:stop_time = 10
 
@@ -249,3 +249,10 @@ augroup transparent-windows
   autocmd FileType denite set winblend=10  " こちらも 5 〜 30 で試してみてください。
   autocmd FileType denite-filter set winblend=10
 augroup END
+
+" macm Edit.Paste key=<nop>
+tmap <D-v> <C-w>"+
+nnoremap <D-v> "+p
+vnoremap <D-v> "+p
+inoremap <D-v> <C-R><C-O>+
+cnoremap <D-v> <C-R><C-O>+
