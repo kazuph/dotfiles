@@ -1,6 +1,7 @@
 return {
   {
     "glidenote/memolist.vim",
+    -- cmd = { "MemoNew", "MemoList", "MemoGrep" },
     keys = {
       { "<leader>mn", "<cmd>MemoNew<cr>",                  desc = "Create a new memo" },
       { "<leader>ml", "<cmd>Telescope memo list<cr>",      desc = "List all memos" },
