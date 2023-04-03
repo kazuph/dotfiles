@@ -1,10 +1,10 @@
-#!/bin/bash -u
+#!/bin/bash
 
 # OSの種類を取得
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OSの場合
     echo "Mac OS"
-elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+elif [ "$(uname -s)" == "Linux" ]; then
     # Linuxの場合
     echo "Linux"
     
@@ -12,7 +12,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$(lsb_release -si)" == "Ubuntu" ]; then
         echo "Ubuntu"
         sudo apt update
-        sudo apt install -y build-essential wget curl git -y
+        sudo apt install build-essential wget curl git -y
     fi
 fi
 
