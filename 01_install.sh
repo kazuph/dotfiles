@@ -20,7 +20,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     if [ "$(lsb_release -si)" == "Ubuntu" ]; then
         echo "Ubuntu"
         sudo apt update
-        sudo apt install -y build-essential wget curl git -y
+        sudo apt install -y build-essential wget curl git tree -y
 
         # install homebrew
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
