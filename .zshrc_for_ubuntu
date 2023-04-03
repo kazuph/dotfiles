@@ -192,6 +192,7 @@ alias to='twnyan user own'
 alias ts='twnyan search'
 alias tt='twnyan timeline 100'
 alias tm='twnyan mention'
+alias ls='exa --classify --icons -h --reverse'
 
 # atcoder
 alias acctest="oj t -d tests -c 'ruby main.rb'"
@@ -561,3 +562,4 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 [[ -f $HOME/.openai.env ]] && source $HOME/.openai.env
+

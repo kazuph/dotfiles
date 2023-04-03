@@ -54,3 +54,7 @@ zmodule zsh-users/zsh-history-substring-search
 zmodule zsh-users/zsh-autosuggestions
 # }}} End configuration added by Zim install
 
+# my setting
+# zmodule olets/zsh-abbr
+# zmodule exa
+

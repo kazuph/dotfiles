@@ -12,5 +12,6 @@ brew install neovim
 brew install font-hack-nerd-font
 brew install ghq
 brew install jq
+brew install exa
 brew install ms-jpq/sad/sad
 [ "$(uname)" == "Darwin" ] && brew install trash
