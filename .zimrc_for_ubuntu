@@ -57,4 +57,6 @@ zmodule zsh-users/zsh-autosuggestions
 # my setting
 # zmodule olets/zsh-abbr
 # zmodule exa
-
+zmodule eriner
+zmodule prompt-pwd
+zmodule https://github.com/kazuph/zimfw-asdf

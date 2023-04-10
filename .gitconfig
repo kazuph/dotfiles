@@ -25,7 +25,7 @@
 [push]
     default = matching
 [pull]
-    rebase = preserve
+	rebase = false
     ff = only
 [merge]
     ff = false

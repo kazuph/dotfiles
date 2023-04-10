@@ -285,7 +285,7 @@ bindkey '^q' fzf-ripgrep-widget
 
 # ディレクトリを検索して移動
 function fzf-get-current-dir() {
-    find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes)' | fzf
+    find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes|runtime)' | fzf
 }
 function fzf-cdr() {
     local destination="$(fzf-get-current-dir)"
@@ -296,8 +296,8 @@ function fzf-cdr() {
         zle reset-prompt
     fi
 }
-# zle -N fzf-cdr
-# bindkey '^q' fzf-cdr
+zle -N fzf-cdr
+bindkey '^t' fzf-cdr
 
 # ブランチを検索して移動
 # fbr - checkout git branch
