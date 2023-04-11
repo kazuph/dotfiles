@@ -121,30 +121,6 @@ test $? || unset _Z_CMD _Z_DATA _Z_NO_PROMPT_COMMAND
 setopt no_share_history
 
 ### fzf集
-FZF_ALT_C_COMMAND="fd --type d"
-# デフォルトオプテョンの指定方法
-# export FZF_DEFAULT_OPTS='--preview "bat --style=numbers --color=always --line-range :500 {}"'
-# export FZF_DEFAULT_OPTS="
-#     --height 90% --reverse --border
-#     --prompt='➜  ' --margin=0,1 --inline-info
-#     --tiebreak=index --no-mouse --filepath-word
-#     --color fg:-1,bg:-1,hl:33,fg+:250,bg+:235,hl+:33
-#     --color info:37,prompt:37,pointer:230,marker:230,spinner:37
-#     --bind='ctrl-w:backward-kill-word,ctrl-x:jump,down:preview-page-down'
-#     --bind='ctrl-z:ignore,ctrl-]:replace-query,up:preview-page-up'
-#     --bind='ctrl-a:toggle-all,?:toggle-preview'
-#     --preview 'bat --style=numbers --color=always --line-range :500 {}'
-
-# ファイル名検索
-export FZF_CTRL_T_COMMAND="fd --type f "
-export FZF_CTRL_T_OPTS="
-    --height 90%
-    --select-1 --exit-0
-    --bind 'ctrl-o:execute(vim {1} < /dev/tty)'
-    --bind '>:reload($FZF_CTRL_T_COMMAND -H -E .git )'
-    --bind '<:reload($FZF_CTRL_T_COMMAND)'
-    --preview 'bat -r :300 --color=always --style=header,grid {}'"
-
 # 全文検索
 __fzf_ripgrep() {
   emulate -L zsh
@@ -170,9 +146,11 @@ fzf-ripgrep-widget() {
 zle -N fzf-ripgrep-widget
 bindkey '^q' fzf-ripgrep-widget
 
+
+
 # ディレクトリを検索して移動
 function fzf-get-current-dir() {
-    find . -type d | grep -vE '(\.git|\.svn|vendor/bundle|\.bundle|public/uploads|/tmp|node_mobuldes)' | fzf
+    fd . --type d | fzf
 }
 function fzf-cdr() {
     local destination="$(fzf-get-current-dir)"
@@ -184,7 +162,16 @@ function fzf-cdr() {
     fi
 }
 # zle -N fzf-cdr
-# bindkey '^q' fzf-cdr
+# bindkey '^t' fzf-cdr
+export FZF_CTRL_T_COMMAND="fzf-cdr"
+# export FZF_CTRL_T_COMMAND="fd --type f "
+# export FZF_CTRL_T_OPTS="
+#     --height 90%
+#     --select-1 --exit-0
+#     --bind 'ctrl-o:execute(vim {1} < /dev/tty)'
+#     --bind '>:reload($FZF_CTRL_T_COMMAND -H -E .git )'
+#     --bind '<:reload($FZF_CTRL_T_COMMAND)'
+#     --preview 'bat -r :300 --color=always --style=header,grid {}'"
 
 # ブランチを検索して移動
 # fbr - checkout git branch
@@ -444,6 +431,9 @@ else
     fi
 fi
 unset __conda_setup
-# <<< conda initialize <<<
+function condaf() {
+  ENV_NAME=$(conda info --env | grep -vE "(^\s.+|^#)" | fzf --preview "conda run -n {1} pip list" | awk '{print $NF}')
+  conda activate $ENV_NAME
+}
 
 source $HOME/.openai.env
