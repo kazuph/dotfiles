@@ -1,4 +1,4 @@
-#!/usr/bin/env LC_ALL=en_US.UTF-8 /Users/kazuph/.anyenv/envs/pyenv/shims/python
+#!/opt/homebrew/Caskroom/miniforge/base/bin/python
 #
 # <xbar.title>Yahoo Stock Ticker</xbar.title>
 # <xbar.version>v1.1</xbar.version>
