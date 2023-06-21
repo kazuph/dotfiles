@@ -21,6 +21,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
         echo "Ubuntu"
         sudo apt update
         sudo apt install -y build-essential wget curl git tree -y
+	sudo apt install -y zsh
 	sudo apt install -y aria2
 
         # install homebrew

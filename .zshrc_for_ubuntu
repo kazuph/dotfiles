@@ -564,3 +564,4 @@ unset __conda_setup
 [[ -f $HOME/.openai.env ]] && source $HOME/.openai.env
 
 export PATH="/home/kazuph/.local/bin:$PATH"
+source "$HOME/.rye/env"
