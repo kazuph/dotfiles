@@ -343,8 +343,8 @@ export GIT_EDITOR=vi
 
 # export DOCKER_HOST=raspberrypi.local:2375
 
-export PATH=$PATH:/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home/bin
-export JAVA_HOME=/Applications/"Android Studio.app"/Contents/jre/jdk/Contents/Home
+export PATH=$PATH:/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin
+export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/ 
 
 export AWS_PROFILE=default
 
@@ -437,3 +437,4 @@ function condaf() {
 }
 
 source $HOME/.openai.env
+source "$HOME/.rye/env"

@@ -10,8 +10,10 @@ if [ -d /home/linuxbrew/.linuxbrew ] ; then
   eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
-if [ -d ${HOME}/.anyenv ] ; then
-  export PATH="$HOME/.anyenv/bin:$PATH"
+# $HOME/bin以下をpathに追加する
+if [ -d $HOME/bin ]; then
+  export PATH=$HOME/bin:$PATH
 fi
 
-[ -f ~/.cargo/env ] && . "$HOME/.cargo/env"
+source $HOME/.openai.env
+. "$HOME/.cargo/env"
