@@ -380,4 +380,15 @@ maps.n["<leader>uy"] = { ui.toggle_syntax, desc = "Toggle syntax highlight" }
 -- Memo
 maps.n["<leader>m"] = sections.m
 
+-- c-cでノーマルモードに戻る
+maps.i["<C-c>"] = { "<esc>", desc = "Return to normal mode" }
+
+-- g/でカーソル位置の文字を置換対象にする
+maps.n["g/"] = { "yiw:%s/<C-r>\"//gc<left><left><left>", desc = "Replace word under cursor" }
+
+-- gg/でカーソル位置の文字をtelescope live grep対象にする
+-- maps.n["<leader>fw"] = { function() require("telescope.builtin").live_grep() end, desc = "Find words" }
+-- maps.n["gg/"] = { function() require("telescope.builtin").live_grep(e") end, desc = "Telescope live grep word under cursor" }
+
 utils.set_mappings(astronvim.user_opts("mappings", maps))
+

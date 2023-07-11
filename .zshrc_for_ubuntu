@@ -562,6 +562,7 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 [[ -f $HOME/.openai.env ]] && source $HOME/.openai.env
+[[ -f $HOME/.huggingface.env ]] && source $HOME/.huggingface.env
 
 export PATH="/home/kazuph/.local/bin:$PATH"
 source "$HOME/.rye/env"
