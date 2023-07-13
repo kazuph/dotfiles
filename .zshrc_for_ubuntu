@@ -565,4 +565,3 @@ unset __conda_setup
 [[ -f $HOME/.huggingface.env ]] && source $HOME/.huggingface.env
 
 export PATH="/home/kazuph/.local/bin:$PATH"
-source "$HOME/.rye/env"
