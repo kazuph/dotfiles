@@ -384,7 +384,14 @@ dalias() { alias | grep 'docker' | sed "s/^\([^=]*\)=\(.*\)/\1 => \2/"| sed "s/[
 # Bash into running container
 dbash() { docker exec -it $(docker ps -aqf "name=$1") bash; }
 
-alias dc='docker-compose'
+alias dc='sudo docker compose'
+alias dcu='sudo docker compose up'
+alias dcub='sudo docker compose up --build'
+alias dce='sudo docker compose exec'
+alias dcs='sudo docker compose stop'
+alias dcl='sudo docker compose logs -f '
+alias dp='sudo docker ps'
+alias ds='sudo docker stop'
 
 # ググれる
 ggr() {open "https://www.google.co.jp/search?q=$1";}
