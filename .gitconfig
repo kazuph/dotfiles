@@ -18,7 +18,7 @@
     editor = vi
     quotepath = false
     precomposeunicode = true
-    pager = delta
+    pager = delta --keep-plus-minus-markers
     symlinks = true
 [interactive]
     diffFilter = delta --color-only
@@ -44,6 +44,7 @@
     up = !git fetch && git branch | grep \\* | cut -d' ' -f 2 | xargs -I% git pull --rebase origin %
     # push origin and set upstream
     pu  = !git push -u origin `git branch | grep \\* | cut -d' ' -f 2`
+    put = !git pu --tags
     # rebase
     rbc = rebase --continue
     rba = rebase --abort
@@ -157,3 +158,10 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default

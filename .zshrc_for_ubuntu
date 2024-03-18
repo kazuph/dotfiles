@@ -10,6 +10,8 @@
 #
 # History
 #
+#
+
 
 # Remove older command from the history if a duplicate is to be added.
 setopt HIST_IGNORE_ALL_DUPS
@@ -184,7 +186,8 @@ alias get='ghq get '
 alias usb='ls /dev/tty.*'
 alias rn='react-native'
 alias sub=subl
-alias vi=nvim
+alias vi="TREM=st nvim"
+
 alias vim=vi
 alias tn='twnyan'
 alias tw='twnyan tw'
@@ -338,6 +341,9 @@ bindkey "^g" gcd
 # ------------------------------------
 # Docker alias and function
 # ------------------------------------
+#
+# ubuntuの場合は sudo dockerを使う
+# alias docker='sudo docker'
 
 # Get latest container ID
 alias dl="docker ps -l -q"
@@ -389,7 +395,7 @@ alias dcu='sudo docker compose up'
 alias dcub='sudo docker compose up --build'
 alias dce='sudo docker compose exec'
 alias dcs='sudo docker compose stop'
-alias dcl='sudo docker compose logs -f '
+alias dcl='sudo docker compose logs -f -n 200'
 alias dp='sudo docker ps'
 alias ds='sudo docker stop'
 
@@ -515,6 +521,8 @@ function simc() {
 
 if [ -d ${HOME}/.cargo/env ] ; then
   source ~/.cargo/env
+  # cargo
+  export PATH=$HOME/.cargo/bin:$PATH
 fi
 
 # M5Stack Moddable
@@ -525,17 +533,12 @@ export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
 # export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
 
 export TMUX_TMPDIR=/tmp
+alias tmuxr="tmux source ~/.tmux.conf"
 
 # source $HOME/.deepl.env
 
 if [[ -f ~/.anyenv/bin/anyenv || -f /opt/homebrew/bin/anyenv ]] ; then
   eval "$(anyenv init -)"
-fi
-
-if [[ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ]] ; then
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-  fpath=(${ASDF_DIR}/completions $fpath)
-  autoload -Uz compinit && compinit
 fi
 
 export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
@@ -546,12 +549,6 @@ export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/kazuph/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/kazuph/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/kazuph/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/kazuph/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -572,3 +569,25 @@ unset __conda_setup
 [[ -f $HOME/.huggingface.env ]] && source $HOME/.huggingface.env
 
 export PATH="/home/kazuph/.local/bin:$PATH"
+
+# bun completions
+[ -s "/home/kazuph/.bun/_bun" ] && source "/home/kazuph/.bun/_bun"
+
+
+
+eval "$(starship init zsh)"
+
+eval "$(~/.local/bin/mise activate zsh)"
+
+# ~/binにpathを通す
+export PATH=$HOME/bin:$PATH
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/kazuph/google-cloud-sdk/path.zsh.inc' ]; then . '/home/kazuph/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/kazuph/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/kazuph/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Turso
+export PATH="/home/kazuph/.turso:$PATH"

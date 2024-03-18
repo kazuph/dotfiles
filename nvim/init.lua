@@ -17,17 +17,17 @@ end
 
 require("astronvim.utils").conditional_func(astronvim.user_opts("polish", nil, false), true)
 
-require'lspconfig'.pylsp.setup{
-  settings = {
-    pylsp = {
-      plugins = {
-        pycodestyle = {
-          ignore = {'W391'},
-          maxLineLength = 150,
-          indentSize = 2
-        }
-      }
-    }
-  }
-}
+-- require'lspconfig'.pylsp.setup{
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--         pycodestyle = {
+--           ignore = {'W391'},
+--           maxLineLength = 150,
+--           indentSize = 2
+--         }
+--       }
+--     }
+--   }
+-- }
 

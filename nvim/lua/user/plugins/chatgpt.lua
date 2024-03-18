@@ -1,6 +1,6 @@
 return {
-  {
-    "aduros/ai.vim",
-    event = "VeryLazy",
-  },
+  -- {
+  --   "aduros/ai.vim",
+  --   event = "VeryLazy",
+  -- },
 }
