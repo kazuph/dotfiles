@@ -437,4 +437,3 @@ function condaf() {
 }
 
 source $HOME/.openai.env
-source "$HOME/.rye/env"
