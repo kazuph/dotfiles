@@ -591,3 +591,11 @@ if [ -f '/home/kazuph/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/kazu
 
 # Turso
 export PATH="/home/kazuph/.turso:$PATH"
+
+# pnpm
+export PNPM_HOME="/home/kazuph/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
