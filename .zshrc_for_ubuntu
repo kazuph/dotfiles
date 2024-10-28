@@ -178,6 +178,7 @@ alias seed='brake db:seed'
 alias rename='massren --config editor vim && massren'
 alias vf='vi `fzf`'
 alias vc='vi -o `git cl`'
+alias vn='vim -u NONE -N '
 alias vm='vi -o `git ml`'
 # alias todo="vim /Users/kazuhiro.honma/Dropbox/memo/2014-07-21-todo.markdown"
 alias todo="todo.sh"
@@ -195,7 +196,7 @@ alias to='twnyan user own'
 alias ts='twnyan search'
 alias tt='twnyan timeline 100'
 alias tm='twnyan mention'
-alias ls='exa --classify --icons -h --reverse'
+alias ls='eza --classify --icons -h --reverse'
 
 # atcoder
 alias acctest="oj t -d tests -c 'ruby main.rb'"
@@ -212,6 +213,10 @@ fi
 export ANT_OPTS=-Dfile.encoding=UTF8
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# for moonbit
+# add ~/.moon/bin
+export PATH=$PATH/.moon/bin
 
 # for nordic
 export PATH=$PATH:$HOME/nRF5_SDK/tools/nrfjprog
@@ -252,7 +257,7 @@ FZF_ALT_C_COMMAND="fd --type d"
 #     --preview 'bat --style=numbers --color=always --line-range :500 {}'
 
 # ファイル名検索
-export FZF_CTRL_T_COMMAND="fd --type f "
+export FZF_CTRL_T_COMMAND="fd --type f"
 export FZF_CTRL_T_OPTS="
     --height 90%
     --select-1 --exit-0
@@ -577,8 +582,6 @@ export PATH="/home/kazuph/.local/bin:$PATH"
 
 eval "$(starship init zsh)"
 
-eval "$(~/.local/bin/mise activate zsh)"
-
 # ~/binにpathを通す
 export PATH=$HOME/bin:$PATH
 
@@ -599,3 +602,19 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+
+source ~/.zplug/init.zsh
+zplug "lukechilds/zsh-better-npm-completion", defer:2
+zplug load
+
+compdef _zbnc_zsh_better_npm_completion pnpm
+
+export PATH=/home/kazuph/.tiup/bin:$PATH
+
+eval "$(mise activate zsh)"
+export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+
+# moonbit
+export PATH="$HOME/.moon/bin:$PATH"
