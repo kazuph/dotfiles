@@ -309,6 +309,29 @@ alias "505"="echo 'HTTP Version Not Supported'"
 alias o='git ls-files | f open'
 alias e='ghq list -p | f cd'
 
+# ~/.zshrc への追加コード
+# Git 関連の設定
+
+# Git alias（.gitconfig に追加）
+# [alias]
+#     wt = worktree
+#     wta = worktree add
+#     wtl = worktree list
+#     wtr = worktree remove
+#     wtp = worktree prune
+
+# Git Worktree zsh functions の読み込み
+if [[ -d "$HOME/dotfiles/zsh/git-worktree" ]]; then
+    # 基本操作
+    source "$HOME/dotfiles/zsh/git-worktree/basic.zsh"
+    
+    # ナビゲーション
+    source "$HOME/dotfiles/zsh/git-worktree/navigation.zsh"
+    
+    # メンテナンス
+    source "$HOME/dotfiles/zsh/git-worktree/maintenance.zsh"
+fi
+
 
 setopt ignoreeof
 
@@ -399,7 +422,6 @@ if [[ -f ~/.anyenv/bin/anyenv || -f /opt/homebrew/bin/anyenv ]] ; then
   eval "$(anyenv init -)"
 fi
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
 fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit && compinit
 
@@ -436,4 +458,19 @@ function condaf() {
   conda activate $ENV_NAME
 }
 
-source $HOME/.openai.env
+alias cs='cursor --remote ssh-remote+pc "$(ssh pc ". ~/.zshrc && ghq list -p" | fzf)"'
+alias ws='windsurf --remote ssh-remote+pc "$(ssh pc ". ~/.zshrc && ghq list -p" | fzf)"'
+
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/kazuph/.lmstudio/bin"
+export PATH="/Users/kazuph/.local/bin:$PATH"
+
+# Added by Windsurf
+export PATH="/Users/kazuph/.codeium/windsurf/bin:$PATH"
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+

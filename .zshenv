@@ -15,5 +15,7 @@ if [ -d $HOME/bin ]; then
   export PATH=$HOME/bin:$PATH
 fi
 
-source $HOME/.openai.env
 . "$HOME/.cargo/env"
+
+# uv
+export PATH="/Users/kazuph/.local/bin:$PATH"
