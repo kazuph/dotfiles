@@ -474,3 +474,4 @@ export PATH="/Users/kazuph/.codeium/windsurf/bin:$PATH"
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 
+alias cc="claude --dangerously-skip-permissions"
