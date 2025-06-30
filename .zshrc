@@ -474,8 +474,153 @@ export PATH="/Users/kazuph/.codeium/windsurf/bin:$PATH"
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 
-alias cc="BASH_MAX_OUTPUT_LENGTH=300 ENABLE_BACKGROUND_TASKS=1 claude --dangerously-skip-permissions"
+alias cc="BASH_MAX_OUTPUT_LENGTH=3000 ENABLE_BACKGROUND_TASKS=1 claude --dangerously-skip-permissions"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:$HOME/.maestro/bin
-alias claude="/Users/kazuph/.claude/local/claude"
+
+# Claude Code protection with user confirmation (no sudo)
+# Function to check if running under Claude Code and request confirmation
+claude_safe_command() {
+    local cmd="$1"
+    shift
+    
+    # Check if running under Claude Code (any of these env vars indicate Claude)
+    if [[ -n "$CLAUDE_DESKTOP_APP" ]] || [[ -n "$ENABLE_BACKGROUND_TASKS" ]] || [[ -n "$BASH_MAX_OUTPUT_LENGTH" ]]; then
+        # Show confirmation dialog without granting root privileges
+        if osascript -e "display dialog \"Claude Code wants to execute: $cmd $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+            command $cmd "$@"
+        else
+            echo "❌ Command execution cancelled by user"
+            return 1
+        fi
+    else
+        command $cmd "$@"
+    fi
+}
+
+# Git-specific protection function
+# Claude Code実行時のGit操作を危険度別に分類して保護
+# 🚨 最高危険度: reset --hard, rebase, cherry-pick (履歴改変・データ消失)
+# ⚠️  高危険度: push --force, clean -f (リモート破壊・ファイル削除)  
+# 📝 中危険度: merge, pull, fetch (マージ競合・予期しない変更)
+# ℹ️  基本確認: その他全てのgitコマンド (意図しない操作防止)
+claude_safe_git() {
+    local cmd="$1"
+    shift
+    local subcmd="$1"
+    
+    # Check if running under Claude Code
+    if [[ -n "$CLAUDE_DESKTOP_APP" ]] || [[ -n "$ENABLE_BACKGROUND_TASKS" ]] || [[ -n "$BASH_MAX_OUTPUT_LENGTH" ]]; then
+        # Define dangerous git operations
+        case "$subcmd" in
+            push|force-push|push\ --force|push\ -f)
+                if osascript -e "display dialog \"⚠️ Claude Code wants to PUSH code to remote repository: git $*\" buttons {\"Cancel\", \"Allow Push\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git push cancelled by user"
+                    return 1
+                fi
+                ;;
+            reset|reset\ --hard|rebase|rebase\ -i|cherry-pick)
+                if osascript -e "display dialog \"⚠️ Claude Code wants to MODIFY git history: git $*\" buttons {\"Cancel\", \"Allow History Change\"} default button \"Cancel\" with icon stop" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git history modification cancelled by user"
+                    return 1
+                fi
+                ;;
+            branch\ -D|branch\ --delete|tag\ -d|tag\ --delete)
+                if osascript -e "display dialog \"⚠️ Claude Code wants to DELETE git branch/tag: git $*\" buttons {\"Cancel\", \"Allow Delete\"} default button \"Cancel\" with icon stop" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git deletion cancelled by user"
+                    return 1
+                fi
+                ;;
+            clean\ -f|clean\ -fd|clean\ -fx)
+                if osascript -e "display dialog \"⚠️ Claude Code wants to CLEAN untracked files: git $*\" buttons {\"Cancel\", \"Allow Clean\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git clean cancelled by user"
+                    return 1
+                fi
+                ;;
+            merge|merge\ --no-ff|pull|fetch)
+                if osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git operation cancelled by user"
+                    return 1
+                fi
+                ;;
+            *)
+                # For other git commands, just show basic confirmation
+                if osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" >/dev/null 2>&1; then
+                    command $cmd "$@"
+                else
+                    echo "❌ Git command cancelled by user"
+                    return 1
+                fi
+                ;;
+        esac
+    else
+        command $cmd "$@"
+    fi
+}
+
+# Always protected commands (extremely high risk - require sudo)
+alias nvram='sudo nvram'                   # ファームウェア設定変更・起動不能リスクの無認証実行を禁止
+alias csrutil='sudo csrutil'              # SIP無効化・セキュリティ低下の無認証実行を禁止
+alias spctl='sudo spctl'                   # Gatekeeper無効化・マルウェアリスクの無認証実行を禁止
+
+# User confirmation protected commands (for Claude Code only)
+alias rm='claude_safe_command rm'                              # Claude Code実行時のファイル削除の無認証実行を禁止
+alias rmdir='claude_safe_command rmdir'                        # Claude Code実行時のディレクトリ削除の無認証実行を禁止
+alias mv='claude_safe_command mv'                              # Claude Code実行時のファイル移動・重要ファイル上書きを禁止
+alias cp='claude_safe_command cp'                              # Claude Code実行時のファイルコピー・重要ファイル上書きを禁止
+alias dd='claude_safe_command dd'                              # Claude Code実行時の低レベルディスク操作・データ破壊を禁止
+alias mkfs='claude_safe_command mkfs'                          # Claude Code実行時のファイルシステム作成・データ全消去を禁止
+alias fdisk='claude_safe_command fdisk'                        # Claude Code実行時のパーティション操作・ディスク破壊を禁止
+alias diskutil='claude_safe_command diskutil'                 # Claude Code実行時のmacOSディスク管理・フォーマットを禁止
+alias format='claude_safe_command format'                     # Claude Code実行時のディスクフォーマット・データ全消去を禁止
+alias parted='claude_safe_command parted'                      # Claude Code実行時のパーティション編集・データ損失を禁止
+alias gparted='claude_safe_command gparted'                    # Claude Code実行時のGUI パーティション編集を禁止
+alias xattr='claude_safe_command xattr'                        # Claude Code実行時の隔離属性削除・セキュリティ回避を禁止
+alias chmod='claude_safe_command chmod'                        # Claude Code実行時のファイル権限変更・セキュリティ設定破壊を禁止
+alias chown='claude_safe_command chown'                        # Claude Code実行時のファイル所有者変更・アクセス制御破壊を禁止
+alias launchctl='claude_safe_command launchctl'                # Claude Code実行時のmacOSサービス制御・システム動作変更を禁止
+alias killall='claude_safe_command killall'                   # Claude Code実行時のプロセス名一括終了・システム不安定化を禁止
+alias pkill='claude_safe_command pkill'                       # Claude Code実行時のプロセスパターン終了・重要プロセス停止を禁止
+alias kill='claude_safe_command kill'                         # Claude Code実行時のプロセス強制終了・システム不安定化を禁止
+alias shutdown='claude_safe_command shutdown'                 # Claude Code実行時のシステム終了・作業中断を禁止
+alias reboot='claude_safe_command reboot'                     # Claude Code実行時のシステム再起動・作業中断を禁止
+alias halt='claude_safe_command halt'                         # Claude Code実行時のシステム停止・作業中断を禁止
+alias systemctl='claude_safe_command systemctl'               # Claude Code実行時のLinuxサービス制御・システム動作変更を禁止
+alias service='claude_safe_command service'                   # Claude Code実行時のサービス制御・システム動作変更を禁止
+alias crontab='claude_safe_command crontab'                   # Claude Code実行時のcron設定変更・定期実行タスク変更を禁止
+alias passwd='claude_safe_command passwd'                     # Claude Code実行時のパスワード変更・アカウント乗っ取りを禁止
+alias su='claude_safe_command su'                             # Claude Code実行時のユーザー切り替え・権限昇格を禁止
+alias visudo='claude_safe_command visudo'                     # Claude Code実行時のsudo設定編集・権限設定破壊を禁止
+alias mount='claude_safe_command mount'                       # Claude Code実行時のファイルシステムマウント・システム構成変更を禁止
+alias umount='claude_safe_command umount'                     # Claude Code実行時のファイルシステムアンマウント・データ損失を禁止
+alias fsck='claude_safe_command fsck'                         # Claude Code実行時のファイルシステム修復・データ変更を禁止
+alias defaults='claude_safe_command defaults'                 # Claude Code実行時のmacOS設定変更・システム動作変更を禁止
+alias scutil='claude_safe_command scutil'                     # Claude Code実行時のシステム設定変更・ネットワーク設定破壊を禁止
+alias dscl='claude_safe_command dscl'                         # Claude Code実行時のDirectory Services操作・ユーザー管理変更を禁止
+alias installer='claude_safe_command installer'               # Claude Code実行時のパッケージインストール・システム変更を禁止
+alias pkgutil='claude_safe_command pkgutil'                   # Claude Code実行時のパッケージ管理・システムファイル変更を禁止
+alias softwareupdate='claude_safe_command softwareupdate'     # Claude Code実行時のシステムアップデート・予期しない変更を禁止
+alias profiles='claude_safe_command profiles'                 # Claude Code実行時の構成プロファイル変更・企業ポリシー破壊を禁止
+alias security='claude_safe_command security'                 # Claude Code実行時のセキュリティ設定変更・暗号化設定破壊を禁止
+alias keychain='claude_safe_command keychain'                 # Claude Code実行時のキーチェーン操作・パスワード情報漏洩を禁止
+alias codesign='claude_safe_command codesign'                 # Claude Code実行時のコード署名操作・セキュリティ証明書変更を禁止
+alias notarytool='claude_safe_command notarytool'             # Claude Code実行時のApple公証操作・開発者証明書変更を禁止
+alias xcrun='claude_safe_command xcrun'                       # Claude Code実行時のXcode開発ツール実行・開発環境変更を禁止
+alias networksetup='claude_safe_command networksetup'         # Claude Code実行時のネットワーク設定変更・接続設定破壊を禁止
+alias systemsetup='claude_safe_command systemsetup'           # Claude Code実行時のシステム設定変更・ハードウェア設定破壊を禁止
+alias pmset='claude_safe_command pmset'                       # Claude Code実行時の電源管理設定変更・バッテリー動作変更を禁止
+alias caffeinate='claude_safe_command caffeinate'             # Claude Code実行時のスリープ制御・電源管理変更を禁止
+
+# Git commands that can destroy code/history
+alias git='claude_safe_git git'                               # Claude Code実行時のGit操作全般の無認証実行を禁止
 
