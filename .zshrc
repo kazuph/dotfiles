@@ -389,20 +389,6 @@ function simc() {
   xcrun instruments -w $(xcrun simctl list | grep -v unavailable | grep -E "^\s" | grep -v ":" | fzf | grep -oE "\((.+?)\)" | grep -oE ".{20,}" | head -n1 | perl -pe "s/(\(|\))//g" )
 }
 
-# function balena {
-#   if [ -f .gitignore.balena ] ; then
-#     echo cp .gitignore.balena .gitignore
-#     \cp .gitignore .gitignore.org
-#     \cp .gitignore.balena .gitignore
-#     /usr/local/bin/balena "$@"
-#     echo cp .gitignore.org .gitignore
-#     \cp .gitignore.org .gitignore
-#     rm -rf .gitignore.org
-#   else
-#     /usr/local/bin/balena "$@"
-#   fi
-# }
-
 if [ -d ${HOME}/.cargo/env ] ; then
   source ~/.cargo/env
 fi
@@ -484,10 +470,14 @@ claude_safe_command() {
     local cmd="$1"
     shift
     
-    # Check if running under Claude Code (any of these env vars indicate Claude)
-    if [[ -n "$CLAUDE_DESKTOP_APP" ]] || [[ -n "$ENABLE_BACKGROUND_TASKS" ]] || [[ -n "$BASH_MAX_OUTPUT_LENGTH" ]]; then
+    # Check if running under Claude Code
+    if [[ "$CLAUDECODE" == "1" ]] || [[ -n "$CLAUDE_CODE_ENTRYPOINT" ]]; then
         # Show confirmation dialog without granting root privileges
-        if osascript -e "display dialog \"Claude Code wants to execute: $cmd $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+        local dialog_result
+        dialog_result=$(osascript -e "display dialog \"Claude Code wants to execute: $cmd $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon caution" 2>&1)
+        
+        # Check if user clicked "Allow" (dialog returns "button returned:Allow")
+        if [[ "$dialog_result" == *"button returned:Allow"* ]]; then
             command $cmd "$@"
         else
             echo "❌ Command execution cancelled by user"
@@ -510,27 +500,33 @@ claude_safe_git() {
     local subcmd="$1"
     
     # Check if running under Claude Code
-    if [[ -n "$CLAUDE_DESKTOP_APP" ]] || [[ -n "$ENABLE_BACKGROUND_TASKS" ]] || [[ -n "$BASH_MAX_OUTPUT_LENGTH" ]]; then
+    if [[ "$CLAUDECODE" == "1" ]] || [[ -n "$CLAUDE_CODE_ENTRYPOINT" ]]; then
         # Define dangerous git operations
         case "$subcmd" in
             push|force-push|push\ --force|push\ -f)
-                if osascript -e "display dialog \"⚠️ Claude Code wants to PUSH code to remote repository: git $*\" buttons {\"Cancel\", \"Allow Push\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"⚠️ Claude Code wants to PUSH code to remote repository: git $*\" buttons {\"Cancel\", \"Allow Push\"} default button \"Cancel\" with icon caution" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow Push"* ]]; then
                     command $cmd "$@"
                 else
                     echo "❌ Git push cancelled by user"
                     return 1
                 fi
                 ;;
-            reset|reset\ --hard|rebase|rebase\ -i|cherry-pick)
-                if osascript -e "display dialog \"⚠️ Claude Code wants to MODIFY git history: git $*\" buttons {\"Cancel\", \"Allow History Change\"} default button \"Cancel\" with icon stop" >/dev/null 2>&1; then
+            reset|reset\ --hard|rebase|rebase\ -i|cherry-pick|restore|restore\ --staged|restore\ --worktree)
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"⚠️ Claude Code wants to MODIFY git history or restore files: git $*\" buttons {\"Cancel\", \"Allow History Change\"} default button \"Cancel\" with icon stop" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow History Change"* ]]; then
                     command $cmd "$@"
                 else
-                    echo "❌ Git history modification cancelled by user"
+                    echo "❌ Git history modification/restore cancelled by user"
                     return 1
                 fi
                 ;;
             branch\ -D|branch\ --delete|tag\ -d|tag\ --delete)
-                if osascript -e "display dialog \"⚠️ Claude Code wants to DELETE git branch/tag: git $*\" buttons {\"Cancel\", \"Allow Delete\"} default button \"Cancel\" with icon stop" >/dev/null 2>&1; then
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"⚠️ Claude Code wants to DELETE git branch/tag: git $*\" buttons {\"Cancel\", \"Allow Delete\"} default button \"Cancel\" with icon stop" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow Delete"* ]]; then
                     command $cmd "$@"
                 else
                     echo "❌ Git deletion cancelled by user"
@@ -538,7 +534,9 @@ claude_safe_git() {
                 fi
                 ;;
             clean\ -f|clean\ -fd|clean\ -fx)
-                if osascript -e "display dialog \"⚠️ Claude Code wants to CLEAN untracked files: git $*\" buttons {\"Cancel\", \"Allow Clean\"} default button \"Cancel\" with icon caution" >/dev/null 2>&1; then
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"⚠️ Claude Code wants to CLEAN untracked files: git $*\" buttons {\"Cancel\", \"Allow Clean\"} default button \"Cancel\" with icon caution" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow Clean"* ]]; then
                     command $cmd "$@"
                 else
                     echo "❌ Git clean cancelled by user"
@@ -546,7 +544,9 @@ claude_safe_git() {
                 fi
                 ;;
             merge|merge\ --no-ff|pull|fetch)
-                if osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" >/dev/null 2>&1; then
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow"* ]]; then
                     command $cmd "$@"
                 else
                     echo "❌ Git operation cancelled by user"
@@ -555,7 +555,9 @@ claude_safe_git() {
                 ;;
             *)
                 # For other git commands, just show basic confirmation
-                if osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" >/dev/null 2>&1; then
+                local dialog_result
+                dialog_result=$(osascript -e "display dialog \"Claude Code wants to execute: git $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon note" 2>&1)
+                if [[ "$dialog_result" == *"button returned:Allow"* ]]; then
                     command $cmd "$@"
                 else
                     echo "❌ Git command cancelled by user"
@@ -576,8 +578,6 @@ alias spctl='sudo spctl'                   # Gatekeeper無効化・マルウェ�
 # User confirmation protected commands (for Claude Code only)
 alias rm='claude_safe_command rm'                              # Claude Code実行時のファイル削除の無認証実行を禁止
 alias rmdir='claude_safe_command rmdir'                        # Claude Code実行時のディレクトリ削除の無認証実行を禁止
-alias mv='claude_safe_command mv'                              # Claude Code実行時のファイル移動・重要ファイル上書きを禁止
-alias cp='claude_safe_command cp'                              # Claude Code実行時のファイルコピー・重要ファイル上書きを禁止
 alias dd='claude_safe_command dd'                              # Claude Code実行時の低レベルディスク操作・データ破壊を禁止
 alias mkfs='claude_safe_command mkfs'                          # Claude Code実行時のファイルシステム作成・データ全消去を禁止
 alias fdisk='claude_safe_command fdisk'                        # Claude Code実行時のパーティション操作・ディスク破壊を禁止
@@ -586,8 +586,8 @@ alias format='claude_safe_command format'                     # Claude Code実�
 alias parted='claude_safe_command parted'                      # Claude Code実行時のパーティション編集・データ損失を禁止
 alias gparted='claude_safe_command gparted'                    # Claude Code実行時のGUI パーティション編集を禁止
 alias xattr='claude_safe_command xattr'                        # Claude Code実行時の隔離属性削除・セキュリティ回避を禁止
-alias chmod='claude_safe_command chmod'                        # Claude Code実行時のファイル権限変更・セキュリティ設定破壊を禁止
-alias chown='claude_safe_command chown'                        # Claude Code実行時のファイル所有者変更・アクセス制御破壊を禁止
+# alias chmod='claude_safe_command chmod'                        # Claude Code実行時のファイル権限変更・セキュリティ設定破壊を禁止
+# alias chown='claude_safe_command chown'                        # Claude Code実行時のファイル所有者変更・アクセス制御破壊を禁止
 alias launchctl='claude_safe_command launchctl'                # Claude Code実行時のmacOSサービス制御・システム動作変更を禁止
 alias killall='claude_safe_command killall'                   # Claude Code実行時のプロセス名一括終了・システム不安定化を禁止
 alias pkill='claude_safe_command pkill'                       # Claude Code実行時のプロセスパターン終了・重要プロセス停止を禁止
@@ -622,5 +622,7 @@ alias pmset='claude_safe_command pmset'                       # Claude Code実�
 alias caffeinate='claude_safe_command caffeinate'             # Claude Code実行時のスリープ制御・電源管理変更を禁止
 
 # Git commands that can destroy code/history
-alias git='claude_safe_git git'                               # Claude Code実行時のGit操作全般の無認証実行を禁止
+# alias git='claude_safe_git git'                               # Claude Code実行時のGit操作全般の無認証実行を禁止
 
+
+alias claude="/Users/kazuph/.claude/local/claude"
