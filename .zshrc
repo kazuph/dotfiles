@@ -627,4 +627,4 @@ alias caffeinate='claude_safe_command caffeinate'             # Claude Codeå®Ÿè¡
 
 alias claude="/Users/kazuph/.claude/local/claude"
 export PATH="/opt/homebrew/opt/trash/bin:$PATH"
-alias rm="trash"
+alias rm='/opt/homebrew/opt/trash/bin/trash'
