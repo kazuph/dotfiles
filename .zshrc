@@ -460,7 +460,7 @@ export PATH="/Users/kazuph/.codeium/windsurf/bin:$PATH"
 
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
 
-alias cc="BASH_MAX_OUTPUT_LENGTH=3000 ENABLE_BACKGROUND_TASKS=1 claude --dangerously-skip-permissions"
+alias cc="ENABLE_BACKGROUND_TASKS=1 claude --dangerously-skip-permissions"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:$HOME/.maestro/bin
 
@@ -629,3 +629,5 @@ alias claude="/Users/kazuph/.claude/local/claude"
 export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 alias rm='/opt/homebrew/opt/trash/bin/trash'
 eval "$(mise activate zsh)"
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
