@@ -164,14 +164,29 @@ function analyzeMessage(content) {
     };
 }
 
-// Slack blocks creation
-function createInteractiveBlocks(content) {
+// Simple Slack notification (no interaction)
+function createSimpleBlocks(content) {
+    const convertedContent = convertMarkdownToMrkdwn(content);
     return [
         {
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `🤖 *Claude Code からの通知*\n\n${content}`
+                text: `🤖 *Claude Code からの通知*\n\n${convertedContent}`
+            }
+        }
+    ];
+}
+
+// Slack blocks creation
+function createInteractiveBlocks(content) {
+    const convertedContent = convertMarkdownToMrkdwn(content);
+    return [
+        {
+            type: 'section',
+            text: {
+                type: 'mrkdwn',
+                text: `🤖 *Claude Code からの通知*\n\n${convertedContent}`
             }
         },
         {
@@ -212,6 +227,63 @@ function createInteractiveBlocks(content) {
             ]
         }
     ];
+}
+
+// Convert Markdown to Slack Mrkdwn format
+function convertMarkdownToMrkdwn(text) {
+    if (!text || typeof text !== 'string') {
+        return text;
+    }
+    
+    let result = text;
+    
+    // 1. コードブロックを一時的に保護（変換対象外にする）
+    const codeBlocks = [];
+    result = result.replace(/```[\s\S]*?```/g, (match, offset) => {
+        const placeholder = `__CODEBLOCK_${codeBlocks.length}__`;
+        codeBlocks.push(match);
+        return placeholder;
+    });
+    
+    // 2. インラインコードを一時的に保護
+    const inlineCodes = [];
+    result = result.replace(/`[^`]+`/g, (match) => {
+        const placeholder = `__INLINECODE_${inlineCodes.length}__`;
+        inlineCodes.push(match);
+        return placeholder;
+    });
+    
+    // 3. 太字変換: **text** → *text*
+    result = result.replace(/\*\*([^*]+)\*\*/g, '*$1*');
+    
+    // 4. 斜体変換: *text* → _text_ (太字処理後なので安全)
+    result = result.replace(/\*([^*]+)\*/g, '_$1_');
+    
+    // 5. 取り消し線変換: ~~text~~ → ~text~
+    result = result.replace(/~~([^~]+)~~/g, '~$1~');
+    
+    // 6. リンク変換: [text](url) → <url|text>
+    result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<$2|$1>');
+    
+    // 7. 見出し変換: # Header → *Header*
+    result = result.replace(/^#{1,6}\s+(.+)$/gm, '*$1*');
+    
+    // 8. リスト変換: - item または * item → • item
+    result = result.replace(/^[\s]*[-*]\s+(.+)$/gm, '• $1');
+    
+    // 9. 番号付きリストの調整（そのまま保持）
+    // 既存の形式で問題ないのでそのまま
+    
+    // 10. 保護したコードを復元
+    inlineCodes.forEach((code, index) => {
+        result = result.replace(`__INLINECODE_${index}__`, code);
+    });
+    
+    codeBlocks.forEach((block, index) => {
+        result = result.replace(`__CODEBLOCK_${index}__`, block);
+    });
+    
+    return result;
 }
 
 // Context information
@@ -612,8 +684,8 @@ async function processTranscript(input) {
     }
 
     const defaultMessage = lastMessageContent || "Claude Code からの通知";
-    // Force interactive mode per user requirement
-    const analysis = { needsInteraction: true, type: 'approval_choice' };
+    // Analyze message to determine if user interaction is needed
+    const analysis = analyzeMessage(defaultMessage);
     
     const tmuxInfo = getTmuxInfo();
     const cleanedMessage = defaultMessage
@@ -622,45 +694,59 @@ async function processTranscript(input) {
         .trim();
 
     try {
-        // Start webhook server
-        await startWebhookServer();
-        
-        // Send Slack notification
-        const blocks = createInteractiveBlocks(cleanedMessage);
-        
-        await callSlackAPI('chat.postMessage', {
-            channel: SLACK_CHANNEL_ID,
-            text: `Claude Code からの通知${tmuxInfo ? ` - ${tmuxInfo}` : ''}`,
-            blocks: blocks
-        });
-        
-        // Wait for user response
-        const userResponse = await waitForUserResponse();
-        
-        if (userResponse) {
-            console.log(`📝 Final response: ${userResponse.action} - ${userResponse.text || '(button response)'}`);
+        if (analysis.needsInteraction) {
+            // Interactive mode: Start webhook server and wait for response
+            await startWebhookServer();
             
-            // Log response
-            const responseLogFile = path.join(os.homedir(), 'slack-user-response.log');
-            const timestamp = new Date().toISOString();
-            appendFileSync(responseLogFile, `[${timestamp}] ${userResponse.action}: ${userResponse.text || '(button response)'}\n`);
+            // Send Slack notification with interactive buttons
+            const blocks = createInteractiveBlocks(cleanedMessage);
             
-            // Send response to Claude via stderr (exit code 2)
-            if (userResponse.action === 'approve') {
-                console.error('✅ ユーザーが承認しました。処理を続行してください。');
-                process.exit(2);
-            } else if (userResponse.action === 'reject') {
-                console.error('❌ ユーザーがキャンセルしました。処理を中止してください。');
-                process.exit(2);
-            } else if (userResponse.action === 'custom') {
-                const customMessage = userResponse.text || 'カスタム返答が提供されました';
-                console.error(`💬 ユーザーからのカスタム返答: ${customMessage}`);
+            await callSlackAPI('chat.postMessage', {
+                channel: SLACK_CHANNEL_ID,
+                text: `Claude Code からの通知${tmuxInfo ? ` - ${tmuxInfo}` : ''}`,
+                blocks: blocks
+            });
+            
+            // Wait for user response
+            const userResponse = await waitForUserResponse();
+            
+            if (userResponse) {
+                console.log(`📝 Final response: ${userResponse.action} - ${userResponse.text || '(button response)'}`);
+                
+                // Log response
+                const responseLogFile = path.join(os.homedir(), 'slack-user-response.log');
+                const timestamp = new Date().toISOString();
+                appendFileSync(responseLogFile, `[${timestamp}] ${userResponse.action}: ${userResponse.text || '(button response)'}\n`);
+                
+                // Send response to Claude via stderr (exit code 2)
+                if (userResponse.action === 'approve') {
+                    console.error('✅ ユーザーが承認しました。処理を続行してください。');
+                    process.exit(2);
+                } else if (userResponse.action === 'reject') {
+                    console.error('❌ ユーザーがキャンセルしました。処理を中止してください。');
+                    process.exit(2);
+                } else if (userResponse.action === 'custom') {
+                    const customMessage = userResponse.text || 'カスタム返答が提供されました';
+                    console.error(`💬 ユーザーからのカスタム返答: ${customMessage}`);
+                    process.exit(2);
+                }
+            } else {
+                console.log('⚠️ No user response received within timeout');
+                console.error('⏰ ユーザー応答のタイムアウト。処理を中止します。');
                 process.exit(2);
             }
         } else {
-            console.log('⚠️ No user response received within timeout');
-            console.error('⏰ ユーザー応答のタイムアウト。処理を中止します。');
-            process.exit(2);
+            // Simple mode: Just send notification and exit
+            const blocks = createSimpleBlocks(cleanedMessage);
+            
+            await callSlackAPI('chat.postMessage', {
+                channel: SLACK_CHANNEL_ID,
+                text: `Claude Code からの通知${tmuxInfo ? ` - ${tmuxInfo}` : ''}`,
+                blocks: blocks
+            });
+            
+            console.log('📤 Simple notification sent to Slack');
+            process.exit(0);
         }
         
     } catch (error) {

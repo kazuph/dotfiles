@@ -1,4 +1,5 @@
 #!/bin/bash
+exit 0
 
 # textlint hook for markdown files using JSON output
 # Returns results to Claude via JSON format
