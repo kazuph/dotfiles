@@ -1,0 +1,45 @@
+# Ghostty Configuration with Japanese Best Practices
+
+# Font configuration for Japanese text support
+font-family = UDEV Gothic 35NF
+font-size = 14
+
+# CRITICAL: Disable discretionary ligatures to prevent Japanese text rendering issues (文字化け対策)
+font-feature = -dlig
+
+# Optional: Disable other ligatures if you still experience issues
+# font-feature = -calt, -liga, -dlig
+
+# Font thickness adjustment for better readability (macOS)
+font-thicken = true
+font-thicken-strength = 1
+
+# Theme and appearance
+# theme = dark  # Uncomment and use a valid theme name if needed
+background-opacity = 0.95
+
+# Window settings
+window-padding-x = 10
+window-padding-y = 10
+
+# Cursor settings
+cursor-style = block
+
+# Shell integration
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# Scrollback
+scrollback-limit = 10000
+
+# Keybindings - Shift+Enter for newline (handled by shell, not terminal)
+# Remove keybind setting as this should be configured in shell (.zshrc)
+
+# Optional: If you use a specific Japanese font, you can set it here
+# font-family = "Hiragino Kaku Gothic ProN"
+# font-family = "Noto Sans CJK JP"
+# font-family = "Source Han Code JP"
+keybind = shift+enter=text:\n
+
+# link
+link-url = true
