@@ -41,5 +41,8 @@ scrollback-limit = 10000
 # font-family = "Source Han Code JP"
 keybind = shift+enter=text:\n
 
+# Disable fullscreen keybinding 
+keybind = cmd+enter=ignore
+
 # link
 link-url = true
