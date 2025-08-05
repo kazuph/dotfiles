@@ -13,6 +13,40 @@ if [ "$TOOL_NAME" = "Bash" ]; then
 	# コマンドを取得
 	COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
+	# git commitコマンドのmainブランチチェック（最優先）
+	if echo "$COMMAND" | grep -qE "git\s+commit"; then
+		# Gitリポジトリ内かチェック
+		if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+			# 現在のブランチを取得
+			BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+			if [ "$BRANCH" = "main" ]; then
+				ERROR_MESSAGE=$(cat <<EOF
+🚨 CLAUDE.md読めてますか？worktree必須です。mainでの作業禁止です。
+
+⚠️  ERROR: Git commits on main branch are prohibited!
+📋 Please follow the worktree policy from CLAUDE.md:
+
+   1. Create a worktree: git worktree add path/to/worktree -b feature-branch
+   2. Navigate to worktree: cd path/to/worktree  
+   3. Develop and commit in the isolated worktree
+
+💡 This prevents accidental commits to the stable main branch.
+
+Blocked command: $COMMAND
+EOF
+				)
+				ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+				cat <<EOF
+{
+  "decision": "block", 
+  "reason": $ESCAPED_MESSAGE
+}
+EOF
+				exit 0
+			fi
+		fi
+	fi
+
 	if [ -n "$COMMAND" ] && [ -f "$HOOK_PRE_COMMANDS_PATH" ]; then
 		# 各ルールをループ処理
 		RULES=$(jq -r 'keys[]' "$HOOK_PRE_COMMANDS_PATH")
