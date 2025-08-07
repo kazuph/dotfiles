@@ -26,11 +26,18 @@ if [ "$TOOL_NAME" = "Bash" ]; then
 ⚠️  ERROR: Git commits on main branch are prohibited!
 📋 Please follow the worktree policy from CLAUDE.md:
 
-   1. Create a worktree: git worktree add path/to/worktree -b feature-branch
-   2. Navigate to worktree: cd path/to/worktree  
+   1. Create a worktree in CURRENT DIRECTORY (重要: Claude Codeは上位ディレクトリに移動できません):
+      git worktree add ./project.worktree/feature-name -b feature-branch
+      
+   ⚠️  注意: "./project.worktree/" のようにカレントディレクトリ以下に作成すること！
+   ❌ NG例: ../project.worktree/ (上位ディレクトリは不可)
+   ✅ OK例: ./project.worktree/feature-name
+   
+   2. Navigate to worktree: cd ./project.worktree/feature-name
    3. Develop and commit in the isolated worktree
 
 💡 This prevents accidental commits to the stable main branch.
+🔒 Claude Code Security: Cannot access parent directories
 
 Blocked command: $COMMAND
 EOF
@@ -47,8 +54,8 @@ EOF
 		fi
 	fi
 
-	# git merge/pull/rebase/cherry-pickコマンドのmainブランチチェック
-	if echo "$COMMAND" | grep -qE "git\s+(merge|pull|rebase|cherry-pick)"; then
+	# git merge/rebase/cherry-pickコマンドのmainブランチチェック（pullは許可）
+	if echo "$COMMAND" | grep -qE "git\s+(merge|rebase|cherry-pick)"; then
 		# Gitリポジトリ内かチェック
 		if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 			# 現在のブランチを取得
@@ -58,9 +65,6 @@ EOF
 				if echo "$COMMAND" | grep -qE "git\s+merge"; then
 					OPERATION="merge"
 					OPERATION_JP="マージ"
-				elif echo "$COMMAND" | grep -qE "git\s+pull"; then
-					OPERATION="pull"
-					OPERATION_JP="プル"
 				elif echo "$COMMAND" | grep -qE "git\s+rebase"; then
 					OPERATION="rebase"
 					OPERATION_JP="リベース"
@@ -78,9 +82,16 @@ EOF
    ❌ 禁止された操作: ${COMMAND}
    
    ✅ 正しいワークフロー:
-   1. worktreeで作業: git worktree add path/to/worktree -b feature-branch
-   2. featureブランチで開発とテスト
-   3. プルリクエスト経由でmainへマージ
+   1. worktreeで作業 (重要: カレントディレクトリ以下に作成):
+      git worktree add ./project.worktree/feature-name -b feature-branch
+      
+      ⚠️  Claude Codeの制限: 上位ディレクトリ（../）にアクセスできません
+      ✅ OK: ./project.worktree/feature-name
+      ❌ NG: ../project.worktree/feature-name
+      
+   2. cd ./project.worktree/feature-name でworktreeへ移動
+   3. featureブランチで開発とテスト
+   4. プルリクエスト経由でmainへマージ
    
    💡 mainブランチへの直接的な変更は、予期しない破壊的変更を引き起こす可能性があります。
 

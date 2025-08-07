@@ -29,11 +29,18 @@ if [ "$BRANCH" = "main" ]; then
 ⚠️  ERROR: Direct write operations on main branch are prohibited!
 📋 Please follow the worktree policy from CLAUDE.md:
 
-   1. Create a worktree: git worktree add path/to/worktree -b feature-branch
-   2. Navigate to worktree: cd path/to/worktree
+   1. Create a worktree IN CURRENT DIRECTORY (重要: Claude Codeの制限):
+      git worktree add ./project.worktree/feature-name -b feature-branch
+      
+      ⚠️  CRITICAL: Claude Codeは上位ディレクトリ（../）にアクセスできません！
+      ✅ 正しい例: ./project.worktree/feature-name
+      ❌ 間違い例: ../project.worktree/feature-name
+      
+   2. Navigate to worktree: cd ./project.worktree/feature-name
    3. Perform your work in the isolated worktree
 
 💡 This prevents accidental damage to the stable main branch.
+🔒 Claude Code Security: Parent directory access is restricted.
 EOF
 )
     # JSONエスケープしてレスポンスを返す
@@ -54,7 +61,10 @@ if [[ "$CURRENT_DIR" != *".worktree"* ]]; then
     cat >&2 <<EOF
 ⚠️  WARNING: You're not in a worktree directory.
 📋 Consider using worktree for safer development:
-   git worktree add path/to/project.worktree/feature-name -b feature-branch
+   git worktree add ./project.worktree/feature-name -b feature-branch
+   
+   重要: Claude Codeはカレントディレクトリより上位にアクセスできません
+   必ず "./" で始まるパスを使用してください（"../" は使用不可）
 
 EOF
     # Don't exit here, just warn
