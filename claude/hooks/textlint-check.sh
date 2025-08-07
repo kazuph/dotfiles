@@ -139,12 +139,23 @@ else
 	# Send notification
 	osascript -e "display notification \"$NOTIFICATION_MSG\" with title \"textlint\" sound name \"Pop\"" 2>/dev/null || true
 
-	# Output to stderr so Claude Code can see it (exit code 1 = non-blocking error)
-	echo "⚠️ textlint found issues in $FILE_PATH:" >&2
-	echo "$FORMATTED_OUTPUT" >&2
-	echo "" >&2
-	echo "Consider fixing these issues for better readability." >&2
+	# Create detailed error message
+	ERROR_MESSAGE=$(cat <<EOF
+⚠️ textlint found issues in $FILE_PATH:
 
-	# Exit with code 2 (blocking error) so Claude Code receives stderr
+$FORMATTED_OUTPUT
+
+Consider fixing these issues for better readability.
+EOF
+)
+	
+	# JSONエスケープしてレスポンスを返す
+	ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+	cat <<EOF
+{
+  "decision": "block",
+  "reason": $ESCAPED_MESSAGE
+}
+EOF
 	exit 2
 fi

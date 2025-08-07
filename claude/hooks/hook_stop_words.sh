@@ -33,18 +33,30 @@ if [ -f "$TRANSCRIPT_PATH" ]; then
 			# 各キーワードをチェック
 			for keyword in $KEYWORDS; do
 				if echo "$LAST_MESSAGE" | LC_ALL=ja_JP.UTF-8 grep -E -q "$keyword"; then
-					# エラーメッセージを直接構成してstderrに出力
-					{
-						echo "❌ エラー: AIの発言に「${keyword}」が含まれています。"
-						echo ""
-						echo "ルール: ${RULE_NAME}"
-						echo "メッセージ: ${MESSAGE}"
-						echo ""
-						echo "検出された文脈:"
-						echo "$LAST_MESSAGE" | grep -E -C 1 "$keyword" | head -n 5
-						echo ""
-						echo "作業を中止し、ルールに従って計画を見直してください。"
-					} >&2
+					# 検出された文脈を取得
+					CONTEXT=$(echo "$LAST_MESSAGE" | grep -E -C 1 "$keyword" | head -n 5)
+					
+					# エラーメッセージを構成
+					ERROR_MESSAGE=$(cat <<EOF
+❌ エラー: AIの発言に「${keyword}」が含まれています。
+
+ルール: ${RULE_NAME}
+メッセージ: ${MESSAGE}
+
+検出された文脈:
+$CONTEXT
+
+作業を中止し、ルールに従って計画を見直してください。
+EOF
+)
+					# JSONエスケープしてレスポンスを返す
+					ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+					cat <<EOF
+{
+  "decision": "block",
+  "reason": $ESCAPED_MESSAGE
+}
+EOF
 					exit 2
 				fi
 			done
@@ -52,5 +64,6 @@ if [ -f "$TRANSCRIPT_PATH" ]; then
 	fi
 fi
 
-# キーワードが見つからなければ何も出力せずに正常終了
+# キーワードが見つからなければ承認
+echo '{"decision": "approve"}'
 exit 0

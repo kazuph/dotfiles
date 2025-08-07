@@ -47,6 +47,58 @@ EOF
 		fi
 	fi
 
+	# git merge/pull/rebase/cherry-pickコマンドのmainブランチチェック
+	if echo "$COMMAND" | grep -qE "git\s+(merge|pull|rebase|cherry-pick)"; then
+		# Gitリポジトリ内かチェック
+		if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+			# 現在のブランチを取得
+			BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+			if [ "$BRANCH" = "main" ]; then
+				# コマンドタイプを判定
+				if echo "$COMMAND" | grep -qE "git\s+merge"; then
+					OPERATION="merge"
+					OPERATION_JP="マージ"
+				elif echo "$COMMAND" | grep -qE "git\s+pull"; then
+					OPERATION="pull"
+					OPERATION_JP="プル"
+				elif echo "$COMMAND" | grep -qE "git\s+rebase"; then
+					OPERATION="rebase"
+					OPERATION_JP="リベース"
+				elif echo "$COMMAND" | grep -qE "git\s+cherry-pick"; then
+					OPERATION="cherry-pick"
+					OPERATION_JP="チェリーピック"
+				fi
+				
+				ERROR_MESSAGE=$(cat <<EOF
+🚨 危険: mainブランチへの${OPERATION_JP}操作が検出されました！
+
+⚠️  ERROR: Git ${OPERATION} operations on main branch are prohibited!
+📋 mainブランチは保護されています:
+
+   ❌ 禁止された操作: ${COMMAND}
+   
+   ✅ 正しいワークフロー:
+   1. worktreeで作業: git worktree add path/to/worktree -b feature-branch
+   2. featureブランチで開発とテスト
+   3. プルリクエスト経由でmainへマージ
+   
+   💡 mainブランチへの直接的な変更は、予期しない破壊的変更を引き起こす可能性があります。
+
+🔒 このコマンドはセキュリティポリシーによりブロックされました。
+EOF
+				)
+				ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+				cat <<EOF
+{
+  "decision": "block", 
+  "reason": $ESCAPED_MESSAGE
+}
+EOF
+				exit 0
+			fi
+		fi
+	fi
+
 	if [ -n "$COMMAND" ] && [ -f "$HOOK_PRE_COMMANDS_PATH" ]; then
 		# 各ルールをループ処理
 		RULES=$(jq -r 'keys[]' "$HOOK_PRE_COMMANDS_PATH")
