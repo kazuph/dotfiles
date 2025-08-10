@@ -16,9 +16,35 @@ font-feature = -salt
 # Cursor
 cursor-style = block
 
+# Keybindings
+keybind = shift+enter=text:\n
+
 # IME and Text Rendering Settings
 # Disable auto-replace features
 macos-auto-secure-input = false
 
 # Text rendering options
 auto-update = off
+
+# Font thickness adjustment for better readability (macOS)
+font-thicken = true
+font-thicken-strength = 1
+
+# Window appearance settings
+background-opacity = 0.95
+window-padding-x = 10
+window-padding-y = 10
+
+# Shell integration for enhanced features
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# Scrollback history
+scrollback-limit = 10000
+
+# Additional keybindings
+# Disable fullscreen toggle to prevent accidental activation
+keybind = cmd+enter=ignore
+
+# Enable clickable links
+link-url = true
