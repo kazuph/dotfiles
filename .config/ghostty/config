@@ -1,0 +1,24 @@
+# Ghostty Configuration
+
+# Font Configuration  
+font-family = UDEV Gothic 35NF
+font-size = 14
+# Disable all ligatures and stylistic alternates
+font-feature = -liga
+font-feature = -calt
+font-feature = -dlig
+font-feature = -hlig
+font-feature = -ss01
+font-feature = -ss02
+font-feature = -ss03
+font-feature = -salt
+
+# Cursor
+cursor-style = block
+
+# IME and Text Rendering Settings
+# Disable auto-replace features
+macos-auto-secure-input = false
+
+# Text rendering options
+auto-update = off

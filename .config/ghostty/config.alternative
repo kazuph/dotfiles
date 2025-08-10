@@ -1,0 +1,17 @@
+# Ghostty Configuration - Alternative
+
+# Font Configuration with explicit CJK support
+font-family = Menlo
+font-codepoint-map = U+3040-309F:Hiragino Kaku Gothic ProN
+font-codepoint-map = U+30A0-30FF:Hiragino Kaku Gothic ProN  
+font-codepoint-map = U+4E00-9FAF:Hiragino Kaku Gothic ProN
+
+font-size = 14
+
+# Window
+window-padding = 10
+window-opacity = 0.95
+
+# Colors (optional)
+cursor-style = block
+cursor-blink = true
