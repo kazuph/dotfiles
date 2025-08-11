@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "MAX_THINKING_TOKENS": "30000",
+    "BASH_DEFAULT_TIMEOUT_MS": "900000",
+    "BASH_MAX_TIMEOUT_MS": "1800000",
+    "MCP_TOOL_TIMEOUT": "600000",
+    "MCP_TIMEOUT": "60000"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bun x ccusage statusline"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Update|Write|MultiEdit|mcp__obsidian__obsidian_write_note|mcp__serena__replace_regex",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prevent-main-write.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/textlint-check.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/hook_pre_commands.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/stop-send-notification.js"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/slack-notifier-unified.mjs"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/hook_stop_words.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "feedbackSurveyState": {
+    "lastShownTime": 1754086762195
+  }
+}
