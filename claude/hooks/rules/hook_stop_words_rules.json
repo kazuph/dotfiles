@@ -1,6 +1,10 @@
 {
+  "はず禁句ルール": {
+    "keywords": ["はず"],
+    "message": "「はず」は禁句です。憶測ではなく実測しましょう。作った状態では0点です。動かせて初めて採点可能になります。まず実行しましょう。"
+  },
   "推測ルール": {
-    "keywords": ["\\bはず\\b", "\\b思われ\\b", "\\bだろう\\b", "\\bかもしれ\\b", "\\bおそらく\\b", "\\bと思います\\b", "\\bでしょう\\b", "\\bようです\\b", "\\bみたい\\b", "\\bらしい\\b", "\\bっぽい\\b", "\\bprobably\\b", "\\bmaybe\\b", "\\bmight\\b", "\\bseems\\b", "\\bappears\\b", "\\blikely\\b", "\\bpresumably\\b", "\\bsuppose\\b", "\\bassume\\b", "\\bguess\\b"],
+    "keywords": ["\\b思われ\\b", "\\bだろう\\b", "\\bかもしれ\\b", "\\bおそらく\\b", "\\bと思います\\b", "\\bでしょう\\b", "\\bようです\\b", "\\bみたい\\b", "\\bらしい\\b", "\\bっぽい\\b", "\\bprobably\\b", "\\bmaybe\\b", "\\bmight\\b", "\\bseems\\b", "\\bappears\\b", "\\blikely\\b", "\\bpresumably\\b", "\\bsuppose\\b", "\\bassume\\b", "\\bguess\\b"],
     "message": "推測、代替案は禁止されてるけどその提案は合ってる？公式ドキュメント読んだ？テストした？"
   },
   "代替案ルール": {
