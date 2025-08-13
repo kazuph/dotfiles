@@ -7,10 +7,6 @@
     "MCP_TOOL_TIMEOUT": "600000",
     "MCP_TIMEOUT": "60000"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bun x ccusage statusline"
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -56,7 +52,12 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bun x ccusage statusline"
+  },
   "feedbackSurveyState": {
     "lastShownTime": 1754086762195
-  }
+  },
+  "model": "opusplan"
 }

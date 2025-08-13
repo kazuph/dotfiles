@@ -22,9 +22,22 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 
 # Check if we're on main branch
 if [ "$BRANCH" = "main" ]; then
-    # Create error message
+    # Read hook input from stdin
+    HOOK_INPUT=$(cat)
+    
+    # Extract file_path from the tool input JSON
+    FILE_PATH=$(echo "$HOOK_INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null || echo "")
+    
+    # If we have a file path and it's a .md file, allow the operation
+    if [[ -n "$FILE_PATH" && "$FILE_PATH" == *.md ]]; then
+        echo '{"decision": "approve", "reason": "Markdown file editing is allowed on main branch"}'
+        exit 0
+    fi
+    
+    # Create error message for non-.md files
     ERROR_MESSAGE=$(cat <<'EOF'
 🚨 CLAUDE.md読めてますか？worktree必須です。mainでの作業禁止です。
+📝 例外: .mdファイルのみmainブランチで編集可能
 
 ⚠️  ERROR: Direct write operations on main branch are prohibited!
 📋 Please follow the worktree policy from CLAUDE.md:
@@ -41,6 +54,7 @@ if [ "$BRANCH" = "main" ]; then
 
 💡 This prevents accidental damage to the stable main branch.
 🔒 Claude Code Security: Parent directory access is restricted.
+📝 Exception: .md files can be edited directly on main branch.
 EOF
 )
     # JSONエスケープしてレスポンスを返す

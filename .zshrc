@@ -631,3 +631,5 @@ alias rm='/opt/homebrew/opt/trash/bin/trash'
 eval "$(mise activate zsh)"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+export PATH="$HOME/.local/bin:$PATH"
