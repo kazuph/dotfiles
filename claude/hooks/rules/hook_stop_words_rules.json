@@ -4,23 +4,23 @@
     "message": "「はず」は禁句です。憶測ではなく実測しましょう。作った状態では0点です。動かせて初めて採点可能になります。まず実行しましょう。"
   },
   "推測ルール": {
-    "keywords": ["\\b思われ\\b", "\\bだろう\\b", "\\bかもしれ\\b", "\\bおそらく\\b", "\\bと思います\\b", "\\bでしょう\\b", "\\bようです\\b", "\\bみたい\\b", "\\bらしい\\b", "\\bっぽい\\b", "\\b可能性\\b", "\\bprobably\\b", "\\bmaybe\\b", "\\bmight\\b", "\\bseems\\b", "\\bappears\\b", "\\blikely\\b", "\\bpresumably\\b", "\\bsuppose\\b", "\\bassume\\b", "\\bguess\\b", "\\bpossibility\\b", "\\bpossible\\b"],
+    "keywords": ["思われ", "だろう", "かもしれ", "おそらく", "と思います", "でしょう", "ようです", "みたい", "らしい", "っぽい", "可能性", "\\bprobably\\b", "\\bmaybe\\b", "\\bmight\\b", "\\bseems\\b", "\\bappears\\b", "\\blikely\\b", "\\bpresumably\\b", "\\bsuppose\\b", "\\bassume\\b", "\\bguess\\b", "\\bpossibility\\b", "\\bpossible\\b"],
     "message": "推測、代替案は禁止されてるけどその提案は合ってる？公式ドキュメント読んだ？テストした？"
   },
   "代替案ルール": {
-    "keywords": ["\\b別の\\b", "\\b代わり\\b", "\\b他の方法\\b", "\\b別のやり方\\b", "\\b他の手段\\b", "\\b異なる方法\\b", "\\b代替手段\\b", "\\b代替案\\b", "\\b別のアプローチ\\b", "\\b他のオプション\\b", "\\balternatively\\b", "\\binstead\\b", "\\banother\\s+way\\b", "\\bdifferent\\s+approach\\b", "\\balternative\\s+method\\b", "\\balternative\\b", "\\bother\\s+option\\b"],
+    "keywords": ["別の", "代わり", "他の方法", "別のやり方", "他の手段", "異なる方法", "代替手段", "代替案", "別のアプローチ", "他のオプション", "\\balternatively\\b", "\\binstead\\b", "\\banother\\s+way\\b", "\\bdifferent\\s+approach\\b", "\\balternative\\s+method\\b", "\\balternative\\b", "\\bother\\s+option\\b"],
     "message": "別の方法を提案してないよね？できるorできないの2択しか無いよ"
   },
   "改善提案ルール": {
-    "keywords": ["\\bより良い\\b", "\\b改善\\b", "\\b最適化\\b", "\\bリファクタリング\\b", "\\b効率化\\b", "\\b高速化\\b", "\\b簡潔化\\b", "\\bbetter\\b", "\\bimprove\\b", "\\boptimize\\b", "\\brefactor\\b", "\\bmodernize\\b", "\\benhance\\b", "\\bupgrade\\b", "\\bstreamline\\b", "\\bpolish\\b"],
+    "keywords": ["より良い", "改善", "最適化", "リファクタリング", "効率化", "高速化", "簡潔化", "\\bbetter\\b", "\\bimprove\\b", "\\boptimize\\b", "\\brefactor\\b", "\\bmodernize\\b", "\\benhance\\b", "\\bupgrade\\b", "\\bstreamline\\b", "\\bpolish\\b"],
     "message": "勝手に改善してないよね？厳密に指示したことだけやってるよね？"
   },
   "追加作業ルール": {
-    "keywords": ["\\bついでに\\b", "\\bせっかくなので\\b", "\\b念のため\\b", "\\b追加で\\b", "\\b一緒に\\b", "\\b合わせて\\b", "\\b同時に\\b", "\\bその際に\\b", "\\bplus\\b", "\\balso\\b", "\\bwhile\\s+we're\\s+at\\s+it\\b", "\\bin\\s+addition\\b"],
+    "keywords": ["ついでに", "せっかくなので", "念のため", "追加で", "一緒に", "合わせて", "同時に", "その際に", "\\bplus\\b", "\\balso\\b", "\\bwhile\\s+we're\\s+at\\s+it\\b", "\\bin\\s+addition\\b"],
     "message": "指示外の追加作業は禁止だけど余計なことしてないよね？指示されたことだけを実行してね"
   },
   "推奨ルール": {
-    "keywords": ["\\b推奨\\b", "\\bべき\\b", "\\bした方が\\b", "\\bすべき\\b", "\\bがいい\\b", "\\bがよい\\b", "\\bお勧め\\b", "\\brecommend\\b", "\\bshould\\b", "\\bwould\\s+be\\s+good\\b", "\\bit's\\s+better\\b", "\\badvisable\\b", "\\bsuggested\\b"],
+    "keywords": ["推奨", "べき", "した方が", "すべき", "がいい", "がよい", "お勧め", "\\brecommend\\b", "\\bshould\\b", "\\bwould\\s+be\\s+good\\b", "\\bit's\\s+better\\b", "\\badvisable\\b", "\\bsuggested\\b"],
     "message": "これは提案？命令？人間の意思決定を邪魔してない？"
   }
 }
