@@ -7,7 +7,7 @@ export LC_ALL=ja_JP.UTF-8
 # 標準入力からJSONを読み取る
 INPUT=$(cat)
 
-HOOK_STOP_WORDS_PATH=".claude/hooks/rules/hook_stop_words_rules.json"
+HOOK_STOP_WORDS_PATH="$HOME/.claude/hooks/rules/hook_stop_words_rules.json"
 
 # トランスクリプトを処理（.jsonl形式に対応）
 TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path')

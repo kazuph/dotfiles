@@ -3,7 +3,7 @@
 
 INPUT=$(cat)
 
-HOOK_PRE_COMMANDS_PATH=".claude/hooks/rules/hook_pre_commands_rules.json"
+HOOK_PRE_COMMANDS_PATH="$HOME/.claude/hooks/rules/hook_pre_commands_rules.json"
 
 # ツール名を取得
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name')
