@@ -633,3 +633,4 @@ eval "$(mise activate zsh)"
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
+alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex -s workspace-write'

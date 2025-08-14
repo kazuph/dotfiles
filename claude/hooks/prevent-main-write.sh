@@ -22,6 +22,12 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 
 # Check if we're on main branch
 if [ "$BRANCH" = "main" ]; then
+    # Check if .allow-main file exists (bypass mechanism)
+    if [ -f ".allow-main" ]; then
+        echo '{"decision": "approve", "reason": "Main branch write operations allowed due to .allow-main file presence"}'
+        exit 0
+    fi
+    
     # Read hook input from stdin
     HOOK_INPUT=$(cat)
     
@@ -38,6 +44,7 @@ if [ "$BRANCH" = "main" ]; then
     ERROR_MESSAGE=$(cat <<'EOF'
 🚨 CLAUDE.md読めてますか？worktree必須です。mainでの作業禁止です。
 📝 例外: .mdファイルのみmainブランチで編集可能
+🔓 バイパス: .allow-mainファイルを作成すると全作業を許可
 
 ⚠️  ERROR: Direct write operations on main branch are prohibited!
 📋 Please follow the worktree policy from CLAUDE.md:
@@ -55,6 +62,7 @@ if [ "$BRANCH" = "main" ]; then
 💡 This prevents accidental damage to the stable main branch.
 🔒 Claude Code Security: Parent directory access is restricted.
 📝 Exception: .md files can be edited directly on main branch.
+🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 EOF
 )
     # JSONエスケープしてレスポンスを返す
