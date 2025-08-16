@@ -20,7 +20,12 @@ if [ "$TOOL_NAME" = "Bash" ]; then
 			# 現在のブランチを取得
 			BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 			if [ "$BRANCH" = "main" ]; then
-				ERROR_MESSAGE=$(cat <<EOF
+				# Check if .allow-main file exists (bypass mechanism)
+				if [ -f ".allow-main" ]; then
+					# バイパス: 処理を続行（エラーメッセージを表示せずに承認）
+					:  # no-op, continue to approval
+				else
+					ERROR_MESSAGE=$(cat <<EOF
 🚨 CLAUDE.md読めてますか？worktree必須です。mainでの作業禁止です。
 
 ⚠️  ERROR: Git commits on main branch are prohibited!
@@ -38,18 +43,20 @@ if [ "$TOOL_NAME" = "Bash" ]; then
 
 💡 This prevents accidental commits to the stable main branch.
 🔒 Claude Code Security: Cannot access parent directories
+🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 
 Blocked command: $COMMAND
 EOF
-				)
-				ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
-				cat <<EOF
+					)
+					ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+					cat <<EOF
 {
   "decision": "block", 
   "reason": $ESCAPED_MESSAGE
 }
 EOF
-				exit 0
+					exit 0
+				fi
 			fi
 		fi
 	fi
@@ -61,19 +68,24 @@ EOF
 			# 現在のブランチを取得
 			BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
 			if [ "$BRANCH" = "main" ]; then
-				# コマンドタイプを判定
-				if echo "$COMMAND" | grep -qE "git\s+merge"; then
-					OPERATION="merge"
-					OPERATION_JP="マージ"
-				elif echo "$COMMAND" | grep -qE "git\s+rebase"; then
-					OPERATION="rebase"
-					OPERATION_JP="リベース"
-				elif echo "$COMMAND" | grep -qE "git\s+cherry-pick"; then
-					OPERATION="cherry-pick"
-					OPERATION_JP="チェリーピック"
-				fi
-				
-				ERROR_MESSAGE=$(cat <<EOF
+				# Check if .allow-main file exists (bypass mechanism)
+				if [ -f ".allow-main" ]; then
+					# バイパス: 処理を続行（エラーメッセージを表示せずに承認）
+					:  # no-op, continue to approval
+				else
+					# コマンドタイプを判定
+					if echo "$COMMAND" | grep -qE "git\s+merge"; then
+						OPERATION="merge"
+						OPERATION_JP="マージ"
+					elif echo "$COMMAND" | grep -qE "git\s+rebase"; then
+						OPERATION="rebase"
+						OPERATION_JP="リベース"
+					elif echo "$COMMAND" | grep -qE "git\s+cherry-pick"; then
+						OPERATION="cherry-pick"
+						OPERATION_JP="チェリーピック"
+					fi
+					
+					ERROR_MESSAGE=$(cat <<EOF
 🚨 危険: mainブランチへの${OPERATION_JP}操作が検出されました！
 
 ⚠️  ERROR: Git ${OPERATION} operations on main branch are prohibited!
@@ -96,16 +108,18 @@ EOF
    💡 mainブランチへの直接的な変更は、予期しない破壊的変更を引き起こす可能性があります。
 
 🔒 このコマンドはセキュリティポリシーによりブロックされました。
+🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 EOF
-				)
-				ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
-				cat <<EOF
+					)
+					ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
+					cat <<EOF
 {
   "decision": "block", 
   "reason": $ESCAPED_MESSAGE
 }
 EOF
-				exit 0
+					exit 0
+				fi
 			fi
 		fi
 	fi

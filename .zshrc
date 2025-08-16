@@ -37,6 +37,7 @@ alias uml='java -jar $HOME/bin/plantuml.jar ' # + 入力ファイル
 # unalias history
 # Customize to your needs...
 alias tmux="TERM=xterm-256color tmux -u"
+alias tmuxnew="TERM=xterm-256color tmux new-session -t 0"
 alias i='iqube'
 # "v"でデフォルトのviを立ち上げる
 # alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
