@@ -325,10 +325,10 @@ alias e='ghq list -p | f cd'
 if [[ -d "$HOME/dotfiles/zsh/git-worktree" ]]; then
     # 基本操作
     source "$HOME/dotfiles/zsh/git-worktree/basic.zsh"
-    
+
     # ナビゲーション
     source "$HOME/dotfiles/zsh/git-worktree/navigation.zsh"
-    
+
     # メンテナンス
     source "$HOME/dotfiles/zsh/git-worktree/maintenance.zsh"
 fi
@@ -368,7 +368,7 @@ export GIT_EDITOR=vi
 # export DOCKER_HOST=raspberrypi.local:2375
 
 export PATH=$PATH:/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin
-export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/ 
+export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/
 
 export AWS_PROFILE=default
 
@@ -470,13 +470,13 @@ export PATH=$PATH:$HOME/.maestro/bin
 claude_safe_command() {
     local cmd="$1"
     shift
-    
+
     # Check if running under Claude Code
     if [[ "$CLAUDECODE" == "1" ]] || [[ -n "$CLAUDE_CODE_ENTRYPOINT" ]]; then
         # Show confirmation dialog without granting root privileges
         local dialog_result
         dialog_result=$(osascript -e "display dialog \"Claude Code wants to execute: $cmd $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon caution" 2>&1)
-        
+
         # Check if user clicked "Allow" (dialog returns "button returned:Allow")
         if [[ "$dialog_result" == *"button returned:Allow"* ]]; then
             command $cmd "$@"
@@ -492,14 +492,14 @@ claude_safe_command() {
 # Git-specific protection function
 # Claude Code実行時のGit操作を危険度別に分類して保護
 # 🚨 最高危険度: reset --hard, rebase, cherry-pick (履歴改変・データ消失)
-# ⚠️  高危険度: push --force, clean -f (リモート破壊・ファイル削除)  
+# ⚠️  高危険度: push --force, clean -f (リモート破壊・ファイル削除)
 # 📝 中危険度: merge, pull, fetch (マージ競合・予期しない変更)
 # ℹ️  基本確認: その他全てのgitコマンド (意図しない操作防止)
 claude_safe_git() {
     local cmd="$1"
     shift
     local subcmd="$1"
-    
+
     # Check if running under Claude Code
     if [[ "$CLAUDECODE" == "1" ]] || [[ -n "$CLAUDE_CODE_ENTRYPOINT" ]]; then
         # Define dangerous git operations
@@ -631,7 +631,16 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 alias rm='/opt/homebrew/opt/trash/bin/trash'
 eval "$(mise activate zsh)"
 
+# Git information in prompt
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats ' (%b)'
+setopt PROMPT_SUBST
+# PROMPT='%~ ${vcs_info_msg_0_} $ '  # Commented out to use Prezto's sorin theme
+
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
-alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex -s workspace-write'
+alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search'
+alias gemini='gemini --approval-mode=yolo '
+

@@ -62,7 +62,6 @@ if [ "$BRANCH" = "main" ]; then
 💡 This prevents accidental damage to the stable main branch.
 🔒 Claude Code Security: Parent directory access is restricted.
 📝 Exception: .md files can be edited directly on main branch.
-🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 EOF
 )
     # JSONエスケープしてレスポンスを返す

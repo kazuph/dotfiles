@@ -43,7 +43,6 @@ if [ "$TOOL_NAME" = "Bash" ]; then
 
 💡 This prevents accidental commits to the stable main branch.
 🔒 Claude Code Security: Cannot access parent directories
-🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 
 Blocked command: $COMMAND
 EOF
@@ -55,7 +54,7 @@ EOF
   "reason": $ESCAPED_MESSAGE
 }
 EOF
-					exit 0
+					exit 2
 				fi
 			fi
 		fi
@@ -108,7 +107,6 @@ EOF
    💡 mainブランチへの直接的な変更は、予期しない破壊的変更を引き起こす可能性があります。
 
 🔒 このコマンドはセキュリティポリシーによりブロックされました。
-🔓 Bypass: Create .allow-main file to permit all operations on main branch.
 EOF
 					)
 					ESCAPED_MESSAGE=$(echo "$ERROR_MESSAGE" | jq -Rs .)
@@ -118,7 +116,7 @@ EOF
   "reason": $ESCAPED_MESSAGE
 }
 EOF
-					exit 0
+					exit 2
 				fi
 			fi
 		fi
@@ -162,7 +160,7 @@ EOF
   "reason": $ESCAPED_MESSAGE
 }
 EOF
-					exit 0
+					exit 2
 				fi
 			done
 		done

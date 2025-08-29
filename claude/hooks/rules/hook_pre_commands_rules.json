@@ -1,10 +1,10 @@
 {
-  "curl使うな": {
-    "commands": ["curl", "wget"],
-    "message": "curlを使うな。wgetを使うな。MCPを使え。使えないなら報告しろ"
-  },
   "docker_no_cache": {
     "commands": ["--no-cache"],
     "message": "それ意味ないよね？\n\n--no-cacheオプションは以下の理由で不適切な可能性があります：\n1. ビルド時間が大幅に増加し、効率的でない\n2. 同じ結果を得るのに不要なリソースを消費する\n3. 特定の問題解決でなければ通常は不要\n\n本当に必要な場合は、その理由とともにユーザーに直接実行をお願いしてください。\n\n--no-cacheが必要な例：\n- キャッシュが壊れている場合\n- ベースイメージの最新版が必要な場合\n- 依存関係の更新を強制したい場合"
+  },
+  "allow_main_禁止": {
+    "commands": ["allow-main", ".allow-main"],
+    "message": "🚨 CRITICAL: .allow-mainファイルの作成・操作は厳格に禁止されています\n\n⚠️  セキュリティリスク:\n- mainブランチ保護機能の迂回\n- 意図しない破壊的変更の可能性\n- システムの安全性を損なう行為\n\n🔒 この操作は絶対に実行できません。\n💡 代替案: 適切なworktreeワークフローをご利用ください。\n\n対処方法:\ngit worktree add ./project.worktree/feature-name -b feature-branch"
   }
 }
