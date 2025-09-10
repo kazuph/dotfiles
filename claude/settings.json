@@ -22,10 +22,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/prevent-main-write.sh"
-          },
-          {
-            "type": "command",
             "command": "~/.claude/hooks/textlint-check.sh"
           }
         ]
@@ -62,5 +58,6 @@
   },
   "feedbackSurveyState": {
     "lastShownTime": 1754086762195
-  }
+  },
+  "model": "sonnet"
 }
