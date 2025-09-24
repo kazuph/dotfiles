@@ -15,49 +15,12 @@
     "DISABLE_TELEMETRY": "true",
     "DISABLE_MICROCOMPACT": "true"
   },
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Update|Write|MultiEdit|mcp__obsidian__obsidian_write_note|mcp__serena__replace_regex",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/textlint-check.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/hook_pre_commands.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/stop-send-notification.js"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/hook_stop_words.sh"
-          }
-        ]
-      }
-    ]
-  },
+  "hooks": {},
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
   },
   "feedbackSurveyState": {
     "lastShownTime": 1754086762195
-  },
-  "model": "sonnet"
+  }
 }
