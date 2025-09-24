@@ -1,8 +1,8 @@
 # Ghostty Configuration
 
-# Font Configuration  
+# Font Configuration
 font-family = UDEV Gothic 35NF
-font-size = 14
+font-size = 16
 # Disable all ligatures and stylistic alternates
 font-feature = -liga
 font-feature = -calt
@@ -26,6 +26,10 @@ macos-auto-secure-input = false
 # Text rendering options
 auto-update = off
 
+# Ensure Shift-click escapes app mouse reporting (tmux, neovim, etc.)
+# `never` = アプリがXTSHIFTESCAPEで上書きできない強制無効
+mouse-shift-capture = never
+
 # Font thickness adjustment for better readability (macOS)
 font-thicken = true
 font-thicken-strength = 1
@@ -37,10 +41,10 @@ window-padding-y = 10
 
 # Shell integration for enhanced features
 shell-integration = detect
-shell-integration-features = cursor,sudo,title
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # Scrollback history
-scrollback-limit = 10000
+scrollback-limit = 100000
 
 # Additional keybindings
 # Disable fullscreen toggle to prevent accidental activation
@@ -48,3 +52,14 @@ keybind = cmd+enter=ignore
 
 # Enable clickable links
 link-url = true
+link-previews = true
+
+# Make Option act as Alt (Meta) on macOS (left Option only)
+macos-option-as-alt = left
+
+# Copy URL under cursor quickly
+keybind = super+u=copy_url_to_clipboard
+
+# Toggle quick terminal (drop-down)
+# W3C code: Backquote → snake case: backquote
+keybind = super+backquote=toggle_quick_terminal
