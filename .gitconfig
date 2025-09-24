@@ -68,8 +68,7 @@
     co  = checkout
     cb  = checkout -b         # branch切ってcheckoutする
     ct  = checkout --track    # remoteのbranchを追跡
-    cmain  = checkout main
-    cmaster  = checkout master
+    cm  = checkout main
     cd  = checkout develop
     cs  = checkout staging
     # branch関連
