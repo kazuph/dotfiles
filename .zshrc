@@ -667,3 +667,8 @@ alias codex='codex --sandbox workspace-write --config sandbox_workspace_write.ne
 
 
 alias gemini='gemini --approval-mode=yolo '
+
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
