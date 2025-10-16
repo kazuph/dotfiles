@@ -631,9 +631,28 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 alias rm='/opt/homebrew/opt/trash/bin/trash'
 eval "$(mise activate zsh)"
 
+# Update tmux pane metadata with the current git branch for status display
+function _tmux_update_git_branch_for_pane() {
+  [[ -n "${TMUX_PANE:-}" ]] || return
+  command -v tmux >/dev/null 2>&1 || return
+
+  local pane="${TMUX_PANE}"
+  local branch
+  branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || branch=""
+
+  if [[ -n "$branch" ]]; then
+    tmux set-option -q -p -t "$pane" @git_branch "$branch" >/dev/null 2>&1
+  else
+    tmux set-option -q -p -t "$pane" -uq @git_branch >/dev/null 2>&1
+  fi
+}
+
 # Git information in prompt
 autoload -Uz vcs_info
-precmd() { vcs_info }
+precmd() {
+  vcs_info
+  _tmux_update_git_branch_for_pane
+}
 zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
 # PROMPT='%~ ${vcs_info_msg_0_} $ '  # Commented out to use Prezto's sorin theme
@@ -648,4 +667,3 @@ alias codex='codex --sandbox workspace-write --config sandbox_workspace_write.ne
 
 
 alias gemini='gemini --approval-mode=yolo '
-
