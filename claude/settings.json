@@ -23,5 +23,11 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754086762195
+  },
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "@nogataka/serena-ts"]
+    }
   }
 }
