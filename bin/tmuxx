@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEFAULT_SESSIONS=(beiju kaishi mooz ubuntu hacks)
+DRYRUN=${TMUXX_DRYRUN:-0}
+USE_NEW_DESKTOPS=${TMUXX_NEW_DESKTOPS:-0}
+
+usage() {
+  cat <<'EOF'
+tmuxx - Ghostty + tmux session restorer
+
+Usage:
+  tmuxx [session...]
+
+If no session names are provided, the default set "proj1" through "proj6" is used.
+Each Ghostty window runs "tmux attach -t <session> || tmux new -s <session>" so that
+existing sessions reconnect and missing sessions are recreated automatically.
+EOF
+}
+
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+declare -a SESSIONS
+if [[ $# -gt 0 ]]; then
+  SESSIONS=("$@")
+else
+  SESSIONS=(${DEFAULT_SESSIONS[@]})
+fi
+
+if [[ ${#SESSIONS[@]} -eq 0 ]]; then
+  echo "tmuxx: no sessions specified" >&2
+  exit 1
+fi
+
+if ! command -v tmux >/dev/null 2>&1; then
+  echo "tmuxx: tmux command not found" >&2
+  exit 1
+fi
+
+GHOSTTY_BIN=$(command -v ghostty || true)
+if [[ -z "$GHOSTTY_BIN" ]]; then
+  echo "tmuxx: ghostty command not found" >&2
+  exit 1
+fi
+
+RESTORE_SCRIPT="$HOME/.tmux/plugins/tmux-resurrect/scripts/restore.sh"
+BOOTSTRAP_SESSION="__tmuxx_bootstrap__"
+bootstrap_created=0
+
+if ! tmux list-sessions >/dev/null 2>&1; then
+  tmux start-server >/dev/null 2>&1 || true
+  tmux new-session -d -s "$BOOTSTRAP_SESSION" -n "$BOOTSTRAP_SESSION" 'sleep 1' >/dev/null 2>&1 || true
+  bootstrap_created=1
+fi
+
+if [[ -x "$RESTORE_SCRIPT" ]]; then
+  "$RESTORE_SCRIPT" >/dev/null 2>&1 || true
+fi
+
+if [[ "$DRYRUN" != "1" ]]; then
+  for _ in {1..10}; do
+    all_ready=1
+    for session in "${SESSIONS[@]}"; do
+      if ! tmux has-session -t "$session" 2>/dev/null; then
+        all_ready=0
+        break
+      fi
+    done
+    [[ $all_ready -eq 1 ]] && break
+    sleep 1
+  done
+fi
+
+if [[ $bootstrap_created -eq 1 ]] && tmux has-session -t "$BOOTSTRAP_SESSION" 2>/dev/null; then
+  tmux kill-session -t "$BOOTSTRAP_SESSION" >/dev/null 2>&1 || true
+fi
+
+create_new_desktop() {
+  /usr/bin/osascript -l JavaScript <<'JXA'
+ObjC.import('stdlib')
+const se = Application('System Events')
+se.includeStandardAdditions = true
+
+function key(code, modifiers) {
+  if (modifiers) {
+    se.keyCode(code, { using: modifiers })
+  } else {
+    se.keyCode(code)
+  }
+}
+
+function findSpacesBar(win) {
+  const groups = win.groups()
+  for (let i = 0; i < groups.length; i++) {
+    const g = groups[i]
+    try {
+      const ident = g.attribute('AXIdentifier')
+      if (ident && ident.js === 'com.apple.expose.spaces.bar') {
+        return g
+      }
+    } catch (e) {}
+    try {
+      const desc = g.description()
+      if (desc && desc.js === 'Spaces Bar') {
+        return g
+      }
+    } catch (e) {}
+  }
+  return null
+}
+
+function addDesktop() {
+  key(126, ['control down'])
+  delay(0.35)
+  const dock = Application('System Events').processes.byName('Dock')
+  if (dock.windows.length === 0) {
+    try { key(53) } catch (e) {}
+    return false
+  }
+  const win = dock.windows[0]
+  const addButtons = win.buttons.whose({ description: 'add desktop' })
+  if (addButtons.length === 0) {
+    try { key(53) } catch (e) {}
+    return false
+  }
+  addButtons[0].click()
+  delay(0.25)
+  const spacesBar = findSpacesBar(win)
+  if (!spacesBar) {
+    try { key(53) } catch (e) {}
+    return false
+  }
+  const thumbnails = spacesBar.groups()
+  if (thumbnails.length === 0) {
+    try { key(53) } catch (e) {}
+    return false
+  }
+  const target = thumbnails[thumbnails.length - 1]
+  try {
+    target.click()
+  } catch (e) {
+    try { key(53) } catch (e2) {}
+    return false
+  }
+  delay(0.25)
+  try { key(53) } catch (e) {}
+  return true
+}
+
+if (!addDesktop()) {
+  $.exit(1)
+}
+$.exit(0)
+JXA
+}
+
+for session in "${SESSIONS[@]}"; do
+  shell_cmd="tmux attach -t ${session} || tmux new -s ${session}"
+  if [[ "$DRYRUN" == "1" ]]; then
+    if [[ "$USE_NEW_DESKTOPS" == "1" ]]; then
+      echo "[dryrun] create new desktop for session '$session'"
+    fi
+    echo "[dryrun] launch Ghostty for session '$session' with: $shell_cmd"
+    continue
+  fi
+  if [[ "$USE_NEW_DESKTOPS" == "1" ]]; then
+    if ! create_new_desktop; then
+      echo "tmuxx: failed to create/switch desktop for '$session'" >&2
+    fi
+  fi
+  "$GHOSTTY_BIN" --title="$session" -e bash -lc "$shell_cmd" >/dev/null 2>&1 &
+done
+
+[[ "$DRYRUN" == "1" ]] || sleep 1
