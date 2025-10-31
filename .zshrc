@@ -660,6 +660,10 @@ setopt PROMPT_SUBST
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
 export PATH="$HOME/.local/bin:$PATH"
+# ~/.cargo/bin/
+export PATH="$HOME/.cargo/bin:$PATH"
+
+
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search --ask-for-approval never --sandbox workspace-write --config sandbox_workspace_write.network_access=true --full-auto'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.20.0/bin/codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
