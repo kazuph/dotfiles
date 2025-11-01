@@ -626,7 +626,6 @@ alias caffeinate='claude_safe_command caffeinate'             # Claude Code実�
 # alias git='claude_safe_git git'                               # Claude Code実行時のGit操作全般の無認証実行を禁止
 
 
-alias claude="/Users/kazuph/.claude/local/claude"
 export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 alias rm='/opt/homebrew/opt/trash/bin/trash'
 eval "$(mise activate zsh)"
