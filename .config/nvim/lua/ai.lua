@@ -1,3 +1,17 @@
+-- ハイライト:
+-- - 選択範囲を取り込み、ストリーミングなしでAIが返した差分を即座に適用するワークフロー。
+-- - プロバイダ非依存のプロンプト仕様で、指定行だけを安全に置換させる。
+-- - ステータスラインにプロバイダ別の実行数を出し、裏側の進行を見える化。
+-- 機能:
+-- - :Ai と互換コマンドが選択推定→意図入力→extmark付与→完了通知まで面倒を見る。
+-- - Claude/Codex/Gemini CLIをspawn・出力後処理込みで切り替えられ、JSONレスポンスにも耐える。
+-- - CRLFや末尾空行を除去してから差し替えるため、バッファのフォーマットを崩さない。
+-- アーキテクチャ:
+-- - begin_fix → start_job → apply_replacement間でctxテーブル（bufnr/range/prompt/provider）を受け渡し。
+-- - providersテーブルがspawn/環境/後処理を記述するストラテジーパターン。
+-- - extmarkで置換範囲を保持しつつジョブの非同期実行とstatus_cacheを同期。
+
+-- このLuaモジュールはNeovim側で選択範囲を収集し、外部AI CLIに投げた出力をそのまま適用する精度重視の編集補助。
 local M = {}
 
 local ns = vim.api.nvim_create_namespace("AiCommand")
@@ -5,6 +19,7 @@ local jobs = {}
 local job_seq = 0
 local status_cache = ""
 
+-- デフォルトのプロバイダは vim.g で上書きでき、このファイルを触らずに切り替えられる。
 local config = {
   default_provider = vim.g.aibofix_default_provider or "claude",
 }
@@ -13,6 +28,7 @@ local function notify(msg, level)
   vim.notify("[Ai] " .. msg, level or vim.log.levels.INFO, { title = "Ai" })
 end
 
+-- ビジュアル選択が無くてもカーソル行を対象にするフォールバックを用意。
 local function current_line_range(bufnr)
   local cursor = vim.api.nvim_win_get_cursor(0)
   local row = cursor[1] - 1
@@ -26,6 +42,7 @@ local function current_line_range(bufnr)
   }
 end
 
+-- Vimのマークを昇順の座標に正規化し、不正な値が来たらフォールバックさせる。
 local function get_selection_range(bufnr)
   local start_pos = vim.fn.getpos("'<")
   local end_pos = vim.fn.getpos("'>")
@@ -64,6 +81,7 @@ local function get_selection_range(bufnr)
   }
 end
 
+-- 選択されたテキストをそのまま抜き出し、プロンプトと置換対象を正確に揃える。
 local function extract_selection(bufnr, range)
   if range.start_row == range.end_row then
     local line = vim.api.nvim_buf_get_lines(bufnr, range.start_row, range.start_row + 1, false)[1] or ""
@@ -78,6 +96,7 @@ local function extract_selection(bufnr, range)
   return table.concat(lines, "\n")
 end
 
+-- バッファ全体・選択範囲・ユーザー入力をまとめ、どのプロバイダでも同じ制約で動くプロンプトを生成。
 local function build_prompt(ctx)
   local agent_name = ctx.provider_label or "AIアシスタント"
   local header = ([[あなたはNeovimから呼び出される%sです。以下のファイルのうち、指定範囲のみを編集対象にしてください。
@@ -93,7 +112,7 @@ local function build_prompt(ctx)
 %s
 ```
 
-修正意図:
+Prompt:
 %s
 
 指示:
@@ -105,6 +124,7 @@ local function build_prompt(ctx)
   return header
 end
 
+-- CRLFや末尾改行を畳んでから適用し、余計な行差分を生まないようにする。
 local function sanitize_output(output)
   local text = table.concat(output, "\n")
   text = text:gsub("\r", "")
@@ -123,6 +143,7 @@ local function apply_status(text)
   vim.cmd("redrawstatus")
 end
 
+-- プロバイダごとの待機数を集計し、ステータスラインに裏で動くジョブを表示。
 local function refresh_statusline()
   local counts = {}
   local total = 0
@@ -151,6 +172,7 @@ local function ensure_status_cleared()
   end
 end
 
+-- Gemini CLIはJSONを挟むログを吐くことがあるので、後方からJSONを探索し、無ければ整形済みstdoutで代用する。
 local function parse_gemini_stdout(stdout)
   local lines = {}
   for _, line in ipairs(stdout) do
@@ -185,6 +207,7 @@ local function parse_gemini_stdout(stdout)
   return sanitize_output(stdout)
 end
 
+-- providersテーブルはストラテジーとして機能し、spawn方法と出力後処理を切り替える。
 local providers = {
   claude = {
     label = "Claude Code",
@@ -244,6 +267,7 @@ local function split_lines(text)
   return vim.split(text, "\n", { plain = true })
 end
 
+-- extmarkで元の選択範囲を保持し、応答待ちにバッファが動いても追従できるようにする。
 local function get_mark_range(bufnr, mark_id)
   local pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, mark_id, { details = true })
   if not pos then
@@ -258,6 +282,7 @@ local function get_mark_range(bufnr, mark_id)
   }
 end
 
+-- 追跡していた範囲をAI出力で置き換え、更新行を通知する。
 local function apply_replacement(ctx, text)
   local range = get_mark_range(ctx.bufnr, ctx.mark_id)
   if not range then
@@ -321,6 +346,7 @@ local function ensure_provider(provider_key)
   return true
 end
 
+-- 外部CLIを起動してstdout/stderrを集め、終了後に結果を適用するメインワークフロー。
 local function start_job(ctx, provider_key)
   local provider = providers[provider_key]
   if not provider then
@@ -484,6 +510,7 @@ local function resolve_provider_key(explicit)
   return "claude"
 end
 
+-- :Ai と互換コマンドの入口。引数を解釈し、選択範囲と指示を集めて start_job へ引き渡す。
 local function begin_fix(opts)
   local provider_key_arg, inline_instruction = parse_command_args(opts.args or "")
   local provider_key = resolve_provider_key(provider_key_arg)
@@ -535,11 +562,12 @@ local function begin_fix(opts)
     return
   end
 
-  vim.ui.input({ prompt = string.format("Ai(%s) 修正意図: ", provider.label) }, function(input)
+  vim.ui.input({ prompt = string.format("Ai(%s) Prompt: ", provider.label) }, function(input)
     launch(input)
   end)
 end
 
+-- 公開APIのsetupはユーザーコマンド登録と設定マージだけを行う。
 function M.setup(opts)
   if opts and type(opts) == "table" then
     config = vim.tbl_deep_extend("force", config, opts)
@@ -555,18 +583,20 @@ function M.setup(opts)
     range = true,
     desc = "選択範囲をAIで部分修正",
   })
-  vim.api.nvim_create_user_command("AiboFix", begin_fix, {
+  vim.api.nvim_create_user_command("AiFix", begin_fix, {
     nargs = "*",
     range = true,
-    desc = "[互換用] AiboFix コマンド",
+    desc = "[互換用] AiFix コマンド",
   })
   M._setup_done = true
 end
 
+-- ステータスライン等がポーリングできるよう、未完了ジョブの有無を返す。
 function M.has_pending()
   return next(jobs) ~= nil
 end
 
+-- ステータス表示を更新して、最新のキャッシュ文字列を返す。
 function M.status()
   refresh_statusline()
   return status_cache

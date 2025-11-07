@@ -38,8 +38,8 @@ return {
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = function()
-      local function aibofix_component()
-        return require("aibofix").status()
+      local function ai_component()
+        return require("ai").status()
       end
       return {
         options = {
@@ -54,9 +54,9 @@ return {
             "fileformat",
             "filetype",
             {
-              aibofix_component,
+              ai_component,
               cond = function()
-                return aibofix_component() ~= ""
+                return ai_component() ~= ""
               end,
             },
           },
