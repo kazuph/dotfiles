@@ -37,14 +37,32 @@ return {
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {
-      options = {
-        theme = "bluedolphin",
-        component_separators = "",
-        section_separators = "",
-        globalstatus = true,
-      },
-    },
+    opts = function()
+      local function aibofix_component()
+        return require("aibofix").status()
+      end
+      return {
+        options = {
+          theme = "bluedolphin",
+          component_separators = "",
+          section_separators = "",
+          globalstatus = true,
+        },
+        sections = {
+          lualine_x = {
+            "encoding",
+            "fileformat",
+            "filetype",
+            {
+              aibofix_component,
+              cond = function()
+                return aibofix_component() ~= ""
+              end,
+            },
+          },
+        },
+      }
+    end,
   },
   {
     "folke/which-key.nvim",
@@ -53,7 +71,7 @@ return {
       local wk = require("which-key")
       wk.setup()
       wk.add({
-        { "<leader>a", group = "Aibo" },
+        { "<leader>a", group = "Ai" },
         { "<leader>c", group = "コード" },
         { "<leader>f", group = "検索" },
         { "<leader>g", group = "Git" },

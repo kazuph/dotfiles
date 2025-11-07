@@ -61,3 +61,5 @@ map("n", "]d", vim.diagnostic.goto_next, { desc = "次の診断" })
 map("n", "<leader>gb", function()
   require("gitsigns").toggle_current_line_blame()
 end, { desc = "行 blame 切替" })
+
+map({ "n", "v" }, "<leader>af", "<cmd>Ai<cr>", { desc = "Ai: 部分修正" })
