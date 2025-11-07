@@ -114,6 +114,15 @@ local function sanitize_output(output)
   return text
 end
 
+local function apply_status(text)
+  if text == status_cache and vim.g.aibofix_status == text then
+    return
+  end
+  status_cache = text
+  vim.g.aibofix_status = text
+  vim.cmd("redrawstatus")
+end
+
 local function refresh_statusline()
   local counts = {}
   local total = 0
@@ -133,15 +142,13 @@ local function refresh_statusline()
     text = " Ai[" .. table.concat(segments, ",") .. "]"
   end
 
-  if text == status_cache then
-    if vim.g.aibofix_status ~= text then
-      vim.g.aibofix_status = text
-    end
-    return
+  apply_status(text)
+end
+
+local function ensure_status_cleared()
+  if next(jobs) == nil then
+    apply_status("")
   end
-  status_cache = text
-  vim.g.aibofix_status = text
-  vim.cmd("redrawstatus")
 end
 
 local function parse_gemini_stdout(stdout)
@@ -383,6 +390,7 @@ local function start_job(ctx, provider_key)
           notify(string.format("#%d (%s): %s", ctx.seq, provider.label, err_text), vim.log.levels.ERROR)
           cleanup_job(job_id)
           clear_mark(ctx)
+          ensure_status_cleared()
           return
         end
 
@@ -406,11 +414,13 @@ local function start_job(ctx, provider_key)
         if not target_buf_valid then
           notify(string.format("#%d (%s): 対象バッファが既に閉じられています。", ctx.seq, provider.label), vim.log.levels.WARN)
           clear_mark(ctx)
+          ensure_status_cleared()
           return
         end
 
         apply_replacement(ctx, out_text)
         clear_mark(ctx)
+        ensure_status_cleared()
       end)
     end,
   }))
@@ -418,6 +428,7 @@ local function start_job(ctx, provider_key)
   if job_id <= 0 then
     clear_mark(ctx)
     notify(string.format("%s のジョブ起動に失敗しました。", provider.label), vim.log.levels.ERROR)
+    ensure_status_cleared()
     return
   end
 
