@@ -1,22 +1,24 @@
 ---@type LazySpec
 return {
   {
-    "catppuccin/nvim",
-    name = "catppuccin",
+    "vimiomori/bluedolphin.nvim",
     lazy = false,
     priority = 1000,
-    config = function()
-      require("catppuccin").setup({
-        flavour = "frappe",
-        integrations = {
-          cmp = true,
-          gitsigns = true,
-          neotree = true,
-          treesitter = true,
-          which_key = true,
-        },
-      })
-      vim.cmd.colorscheme("catppuccin")
+    opts = {
+      style = "colorful",
+      transparent = false,
+      styles = {
+        comments = { italic = true },
+        keywords = { italic = true },
+        sidebars = "dark",
+        floats = "dark",
+      },
+      sidebars = { "qf", "help", "neo-tree" },
+      lualine_bold = true,
+    },
+    config = function(_, opts)
+      require("bluedolphin").setup(opts)
+      vim.cmd.colorscheme("bluedolphin")
     end,
   },
   {
@@ -37,7 +39,7 @@ return {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       options = {
-        theme = "catppuccin",
+        theme = "bluedolphin",
         component_separators = "",
         section_separators = "",
         globalstatus = true,

@@ -1,5 +1,13 @@
 local map = vim.keymap.set
 
+local function telescope_builtin(func, opts)
+  return function()
+    require("lazy").load({ plugins = { "telescope.nvim" } })
+    local builtin = require("telescope.builtin")
+    builtin[func](opts and vim.deepcopy(opts) or {})
+  end
+end
+
 map({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
 map("n", "<leader>w", vim.cmd.write, { desc = "保存" })
@@ -7,18 +15,11 @@ map("n", "<leader>q", vim.cmd.quit, { desc = "ウィンドウを閉じる" })
 map("n", "<leader>Q", vim.cmd.qall, { desc = "Neovimを終了" })
 
 map("n", "<leader>fe", "<cmd>Neotree toggle<cr>", { desc = "ファイルツリー" })
-map("n", "<leader>ff", function()
-  require("telescope.builtin").find_files({ hidden = true })
-end, { desc = "ファイル検索" })
-map("n", "<leader>fg", function()
-  require("telescope.builtin").live_grep()
-end, { desc = "ライブgrep" })
-map("n", "<leader>fb", function()
-  require("telescope.builtin").buffers()
-end, { desc = "バッファ一覧" })
-map("n", "<leader>fh", function()
-  require("telescope.builtin").help_tags()
-end, { desc = "ヘルプ検索" })
+map("n", "<leader>ff", telescope_builtin("find_files", { hidden = true }), { desc = "ファイル検索" })
+map("n", "<C-p>", telescope_builtin("find_files", { hidden = true }), { desc = "Ctrl+P ファイル検索" })
+map("n", "<leader>fg", telescope_builtin("live_grep"), { desc = "ライブgrep" })
+map("n", "<leader>fb", telescope_builtin("buffers"), { desc = "バッファ一覧" })
+map("n", "<leader>fh", telescope_builtin("help_tags"), { desc = "ヘルプ検索" })
 
 map("n", "<leader>tn", "<cmd>ToggleTerm direction=float<cr>", { desc = "フロート端末" })
 map("n", "<leader>ts", "<cmd>ToggleTerm size=15 direction=horizontal<cr>", { desc = "水平端末" })
