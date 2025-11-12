@@ -15,7 +15,19 @@
     "DISABLE_TELEMETRY": "true",
     "DISABLE_MICROCOMPACT": "true"
   },
-  "hooks": {},
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/hooks/stop-send-notification.js"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "bun x ccusage statusline"
@@ -23,11 +35,5 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754086762195
-  },
-  "mcpServers": {
-    "serena": {
-      "command": "npx",
-      "args": ["-y", "@nogataka/serena-ts"]
-    }
   }
 }
