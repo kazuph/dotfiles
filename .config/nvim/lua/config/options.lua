@@ -1,3 +1,6 @@
+vim.g.markdown_recommended_style = 0
+vim.g.markdown_syntax_conceal = 0
+
 local opt = vim.opt
 
 opt.mouse = "a"
@@ -26,6 +29,7 @@ opt.undofile = true
 opt.swapfile = false
 opt.fillchars = { eob = " " }
 opt.conceallevel = 2
+opt.autoread = true
 
 if vim.fn.has("nvim-0.9") == 1 then
   opt.splitkeep = "screen"
