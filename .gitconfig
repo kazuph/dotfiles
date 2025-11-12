@@ -153,8 +153,6 @@
     driver = mergepbx %O %A %B
 [ghq]
     root = "~/src"
-[url "git@github.com:"]
-    insteadOf = https://github.com/
 [init]
 	defaultBranch = main
 [filter "lfs"]

@@ -133,6 +133,13 @@ unset key
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+if [[ -d $HOME/.local/bin ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+if [[ -d $HOME/bin ]]; then
+  export PATH="$HOME/bin:$PATH"
+fi
+
 # Customize to your needs...
 export EDITOR=vim
 HISTSIZE=1000000
@@ -580,7 +587,10 @@ export PATH="/home/kazuph/.local/bin:$PATH"
 
 
 
-eval "$(starship init zsh)"
+# starshipがあるときだけ実行する
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 # ~/binにpathを通す
 export PATH=$HOME/bin:$PATH
@@ -612,9 +622,18 @@ compdef _zbnc_zsh_better_npm_completion pnpm
 
 export PATH=/home/kazuph/.tiup/bin:$PATH
 
-eval "$(mise activate zsh)"
-export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+# miseがあるときだけ実行する
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+  export PATH="$HOME/.local/share/mise/shims:$PATH"
+fi
+
+# Alias for claude
+alias cc="claude --dangerously-skip-permissions"
+alias codex='codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
 
 
-# moonbit
-export PATH="$HOME/.moon/bin:$PATH"
+# begin twig completion
+. <(twig --completion)
+# end twig completion
