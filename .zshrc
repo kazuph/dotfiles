@@ -646,6 +646,17 @@ function _tmux_update_git_branch_for_pane() {
   fi
 }
 
+function _tmux_set_pane_title() {
+  [[ -n "${TMUX_PANE:-}" ]] || return
+  command -v tmux >/dev/null 2>&1 || return
+
+  local title="${1:-}"
+  [[ -n "$title" ]] || return
+  title="${title//$'\r'/ }"
+  title="${title//$'\n'/ }"
+  tmux select-pane -t "$TMUX_PANE" -T "$title" >/dev/null 2>&1
+}
+
 # Git information in prompt
 autoload -Uz vcs_info
 precmd() {
@@ -666,12 +677,23 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search --ask-for-approval never --sandbox workspace-write --config sandbox_workspace_write.network_access=true --full-auto'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.20.0/bin/codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
-alias codex='codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
+codex() {
+  # local summary="$*"
+  # [[ -n "$summary" ]] || summary="(interactive)"
+  # if (( ${#summary} > 80 )); then
+  #   summary="${summary:0:77}..."
+  # fi
+  # _tmux_set_pane_title "Codex: ${summary}"
+  command codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox "$@"
+}
 
+gemini() {
+  # local summary="$*"
+  # [[ -n "$summary" ]] || summary="(interactive)"
+  # if (( ${#summary} > 80 )); then
+  #   summary="${summary:0:77}..."
+  # fi
+  # _tmux_set_pane_title "Gemini: ${summary}"
+  command mise exec -- gemini --approval-mode=yolo "$@"
+}
 
-alias gemini='gemini --approval-mode=yolo '
-
-
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
