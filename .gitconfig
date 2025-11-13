@@ -3,6 +3,9 @@
     email = kazu.homma@gmail.com
 [github]
     user = kazuph
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+    pushInsteadOf = https://github.com/
 [color]
     # colorの設定(以下のコマンドは自動で色つける)
     ui = auto
