@@ -471,11 +471,52 @@ claude_safe_command() {
     local cmd="$1"
     shift
 
-    # Check if running under Claude Code
+    local command_str="$cmd"
+    if (( $# > 0 )); then
+        command_str+=" $*"
+    fi
+
+    local claude_context_active=0
     if [[ "$CLAUDECODE" == "1" ]] || [[ -n "$CLAUDE_CODE_ENTRYPOINT" ]]; then
+        claude_context_active=1
+    fi
+
+    local keyword_match=""
+    if [[ -n "$command_str" ]]; then
+        local command_str_lower
+        command_str_lower=$(printf '%s' "$command_str" | tr '[:upper:]' '[:lower:]')
+        local tokens
+        tokens=$(printf '%s' "$command_str_lower" | tr -cs '[:alnum:]_-' ' ')
+        local token
+        for token in $tokens; do
+            if [[ "$token" == *"deploy"* ]]; then
+                keyword_match="deploy"
+                break
+            elif [[ "$token" == *"delete"* ]]; then
+                keyword_match="delete"
+                break
+            elif [[ "$token" == "rm" ]]; then
+                keyword_match="rm"
+                break
+            fi
+        done
+    fi
+
+    if (( claude_context_active )) || [[ -n "$keyword_match" ]]; then
         # Show confirmation dialog without granting root privileges
+        local prompt_message=""
+        if (( claude_context_active )); then
+            prompt_message="Claude Code wants to execute: $command_str"
+        else
+            prompt_message="Keyword safeguard triggered for: $command_str"
+        fi
+        if [[ -n "$keyword_match" ]]; then
+            prompt_message+=$'\n'"Detected keyword: $keyword_match"
+        fi
+        prompt_message+=$'\n'"Directory: $PWD"
+
         local dialog_result
-        dialog_result=$(osascript -e "display dialog \"Claude Code wants to execute: $cmd $*\" buttons {\"Cancel\", \"Allow\"} default button \"Cancel\" with icon caution" 2>&1)
+        dialog_result=$(CLAUDE_SAFE_PROMPT="$prompt_message" osascript -e 'display dialog (system attribute "CLAUDE_SAFE_PROMPT") buttons {"Cancel", "Allow"} default button "Cancel" with icon caution' 2>&1)
 
         # Check if user clicked "Allow" (dialog returns "button returned:Allow")
         if [[ "$dialog_result" == *"button returned:Allow"* ]]; then
@@ -696,4 +737,3 @@ gemini() {
   # _tmux_set_pane_title "Gemini: ${summary}"
   command mise exec -- gemini --approval-mode=yolo "$@"
 }
-
