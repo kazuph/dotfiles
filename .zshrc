@@ -737,3 +737,11 @@ gemini() {
   # _tmux_set_pane_title "Gemini: ${summary}"
   command mise exec -- gemini --approval-mode=yolo "$@"
 }
+
+# pnpm
+export PNPM_HOME="/Users/kazuph/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
