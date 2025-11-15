@@ -63,3 +63,9 @@ map("n", "<leader>gb", function()
 end, { desc = "行 blame 切替" })
 
 map({ "n", "v" }, "<leader>af", "<cmd>Ai<cr>", { desc = "Ai: 部分修正" })
+
+-- ウィンドウリサイズ (Ctrl+e の後に hjkl)
+map("n", "<C-e>h", "<cmd>vertical resize -2<cr>", { desc = "ウィンドウ幅を減らす" })
+map("n", "<C-e>j", "<cmd>resize +2<cr>", { desc = "ウィンドウ高さを増やす" })
+map("n", "<C-e>k", "<cmd>resize -2<cr>", { desc = "ウィンドウ高さを減らす" })
+map("n", "<C-e>l", "<cmd>vertical resize +2<cr>", { desc = "ウィンドウ幅を増やす" })

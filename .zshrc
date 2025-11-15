@@ -718,25 +718,9 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.18.0/bin/codex --search --ask-for-approval never --sandbox workspace-write --config sandbox_workspace_write.network_access=true --full-auto'
 # alias codex='/Users/kazuph/.local/share/mise/installs/node/22.20.0/bin/codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
-codex() {
-  # local summary="$*"
-  # [[ -n "$summary" ]] || summary="(interactive)"
-  # if (( ${#summary} > 80 )); then
-  #   summary="${summary:0:77}..."
-  # fi
-  # _tmux_set_pane_title "Codex: ${summary}"
-  command codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox "$@"
-}
+alias codex='command codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox'
 
-gemini() {
-  # local summary="$*"
-  # [[ -n "$summary" ]] || summary="(interactive)"
-  # if (( ${#summary} > 80 )); then
-  #   summary="${summary:0:77}..."
-  # fi
-  # _tmux_set_pane_title "Gemini: ${summary}"
-  command mise exec -- gemini --approval-mode=yolo "$@"
-}
+alias gemini='command mise exec -- gemini --approval-mode=yolo'
 
 # pnpm
 export PNPM_HOME="/Users/kazuph/Library/pnpm"
