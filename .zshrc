@@ -81,6 +81,8 @@ alias to='twnyan user own'
 alias ts='twnyan search'
 alias tt='twnyan timeline 100'
 alias tm='twnyan mention'
+alias python='python3'
+alias pip='pip3'
 
 # atcoder
 alias acctest="oj t -d tests -c 'ruby main.rb'"
@@ -309,6 +311,7 @@ alias "504"="echo 'Gateway Timeout'"
 alias "505"="echo 'HTTP Version Not Supported'"
 alias o='git ls-files | f open'
 alias e='ghq list -p | f cd'
+alias ghm='gh markdown-preview'
 
 # ~/.zshrc への追加コード
 # Git 関連の設定
@@ -729,3 +732,9 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Added by Antigravity
+export PATH="/Users/kazuph/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/kazuph/.antigravity/antigravity/bin:$PATH"
