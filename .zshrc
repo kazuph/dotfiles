@@ -214,25 +214,42 @@ gcd() {
   local current_dir=$(pwd)
   local selected
 
+  # transform で3モード循環: local -> ghq -> git -> local ...
+  local toggle='ctrl-g:transform:
+    if [[ $FZF_PROMPT =~ local ]]; then
+      echo "change-prompt(ghq> )+reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.*)"
+    elif [[ $FZF_PROMPT =~ ghq ]]; then
+      echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[* ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
+    else
+      echo "change-prompt(local> )+reload(fd . --type f --type d 2>/dev/null)+change-preview([[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {})"
+    fi'
+
   if [[ "$current_dir" == "$HOME" ]] || [[ "$current_dir" != "$ghq_root"* ]]; then
-    # ホームディレクトリ or ghq管理外 → ghqリポジトリ検索
+    # ホームディレクトリ or ghq管理外 → ghqリポジトリ検索から開始
     selected=$(ghq list -p | fzf \
-      --header 'ghq repos' \
-      --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*")
+      --prompt 'ghq> ' \
+      --header 'C-g: toggle mode (ghq/git/local)' \
+      --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*" \
+      --bind "$toggle")
   else
-    # ghq管理下 → ファイル/ディレクトリ検索（^Gでghq検索に切替可能）
+    # ghq管理下 → ファイル/ディレクトリ検索から開始
     selected=$(fd . --type f --type d 2>/dev/null | fzf \
-      --header 'local files (C-g: ghq repos)' \
+      --prompt 'local> ' \
+      --header 'C-g: toggle mode (local/ghq/git)' \
       --preview '[[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {}' \
-      --bind "ctrl-g:reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.*)+change-header(ghq repos)")
+      --bind "$toggle")
   fi
 
-  # 選択結果を処理（ghqパスもローカルパスも同じロジックで処理）
+  # 選択結果を処理
   if [[ -n "$selected" ]]; then
     if [[ -d "$selected" ]]; then
       cd "$selected"
     elif [[ -f "$selected" ]]; then
       eval "vi \"$selected\"" </dev/tty
+    else
+      # ファイルでもディレクトリでもない → git branch とみなす
+      local branch="${selected#remotes/origin/}"
+      git checkout "$branch" 2>/dev/null || git checkout -b "$branch" "origin/$branch" 2>/dev/null
     fi
   fi
   zle accept-line
