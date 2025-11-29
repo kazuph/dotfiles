@@ -3,6 +3,9 @@ vim.g.markdown_syntax_conceal = 0
 
 local opt = vim.opt
 
+-- 日本語エンコーディング対応（Shift_JIS, EUC-JP等）
+opt.fileencodings = "utf-8,sjis,euc-jp,cp932,iso-2022-jp,latin1"
+
 opt.mouse = "a"
 opt.clipboard = "unnamedplus"
 opt.breakindent = true

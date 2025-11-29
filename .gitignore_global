@@ -33,3 +33,4 @@ tags
 /tmp
 .cache
 freertos
+.ms-playwright
