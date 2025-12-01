@@ -107,16 +107,16 @@ APPLESCRIPT
   fi
 
   if [[ "$cmd" == "rm" ]]; then
-    if command -v trash >/dev/null 2>&1; then
-      command trash "${args[@]}"
+    if command -v trash >/dev/null 2>/dev/null; then
+      builtin command trash "${args[@]}"
     else
-      command rm "${args[@]}"
+      builtin command rm "${args[@]}"
     fi
   else
     if [[ -n "${AI_GUARD_EXEC:-}" ]]; then
       eval "$AI_GUARD_EXEC"
     else
-      command "$cmd" "${args[@]}"
+      builtin command "$cmd" "${args[@]}"
     fi
   fi
 }
@@ -206,4 +206,18 @@ flyctl() {
 reset() {
   local exec_cmd="brake db:migrate:reset"
   AI_GUARD_EXEC="$exec_cmd" ai_extreme_confirm reset
+}
+
+# command 経由のバイパスを防ぐ
+command() {
+  local cmd="$1"; shift
+  case "$cmd" in
+    rm|rmdir|dd|mkfs|fdisk|diskutil|format|parted|gparted|rimraf|trash)
+      ai_extreme_confirm "$cmd" "$@" ; return $? ;;
+    git|npm|pnpm|yarn|firebase|vercel|flyctl)
+      ai_extreme_confirm "$cmd" "$@" ; return $? ;;
+    push|publish|deploy|reset)
+      ai_extreme_confirm "$cmd" "$@" ; return $? ;;
+  esac
+  builtin command "$cmd" "$@"
 }
