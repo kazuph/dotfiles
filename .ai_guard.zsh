@@ -42,7 +42,18 @@ ai_extreme_confirm() {
       needs_prompt=1 ;;
     dd|mkfs|fdisk|diskutil|format|parted|gparted)
       needs_prompt=1 ;;
+    push|publish|deploy|reset)
+      needs_prompt=1 ;;
   esac
+
+  # サブコマンド系（git push/reset, npm|pnpm|yarn publish, firebase|vercel|flyctl deploy など）
+  if [[ "$cmd" == "git" || "$cmd" == "npm" || "$cmd" == "pnpm" || "$cmd" == "yarn" || "$cmd" == "firebase" || "$cmd" == "vercel" || "$cmd" == "flyctl" ]]; then
+    local subcmd="${args[1]:-}"
+    case "$subcmd" in
+      push|publish|deploy|reset)
+        needs_prompt=1 ;;
+    esac
+  fi
 
   local cmd_display
   cmd_display="$(printf "%s " "$cmd" "${args[@]}")"
@@ -102,7 +113,11 @@ APPLESCRIPT
       command rm "${args[@]}"
     fi
   else
-    command "$cmd" "${args[@]}"
+    if [[ -n "${AI_GUARD_EXEC:-}" ]]; then
+      eval "$AI_GUARD_EXEC"
+    else
+      command "$cmd" "${args[@]}"
+    fi
   fi
 }
 
@@ -125,3 +140,70 @@ alias csrutil='sudo csrutil'
 alias spctl='sudo spctl'
 
 export PATH="/opt/homebrew/opt/trash/bin:$PATH"
+
+# --- guarded wrappers -------------------------------------------------
+
+# git push/reset を確認
+git() {
+  if [[ "$1" == push || "$1" == reset ]]; then
+    ai_extreme_confirm git "$@"
+  else
+    command git "$@"
+  fi
+}
+
+# npm/pnpm/yarn publish を確認
+npm() {
+  if [[ "$1" == publish ]]; then
+    ai_extreme_confirm npm "$@"
+  else
+    command npm "$@"
+  fi
+}
+
+pnpm() {
+  if [[ "$1" == publish ]]; then
+    ai_extreme_confirm pnpm "$@"
+  else
+    command pnpm "$@"
+  fi
+}
+
+yarn() {
+  if [[ "$1" == publish ]]; then
+    ai_extreme_confirm yarn "$@"
+  else
+    command yarn "$@"
+  fi
+}
+
+# deploy 系主要CLI
+firebase() {
+  if [[ "$1" == deploy ]]; then
+    ai_extreme_confirm firebase "$@"
+  else
+    command firebase "$@"
+  fi
+}
+
+vercel() {
+  if [[ "$1" == deploy ]]; then
+    ai_extreme_confirm vercel "$@"
+  else
+    command vercel "$@"
+  fi
+}
+
+flyctl() {
+  if [[ "$1" == deploy ]]; then
+    ai_extreme_confirm flyctl "$@"
+  else
+    command flyctl "$@"
+  fi
+}
+
+# 既存 reset エイリアスを保護付きで実行
+reset() {
+  local exec_cmd="brake db:migrate:reset"
+  AI_GUARD_EXEC="$exec_cmd" ai_extreme_confirm reset
+}

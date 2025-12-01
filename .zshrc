@@ -152,7 +152,7 @@ __fzf_ripgrep() {
           --bind 'change:reload:rg_with_glob {q} || :' \
           --bind="ctrl-l:execute(tmux splitw -h -- nvim +/{q} {1} +{2})" \
           --delimiter=":" \
-          --header '@.md or @.md pattern' \
+          --header '@.ext filters files, @.ext word searches content' \
           --preview="bat --color=always --style=header,grid --highlight-line {2} {1} 2>/dev/null || bat --color=always --style=header,grid {1}" \
           --preview-window='down:60%:+{2}-10')
 
