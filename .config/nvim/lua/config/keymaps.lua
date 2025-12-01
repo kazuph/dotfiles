@@ -69,3 +69,29 @@ map("n", "<C-e>h", "<cmd>vertical resize -2<cr>", { desc = "ウィンドウ幅�
 map("n", "<C-e>j", "<cmd>resize +2<cr>", { desc = "ウィンドウ高さを増やす" })
 map("n", "<C-e>k", "<cmd>resize -2<cr>", { desc = "ウィンドウ高さを減らす" })
 map("n", "<C-e>l", "<cmd>vertical resize +2<cr>", { desc = "ウィンドウ幅を増やす" })
+
+-- Markdown限定: 開いているファイルに対して `npx reviw <file>` を実行
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function(ev)
+    vim.keymap.set("n", "<leader>p", function()
+      vim.cmd.write()
+      local file = vim.api.nvim_buf_get_name(ev.buf)
+      if file == "" then
+        vim.notify("No file name to run reviw", vim.log.levels.WARN, { title = "npx reviw" })
+        return
+      end
+      vim.notify("Running npx reviw " .. file .. " (async)", vim.log.levels.INFO, { title = "npx reviw" })
+      vim.fn.jobstart({ "npx", "reviw", file }, {
+        stdout_buffered = false,
+        stderr_buffered = false,
+        on_exit = function(_, code)
+          vim.schedule(function()
+            local level = code == 0 and vim.log.levels.INFO or vim.log.levels.ERROR
+            vim.notify("reviw finished (exit " .. code .. ")", level, { title = "npx reviw" })
+          end)
+        end,
+      })
+    end, { buffer = ev.buf, desc = "npx reviw current markdown" })
+  end,
+})
