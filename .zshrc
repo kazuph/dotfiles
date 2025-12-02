@@ -124,7 +124,7 @@ _Z_DATA=~/.z
 # j: z の履歴を fzf で選択して cd
 unalias j 2>/dev/null
 j() {
-  local dir=$(z -l 2>&1 | sed 's/^[0-9. ]*//' | fzf --tac --no-sort --preview 'ls -la {}')
+  local dir=$(z -l 2>&1 | sed 's/^[0-9. ]*//' | fzf --tac --no-sort --query "$*" --preview 'ls -la {}')
   [[ -n "$dir" ]] && cd "$dir"
 }
 if is-at-least 4.3.9; then
@@ -576,3 +576,8 @@ export PATH="/Users/kazuph/.antigravity/antigravity/bin:$PATH"
 
 # Added by Antigravity
 export PATH="/Users/kazuph/.antigravity/antigravity/bin:$PATH"
+# Skip / Android toolchain
+export JAVA_HOME=/opt/homebrew/opt/openjdk
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export ANDROID_NDK_HOME=/opt/homebrew/share/android-ndk
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"

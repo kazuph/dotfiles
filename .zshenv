@@ -31,3 +31,6 @@ prioritize_cargo_bin() {
 
 # Apply prioritization
 prioritize_cargo_bin
+
+# 危険コマンド確認フック（非対話シェルでも有効化）
+[[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
