@@ -18,6 +18,9 @@ fi
 # uv  
 export PATH="/Users/kazuph/.local/bin:$PATH"
 
+# bash 非ログインシェルにも ai_guard を適用
+export BASH_ENV="$HOME/dotfiles/.bashrc"
+
 # Rust cargo binaries (ensure priority over ~/.local/bin)
 . "$HOME/.cargo/env"
 

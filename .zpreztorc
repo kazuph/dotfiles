@@ -15,6 +15,9 @@
 # Color output (auto set to 'no' on dumb terminals).
 zstyle ':prezto:*:*' color 'yes'
 
+# Disable utility.safe-ops (-i付与) because ai_guard already handles confirmations.
+zstyle ':prezto:module:utility' safe-ops 'no'
+
 # Set the Zsh modules to load (man zshmodules).
 # zstyle ':prezto:load' zmodule 'attr' 'stat'
 

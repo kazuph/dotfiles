@@ -81,4 +81,49 @@ return {
       },
     },
   },
+  {
+    "mvllow/modes.nvim",
+    event = "VeryLazy",
+    opts = {
+      colors = {
+        insert = "#78dce8",
+        visual = "#ab9df2",
+        delete = "#ff6188",
+        copy = "#a9dc76",
+      },
+      line_opacity = 0.2,
+    },
+  },
+  {
+    "rmagatti/goto-preview",
+    keys = {
+      {
+        "gp",
+        function()
+          require("goto-preview").goto_preview_definition()
+        end,
+        desc = "定義プレビュー",
+      },
+      {
+        "gP",
+        function()
+          require("goto-preview").goto_preview_references()
+        end,
+        desc = "参照プレビュー",
+      },
+      {
+        "gq",
+        function()
+          require("goto-preview").close_all_win()
+        end,
+        desc = "プレビュー閉じる",
+      },
+    },
+    opts = {
+      width = 100,
+      height = 20,
+      border = "rounded",
+      default_mappings = false,
+    },
+  },
 }
