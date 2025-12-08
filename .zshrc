@@ -221,7 +221,7 @@ gcd() {
     if [[ $FZF_PROMPT =~ local ]]; then
       echo "change-prompt(ghq> )+reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.*)"
     elif [[ $FZF_PROMPT =~ ghq ]]; then
-      echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[* ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
+      echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
     else
       echo "change-prompt(local> )+reload(fd . --type f --type d 2>/dev/null)+change-preview([[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {})"
     fi'

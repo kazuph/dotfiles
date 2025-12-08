@@ -17,6 +17,25 @@
   },
   "model": "opus",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Update",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/protect-main-branch.py"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/hook_pre_commands.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prevent-main-write.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "type": "prompt",
