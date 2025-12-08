@@ -15,31 +15,35 @@
     "DISABLE_TELEMETRY": "true",
     "DISABLE_MICROCOMPACT": "true"
   },
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.figma.com)",
+      "Bash(npm install:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  },
   "model": "opus",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit|Update",
+        "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/protect-main-branch.py"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/hook_pre_commands.sh"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/prevent-main-write.sh"
+            "command": "~/.claude/hooks/pretool_guard.py"
           }
         ]
       }
     ],
     "Stop": [
       {
-        "type": "prompt",
-        "prompt": "タスク完了報告を行ってください。以下の手順で実行:\n1. tmux display-message -p -t \"$TMUX_PANE\" '#I' でウィンドウIDを取得\n2. 今回のタスク内容を30文字以内で要約\n3. say -r 230 \"Window <ID> <要約>\" をバックグラウンドで実行\n4. ~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh \"<漢字+絵文字>\" を実行"
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "タスク完了報告を行ってください。以下の手順で実行:\n1. tmux display-message -p -t \"$TMUX_PANE\" '#I' でウィンドウIDを取得\n2. 今回のタスク内容を30文字以内で要約\n3. say -r 230 \"Window <ID> <要約>\" をバックグラウンドで実行\n4. ~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh \"<漢字+絵文字>\" を実行"
+          }
+        ]
       }
     ]
   },
