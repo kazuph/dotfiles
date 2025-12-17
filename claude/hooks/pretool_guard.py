@@ -146,7 +146,19 @@ def is_safe_git_command(subcmd: Optional[str], args: List[str]) -> bool:
             return True
         return False
     if subcmd == "worktree":
-        return len(args) >= 1 and args[0] == "list"
+        if not args:
+            return False
+        # allow listing existing worktrees and creating new ones
+        if args[0] in {"list", "add"}:
+            return True
+        return False
+    if subcmd == "gtr":
+        # git-worktree-helper (gtr): worktree management tool
+        # Only allow safe operations (matching git worktree policy)
+        if not args:
+            return True  # gtr without args shows help/status
+        safe_gtr_cmds = {"new", "list", "switch", "add", "cd", "shell"}
+        return args[0] in safe_gtr_cmds
     if subcmd == "config":
         forbidden_fragments = {
             "--add",
@@ -221,14 +233,19 @@ def git_segments_all_safe(command: str, aliases: Dict[str, str]) -> bool:
     return True
 
 
-def bash_blacklist_hit(command: str) -> Optional[str]:
+def bash_blacklist_hit(command: str) -> Optional[Tuple[str, str]]:
+    """
+    Returns (decision, reason) tuple or None if no match.
+    decision: "deny" for hard block, "ask_user" for confirmation dialog
+    """
     if not command.strip():
         return None
 
-    # block any attempt mentioning .allow-main
+    # block any attempt mentioning .allow-main (hard deny)
     if ".allow-main" in command:
-        return "🚫 .allow-main 作成・操作は禁止されています。"
+        return ("deny", "🚫 .allow-main 作成・操作は禁止されています。")
 
+    # Destructive patterns - require user confirmation (ask_user)
     destructive_patterns = [
         r"\brm\b\s+-[frFR]+",
         r"\brmdir\b",
@@ -242,6 +259,7 @@ def bash_blacklist_hit(command: str) -> Optional[str]:
         r"\bparted\b",
     ]
 
+    # Deploy patterns - require user confirmation (ask_user)
     deploy_patterns = [
         r"\bdeploy\b",
         r"\bpublish\b",
@@ -259,7 +277,7 @@ def bash_blacklist_hit(command: str) -> Optional[str]:
 
     for pat in destructive_patterns + deploy_patterns:
         if re.search(pat, command, flags=re.IGNORECASE):
-            return "🚫 安全上の理由でブロックされたコマンドです。"
+            return ("ask_user", "⚠️ 破壊的/デプロイ系コマンドです。実行しますか？")
     return None
 
 
@@ -293,9 +311,10 @@ def main():
 
     # Bashブラックリスト（allow-mainが無い場合のみ適用）
     if tool_name == "Bash" and not allow_main_flag:
-        blk = bash_blacklist_hit(command_str)
-        if blk:
-            emit_decision("deny", blk)
+        result = bash_blacklist_hit(command_str)
+        if result:
+            decision, reason = result
+            emit_decision(decision, reason)
 
     # Gitリポジトリ外はブラックリストのみ適用済み、その他許可
     if not in_repo:

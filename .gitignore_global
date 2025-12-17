@@ -34,3 +34,5 @@ tags
 .cache
 freertos
 .ms-playwright
+.allow-main
+/.worktree

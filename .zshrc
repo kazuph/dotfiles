@@ -582,3 +582,6 @@ export JAVA_HOME=/opt/homebrew/opt/openjdk
 export ANDROID_HOME="$HOME/Library/Android/sdk"
 export ANDROID_NDK_HOME=/opt/homebrew/share/android-ndk
 export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"
+
+# moonbit
+export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
