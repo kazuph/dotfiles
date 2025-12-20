@@ -94,6 +94,10 @@ ai_extreme_confirm() {
   local cmd_display cmd_display_for_prompt
   cmd_display="$(printf "%s " "$cmd" "${args[@]}")"
   cmd_display="${cmd_display% }"
+  if [[ -n "${AI_GUARD_CMD_DISPLAY:-}" ]]; then
+    cmd_display="${AI_GUARD_CMD_DISPLAY}"
+  fi
+  cmd_display="${cmd_display//$'\n'/ }"
   cmd_display_for_prompt=$'- コマンド: '"$cmd_display"
 
   if (( needs_prompt )); then
@@ -251,6 +255,45 @@ _ai_guard_contains_danger_word() {
 AI_GUARD_BLOCK_REASON=""
 AI_GUARD_GIT_PUSH_DECISION=""
 AI_GUARD_GH_PR_CREATE_DECISION=""
+AI_GUARD_DANGER_WORD_ACK="0"
+AI_GUARD_TRAP_ACTIVE="0"
+
+TRAPDEBUG() {
+  if [[ "${AI_GUARD_TRAP_ACTIVE:-0}" == "1" ]]; then
+    return 0
+  fi
+  AI_GUARD_TRAP_ACTIVE=1
+
+  if ! _ai_guard_is_ai_session; then
+    AI_GUARD_TRAP_ACTIVE=0
+    return 0
+  fi
+  if [[ "${AI_GUARD_ACTIVE:-0}" == "1" ]]; then
+    AI_GUARD_TRAP_ACTIVE=0
+    return 0
+  fi
+
+  AI_GUARD_DANGER_WORD_ACK=0
+  local cmd_line="${ZSH_DEBUG_CMD:-}"
+  if [[ -n "$cmd_line" ]] && _ai_guard_contains_danger_word "$cmd_line"; then
+    local prev_exec="${AI_GUARD_EXEC:-}"
+    local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
+    AI_GUARD_EXEC=":"
+    AI_GUARD_CMD_DISPLAY="$cmd_line"
+    ai_extreme_confirm :
+    local rc=$?
+    AI_GUARD_EXEC="$prev_exec"
+    AI_GUARD_CMD_DISPLAY="$prev_display"
+    if [[ $rc -ne 0 ]]; then
+      AI_GUARD_TRAP_ACTIVE=0
+      return 1
+    fi
+    AI_GUARD_DANGER_WORD_ACK=1
+  fi
+
+  AI_GUARD_TRAP_ACTIVE=0
+  return 0
+}
 
 ai_guard_block() {
   local cmd_display="$1"
@@ -443,8 +486,12 @@ _ai_guard_need_prompt() {
     cmd_line="$cmd_line $*"
   fi
 
-  if _ai_guard_contains_danger_word "$cmd_line"; then
-    return 0
+  if [[ "${AI_GUARD_DANGER_WORD_ACK:-0}" == "1" ]]; then
+    AI_GUARD_DANGER_WORD_ACK=0
+  else
+    if _ai_guard_contains_danger_word "$cmd_line"; then
+      return 0
+    fi
   fi
 
   case "$cmd" in
