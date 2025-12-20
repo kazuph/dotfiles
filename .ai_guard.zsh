@@ -294,8 +294,8 @@ _ai_guard_eval_git_push() {
   local arg remote_name="" remote_name_set=0
   for arg in "$@"; do
     case "$arg" in
-      --force|-f|main|*/main|*:main)
-        AI_GUARD_BLOCK_REASON="main/--force/-f は禁止です。"
+      --force|-f|main|*/main|*:main|master|*/master|*:master)
+        AI_GUARD_BLOCK_REASON="main/master/--force/-f は禁止です。"
         AI_GUARD_GIT_PUSH_DECISION="block"
         return 0
         ;;
