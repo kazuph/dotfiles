@@ -258,6 +258,16 @@ AI_GUARD_GH_PR_CREATE_DECISION=""
 AI_GUARD_DANGER_WORD_ACK="0"
 AI_GUARD_TRAP_ACTIVE="0"
 
+_ai_guard_precmd() {
+  AI_GUARD_DANGER_WORD_ACK=0
+  AI_GUARD_TRAP_ACTIVE=0
+}
+
+typeset -ga precmd_functions
+if (( ${precmd_functions[(Ie)_ai_guard_precmd]} == 0 )); then
+  precmd_functions+=_ai_guard_precmd
+fi
+
 TRAPDEBUG() {
   if [[ "${AI_GUARD_TRAP_ACTIVE:-0}" == "1" ]]; then
     return 0
@@ -273,7 +283,10 @@ TRAPDEBUG() {
     return 0
   fi
 
-  AI_GUARD_DANGER_WORD_ACK=0
+  if [[ "${AI_GUARD_DANGER_WORD_ACK:-0}" == "1" ]]; then
+    AI_GUARD_TRAP_ACTIVE=0
+    return 0
+  fi
   local cmd_line="${ZSH_DEBUG_CMD:-}"
   if [[ -n "$cmd_line" ]] && _ai_guard_contains_danger_word "$cmd_line"; then
     local prev_exec="${AI_GUARD_EXEC:-}"
@@ -487,11 +500,10 @@ _ai_guard_need_prompt() {
   fi
 
   if [[ "${AI_GUARD_DANGER_WORD_ACK:-0}" == "1" ]]; then
-    AI_GUARD_DANGER_WORD_ACK=0
-  else
-    if _ai_guard_contains_danger_word "$cmd_line"; then
-      return 0
-    fi
+    return 1
+  fi
+  if _ai_guard_contains_danger_word "$cmd_line"; then
+    return 0
   fi
 
   case "$cmd" in
