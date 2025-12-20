@@ -258,14 +258,17 @@ AI_GUARD_GH_PR_CREATE_DECISION=""
 AI_GUARD_DANGER_WORD_ACK="0"
 AI_GUARD_TRAP_ACTIVE="0"
 AI_GUARD_LAST_CMDLINE=""
+AI_GUARD_LAST_CMDLINE_VALID="0"
 
 _ai_guard_preexec() {
   AI_GUARD_LAST_CMDLINE="$1"
+  AI_GUARD_LAST_CMDLINE_VALID="1"
   AI_GUARD_DANGER_WORD_ACK=0
   AI_GUARD_TRAP_ACTIVE=0
 }
 
 if [[ -n "${ZSH_VERSION:-}" ]]; then
+  setopt DEBUG_BEFORE_CMD
   typeset -ga preexec_functions
   if (( ${preexec_functions[(Ie)_ai_guard_preexec]} == 0 )); then
     preexec_functions+=_ai_guard_preexec
@@ -292,14 +295,15 @@ TRAPDEBUG() {
     return 0
   fi
   local cmd_line="${ZSH_DEBUG_CMD:-}"
-  if [[ -z "$cmd_line" && -n "${AI_GUARD_LAST_CMDLINE:-}" ]]; then
+  if [[ -z "$cmd_line" && "${AI_GUARD_LAST_CMDLINE_VALID:-0}" == "1" ]]; then
     cmd_line="$AI_GUARD_LAST_CMDLINE"
+    AI_GUARD_LAST_CMDLINE_VALID="0"
   fi
   if [[ -n "$cmd_line" ]] && _ai_guard_contains_danger_word "$cmd_line"; then
     local prev_exec="${AI_GUARD_EXEC:-}"
     local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
     AI_GUARD_EXEC=":"
-    AI_GUARD_CMD_DISPLAY="${AI_GUARD_LAST_CMDLINE:-$cmd_line}"
+    AI_GUARD_CMD_DISPLAY="$cmd_line"
     ai_extreme_confirm :
     local rc=$?
     AI_GUARD_EXEC="$prev_exec"
