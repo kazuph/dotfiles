@@ -258,11 +258,17 @@ AI_GUARD_GH_PR_CREATE_DECISION=""
 AI_GUARD_DANGER_WORD_ACK="0"
 AI_GUARD_TRAP_ACTIVE="0"
 AI_GUARD_LAST_CMDLINE=""
-AI_GUARD_LAST_CMDLINE_VALID="0"
+AI_GUARD_PENDING_DANGER="0"
+AI_GUARD_PENDING_CMDLINE=""
 
 _ai_guard_preexec() {
   AI_GUARD_LAST_CMDLINE="$1"
-  AI_GUARD_LAST_CMDLINE_VALID="1"
+  AI_GUARD_PENDING_CMDLINE="$1"
+  if _ai_guard_contains_danger_word "$1"; then
+    AI_GUARD_PENDING_DANGER="1"
+  else
+    AI_GUARD_PENDING_DANGER="0"
+  fi
   AI_GUARD_DANGER_WORD_ACK=0
   AI_GUARD_TRAP_ACTIVE=0
 }
@@ -294,16 +300,11 @@ TRAPDEBUG() {
     AI_GUARD_TRAP_ACTIVE=0
     return 0
   fi
-  local cmd_line="${ZSH_DEBUG_CMD:-}"
-  if [[ -z "$cmd_line" && "${AI_GUARD_LAST_CMDLINE_VALID:-0}" == "1" ]]; then
-    cmd_line="$AI_GUARD_LAST_CMDLINE"
-    AI_GUARD_LAST_CMDLINE_VALID="0"
-  fi
-  if [[ -n "$cmd_line" ]] && _ai_guard_contains_danger_word "$cmd_line"; then
+  if [[ "${AI_GUARD_PENDING_DANGER:-0}" == "1" && -n "${AI_GUARD_PENDING_CMDLINE:-}" ]]; then
     local prev_exec="${AI_GUARD_EXEC:-}"
     local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
     AI_GUARD_EXEC=":"
-    AI_GUARD_CMD_DISPLAY="$cmd_line"
+    AI_GUARD_CMD_DISPLAY="$AI_GUARD_PENDING_CMDLINE"
     ai_extreme_confirm :
     local rc=$?
     AI_GUARD_EXEC="$prev_exec"
@@ -313,6 +314,8 @@ TRAPDEBUG() {
       return 1
     fi
     AI_GUARD_DANGER_WORD_ACK=1
+    AI_GUARD_PENDING_DANGER="0"
+    AI_GUARD_PENDING_CMDLINE=""
   fi
 
   AI_GUARD_TRAP_ACTIVE=0
