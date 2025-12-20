@@ -339,6 +339,11 @@ _ai_guard_eval_git_push() {
         AI_GUARD_GIT_PUSH_DECISION="block"
         return 0
         ;;
+      --force-with-lease)
+        AI_GUARD_BLOCK_REASON="--force-with-lease は確認が必要です。"
+        AI_GUARD_GIT_PUSH_DECISION="prompt"
+        return 0
+        ;;
     esac
     if [[ "$arg" != -* && "$remote_name_set" -eq 0 ]]; then
       remote_name="$arg"
