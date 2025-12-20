@@ -260,6 +260,12 @@ AI_GUARD_TRAP_ACTIVE="0"
 
 _ai_guard_accept_line() {
   local cmd_line="$BUFFER"
+  local cmd_trim="${cmd_line##[[:space:]]#}"
+  local cmd_name="${cmd_trim%% *}"
+  if [[ "$cmd_name" == "git" ]]; then
+    zle .accept-line
+    return 0
+  fi
   if _ai_guard_contains_danger_word "$cmd_line"; then
     local prev_exec="${AI_GUARD_EXEC:-}"
     local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
