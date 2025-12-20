@@ -508,9 +508,6 @@ alias cc="ENABLE_BACKGROUND_TASKS=1 claude --dangerously-skip-permissions"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:$HOME/.maestro/bin
 
-# 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
-# 危険コマンド確認フックを共通ファイルに集約
-[[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
 eval "$(mise activate zsh)"
 
 # Update tmux pane metadata with the current git branch for status display
@@ -585,3 +582,7 @@ export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:
 
 # moonbit
 export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
+
+# 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
+# 危険コマンド確認フックを共通ファイルに集約
+[[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
