@@ -257,70 +257,29 @@ AI_GUARD_GIT_PUSH_DECISION=""
 AI_GUARD_GH_PR_CREATE_DECISION=""
 AI_GUARD_DANGER_WORD_ACK="0"
 AI_GUARD_TRAP_ACTIVE="0"
-AI_GUARD_LAST_CMDLINE=""
-AI_GUARD_PENDING_DANGER="0"
-AI_GUARD_PENDING_CMDLINE=""
 
-_ai_guard_preexec() {
-  AI_GUARD_LAST_CMDLINE="$1"
-  AI_GUARD_PENDING_CMDLINE="$1"
-  if _ai_guard_contains_danger_word "$1"; then
-    AI_GUARD_PENDING_DANGER="1"
-  else
-    AI_GUARD_PENDING_DANGER="0"
-  fi
-  AI_GUARD_DANGER_WORD_ACK=0
-  AI_GUARD_TRAP_ACTIVE=0
-}
-
-if [[ -n "${ZSH_VERSION:-}" ]]; then
-  setopt DEBUG_BEFORE_CMD
-  typeset -ga preexec_functions
-  if (( ${preexec_functions[(Ie)_ai_guard_preexec]} == 0 )); then
-    preexec_functions+=_ai_guard_preexec
-  fi
-fi
-
-TRAPDEBUG() {
-  if [[ "${AI_GUARD_TRAP_ACTIVE:-0}" == "1" ]]; then
-    return 0
-  fi
-  AI_GUARD_TRAP_ACTIVE=1
-
-  if ! _ai_guard_is_ai_session; then
-    AI_GUARD_TRAP_ACTIVE=0
-    return 0
-  fi
-  if [[ "${AI_GUARD_ACTIVE:-0}" == "1" ]]; then
-    AI_GUARD_TRAP_ACTIVE=0
-    return 0
-  fi
-
-  if [[ "${AI_GUARD_DANGER_WORD_ACK:-0}" == "1" ]]; then
-    AI_GUARD_TRAP_ACTIVE=0
-    return 0
-  fi
-  if [[ "${AI_GUARD_PENDING_DANGER:-0}" == "1" && -n "${AI_GUARD_PENDING_CMDLINE:-}" ]]; then
+_ai_guard_accept_line() {
+  local cmd_line="$BUFFER"
+  if _ai_guard_contains_danger_word "$cmd_line"; then
     local prev_exec="${AI_GUARD_EXEC:-}"
     local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
     AI_GUARD_EXEC=":"
-    AI_GUARD_CMD_DISPLAY="$AI_GUARD_PENDING_CMDLINE"
+    AI_GUARD_CMD_DISPLAY="$cmd_line"
     ai_extreme_confirm :
     local rc=$?
     AI_GUARD_EXEC="$prev_exec"
     AI_GUARD_CMD_DISPLAY="$prev_display"
     if [[ $rc -ne 0 ]]; then
-      AI_GUARD_TRAP_ACTIVE=0
-      return 1
+      zle redisplay
+      return 0
     fi
-    AI_GUARD_DANGER_WORD_ACK=1
-    AI_GUARD_PENDING_DANGER="0"
-    AI_GUARD_PENDING_CMDLINE=""
   fi
-
-  AI_GUARD_TRAP_ACTIVE=0
-  return 0
+  zle .accept-line
 }
+
+if [[ -n "${ZSH_VERSION:-}" && -o interactive ]]; then
+  zle -N accept-line _ai_guard_accept_line
+fi
 
 ai_guard_block() {
   local cmd_display="$1"
