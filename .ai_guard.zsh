@@ -263,9 +263,11 @@ _ai_guard_precmd() {
   AI_GUARD_TRAP_ACTIVE=0
 }
 
-typeset -ga precmd_functions
-if (( ${precmd_functions[(Ie)_ai_guard_precmd]} == 0 )); then
-  precmd_functions+=_ai_guard_precmd
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+  typeset -ga precmd_functions
+  if (( ${precmd_functions[(Ie)_ai_guard_precmd]} == 0 )); then
+    precmd_functions+=_ai_guard_precmd
+  fi
 fi
 
 TRAPDEBUG() {
