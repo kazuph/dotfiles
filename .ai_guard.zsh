@@ -198,7 +198,10 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # ※ git push は確認不要
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
-_AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted gparted git gh npm npx pnpm pnpx yarn bun bunx deno cargo firebase vercel flyctl fly wrangler netlify railway render amplify cdk serverless sls pulumi terraform)
+_AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted gparted git gh sh bash zsh dash ksh fish nu aws npm npx pnpm pnpx yarn bun bunx deno cargo firebase vercel flyctl fly wrangler netlify railway render amplify cdk serverless sls pulumi terraform)
+
+_AI_GUARD_DANGER_WORDS=(publish deploy put)
+_AI_GUARD_DANGER_REGEX="(^|[^[:alnum:]])($(printf "%s|" "${_AI_GUARD_DANGER_WORDS[@]}" | sed 's/|$//'))([^[:alnum:]]|$)"
 
 # 自動承認対象のパスかチェック（/tmp, /private/tmp, .artifacts/ 以下）
 # パストラバーサル攻撃を防ぐため .. を含むパスは拒否
@@ -235,6 +238,14 @@ _ai_guard_all_rm_paths_safe() {
     _ai_guard_is_safe_rm_path "$arg" || return 1
   done
   return 0
+}
+
+_ai_guard_contains_danger_word() {
+  local cmd_line="$*"
+  [[ -n "$cmd_line" ]] || return 1
+  local cmd_line_l="${cmd_line:l}"
+  [[ "$cmd_line_l" =~ $_AI_GUARD_DANGER_REGEX ]] && return 0
+  return 1
 }
 
 AI_GUARD_BLOCK_REASON=""
@@ -427,13 +438,14 @@ _ai_guard_is_target() {
 
 _ai_guard_need_prompt() {
   local cmd="$1"; shift
+  local cmd_line="$cmd"
+  if [[ "$#" -gt 0 ]]; then
+    cmd_line="$cmd_line $*"
+  fi
 
-  # グローバルチェック: 引数のどこかに publish または deploy が含まれていれば確認
-  # npx cdk deploy, bunx serverless deploy 等のケースに対応
-  local arg
-  for arg in "$@"; do
-    [[ "$arg" == publish || "$arg" == deploy ]] && return 0
-  done
+  if _ai_guard_contains_danger_word "$cmd_line"; then
+    return 0
+  fi
 
   case "$cmd" in
     rm|rmdir|rimraf|trash)
