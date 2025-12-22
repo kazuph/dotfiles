@@ -39,10 +39,25 @@ def emit_decision(decision: str, reason: Optional[str] = None) -> None:
 
 def get_target_directory(input_data: Dict) -> str:
     tool_input = input_data.get("tool_input", {})
-    for key in ("file_path", "notebook_path"):
+    for key in ("file_path", "path", "notebook_path"):
         path = tool_input.get(key)
-        if path:
+        if isinstance(path, str) and path:
             return os.path.dirname(os.path.abspath(path))
+    for key in ("file_paths", "paths"):
+        paths = tool_input.get(key)
+        if isinstance(paths, list) and paths:
+            for candidate in paths:
+                if isinstance(candidate, str) and candidate:
+                    return os.path.dirname(os.path.abspath(candidate))
+    edits = tool_input.get("edits")
+    if isinstance(edits, list):
+        for edit in edits:
+            if not isinstance(edit, dict):
+                continue
+            for key in ("file_path", "path", "notebook_path"):
+                path = edit.get(key)
+                if isinstance(path, str) and path:
+                    return os.path.dirname(os.path.abspath(path))
     if tool_input.get("command"):
         return input_data.get("cwd", os.getcwd())
     return input_data.get("cwd", os.getcwd())
