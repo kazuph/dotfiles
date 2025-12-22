@@ -8,7 +8,6 @@
     "MCP_TIMEOUT": "1800000",
     "BASH_MAX_OUTPUT_LENGTH": "80000",
     "MAX_MCP_OUTPUT_TOKENS": "80000",
-    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "80000",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "false",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "true",
     "DISABLE_ERROR_REPORTING": "true",
@@ -23,7 +22,6 @@
     "deny": [],
     "defaultMode": "default"
   },
-  "model": "opus",
   "hooks": {
     "PreToolUse": [
       {
@@ -62,7 +60,8 @@
     "learning-output-style@claude-code-plugins": true,
     "plugin-dev@claude-code-plugins": false,
     "pr-review-toolkit@claude-code-plugins": false,
-    "reviw-plugin@reviw-marketplace": true
+    "reviw-plugin@reviw-marketplace": true,
+    "claude-mem@thedotmack": false
   },
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
