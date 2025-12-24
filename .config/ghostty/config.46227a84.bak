@@ -1,0 +1,24 @@
+# Ghostty Configuration
+
+# Font - UDEV Gothic (UDフォント + JetBrains Mono + Nerd Font)
+font-family = "UDEV Gothic 35NF"
+font-size = 14
+
+# Window
+window-padding-x = 10
+window-padding-y = 10
+window-decoration = true
+
+# Cursor
+cursor-style = block
+cursor-style-blink = true
+
+# Theme (Catppuccin Mocha風)
+background = 1e1e2e
+foreground = cdd6f4
+
+# Scrollback
+scrollback-limit = 10000
+
+# Shell integration
+shell-integration = zsh
