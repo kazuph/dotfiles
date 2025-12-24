@@ -22,7 +22,7 @@ export PATH="/Users/kazuph/.local/bin:$PATH"
 export BASH_ENV="$HOME/dotfiles/.bashrc"
 
 # Rust cargo binaries (ensure priority over ~/.local/bin)
-. "$HOME/.cargo/env"
+[[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # Function to prioritize ~/.cargo/bin over ~/.local/bin
 prioritize_cargo_bin() {

@@ -586,3 +586,6 @@ export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
 # 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
 # 危険コマンド確認フックを共通ファイルに集約
 [[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
+
+# Modern CLI tools (starship, zoxide, eza, bat, etc.)
+source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"

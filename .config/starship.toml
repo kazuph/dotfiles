@@ -1,0 +1,118 @@
+# Starship Configuration - Modern Terminal Prompt
+# https://starship.rs/config/
+
+# 全体設定
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$git_state\
+$nodejs\
+$python\
+$rust\
+$golang\
+$ruby\
+$docker_context\
+$aws\
+$cmd_duration\
+$line_break\
+$character"""
+
+# プロンプトを2行にしない（コンパクトモード）
+add_newline = false
+
+# コマンド実行時間
+[cmd_duration]
+min_time = 2_000
+format = "[$duration]($style) "
+style = "yellow"
+
+# ディレクトリ
+[directory]
+truncation_length = 5
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+
+# Git branch
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold purple"
+
+# Git status
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold red"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# Character (プロンプト)
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# Node.js
+[nodejs]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold green"
+detect_files = ["package.json", ".node-version"]
+
+# Python
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
+style = "bold yellow"
+
+# Rust
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold red"
+
+# Go
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold cyan"
+
+# Ruby
+[ruby]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold red"
+
+# Docker
+[docker_context]
+format = "[$symbol$context]($style) "
+symbol = " "
+style = "bold blue"
+
+# AWS
+[aws]
+format = '[$symbol($profile )(\($region\) )]($style)'
+symbol = " "
+style = "bold orange"
+
+# ユーザー名（root時のみ表示）
+[username]
+show_always = false
+format = "[$user]($style)@"
+
+# ホスト名（SSH時のみ表示）
+[hostname]
+ssh_only = true
+format = "[$hostname]($style) "
+style = "bold green"
