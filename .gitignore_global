@@ -36,3 +36,8 @@ freertos
 .ms-playwright
 .allow-main
 /.worktree
+
+# artifacts (screenshots, videos, evidence)
+.artifacts/
+.reports/
+

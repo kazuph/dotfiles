@@ -141,9 +141,6 @@ def is_safe_git_command(subcmd: Optional[str], args: List[str]) -> bool:
         return True
     if subcmd == "branch":
         forbidden = {
-            "-d",
-            "-D",
-            "--delete",
             "-m",
             "-M",
             "--move",
@@ -163,8 +160,8 @@ def is_safe_git_command(subcmd: Optional[str], args: List[str]) -> bool:
     if subcmd == "worktree":
         if not args:
             return False
-        # allow listing existing worktrees and creating new ones
-        if args[0] in {"list", "add"}:
+        # allow listing, creating, and removing worktrees
+        if args[0] in {"list", "add", "remove"}:
             return True
         return False
     if subcmd == "gtr":
@@ -350,7 +347,8 @@ def main():
 
         if tool_name == "Bash":
             aliases = load_git_aliases(target_dir)
-            has_git = "git" in command_str
+            # 単語境界を考慮（github.com 等の誤検出を防ぐ）
+            has_git = bool(re.search(r'\bgit\b', command_str))
             if has_git:
                 if git_segments_all_safe(command_str, aliases):
                     emit_decision("allow", "mainだが安全なgitコマンドを許可")

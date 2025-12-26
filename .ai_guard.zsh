@@ -123,7 +123,7 @@ on run argv
 end run
 APPLESCRIPT
         dialog_output=$(osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" 2>/dev/null) || dialog_output=""
-        rm -f "$tmp_as"
+        builtin command rm -f "$tmp_as"
       fi
     fi
 
@@ -169,18 +169,10 @@ APPLESCRIPT
     printf "✅ 承認: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
   fi
 
-  if [[ "$cmd" == "rm" ]]; then
-    if command -v trash >/dev/null 2>/dev/null; then
-      builtin command trash "${args[@]}"
-    else
-      builtin command rm "${args[@]}"
-    fi
+  if [[ -n "${AI_GUARD_EXEC:-}" ]]; then
+    eval "$AI_GUARD_EXEC"
   else
-    if [[ -n "${AI_GUARD_EXEC:-}" ]]; then
-      eval "$AI_GUARD_EXEC"
-    else
-      builtin command "$cmd" "${args[@]}"
-    fi
+    builtin command "$cmd" "${args[@]}"
   fi
   AI_GUARD_ACTIVE=${_ai_guard_prev_active}
 }
@@ -337,13 +329,29 @@ _ai_guard_eval_git_push() {
   AI_GUARD_BLOCK_REASON=""
   AI_GUARD_GIT_PUSH_DECISION="allow"
 
+  # .allow-main ファイルが存在する場合は main/master への push を許可
+  local git_root allow_main_flag=0
+  git_root=$(builtin command git rev-parse --show-toplevel 2>/dev/null)
+  if [[ -n "$git_root" && -f "${git_root}/.allow-main" ]]; then
+    allow_main_flag=1
+  fi
+
   local arg remote_name="" remote_name_set=0
   for arg in "$@"; do
     case "$arg" in
-      --force|-f|main|*/main|*:main|master|*/master|*:master)
-        AI_GUARD_BLOCK_REASON="main/master/--force/-f は禁止です。"
-        AI_GUARD_GIT_PUSH_DECISION="block"
+      --force|-f)
+        # --force は .allow-main があっても確認が必要
+        AI_GUARD_BLOCK_REASON="--force/-f は確認が必要です。"
+        AI_GUARD_GIT_PUSH_DECISION="prompt"
         return 0
+        ;;
+      main|*/main|*:main|master|*/master|*:master)
+        # .allow-main がある場合は許可、なければブロック
+        if [[ "$allow_main_flag" -eq 0 ]]; then
+          AI_GUARD_BLOCK_REASON="main/master は禁止です。許可するにはリポジトリルートに .allow-main ファイルを作成してください。"
+          AI_GUARD_GIT_PUSH_DECISION="block"
+          return 0
+        fi
         ;;
       --force-with-lease)
         AI_GUARD_BLOCK_REASON="--force-with-lease は確認が必要です。"
@@ -491,15 +499,18 @@ _ai_guard_need_prompt() {
   fi
 
   case "$cmd" in
-    rm|rmdir|rimraf|trash)
+    rmdir|rimraf|trash)
       # /tmp や .artifacts/ 以下は自動承認
       _ai_guard_all_rm_paths_safe "$@" && return 1
       return 0
       ;;
     mv)
-      # /tmp や .artifacts/ 以下への移動は自動承認
-      _ai_guard_all_rm_paths_safe "$@" && return 1
-      return 0
+      # backup/bak 系の単語が含まれる場合のみ確認（上書きバックアップ事故防止）
+      local mv_args="$*"
+      if [[ "$mv_args" =~ (backup|bak|\.bak|\.backup|_backup|_bak) ]]; then
+        return 0
+      fi
+      return 1
       ;;
     dd|mkfs|fdisk|diskutil|format|parted|gparted) return 0 ;;
     git)
@@ -554,6 +565,21 @@ _ai_guard_need_prompt() {
 
 _ai_guard_dispatch() {
   local cmd="$1"; shift
+
+  # rm は AI/Human 関係なく即時ブロック（trashを使用すること）
+  if [[ "$cmd" == "rm" ]]; then
+    printf "❌ rm コマンドは禁止されています。trash コマンドを使用してください。\n" >&2
+    printf "\n" >&2
+    printf "📖 trash コマンドの使い方:\n" >&2
+    printf "  trash <file>       # ファイルをゴミ箱に移動\n" >&2
+    printf "  trash <dir>        # ディレクトリをゴミ箱に移動\n" >&2
+    printf "  trash -l           # ゴミ箱の中身を一覧表示\n" >&2
+    printf "  trash -e           # ゴミ箱を空にする\n" >&2
+    printf "\n" >&2
+    printf "💡 ゴミ箱から復元: Finder → ゴミ箱 → 右クリック → 戻す\n" >&2
+    return 1
+  fi
+
   # Humanセッションではガードを通さず即実行
   if _ai_guard_is_ai_session; then :; else
     builtin command "$cmd" "$@"
