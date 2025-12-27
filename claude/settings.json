@@ -56,10 +56,12 @@
     "commit-commands@claude-code-plugins": false,
     "explanatory-output-style@claude-code-plugins": true,
     "feature-dev@claude-code-plugins": false,
-    "frontend-design@claude-code-plugins": true,
     "plugin-dev@claude-code-plugins": false,
     "pr-review-toolkit@claude-code-plugins": false,
-    "reviw-plugin@reviw-marketplace": true
+    "reviw-plugin@reviw-marketplace": true,
+    "linear@claude-plugins-official": true,
+    "firebase@claude-plugins-official": true,
+    "frontend-design@claude-code-plugins": true
   },
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
