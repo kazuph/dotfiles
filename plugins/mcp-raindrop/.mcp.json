@@ -1,0 +1,6 @@
+{
+  "mcp-raindrop": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-raindrop"]
+  }
+}

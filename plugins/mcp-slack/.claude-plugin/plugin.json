@@ -1,0 +1,12 @@
+{
+  "name": "mcp-slack",
+  "version": "0.5.0",
+  "description": "Slack workspace integration for Claude - Access Slack workspaces without admin approval",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-slack",
+  "license": "MIT",
+  "keywords": ["mcp", "slack", "slack-api", "model context protocol"]
+}

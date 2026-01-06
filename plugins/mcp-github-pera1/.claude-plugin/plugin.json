@@ -1,0 +1,12 @@
+{
+  "name": "mcp-github-pera1",
+  "version": "0.5.0",
+  "description": "GitHub code extraction via Pera1 for Claude - Extract code from GitHub repos",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-github-pera1",
+  "license": "MIT",
+  "keywords": ["github", "code", "mcp", "claude", "pera1"]
+}

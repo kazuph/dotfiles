@@ -1,0 +1,113 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kazuph-dotfiles",
+  "description": "kazuph's personal Claude Code plugins - MCP servers and tools",
+  "owner": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "mcp-browser-tabs",
+      "description": "Chrome browser tabs info for Claude",
+      "category": "development",
+      "source": "./plugins/mcp-browser-tabs"
+    },
+    {
+      "name": "mcp-chrome-devtools",
+      "description": "Chrome DevTools Protocol MCP for browser automation",
+      "category": "development",
+      "source": "./plugins/mcp-chrome-devtools"
+    },
+    {
+      "name": "mcp-fetch",
+      "description": "HTTP fetch MCP server",
+      "category": "development",
+      "source": "./plugins/mcp-fetch"
+    },
+    {
+      "name": "mcp-github-pera1",
+      "description": "GitHub code extraction via Pera1 (local)",
+      "category": "development",
+      "source": "./plugins/mcp-github-pera1"
+    },
+    {
+      "name": "mcp-gmail-gas",
+      "description": "Gmail via Google Apps Script MCP",
+      "category": "productivity",
+      "source": "./plugins/mcp-gmail-gas"
+    },
+    {
+      "name": "mcp-google-image-search",
+      "description": "Google image search MCP",
+      "category": "development",
+      "source": "./plugins/mcp-google-image-search"
+    },
+    {
+      "name": "mcp-limitless",
+      "description": "Limitless AI pendant lifelogs MCP (SSE)",
+      "category": "productivity",
+      "source": "./plugins/mcp-limitless"
+    },
+    {
+      "name": "mcp-linear",
+      "description": "Linear issue tracking MCP (SSE)",
+      "category": "productivity",
+      "source": "./plugins/mcp-linear"
+    },
+    {
+      "name": "mcp-obsidian",
+      "description": "Obsidian vault MCP server",
+      "category": "productivity",
+      "source": "./plugins/mcp-obsidian"
+    },
+    {
+      "name": "mcp-pera1-remote",
+      "description": "GitHub code extraction via Pera1 remote service (SSE)",
+      "category": "development",
+      "source": "./plugins/mcp-pera1-remote"
+    },
+    {
+      "name": "mcp-playwright",
+      "description": "Playwright browser automation MCP",
+      "category": "development",
+      "source": "./plugins/mcp-playwright"
+    },
+    {
+      "name": "mcp-raindrop",
+      "description": "Raindrop.io bookmark manager MCP",
+      "category": "productivity",
+      "source": "./plugins/mcp-raindrop"
+    },
+    {
+      "name": "mcp-screenshot",
+      "description": "Screenshot capture MCP",
+      "category": "development",
+      "source": "./plugins/mcp-screenshot"
+    },
+    {
+      "name": "mcp-slack",
+      "description": "Slack messaging MCP",
+      "category": "productivity",
+      "source": "./plugins/mcp-slack"
+    },
+    {
+      "name": "mcp-taskmanager",
+      "description": "Task manager MCP",
+      "category": "productivity",
+      "source": "./plugins/mcp-taskmanager"
+    },
+    {
+      "name": "mcp-tmux",
+      "description": "Tmux session management MCP",
+      "category": "development",
+      "source": "./plugins/mcp-tmux"
+    },
+    {
+      "name": "mcp-youtube",
+      "description": "YouTube video information MCP",
+      "category": "development",
+      "source": "./plugins/mcp-youtube"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "mcp-screenshot": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-screenshot"]
+  }
+}

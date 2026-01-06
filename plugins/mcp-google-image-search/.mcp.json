@@ -1,0 +1,6 @@
+{
+  "mcp-google-image-search": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-google-image-search"]
+  }
+}

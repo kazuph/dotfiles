@@ -1,0 +1,6 @@
+{
+  "mcp-obsidian": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-obsidian"]
+  }
+}

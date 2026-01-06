@@ -1,0 +1,12 @@
+{
+  "name": "mcp-youtube",
+  "version": "0.5.0",
+  "description": "YouTube subtitle extraction for Claude - Extract subtitles from YouTube videos",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-youtube",
+  "license": "MIT",
+  "keywords": ["youtube", "subtitles", "mcp", "claude", "captions"]
+}

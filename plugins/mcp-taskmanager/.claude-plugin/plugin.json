@@ -1,0 +1,12 @@
+{
+  "name": "mcp-taskmanager",
+  "version": "0.5.0",
+  "description": "Task management for Claude - Manage tasks with MCP",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-taskmanager",
+  "license": "MIT",
+  "keywords": ["taskmanager", "mcp", "claude"]
+}

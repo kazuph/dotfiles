@@ -1,0 +1,11 @@
+{
+  "name": "mcp-limitless",
+  "version": "1.0.1",
+  "description": "Limitless Pendant lifelogs and audio access via official MCP API",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["limitless", "pendant", "lifelogs", "audio", "mcp", "claude"]
+}

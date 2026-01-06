@@ -1,0 +1,12 @@
+{
+  "name": "mcp-google-image-search",
+  "version": "0.5.0",
+  "description": "Google Image Search for Claude - Search images via Google Custom Search or SerpAPI",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-google-image-search",
+  "license": "MIT",
+  "keywords": ["mcp", "model-context-protocol", "google-images", "image-search", "search-api", "claude", "ai", "serpapi", "custom-search"]
+}

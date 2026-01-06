@@ -1,0 +1,6 @@
+{
+  "mcp-playwright": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-playwright"]
+  }
+}

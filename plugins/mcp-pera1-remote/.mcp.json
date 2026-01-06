@@ -1,0 +1,6 @@
+{
+  "pera1-remote": {
+    "type": "sse",
+    "url": "https://pera1.kazu-san.workers.dev/mcp"
+  }
+}

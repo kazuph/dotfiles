@@ -1,18 +1,19 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
+    "ENABLE_TOOL_SEARCH": "true",
     "MAX_THINKING_TOKENS": "30000",
     "BASH_DEFAULT_TIMEOUT_MS": "900000",
     "BASH_MAX_TIMEOUT_MS": "1800000",
     "MCP_TOOL_TIMEOUT": "1800000",
     "MCP_TIMEOUT": "1800000",
-    "BASH_MAX_OUTPUT_LENGTH": "80000",
-    "MAX_MCP_OUTPUT_TOKENS": "80000",
+    "BASH_MAX_OUTPUT_LENGTH": "100000",
+    "MAX_MCP_OUTPUT_TOKENS": "100000",
     "CLAUDE_CODE_ENABLE_TELEMETRY": "false",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "true",
     "DISABLE_ERROR_REPORTING": "true",
     "DISABLE_TELEMETRY": "true",
-    "DISABLE_MICROCOMPACT": "true"
+    "DISABLE_MICROCOMPACT": "false"
   },
   "permissions": {
     "allow": [
@@ -54,14 +55,29 @@
     "security-guidance@claude-code-plugins": false,
     "code-review@claude-code-plugins": false,
     "commit-commands@claude-code-plugins": false,
-    "explanatory-output-style@claude-code-plugins": true,
     "feature-dev@claude-code-plugins": false,
-    "plugin-dev@claude-code-plugins": false,
     "pr-review-toolkit@claude-code-plugins": false,
-    "reviw-plugin@reviw-marketplace": true,
-    "linear@claude-plugins-official": true,
-    "firebase@claude-plugins-official": true,
-    "frontend-design@claude-code-plugins": true
+    "frontend-design@claude-code-plugins": true,
+    "reviw-plugin@reviw-plugins": true,
+    "slack@claude-plugins-official": true,
+    "mcp-browser-tabs@kazuph-dotfiles": true,
+    "mcp-chrome-devtools@kazuph-dotfiles": true,
+    "mcp-fetch@kazuph-dotfiles": true,
+    "mcp-github-pera1@kazuph-dotfiles": true,
+    "mcp-gmail-gas@kazuph-dotfiles": true,
+    "mcp-google-image-search@kazuph-dotfiles": true,
+    "mcp-limitless@kazuph-dotfiles": true,
+    "mcp-linear@kazuph-dotfiles": true,
+    "mcp-obsidian@kazuph-dotfiles": true,
+    "mcp-pera1-remote@kazuph-dotfiles": true,
+    "mcp-playwright@kazuph-dotfiles": true,
+    "mcp-raindrop@kazuph-dotfiles": true,
+    "mcp-screenshot@kazuph-dotfiles": true,
+    "mcp-slack@kazuph-dotfiles": true,
+    "mcp-taskmanager@kazuph-dotfiles": true,
+    "mcp-tmux@kazuph-dotfiles": true,
+    "mcp-youtube@kazuph-dotfiles": true,
+    "claude-mem@kazuph-claude-mem-jp": true
   },
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {

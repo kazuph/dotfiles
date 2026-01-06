@@ -1,0 +1,6 @@
+{
+  "mcp-youtube": {
+    "command": "npx",
+    "args": ["-y", "@kazuph/mcp-youtube"]
+  }
+}

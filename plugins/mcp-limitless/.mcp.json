@@ -1,0 +1,6 @@
+{
+  "limitless": {
+    "type": "sse",
+    "url": "https://api.limitless.ai/mcp"
+  }
+}

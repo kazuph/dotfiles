@@ -1,0 +1,22 @@
+{
+  "enabledPlugins": {
+    "context7@kazuph-dotfiles": true,
+    "mcp-browser-tabs@kazuph-dotfiles": true,
+    "mcp-pera1-remote@kazuph-dotfiles": true,
+    "mcp-limitless@kazuph-dotfiles": true,
+    "mcp-linear@kazuph-dotfiles": true,
+    "mcp-chrome-devtools@kazuph-dotfiles": true,
+    "mcp-fetch@kazuph-dotfiles": true,
+    "mcp-github-pera1@kazuph-dotfiles": true,
+    "mcp-gmail-gas@kazuph-dotfiles": true,
+    "mcp-google-image-search@kazuph-dotfiles": true,
+    "mcp-obsidian@kazuph-dotfiles": true,
+    "mcp-playwright@kazuph-dotfiles": true,
+    "mcp-raindrop@kazuph-dotfiles": true,
+    "mcp-screenshot@kazuph-dotfiles": true,
+    "mcp-slack@kazuph-dotfiles": true,
+    "mcp-taskmanager@kazuph-dotfiles": true,
+    "mcp-tmux@kazuph-dotfiles": true,
+    "mcp-youtube@kazuph-dotfiles": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "mcp-chrome-devtools",
+  "version": "1.0.0",
+  "description": "Chrome DevTools integration for Claude - browser automation, screenshots, console logs",
+  "author": {
+    "name": "Google",
+    "url": "https://github.com/anthropics/anthropic-quickstarts"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["chrome", "devtools", "browser", "automation", "mcp", "claude"]
+}

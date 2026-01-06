@@ -1,0 +1,12 @@
+{
+  "name": "mcp-playwright",
+  "version": "0.5.0",
+  "description": "Playwright browser automation for Claude - Automate browser actions",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-playwright",
+  "license": "MIT",
+  "keywords": ["mcp", "playwright", "browser", "automation"]
+}

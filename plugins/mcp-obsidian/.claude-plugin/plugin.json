@@ -1,0 +1,12 @@
+{
+  "name": "mcp-obsidian",
+  "version": "0.5.0",
+  "description": "Obsidian vault management for Claude - Search and read notes from Obsidian vaults",
+  "author": {
+    "name": "kazuph",
+    "url": "https://github.com/kazuph"
+  },
+  "repository": "https://github.com/kazuph/mcp-obsidian",
+  "license": "MIT",
+  "keywords": ["obsidian", "mcp", "claude", "notes", "vault"]
+}
