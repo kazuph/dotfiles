@@ -3,6 +3,54 @@
 [[ -n ${AI_GUARD_LOADED:-} ]] && return
 AI_GUARD_LOADED=1
 
+# ============================================================================
+# CRITICAL SECURITY: .allow-main 保護機構
+# AIプロセスは .allow-main を含む全てのコマンドを即時ブロック
+# このセクションは最優先で実行され、バイパス不可能
+# ============================================================================
+_AI_GUARD_PROTECTED_PATTERNS=(
+  '.allow-main'
+  '.allow_main'
+  'allow-main'
+  'allow_main'
+)
+
+_ai_guard_check_protected_pattern() {
+  local cmd_line="$1"
+  local pattern
+  for pattern in "${_AI_GUARD_PROTECTED_PATTERNS[@]}"; do
+    if [[ "$cmd_line" == *"$pattern"* ]]; then
+      return 0  # 保護パターンを検出
+    fi
+  done
+  return 1  # 安全
+}
+
+_ai_guard_block_protected() {
+  local cmd_line="$1"
+  printf "\n" >&2
+  printf "🚫🚫🚫 SECURITY BLOCK 🚫🚫🚫\n" >&2
+  printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
+  printf "❌ AIプロセスによる .allow-main 関連操作は完全に禁止されています\n" >&2
+  printf "\n" >&2
+  printf "ブロックされたコマンド:\n" >&2
+  printf "  %s\n" "$cmd_line" >&2
+  printf "\n" >&2
+  printf "理由: .allow-main はセキュリティ上重要なファイルです。\n" >&2
+  printf "      AIがこのファイルを操作することは許可されていません。\n" >&2
+  printf "\n" >&2
+  printf "必要な場合は、人間が手動で操作してください。\n" >&2
+  printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
+  printf "\n" >&2
+
+  # ログに記録
+  local log_file="$HOME/.ai_guard_security.log"
+  printf "%s\tBLOCKED_PROTECTED\t%s\t[AI attempted to access protected pattern]\n" \
+    "$(date -Iseconds)" "$cmd_line" >> "$log_file" 2>/dev/null
+}
+
+# ============================================================================
+
 # Detect whether this shell is driven by an AI tool (Codex/Claude等)。
 _ai_guard_is_ai_session() {
   [[ "${AI_GUARD_FORCE_AI:-0}" == "1" ]] && return 0
@@ -205,7 +253,8 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # ※ git push は確認不要
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
-_AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted gparted git gh sh bash zsh dash ksh fish nu aws npm npx pnpm pnpx yarn bun bunx deno cargo firebase vercel flyctl fly wrangler netlify railway render amplify cdk serverless sls pulumi terraform)
+# ファイル作成系コマンド（touch, tee, cp）も追加して .allow-main 作成を防止
+_AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted gparted git gh sh bash zsh dash ksh fish nu aws npm npx pnpm pnpx yarn bun bunx deno cargo firebase vercel flyctl fly wrangler netlify railway render amplify cdk serverless sls pulumi terraform touch tee cp ln)
 
 _AI_GUARD_DANGER_WORDS=(publish deploy put)
 _AI_GUARD_DANGER_REGEX="(^|[^[:alnum:]])($(printf "%s|" "${_AI_GUARD_DANGER_WORDS[@]}" | sed 's/|$//'))([^[:alnum:]]|$)"
@@ -576,9 +625,16 @@ _ai_guard_need_prompt() {
 
 _ai_guard_dispatch() {
   local cmd="$1"; shift
+  local full_cmd="$cmd $*"
 
-  # rm は AI/Human 関係なく即時ブロック（trashを使用すること）
-  if [[ "$cmd" == "rm" ]]; then
+  # CRITICAL: AIセッションで保護パターンを含む場合は即時ブロック（最優先）
+  if _ai_guard_is_ai_session && _ai_guard_check_protected_pattern "$full_cmd"; then
+    _ai_guard_block_protected "$full_cmd"
+    return 1
+  fi
+
+  # rm は AIセッションのみブロック（Humanは許可）
+  if [[ "$cmd" == "rm" ]] && _ai_guard_is_ai_session; then
     # rmオプションを除去してパスのみ抽出
     local trash_targets=()
     local arg
@@ -589,6 +645,12 @@ _ai_guard_dispatch() {
     done
 
     printf "❌ rm コマンドは禁止されています。\n" >&2
+    printf "\n" >&2
+    printf "📖 trash コマンドの使い方:\n" >&2
+    printf "  trash <file>       # ファイルをゴミ箱に移動\n" >&2
+    printf "  trash <dir>        # ディレクトリをゴミ箱に移動\n" >&2
+    printf "  trash -l           # ゴミ箱の中身を一覧表示\n" >&2
+    printf "  trash -e           # ゴミ箱を空にする\n" >&2
     printf "\n" >&2
     if [[ ${#trash_targets[@]} -gt 0 ]]; then
       printf "📋 代わりにこちらをコピーして実行:\n" >&2
@@ -662,6 +724,14 @@ reset() {
 # command 経由のバイパスも捕捉
 command() {
   local cmd="$1"; shift
+  local full_cmd="$cmd $*"
+
+  # CRITICAL: AIセッションで保護パターンを含む場合は即時ブロック
+  if _ai_guard_is_ai_session && _ai_guard_check_protected_pattern "$full_cmd"; then
+    _ai_guard_block_protected "$full_cmd"
+    return 1
+  fi
+
   if _ai_guard_is_ai_session; then :; else
     builtin command "$cmd" "$@"
     return $?
@@ -677,3 +747,75 @@ command() {
     builtin command "$cmd" "$@"
   fi
 }
+
+# ============================================================================
+# preexec フック: 全コマンド実行前の最終防衛線
+# ラップされていないコマンドも含め、全てのコマンドをチェック
+# ============================================================================
+_ai_guard_preexec_protected_check() {
+  local cmd_line="$1"
+
+  # AIセッションでない場合はスキップ
+  _ai_guard_is_ai_session || return 0
+
+  # 保護パターンを含む場合はブロック
+  if _ai_guard_check_protected_pattern "$cmd_line"; then
+    _ai_guard_block_protected "$cmd_line"
+    # preexec からはコマンドを中断できないため、
+    # 代わりに BUFFER を空にして実行を防ぐ
+    # ただし preexec は実行前の最後の通知なので、
+    # 実際のブロックは precmd/accept-line で行う必要がある
+    return 1
+  fi
+
+  return 0
+}
+
+# precmd フック用のフラグ
+_AI_GUARD_BLOCKED_CMD=""
+
+# accept-line をオーバーライドして、保護パターンを含むコマンドをブロック
+_ai_guard_accept_line_protected() {
+  local cmd_line="$BUFFER"
+
+  # AIセッションで保護パターンを含む場合はブロック
+  if _ai_guard_is_ai_session && _ai_guard_check_protected_pattern "$cmd_line"; then
+    _ai_guard_block_protected "$cmd_line"
+    BUFFER=""
+    zle redisplay
+    return 0
+  fi
+
+  # 元の accept-line 処理を実行
+  # danger word チェック（既存の _ai_guard_accept_line のロジック）
+  local cmd_trim="${cmd_line##[[:space:]]#}"
+  local cmd_name="${cmd_trim%% *}"
+  if [[ "$cmd_name" == "git" ]]; then
+    zle .accept-line
+    return 0
+  fi
+  if _ai_guard_contains_danger_word "$cmd_line"; then
+    local prev_exec="${AI_GUARD_EXEC:-}"
+    local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
+    AI_GUARD_EXEC=":"
+    AI_GUARD_CMD_DISPLAY="$cmd_line"
+    ai_extreme_confirm :
+    local rc=$?
+    AI_GUARD_EXEC="$prev_exec"
+    AI_GUARD_CMD_DISPLAY="$prev_display"
+    if [[ $rc -ne 0 ]]; then
+      zle redisplay
+      return 0
+    fi
+  fi
+  zle .accept-line
+}
+
+# 対話シェルの場合、accept-line を再定義
+if [[ -n "${ZSH_VERSION:-}" && -o interactive ]]; then
+  zle -N accept-line _ai_guard_accept_line_protected
+fi
+
+# preexec フックも追加（二重防御）
+autoload -Uz add-zsh-hook
+add-zsh-hook preexec _ai_guard_preexec_protected_check
