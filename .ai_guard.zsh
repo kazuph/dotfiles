@@ -44,8 +44,9 @@ ai_extreme_confirm() {
     printf "⚠️ ログファイル %s を作成できませんでした。権限を確認してください。\n" "$log_file" >&2
   fi
 
+  local cwd_short="" context_block="" context_for_log=""
   {
-    local cwd shell_proc parent_proc tty_name context_block context_for_log tmux_info tmux_window_name tmux_window_index
+    local cwd shell_proc parent_proc tty_name tmux_info tmux_window_name tmux_window_index
     cwd="$(pwd -P 2>/dev/null || pwd)"
     shell_proc="$(ps -o comm= -p "$$" 2>/dev/null | tr -d '\n')"
     parent_proc="$(ps -o comm= -p "$PPID" 2>/dev/null | tr -d '\n')"
@@ -54,14 +55,22 @@ ai_extreme_confirm() {
     [[ -z "$shell_proc" ]] && shell_proc="(unknown)"
     [[ -z "$parent_proc" ]] && parent_proc="(unknown)"
     local base_context_block cwd_display
+    # 末尾2階層を強調表示（例: /Users/kazuph/projects/myapp → projects/myapp）
+    local parent_dir=$(dirname "$cwd")
+    local last_two="${parent_dir##*/}/${cwd##*/}"
+    [[ "$parent_dir" == "/" ]] && last_two="${cwd##*/}"
+    [[ "$cwd" == "/" ]] && last_two="/"
+    cwd_short="$last_two"
+
     if [[ "$cwd" == "$HOME" ]]; then
       cwd_display="~"
+      cwd_short="~"
     elif [[ "$cwd" == "$HOME"/* ]]; then
       cwd_display="~/${cwd#"$HOME/"}"
     else
       cwd_display="$cwd"
     fi
-    base_context_block=$'- 実行ディレクトリ: '"$cwd_display"$'\n- シェル: '"$shell_proc"$'\n- 親プロセス: '"$parent_proc"$'\n- TTY: '"$tty_name"
+    base_context_block=$'📁 '"$cwd_short"$'\n   ('"$cwd_display"$')\n- シェル: '"$shell_proc"$'\n- 親プロセス: '"$parent_proc"$'\n- TTY: '"$tty_name"
     context_for_log="[cwd:${cwd}] [shell:${shell_proc}] [ppid:${parent_proc}] [tty:${tty_name}]"
 
     # tmux 情報（TMUX_PANE が祖先プロセスの pane と一致する場合のみ）
@@ -86,9 +95,8 @@ ai_extreme_confirm() {
       fi
     fi
 
-    # 表示用コンテキストを組み立て（tmux情報→その他）
-    local context_block
-    context_block="$tmux_context_block$base_context_block"
+    # 表示用コンテキストを組み立て（📁ディレクトリを最上部に）
+    context_block="$base_context_block"$'\n'"$tmux_context_block"
   } >/dev/null
 
   local cmd_display cmd_display_for_prompt
@@ -113,16 +121,19 @@ ai_extreme_confirm() {
 on run argv
   set cmdText to item 1 of argv
   set ctxText to item 2 of argv
+  set titleText to item 3 of argv
   set promptText to "⚠️ 本当に実行しますか？" & return & cmdText & return & ctxText & return & return & "承認/却下の理由を入力してください。"
   try
-    set resp to display dialog promptText default answer "" buttons {"却下", "承認"} default button "却下" with icon stop
+    set resp to display dialog promptText default answer "" buttons {"却下", "承認"} default button "却下" with title titleText with icon stop
     return (button returned of resp) & linefeed & (text returned of resp)
   on error number -128
     return "ESC" & linefeed & ""
   end try
 end run
 APPLESCRIPT
-        dialog_output=$(osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" 2>/dev/null) || dialog_output=""
+        # タイトルに「コマンド @ ディレクトリ末尾2階層」を表示
+        local dialog_title="${cmd} @ ${cwd_short}"
+        dialog_output=$(osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" 2>/dev/null) || dialog_output=""
         builtin command rm -f "$tmp_as"
       fi
     fi
