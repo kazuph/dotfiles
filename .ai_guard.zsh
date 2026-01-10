@@ -259,7 +259,46 @@ _AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted
 _AI_GUARD_DANGER_WORDS=(publish deploy put)
 _AI_GUARD_DANGER_REGEX="(^|[^[:alnum:]])($(printf "%s|" "${_AI_GUARD_DANGER_WORDS[@]}" | sed 's/|$//'))([^[:alnum:]]|$)"
 
-# 自動承認対象のパスかチェック（/tmp, /private/tmp, .artifacts/ 以下）
+# AIセッションの起動ディレクトリを取得（PPIDのcwd）
+# キャッシュして複数回呼び出しを最適化
+_AI_GUARD_LAUNCH_DIR_CACHE=""
+_AI_GUARD_LAUNCH_GIT_ROOT_CACHE=""
+_AI_GUARD_LAUNCH_CACHE_DONE=0
+
+_ai_guard_get_ai_launch_dir() {
+  # キャッシュ済みなら返す
+  [[ "$_AI_GUARD_LAUNCH_CACHE_DONE" == "1" ]] && { printf "%s" "$_AI_GUARD_LAUNCH_DIR_CACHE"; return 0; }
+
+  local ppid_cwd=""
+  local pid="${PPID:-0}"
+
+  # lsofでPPIDのcwdを取得（macOS対応）
+  if command -v lsof >/dev/null 2>&1; then
+    ppid_cwd=$(lsof -p "$pid" -Fn 2>/dev/null | awk '/^n\// && prev == "fcwd" {print substr($0,2); exit} {prev=$0}')
+  fi
+
+  # 取得できない場合は空を返す
+  _AI_GUARD_LAUNCH_DIR_CACHE="$ppid_cwd"
+
+  # gitルートも同時にキャッシュ
+  if [[ -n "$ppid_cwd" ]]; then
+    _AI_GUARD_LAUNCH_GIT_ROOT_CACHE=$(builtin command git -C "$ppid_cwd" rev-parse --show-toplevel 2>/dev/null) || _AI_GUARD_LAUNCH_GIT_ROOT_CACHE=""
+  fi
+
+  _AI_GUARD_LAUNCH_CACHE_DONE=1
+  printf "%s" "$_AI_GUARD_LAUNCH_DIR_CACHE"
+}
+
+_ai_guard_get_ai_launch_git_root() {
+  # 先にキャッシュを確保
+  [[ "$_AI_GUARD_LAUNCH_CACHE_DONE" != "1" ]] && _ai_guard_get_ai_launch_dir >/dev/null
+  printf "%s" "$_AI_GUARD_LAUNCH_GIT_ROOT_CACHE"
+}
+
+# 自動承認対象のパスかチェック
+# - /tmp, /private/tmp, .artifacts/ 以下は常に自動承認
+# - git管理下で起動された場合、そのリポジトリ内は自動承認
+# - ホームディレクトリで起動された場合は常にダイアログ
 # パストラバーサル攻撃を防ぐため .. を含むパスは拒否
 _ai_guard_is_safe_rm_path() {
   local target="$1"
@@ -275,11 +314,37 @@ _ai_guard_is_safe_rm_path() {
     abs_path="$(pwd -P)/$target"
   fi
 
-  # /tmp または /private/tmp 以下
+  # /tmp または /private/tmp 以下は常に自動承認
   [[ "$abs_path" == /tmp/* || "$abs_path" == /private/tmp/* || "$abs_path" == /tmp || "$abs_path" == /private/tmp ]] && return 0
 
-  # .artifacts/ ディレクトリ内
+  # .artifacts/ ディレクトリ内は常に自動承認
   [[ "$abs_path" == */.artifacts/* || "$abs_path" == */.artifacts ]] && return 0
+
+  # AIセッションの場合、起動ディレクトリに基づく判定
+  if _ai_guard_is_ai_session; then
+    local launch_dir launch_git_root
+    launch_dir=$(_ai_guard_get_ai_launch_dir)
+
+    # 起動ディレクトリがホームディレクトリの場合は常にダイアログ
+    if [[ -z "$launch_dir" || "$launch_dir" == "$HOME" ]]; then
+      return 1  # 安全でない = ダイアログ表示
+    fi
+
+    # git管理下で起動された場合
+    launch_git_root=$(_ai_guard_get_ai_launch_git_root)
+    if [[ -n "$launch_git_root" ]]; then
+      # 削除対象がリポジトリ内なら自動承認
+      # abs_path が launch_git_root/ で始まるかチェック
+      if [[ "$abs_path" == "$launch_git_root"/* || "$abs_path" == "$launch_git_root" ]]; then
+        return 0  # 安全 = 自動承認
+      fi
+      # リポジトリ外はダイアログ
+      return 1
+    fi
+
+    # git管理下でない場所で起動された場合もダイアログ
+    return 1
+  fi
 
   return 1
 }
