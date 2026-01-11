@@ -882,5 +882,7 @@ if [[ -n "${ZSH_VERSION:-}" && -o interactive ]]; then
 fi
 
 # preexec フックも追加（二重防御）
-autoload -Uz add-zsh-hook
-add-zsh-hook preexec _ai_guard_preexec_protected_check
+if [[ -n "${ZSH_VERSION:-}" ]]; then
+  autoload -Uz add-zsh-hook
+  add-zsh-hook preexec _ai_guard_preexec_protected_check
+fi
