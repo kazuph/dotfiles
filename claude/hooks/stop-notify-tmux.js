@@ -74,12 +74,27 @@ try {
 
     // tmux情報を取得
     let sessionName = "", windowIndex = "", paneIndex = "", paneTitle = "", tmuxSocket = "";
-    let terminalApp = process.env.TERM_PROGRAM || "Terminal";
+    // TERM_PROGRAMが取得できない場合はGhosttyをデフォルトに（macOSでよく使われる）
+    let terminalApp = process.env.TERM_PROGRAM || "Ghostty";
 
-    // TMUXソケットパスを環境変数から取得（例: /private/tmp/tmux-501/default,12345,0）
+    // TMUXソケットパスを取得
+    // 1. 環境変数から取得を試みる
+    // 2. なければユーザーIDから推測（/private/tmp/tmux-UID/default）
     const tmuxEnv = process.env.TMUX || "";
     if (tmuxEnv) {
         tmuxSocket = tmuxEnv.split(',')[0];
+    } else {
+        // フォールバック: ユーザーIDから推測
+        try {
+            const uid = execFileSync('id', ['-u'], { encoding: 'utf8' }).trim();
+            const guessedSocket = `/private/tmp/tmux-${uid}/default`;
+            const fs = require('node:fs');
+            if (fs.existsSync(guessedSocket)) {
+                tmuxSocket = guessedSocket;
+            }
+        } catch (e) {
+            // 推測失敗
+        }
     }
 
     try {
