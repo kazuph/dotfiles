@@ -14,8 +14,13 @@ const { readFileSync, writeFileSync } = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
 
+const fs = require('node:fs');
+const debugLog = (msg) => fs.appendFileSync('/tmp/claude-notify-debug.log', `[${new Date().toISOString()}] ${msg}\n`);
+
 try {
+    debugLog('Script started');
     const inputRaw = readFileSync(process.stdin.fd, 'utf8');
+    debugLog(`Input: ${inputRaw.substring(0, 200)}`);
     const input = JSON.parse(inputRaw);
 
     // 無限ループ防止: stop hookが既に実行中なら終了
@@ -24,6 +29,7 @@ try {
     }
 
     if (!input.transcript_path) {
+        debugLog('No transcript_path, exiting');
         process.exit(0);
     }
 
@@ -36,32 +42,48 @@ try {
 
     const allowedBase = path.join(homeDir, '.claude', 'projects');
     const resolvedPath = path.resolve(transcriptPath);
+    debugLog(`resolvedPath: ${resolvedPath}`);
 
     if (!resolvedPath.startsWith(allowedBase)) {
+        debugLog('Path not allowed, exiting');
         process.exit(1);
     }
 
     let lines;
     try {
         lines = readFileSync(resolvedPath, "utf-8").split("\n").filter(line => line.trim());
+        debugLog(`Lines count: ${lines.length}`);
     } catch (e) {
+        debugLog(`Read error: ${e.message}`);
         process.exit(0);
     }
 
     if (lines.length === 0) {
+        debugLog('No lines, exiting');
         process.exit(0);
     }
 
-    const lastLine = lines[lines.length - 1];
-    let transcript, lastMessageContent;
-    try {
-        transcript = JSON.parse(lastLine);
-        lastMessageContent = transcript?.message?.content?.[0]?.text;
-    } catch (e) {
-        process.exit(0);
+    // 最後のアシスタントテキストメッセージを探す（逆順で検索）
+    let lastMessageContent = null;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        try {
+            const entry = JSON.parse(lines[i]);
+            // アシスタントのメッセージでテキストコンテンツを持つものを探す
+            if (entry?.message?.role === 'assistant' && entry?.message?.content) {
+                const textContent = entry.message.content.find(c => c.type === 'text');
+                if (textContent?.text) {
+                    lastMessageContent = textContent.text;
+                    debugLog(`Found text at line ${i}: ${lastMessageContent.substring(0, 50)}`);
+                    break;
+                }
+            }
+        } catch (e) {
+            // JSONパースエラーは無視して次の行へ
+        }
     }
 
     if (!lastMessageContent) {
+        debugLog('No lastMessageContent found, exiting');
         process.exit(0);
     }
 
@@ -161,6 +183,18 @@ try {
             `${tmuxCmd} select-window -t "${sessionName}:${windowIndex}"`,
             `${tmuxCmd} select-pane -t "${sessionName}:${windowIndex}.${paneIndex}"`
         ].join(' && ');
+
+        // デバッグ: 実行されるコマンドをログに出力
+        const fs = require('node:fs');
+        fs.appendFileSync('/tmp/claude-notify-debug.log',
+            `[${new Date().toISOString()}]\n` +
+            `tmuxSocket: ${tmuxSocket}\n` +
+            `sessionName: ${sessionName}\n` +
+            `windowIndex: ${windowIndex}\n` +
+            `paneIndex: ${paneIndex}\n` +
+            `terminalApp: ${terminalApp}\n` +
+            `focusCommand: ${focusCommand}\n\n`
+        );
 
         try {
             execFileSync(notifierPath, [
