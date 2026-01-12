@@ -119,25 +119,52 @@ try {
         }
     }
 
+    // TMUX_PANEを使って、Claude Codeが動いているpaneを正確に特定
+    // （display-messageはアクティブpaneを返すので、ユーザーが別paneにいると間違った値になる）
+    const tmuxPane = process.env.TMUX_PANE || "";
+
     try {
-        sessionName = execFileSync('tmux', ['display-message', '-p', '#{session_name}'], {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-        }).trim();
-        windowIndex = execFileSync('tmux', ['display-message', '-p', '#{window_index}'], {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-        }).trim();
-        paneIndex = execFileSync('tmux', ['display-message', '-p', '#{pane_index}'], {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-        }).trim();
-        paneTitle = execFileSync('tmux', ['display-message', '-p', '#{pane_title}'], {
-            encoding: 'utf8',
-            stdio: ['pipe', 'pipe', 'ignore']
-        }).trim();
+        if (tmuxPane && tmuxSocket) {
+            // TMUX_PANEが利用可能な場合、-tオプションで特定のpaneの情報を取得
+            const tmuxArgs = ['-S', tmuxSocket, 'display-message', '-t', tmuxPane, '-p'];
+            sessionName = execFileSync('tmux', [...tmuxArgs, '#{session_name}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            windowIndex = execFileSync('tmux', [...tmuxArgs, '#{window_index}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            paneIndex = execFileSync('tmux', [...tmuxArgs, '#{pane_index}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            paneTitle = execFileSync('tmux', [...tmuxArgs, '#{pane_title}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+        } else {
+            // フォールバック: 従来の方法（アクティブpane）
+            sessionName = execFileSync('tmux', ['display-message', '-p', '#{session_name}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            windowIndex = execFileSync('tmux', ['display-message', '-p', '#{window_index}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            paneIndex = execFileSync('tmux', ['display-message', '-p', '#{pane_index}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+            paneTitle = execFileSync('tmux', ['display-message', '-p', '#{pane_title}'], {
+                encoding: 'utf8',
+                stdio: ['pipe', 'pipe', 'ignore']
+            }).trim();
+        }
     } catch (e) {
         // tmux外で実行された場合
+        debugLog(`tmux error: ${e.message}`);
         sessionName = "";
     }
 
