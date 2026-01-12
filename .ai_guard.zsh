@@ -61,10 +61,10 @@ _ai_guard_is_ai_session() {
   gp_pid=$(ps -p "$pid" -o ppid= 2>/dev/null | tr -d ' ')
   gp=$(ps -o command= -p "$gp_pid" 2>/dev/null || true)
 
-  if echo "$pcmd" | grep -qiE 'codex|claude|anthropic|openai|aider'; then
+  if echo "$pcmd" | grep -qiE 'codex|claude|anthropic|openai|aider|opencode'; then
     return 0
   fi
-  if echo "$gp" | grep -qiE 'codex|claude|anthropic|openai|aider'; then
+  if echo "$gp" | grep -qiE 'codex|claude|anthropic|openai|aider|opencode'; then
     return 0
   fi
 
@@ -92,59 +92,41 @@ ai_extreme_confirm() {
     printf "⚠️ ログファイル %s を作成できませんでした。権限を確認してください。\n" "$log_file" >&2
   fi
 
-  local cwd_short="" context_block="" context_for_log=""
+  local cwd_short="" context_block="" context_for_log="" dialog_title_prefix=""
   {
-    local cwd shell_proc parent_proc tty_name tmux_info tmux_window_name tmux_window_index
+    local cwd parent_proc
     cwd="$(pwd -P 2>/dev/null || pwd)"
-    shell_proc="$(ps -o comm= -p "$$" 2>/dev/null | tr -d '\n')"
     parent_proc="$(ps -o comm= -p "$PPID" 2>/dev/null | tr -d '\n')"
-    tty_name="$(tty 2>/dev/null || true)"
-    [[ -z "$tty_name" ]] && tty_name="(not a tty)"
-    [[ -z "$shell_proc" ]] && shell_proc="(unknown)"
     [[ -z "$parent_proc" ]] && parent_proc="(unknown)"
-    local base_context_block cwd_display
+
     # 末尾2階層を強調表示（例: /Users/kazuph/projects/myapp → projects/myapp）
     local parent_dir=$(dirname "$cwd")
     local last_two="${parent_dir##*/}/${cwd##*/}"
     [[ "$parent_dir" == "/" ]] && last_two="${cwd##*/}"
     [[ "$cwd" == "/" ]] && last_two="/"
     cwd_short="$last_two"
+    [[ "$cwd" == "$HOME" ]] && cwd_short="~"
 
-    if [[ "$cwd" == "$HOME" ]]; then
-      cwd_display="~"
-      cwd_short="~"
-    elif [[ "$cwd" == "$HOME"/* ]]; then
-      cwd_display="~/${cwd#"$HOME/"}"
-    else
-      cwd_display="$cwd"
-    fi
-    base_context_block=$'📁 '"$cwd_short"$'\n   ('"$cwd_display"$')\n- シェル: '"$shell_proc"$'\n- 親プロセス: '"$parent_proc"$'\n- TTY: '"$tty_name"
-    context_for_log="[cwd:${cwd}] [shell:${shell_proc}] [ppid:${parent_proc}] [tty:${tty_name}]"
+    # シンプルなコンテキストブロック（親プロセスはタイトルに移動）
+    context_block=$'📁 '"$cwd_short"
+    context_for_log="[cwd:${cwd}] [ppid:${parent_proc}]"
 
-    # tmux 情報（TMUX_PANE が祖先プロセスの pane と一致する場合のみ）
-    local tmux_force="${AI_GUARD_TMUX_FORCE:-}"
+    # タイトルプレフィックス: 🤖 プロセス名 [tmux window: pane]
+    dialog_title_prefix="🤖 ${parent_proc}"
 
-    local tmux_context_block=""
+    # tmux 情報を追加
     if [[ -n "${TMUX_PANE:-}" ]] && builtin command -v tmux >/dev/null 2>&1; then
-      local tmux_window_index tmux_window_name tmux_pane_id tmux_pane_title
+      local tmux_window_name tmux_pane_title
       tmux_window_name=$(tmux display-message -p -t "${TMUX_PANE}" '#{window_name}' 2>/dev/null | tr -d '\n')
-      tmux_window_index=$(tmux display-message -p -t "${TMUX_PANE}" '#{window_index}' 2>/dev/null | tr -d '\n')
-      tmux_pane_id=$(tmux display-message -p -t "${TMUX_PANE}" '#{pane_id}' 2>/dev/null | tr -d '\n')
       tmux_pane_title=$(tmux display-message -p -t "${TMUX_PANE}" '#{pane_title}' 2>/dev/null | tr -d '\n')
 
-      if [[ -n "$tmux_window_name" || -n "$tmux_window_index" || -n "$tmux_pane_id" ]]; then
-        tmux_info="[tmux ${tmux_window_index:-?}-${tmux_pane_id:-?}] ${tmux_window_name:-(no-name)}"
-        local tmux_title_block=""
-        if [[ -n "$tmux_pane_title" ]]; then
-          tmux_title_block=$'\n- tmux pane title: '"$tmux_pane_title"
-        fi
-        tmux_context_block=$'- tmux: '"$tmux_info"$tmux_title_block$'\n'
-        context_for_log="[tmux:${tmux_info}${tmux_pane_title:+ |title:${tmux_pane_title}}] ${context_for_log}"
+      if [[ -n "$tmux_window_name" || -n "$tmux_pane_title" ]]; then
+        dialog_title_prefix="${dialog_title_prefix} [${tmux_window_name:-?}: ${tmux_pane_title:-?}]"
+        context_for_log="[tmux:${tmux_window_name}|${tmux_pane_title}] ${context_for_log}"
       fi
     fi
 
-    # 表示用コンテキストを組み立て（📁ディレクトリを最上部に）
-    context_block="$base_context_block"$'\n'"$tmux_context_block"
+    dialog_title_prefix="${dialog_title_prefix} "
   } >/dev/null
 
   local cmd_display cmd_display_for_prompt
@@ -154,7 +136,7 @@ ai_extreme_confirm() {
     cmd_display="${AI_GUARD_CMD_DISPLAY}"
   fi
   cmd_display="${cmd_display//$'\n'/ }"
-  cmd_display_for_prompt=$'- コマンド: '"$cmd_display"
+  cmd_display_for_prompt=$'💻 コマンド: '"$cmd_display"
 
   if (( needs_prompt )); then
     local dialog_output button_choice reason_text
@@ -179,8 +161,8 @@ on run argv
   end try
 end run
 APPLESCRIPT
-        # タイトルに「コマンド @ ディレクトリ末尾2階層」を表示
-        local dialog_title="${cmd} @ ${cwd_short}"
+        # タイトルに「[tmux window: pane title] コマンド @ ディレクトリ末尾2階層」を表示
+        local dialog_title="${dialog_title_prefix}${cmd} @ ${cwd_short}"
         dialog_output=$(osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" 2>/dev/null) || dialog_output=""
         builtin command rm -f "$tmp_as"
       fi
