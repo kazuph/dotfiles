@@ -16,7 +16,7 @@
     grep = auto
 [core]
     # globalな.gitignoreの指定
-	excludesfile = /Users/kazuph/.gitignore_global
+	excludesfile = /Users/kazuhirohomma/.gitignore_global
     autoCRLF = false
     editor = vi
     quotepath = false
