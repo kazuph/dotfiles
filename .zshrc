@@ -592,3 +592,11 @@ export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
 
 # Modern CLI tools (starship, zoxide, eza, bat, etc.)
 source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
+
+# moonbit
+export PATH="$HOME/.moon/bin:$PATH"
+
+# direnv
+eval "$(direnv hook zsh)"
+export PATH="$HOME/bin:$PATH"
+
