@@ -96,17 +96,34 @@ direnv allow
 
 ### Step 6: (Optional) Configure gwq
 
+> **Note:** gwqは**グローバルなbasedir**を前提とした設計です。プロジェクトローカルな`.worktree/`配置はサポートされていません。
+
 ~/.config/gwq/config.toml を確認/作成:
 
 ```toml
 [worktree]
-basedir = ".worktree"  # プロジェクト内に配置（direnv継承のため）
+# グローバルなbasedirを指定（環境に合わせて変更）
+# デフォルト: ~/worktrees
+# ghq連携: ghqのrootと同じディレクトリ（例: ~/src, ~/ghq, ~/code）
+basedir = "~/worktrees"
+auto_mkdir = true
+
+[naming]
+template = "{{.Host}}/{{.Owner}}/{{.Repository}}-{{.Branch}}"
+
+[naming.sanitize_chars]
+"/" = "-"
+":" = "-"
 
 [[repository_settings]]
 repository = "*"
-copy_files = []  # direnv + dotenvxならコピー不要
-setup_commands = ["npm install || pnpm install || true", "direnv allow"]
+copy_files = []  # direnvで環境変数を継承するのでコピー不要
+setup_commands = ["npm install || pnpm install || yarn install || true"]
 ```
+
+**ghqユーザーは推奨**: basedirをghqのrootに合わせることで、worktreeもghqのディレクトリ構造に統合できます。Ownerレベル（`~/src/github.com/owner/.envrc`）に環境変数を設定しておけば、ghqリポジトリもworktreeも同じ環境変数が自動適用されます。
+
+**gwqを使わない場合**: `git worktree add .worktree/<feature> -b <branch>` でプロジェクトローカルに配置。この場合、プロジェクトルートの`.envrc`がworktreeに継承されます。
 
 ## Multi-Environment Setup
 
@@ -184,15 +201,26 @@ jobs:
 
 worktreeでも自動で動作する理由:
 
+**標準git worktree（プロジェクトローカル）の場合:**
 1. `.worktree/` はプロジェクト内のサブディレクトリ
 2. direnvは親ディレクトリの `.envrc` を自動継承
+3. `.env` はgit管理なのでworktreeにも存在
+4. 結果、worktreeでも自動で復号される
+
+**gwq（グローバルbasedir）の場合:**
+1. worktreeは `~/worktrees/` 等のグローバルディレクトリに作成
+2. ghq連携時はOwnerレベル（`~/src/github.com/owner/.envrc`）の`.envrc`が継承される
 3. `.env` はgit管理なのでworktreeにも存在
 4. 結果、worktreeでも自動で復号される
 
 ### Modifying .env in Worktree
 
 ```bash
+# 標準git worktreeの場合
 cd .worktree/feature-x/
+
+# gwq（ghq連携）の場合
+# cd ~/src/github.com/owner/repo-feature-x/
 
 # 環境変数を追加/変更（自動で再暗号化される）
 dotenvx set NEW_API_KEY="xxx"
