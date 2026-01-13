@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "kazuph-dotfiles",
-  "version": "1.18.0",
+  "version": "1.19.0",
   "description": "kazuph's personal Claude Code plugins - MCP servers and tools",
   "owner": {
     "name": "kazuph",

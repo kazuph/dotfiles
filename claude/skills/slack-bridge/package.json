@@ -1,0 +1,14 @@
+{
+  "name": "claude-slack-bridge",
+  "version": "1.0.0",
+  "description": "Bridge between Claude Code AskUserQuestion and Slack",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
