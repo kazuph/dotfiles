@@ -161,8 +161,10 @@ ln -sfv "$DOTFILES_DIR/.ideavimrc" "$HOME/.ideavimrc" 2>/dev/null || true
 log_success "Symbolic links created"
 
 # ===========================================
-# 7. Setup tmux plugin manager
+# 7. Setup tmux plugin manager and scripts
 # ===========================================
+mkdir -p "$HOME/.tmux"
+
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     log_info "Installing tmux plugin manager..."
     git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
@@ -170,6 +172,10 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 else
     log_info "TPM already installed"
 fi
+
+# tmux scripts (pane border label, status segments, etc.)
+ln -snfv "$DOTFILES_DIR/.tmux/scripts" "$HOME/.tmux/scripts"
+log_info "tmux scripts linked"
 
 # ===========================================
 # 8. modern-tools.zsh (already in .zshrc)
