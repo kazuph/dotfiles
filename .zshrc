@@ -234,6 +234,7 @@ gcd() {
     selected=$(ghq list -p | fzf \
       --prompt 'ghq> ' \
       --header 'C-g: toggle mode (ghq/git/local)' \
+      --delimiter '/' --with-nth -3.. \
       --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*" \
       --bind "$toggle")
   else
@@ -241,6 +242,7 @@ gcd() {
     selected=$(fd . --type f --type d 2>/dev/null | fzf \
       --prompt 'local> ' \
       --header 'C-g: toggle mode (local/ghq/git)' \
+      --delimiter '/' --with-nth -3.. \
       --preview '[[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {}' \
       --bind "$toggle")
   fi
