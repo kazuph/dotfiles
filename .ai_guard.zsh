@@ -113,9 +113,9 @@ _ai_guard_block_checkout_b() {
 # git checkout -b または checkout --branch を検出
 _ai_guard_is_checkout_b() {
   local cmd_line="$1"
-  # git checkout -b <branch> または git checkout --branch <branch> を検出
-  [[ "$cmd_line" =~ (^|[[:space:]])git[[:space:]]+checkout[[:space:]]+-b[[:space:]] ]] && return 0
-  [[ "$cmd_line" =~ (^|[[:space:]])git[[:space:]]+checkout[[:space:]]+--branch[[:space:]] ]] && return 0
+  # 行頭から git checkout -b / --branch を検出（コミットメッセージ等での誤検知を防ぐ）
+  [[ "$cmd_line" =~ ^git[[:space:]]+checkout[[:space:]]+-b[[:space:]] ]] && return 0
+  [[ "$cmd_line" =~ ^git[[:space:]]+checkout[[:space:]]+--branch[[:space:]] ]] && return 0
   return 1
 }
 
