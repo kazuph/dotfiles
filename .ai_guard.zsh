@@ -50,6 +50,76 @@ _ai_guard_block_protected() {
 }
 
 # ============================================================================
+# git checkout -b ブロック: worktree (gwq) を使わせる
+# ============================================================================
+_ai_guard_block_checkout_b() {
+  local cmd_line="$1"
+  printf "\n" >&2
+  printf "🚫 ブロック: git checkout -b\n" >&2
+  printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
+  printf "gwq でworktreeを使う必要があります。\n" >&2
+  printf "\n" >&2
+
+  # gwq がインストールされているかチェック
+  if command -v gwq >/dev/null 2>&1; then
+    printf "📖 gwq の使い方:\n" >&2
+    printf "  gwq add -b <branch>   # 新しいブランチでworktree作成\n" >&2
+    printf "  gwq add <branch>      # 既存ブランチでworktree作成\n" >&2
+    printf "  gwq add -i            # インタラクティブにブランチ選択\n" >&2
+    printf "  gwq list              # worktree一覧\n" >&2
+    printf "  gwq config list       # 設定確認\n" >&2
+    printf "\n" >&2
+
+    # ブランチ名を抽出して代替コマンドを提案
+    local branch_name=""
+    if [[ "$cmd_line" =~ checkout[[:space:]]+-b[[:space:]]+([^[:space:]]+) ]]; then
+      branch_name="${match[1]}"
+    elif [[ "$cmd_line" =~ checkout[[:space:]]+--branch[[:space:]]+([^[:space:]]+) ]]; then
+      branch_name="${match[1]}"
+    fi
+
+    if [[ -n "$branch_name" ]]; then
+      printf "📋 代わりにこちらを実行:\n" >&2
+      printf "  gwq add -b %s\n" "$branch_name" >&2
+      printf "\n" >&2
+    fi
+  else
+    printf "⚠️  gwq がインストールされていません。\n" >&2
+    printf "\n" >&2
+    printf "📦 セットアップ手順:\n" >&2
+    printf "  1. gwq をインストール\n" >&2
+    printf "     brew install gwq  # または go install github.com/xxx/gwq@latest\n" >&2
+    printf "  2. 設定ファイルを確認\n" >&2
+    printf "     gwq config list\n" >&2
+    printf "  3. ghqと同じ構造でworktreeを作成するように設定\n" >&2
+    printf "\n" >&2
+  fi
+
+  printf "💡 ghqと同じ構造でworktreeを作成する必要があります。\n" >&2
+  printf "   設定ファイルも確認してください: gwq config list\n" >&2
+  printf "\n" >&2
+  printf "📁 ディレクトリ構造 (現在の設定):\n" >&2
+  printf "   ~/src/{{Host}}/{{Owner}}/{{Repository}}-{{Branch}}\n" >&2
+  printf "   例: ~/src/github.com/user/repo-feature-auth\n" >&2
+  printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
+  printf "\n" >&2
+
+  # ログに記録
+  local log_file="$HOME/.ai_guard_security.log"
+  printf "%s\tBLOCKED_CHECKOUT_B\t%s\t[Redirecting to gwq worktree]\n" \
+    "$(date -Iseconds)" "$cmd_line" >> "$log_file" 2>/dev/null
+}
+
+# git checkout -b または checkout --branch を検出
+_ai_guard_is_checkout_b() {
+  local cmd_line="$1"
+  # git checkout -b <branch> または git checkout --branch <branch> を検出
+  [[ "$cmd_line" =~ (^|[[:space:]])git[[:space:]]+checkout[[:space:]]+-b[[:space:]] ]] && return 0
+  [[ "$cmd_line" =~ (^|[[:space:]])git[[:space:]]+checkout[[:space:]]+--branch[[:space:]] ]] && return 0
+  return 1
+}
+
+# ============================================================================
 
 # Detect whether this shell is driven by an AI tool (Codex/Claude等)。
 _ai_guard_is_ai_session() {
@@ -455,7 +525,7 @@ _ai_guard_eval_git_push() {
       main|*/main|*:main|master|*/master|*:master)
         # .allow-main がある場合は許可、なければブロック
         if [[ "$allow_main_flag" -eq 0 ]]; then
-          AI_GUARD_BLOCK_REASON="main/master は禁止です。許可するにはリポジトリルートに .allow-main ファイルを作成してください。"
+          AI_GUARD_BLOCK_REASON="main/master は禁止です。"
           AI_GUARD_GIT_PUSH_DECISION="block"
           return 0
         fi
@@ -722,6 +792,12 @@ _ai_guard_dispatch() {
   cmd_display="$(printf "%s " "$cmd" "$@")"
   cmd_display="${cmd_display% }"
 
+  # git checkout -b のブロック（全ユーザー対象）
+  if [[ "$cmd" == "git" ]] && _ai_guard_is_checkout_b "$cmd_display"; then
+    _ai_guard_block_checkout_b "$cmd_display"
+    return 1
+  fi
+
   if [[ "$cmd" == "git" ]] && _ai_guard_eval_git_push "$@"; then
     case "$AI_GUARD_GIT_PUSH_DECISION" in
       block)
@@ -802,7 +878,14 @@ command() {
 _ai_guard_preexec_protected_check() {
   local cmd_line="$1"
 
-  # AIセッションでない場合はスキップ
+  # git checkout -b のブロック（全ユーザー対象、preexec での警告）
+  # ※ 実際のブロックは accept-line で行われるが、万が一のための警告
+  if _ai_guard_is_checkout_b "$cmd_line"; then
+    _ai_guard_block_checkout_b "$cmd_line"
+    return 1
+  fi
+
+  # AIセッションでない場合は以降のチェックをスキップ
   _ai_guard_is_ai_session || return 0
 
   # 保護パターンを含む場合はブロック
@@ -828,6 +911,14 @@ _ai_guard_accept_line_protected() {
   # AIセッションで保護パターンを含む場合はブロック
   if _ai_guard_is_ai_session && _ai_guard_check_protected_pattern "$cmd_line"; then
     _ai_guard_block_protected "$cmd_line"
+    BUFFER=""
+    zle redisplay
+    return 0
+  fi
+
+  # git checkout -b のブロック（全ユーザー対象）
+  if _ai_guard_is_checkout_b "$cmd_line"; then
+    _ai_guard_block_checkout_b "$cmd_line"
     BUFFER=""
     zle redisplay
     return 0
