@@ -222,7 +222,7 @@ gcd() {
   # transform で3モード循環: local -> ghq -> git -> local ...
   local toggle='ctrl-g:transform:
     if [[ $FZF_PROMPT =~ local ]]; then
-      echo "change-prompt(ghq> )+reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.*)"
+      echo "change-prompt(ghq> )+reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.md 2>/dev/null || head -80 {}/README* 2>/dev/null || echo No README)"
     elif [[ $FZF_PROMPT =~ ghq ]]; then
       echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
     else
@@ -234,15 +234,15 @@ gcd() {
     selected=$(ghq list -p | fzf \
       --prompt 'ghq> ' \
       --header 'C-g: toggle mode (ghq/git/local)' \
-      --delimiter '/' --with-nth -3.. \
-      --preview "bat --color=always --style=header,grid --line-range :80 {}/README.*" \
+      --delimiter '/' --with-nth -2.. \
+      --preview "bat --color=always --style=header,grid --line-range :80 {}/README.md 2>/dev/null || head -80 {}/README* 2>/dev/null || echo 'No README'" \
       --bind "$toggle")
   else
     # ghq管理下 → ファイル/ディレクトリ検索から開始
     selected=$(fd . --type f --type d 2>/dev/null | fzf \
       --prompt 'local> ' \
       --header 'C-g: toggle mode (local/ghq/git)' \
-      --delimiter '/' --with-nth -3.. \
+      --delimiter '/' --with-nth -2.. \
       --preview '[[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {}' \
       --bind "$toggle")
   fi
