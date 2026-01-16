@@ -451,7 +451,12 @@ export PATH="${MODDABLE}/build/bin/mac/release:$PATH"
 # export PATH="$PATH:$IDF_PATH/tools"
 # export PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
 
-export TMUX_TMPDIR=/tmp
+# TMUX_TMPDIR: Termux uses $PREFIX/tmp, others use /tmp
+if [[ -n "$PREFIX" && "$PREFIX" == *"com.termux"* ]]; then
+  export TMUX_TMPDIR=$PREFIX/tmp
+else
+  export TMUX_TMPDIR=/tmp
+fi
 
 # source $HOME/.deepl.env
 
@@ -592,3 +597,12 @@ export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
 
 # Modern CLI tools (starship, zoxide, eza, bat, etc.)
 source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
+
+# Go
+export PATH="$HOME/go/bin:$PATH"
+
+# Termux-specific settings
+if [[ -n "$PREFIX" && "$PREFIX" == *"com.termux"* ]]; then
+  export TMPDIR=$PREFIX/tmp
+  export CLAUDE_CODE_TMPDIR=$TMPDIR
+fi
