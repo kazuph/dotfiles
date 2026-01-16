@@ -249,27 +249,10 @@ try {
         }
     }
 
-    // stopMessage を出力してClaudeにタスク完了報告手順を伝える
-    outputStopMessage();
+    // 通知完了（JSON出力はprompt hookに移行）
+    debugLog('Notification sent successfully');
 
 } catch (error) {
-    // エラー時もstopMessageは出力
-    outputStopMessage();
+    debugLog(`Error: ${error.message}`);
     process.exit(0);
-}
-
-function outputStopMessage() {
-    const stopMessage = `タスク完了報告手順:
-1. tmux display-message -p -t "$TMUX_PANE" '#I' でウィンドウID取得
-2. 今回のタスク内容を30文字以内で要約
-3. say -r 230 "Window <ID> <要約>" をバックグラウンドで実行
-4. ~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh "<漢字+絵文字>" を実行`;
-
-    const output = {
-        hookSpecificOutput: {
-            hookEventName: "Stop",
-            stopMessage: stopMessage
-        }
-    };
-    console.log(JSON.stringify(output));
 }
