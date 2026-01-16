@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Claude Code 応答完了時にベルを鳴らす（tmuxの通知用）
+printf '\a' > /dev/tty 2>/dev/null || printf '\a' >&2
+
 # Stop hook: return instructions as JSON to satisfy hook runner expectations
 MSG=$(cat <<'EOF'
 タスク完了報告手順:

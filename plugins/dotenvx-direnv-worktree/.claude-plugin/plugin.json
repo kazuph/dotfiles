@@ -1,0 +1,13 @@
+{
+  "name": "dotenvx-direnv-worktree",
+  "version": "1.0.1",
+  "description": "Environment variable management best practices using dotenvx + direnv + git worktree. Enables secure, encrypted env management across parallel development environments.",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["dotenvx", "direnv", "worktree", "env", "environment", "security", "encryption"],
+  "skills": "./skills/"
+}
