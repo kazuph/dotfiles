@@ -10,9 +10,6 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# AI Guard - 危険コマンドの実行前確認
-[[ -f ~/dotfiles/.ai_guard.zsh ]] && source ~/dotfiles/.ai_guard.zsh
-
 if type brew &>/dev/null
 then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
@@ -594,8 +591,10 @@ export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:
 export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
 
 # 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
-# 危険コマンド確認フックを共通ファイルに集約
-[[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
+# 危険コマンド確認フックを共通ファイルに集約 (Termux以外で有効)
+if [[ -z "$PREFIX" || "$PREFIX" != *"com.termux"* ]]; then
+  [[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
+fi
 
 # Modern CLI tools (starship, zoxide, eza, bat, etc.)
 source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
