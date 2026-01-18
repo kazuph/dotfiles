@@ -315,6 +315,7 @@ _AI_GUARD_DANGER_REGEX="(^|[^[:alnum:]])($(printf "%s|" "${_AI_GUARD_DANGER_WORD
 # キャッシュして複数回呼び出しを最適化
 _AI_GUARD_LAUNCH_DIR_CACHE=""
 _AI_GUARD_LAUNCH_GIT_ROOT_CACHE=""
+_AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE=""
 _AI_GUARD_LAUNCH_CACHE_DONE=0
 
 _ai_guard_get_ai_launch_dir() {
@@ -332,9 +333,14 @@ _ai_guard_get_ai_launch_dir() {
   # 取得できない場合は空を返す
   _AI_GUARD_LAUNCH_DIR_CACHE="$ppid_cwd"
 
-  # gitルートも同時にキャッシュ
+  # gitルートとgit-common-dirも同時にキャッシュ
   if [[ -n "$ppid_cwd" ]]; then
     _AI_GUARD_LAUNCH_GIT_ROOT_CACHE=$(builtin command git -C "$ppid_cwd" rev-parse --show-toplevel 2>/dev/null) || _AI_GUARD_LAUNCH_GIT_ROOT_CACHE=""
+    _AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE=$(builtin command git -C "$ppid_cwd" rev-parse --git-common-dir 2>/dev/null) || _AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE=""
+    # 相対パスの場合は絶対パスに変換
+    if [[ -n "$_AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE" && "$_AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE" != /* ]]; then
+      _AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE=$(cd "$ppid_cwd" && cd "$_AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE" && pwd -P 2>/dev/null) || _AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE=""
+    fi
   fi
 
   _AI_GUARD_LAUNCH_CACHE_DONE=1
@@ -347,9 +353,16 @@ _ai_guard_get_ai_launch_git_root() {
   printf "%s" "$_AI_GUARD_LAUNCH_GIT_ROOT_CACHE"
 }
 
+_ai_guard_get_ai_launch_git_common_dir() {
+  # 先にキャッシュを確保
+  [[ "$_AI_GUARD_LAUNCH_CACHE_DONE" != "1" ]] && _ai_guard_get_ai_launch_dir >/dev/null
+  printf "%s" "$_AI_GUARD_LAUNCH_GIT_COMMON_DIR_CACHE"
+}
+
 # 自動承認対象のパスかチェック
 # - /tmp, /private/tmp, .artifacts/ 以下は常に自動承認
 # - git管理下で起動された場合、そのリポジトリ内は自動承認
+# - 同じgit-common-dirを持つworktreeも自動承認（main/master以外）
 # - ホームディレクトリで起動された場合は常にダイアログ
 # パストラバーサル攻撃を防ぐため .. を含むパスは拒否
 _ai_guard_is_safe_rm_path() {
@@ -374,7 +387,7 @@ _ai_guard_is_safe_rm_path() {
 
   # AIセッションの場合、起動ディレクトリに基づく判定
   if _ai_guard_is_ai_session; then
-    local launch_dir launch_git_root
+    local launch_dir launch_git_root launch_git_common_dir
     launch_dir=$(_ai_guard_get_ai_launch_dir)
 
     # 起動ディレクトリがホームディレクトリの場合は常にダイアログ
@@ -384,12 +397,33 @@ _ai_guard_is_safe_rm_path() {
 
     # git管理下で起動された場合
     launch_git_root=$(_ai_guard_get_ai_launch_git_root)
+    launch_git_common_dir=$(_ai_guard_get_ai_launch_git_common_dir)
     if [[ -n "$launch_git_root" ]]; then
-      # 削除対象がリポジトリ内なら自動承認
-      # abs_path が launch_git_root/ で始まるかチェック
-      if [[ "$abs_path" == "$launch_git_root"/* || "$abs_path" == "$launch_git_root" ]]; then
-        return 0  # 安全 = 自動承認
+      # 対象パスが存在するディレクトリを特定
+      local target_dir="$abs_path"
+      [[ -f "$abs_path" ]] && target_dir=$(dirname "$abs_path")
+      [[ ! -d "$target_dir" ]] && target_dir=$(dirname "$target_dir")
+
+      # 対象パスのgit情報を取得
+      local target_git_common_dir target_git_root target_branch
+      target_git_root=$(builtin command git -C "$target_dir" rev-parse --show-toplevel 2>/dev/null) || target_git_root=""
+      target_git_common_dir=$(builtin command git -C "$target_dir" rev-parse --git-common-dir 2>/dev/null) || target_git_common_dir=""
+      # 相対パスの場合は絶対パスに変換
+      if [[ -n "$target_git_common_dir" && "$target_git_common_dir" != /* ]]; then
+        target_git_common_dir=$(cd "$target_dir" && cd "$target_git_common_dir" && pwd -P 2>/dev/null) || target_git_common_dir=""
       fi
+
+      # 同じgit-common-dirを持つ場合（同一リポジトリまたはworktree）
+      if [[ -n "$target_git_common_dir" && -n "$launch_git_common_dir" && "$launch_git_common_dir" == "$target_git_common_dir" ]]; then
+        # 対象がmain/masterブランチの場合はダイアログ（安全のため）
+        target_branch=$(builtin command git -C "$target_dir" rev-parse --abbrev-ref HEAD 2>/dev/null) || target_branch=""
+        if [[ "$target_branch" == "main" || "$target_branch" == "master" ]]; then
+          return 1  # main/masterはダイアログ表示
+        fi
+        # main/master以外は自動承認
+        return 0
+      fi
+
       # リポジトリ外はダイアログ
       return 1
     fi
