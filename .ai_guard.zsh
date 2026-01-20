@@ -415,9 +415,13 @@ _ai_guard_is_safe_rm_path() {
 
       # 同じgit-common-dirを持つ場合（同一リポジトリまたはworktree）
       if [[ -n "$target_git_common_dir" && -n "$launch_git_common_dir" && "$launch_git_common_dir" == "$target_git_common_dir" ]]; then
-        # 対象がmain/masterブランチの場合はダイアログ（安全のため）
+        # 対象がmain/masterブランチの場合
         target_branch=$(builtin command git -C "$target_dir" rev-parse --abbrev-ref HEAD 2>/dev/null) || target_branch=""
         if [[ "$target_branch" == "main" || "$target_branch" == "master" ]]; then
+          # .allow-main があれば許可
+          if [[ -n "$target_git_root" && -f "${target_git_root}/.allow-main" ]]; then
+            return 0  # .allow-main により許可
+          fi
           return 1  # main/masterはダイアログ表示
         fi
         # main/master以外は自動承認

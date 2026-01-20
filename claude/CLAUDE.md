@@ -38,6 +38,44 @@ When you think of alternatives, present options to the user for selection.
 - ✗ Interpreting user statements in self-serving ways
 - ✗ Proceeding with "I'll ask later" mentality
 
+## Plan Tracking via TodoList (Long Session Support)
+
+**Problem**: After compaction, Claude forgets where plan files are stored.
+
+**Solution**: Use TodoList as persistent memory for plan file location.
+
+### When Creating a Plan
+After completing plan mode and saving a plan file:
+1. Add to TodoList: `📂 PLAN: <full-path-to-plan-file>`
+2. Status: `in_progress`
+3. This MUST be the first item in the TodoList
+
+Example:
+```
+TodoList:
+- [in_progress] 📂 PLAN: /Users/kazuph/myproject/.artifacts/auth/PLAN.md
+- [in_progress] 認証機能のAPI実装
+- [pending] フロントエンド実装
+- [pending] E2Eテスト作成
+```
+
+### Session Start / Post-Compaction Protocol (CRITICAL)
+**Upon ANY session start or context recovery, IMMEDIATELY:**
+
+1. **Check TodoList** for items starting with `📂 PLAN:`
+2. **If found**: Read the plan file at that path
+3. **Report to user**: "前回の計画書を読みました：[file path]。進捗を確認します。"
+4. **Resume work** based on plan and remaining todos
+
+### When Plan is Complete
+1. Remove the `📂 PLAN:` item from TodoList
+2. Archive the plan file (optional, user's discretion)
+
+### Prohibited
+- ✗ Creating plans without adding `📂 PLAN:` to TodoList
+- ✗ Starting new work when `📂 PLAN:` exists without reading it
+- ✗ Asking "what were we doing?" when plan path is in TodoList
+
 ## Task Delegation & Parallel Execution
 - Delegate to subagents; do not execute on main thread
 - Role: You (Director) → Managers (review) → Players (implement)
