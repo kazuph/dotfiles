@@ -143,11 +143,6 @@
     b = !"(for i in `git branch | colrm 1 2` ; do echo `git log --date=iso8601 -n 1 --pretty=\"format:[%ai] %h\" $i` $i ; done) | sort -r"
 
     pushf = "push --force-with-lease"
-    wt = worktree
-    wta = worktree add
-    wtl = worktree list
-    wtr = worktree remove
-    wtp = worktree prune
 [http]
     postBuffer = 2M
     #driver for merging XCode project files
@@ -174,3 +169,6 @@
 	include = **/.env.local
 	include = **/.env.development
 	include = **/.dev.vars
+[wt]
+	basedir = ".worktree"
+	copyignored = true

@@ -50,24 +50,22 @@ _ai_guard_block_protected() {
 }
 
 # ============================================================================
-# git checkout -b ブロック: worktree (gwq) を使わせる
+# git checkout -b ブロック: worktree (git wt) を使わせる
 # ============================================================================
 _ai_guard_block_checkout_b() {
   local cmd_line="$1"
   printf "\n" >&2
   printf "🚫 ブロック: git checkout -b\n" >&2
   printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
-  printf "gwq でworktreeを使う必要があります。\n" >&2
+  printf "git wt でworktreeを使う必要があります。\n" >&2
   printf "\n" >&2
 
-  # gwq がインストールされているかチェック
-  if command -v gwq >/dev/null 2>&1; then
-    printf "📖 gwq の使い方:\n" >&2
-    printf "  gwq add -b <branch>   # 新しいブランチでworktree作成\n" >&2
-    printf "  gwq add <branch>      # 既存ブランチでworktree作成\n" >&2
-    printf "  gwq add -i            # インタラクティブにブランチ選択\n" >&2
-    printf "  gwq list              # worktree一覧\n" >&2
-    printf "  gwq config list       # 設定確認\n" >&2
+  # git-wt がインストールされているかチェック
+  if git wt --version >/dev/null 2>&1; then
+    printf "📖 git wt の使い方:\n" >&2
+    printf "  git wt <branch>       # worktree作成（なければ新規ブランチ）\n" >&2
+    printf "  git wt                # worktree一覧\n" >&2
+    printf "  git wt -d <branch>    # worktree削除\n" >&2
     printf "\n" >&2
 
     # ブランチ名を抽出して代替コマンドを提案
@@ -80,33 +78,29 @@ _ai_guard_block_checkout_b() {
 
     if [[ -n "$branch_name" ]]; then
       printf "📋 代わりにこちらを実行:\n" >&2
-      printf "  gwq add -b %s\n" "$branch_name" >&2
+      printf "  git wt %s\n" "$branch_name" >&2
       printf "\n" >&2
     fi
   else
-    printf "⚠️  gwq がインストールされていません。\n" >&2
+    printf "⚠️  git-wt がインストールされていません。\n" >&2
     printf "\n" >&2
     printf "📦 セットアップ手順:\n" >&2
-    printf "  1. gwq をインストール\n" >&2
-    printf "     brew install gwq  # または go install github.com/xxx/gwq@latest\n" >&2
-    printf "  2. 設定ファイルを確認\n" >&2
-    printf "     gwq config list\n" >&2
-    printf "  3. ghqと同じ構造でworktreeを作成するように設定\n" >&2
+    printf "  brew install k1LoW/tap/git-wt\n" >&2
     printf "\n" >&2
   fi
 
-  printf "💡 ghqと同じ構造でworktreeを作成する必要があります。\n" >&2
-  printf "   設定ファイルも確認してください: gwq config list\n" >&2
+  printf "💡 プロジェクトローカルに.worktreeディレクトリが作成されます。\n" >&2
+  printf "   設定確認: git config --get wt.basedir\n" >&2
   printf "\n" >&2
-  printf "📁 ディレクトリ構造 (現在の設定):\n" >&2
-  printf "   ~/src/{{Host}}/{{Owner}}/{{Repository}}-{{Branch}}\n" >&2
-  printf "   例: ~/src/github.com/user/repo-feature-auth\n" >&2
+  printf "📁 ディレクトリ構造:\n" >&2
+  printf "   .worktree/<branch>\n" >&2
+  printf "   例: .worktree/feature-auth\n" >&2
   printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" >&2
   printf "\n" >&2
 
   # ログに記録
   local log_file="$HOME/.ai_guard_security.log"
-  printf "%s\tBLOCKED_CHECKOUT_B\t%s\t[Redirecting to gwq worktree]\n" \
+  printf "%s\tBLOCKED_CHECKOUT_B\t%s\t[Redirecting to git wt worktree]\n" \
     "$(date -Iseconds)" "$cmd_line" >> "$log_file" 2>/dev/null
 }
 

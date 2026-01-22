@@ -28,7 +28,7 @@ Git worktreeを使った並列開発で、環境変数を安全かつ効率的�
 
 | ツール | 役割 | インストール |
 |--------|------|-------------|
-| **gwq** | Git worktree管理、fuzzy finder | `go install github.com/d-kuro/gwq@latest` |
+| **git-wt** | Git worktree管理 | `brew install k1LoW/tap/git-wt` |
 | **direnv** | ディレクトリ単位で環境変数を自動読み込み | `brew install direnv` |
 | **dotenvx** | .envファイルの暗号化管理 | `npm install -g @dotenvx/dotenvx` |
 
@@ -47,8 +47,8 @@ which direnv || echo "direnv not installed"
 # Check dotenvx
 which dotenvx || npm list -g @dotenvx/dotenvx || echo "dotenvx not installed"
 
-# Check gwq (optional but recommended)
-which gwq || echo "gwq not installed (optional)"
+# Check git-wt (optional but recommended)
+git wt --version || echo "git-wt not installed (optional)"
 ```
 
 インストールされていない場合は、ユーザーに案内してインストールを促す。
@@ -94,36 +94,28 @@ eval "$(dotenvx decrypt --stdout --format shell)"
 direnv allow
 ```
 
-### Step 6: (Optional) Configure gwq
+### Step 6: (Optional) Configure git-wt
 
-> **Note:** gwqは**グローバルなbasedir**を前提とした設計です。プロジェクトローカルな`.worktree/`配置はサポートされていません。
+> **Note:** git-wtは**プロジェクトローカルな.worktree/**に配置する設計です。
 
-~/.config/gwq/config.toml を確認/作成:
+.gitconfigで設定:
 
-```toml
-[worktree]
-# グローバルなbasedirを指定（環境に合わせて変更）
-# デフォルト: ~/worktrees
-# ghq連携: ghqのrootと同じディレクトリ（例: ~/src, ~/ghq, ~/code）
-basedir = "~/worktrees"
-auto_mkdir = true
-
-[naming]
-template = "{{.Host}}/{{.Owner}}/{{.Repository}}-{{.Branch}}"
-
-[naming.sanitize_chars]
-"/" = "-"
-":" = "-"
-
-[[repository_settings]]
-repository = "*"
-copy_files = []  # direnvで環境変数を継承するのでコピー不要
-setup_commands = ["npm install || pnpm install || yarn install || true"]
+```bash
+git config --global wt.basedir ".worktree"
+git config --global wt.copyignored true
+git config --global --add wt.hook "npm install || pnpm install || yarn install || true"
 ```
 
-**ghqユーザーは推奨**: basedirをghqのrootに合わせることで、worktreeもghqのディレクトリ構造に統合できます。Ownerレベル（`~/src/github.com/owner/.envrc`）に環境変数を設定しておけば、ghqリポジトリもworktreeも同じ環境変数が自動適用されます。
+**ディレクトリ構造:**
+```
+myproject/
+├── .worktree/
+│   └── feature-auth/    # git wt feature-auth で作成
+├── .envrc               # プロジェクトルートの環境変数
+└── .env                 # 暗号化済み
+```
 
-**gwqを使わない場合**: `git worktree add .worktree/<feature> -b <branch>` でプロジェクトローカルに配置。この場合、プロジェクトルートの`.envrc`がworktreeに継承されます。
+direnvは親ディレクトリの`.envrc`を継承するため、プロジェクトルートに環境変数を設定しておけば、worktreeでも同じ環境変数が自動適用されます。
 
 ## Multi-Environment Setup
 
@@ -183,12 +175,13 @@ jobs:
 | `dotenvx get KEY` | 変数の値を取得 |
 | `dotenvx run -- <command>` | 環境変数を注入してコマンド実行 |
 
-### gwq
+### git-wt
 
 | コマンド | 説明 |
 |---------|------|
-| `gwq add -b <branch>` | worktree作成 |
-| `gwq list` | worktree一覧（fuzzy finder） |
+| `git wt <branch>` | worktree作成 |
+| `git wt` | worktree一覧 |
+| `git wt -d <branch>` | worktree削除 |
 
 ### direnv
 
@@ -201,26 +194,17 @@ jobs:
 
 worktreeでも自動で動作する理由:
 
-**標準git worktree（プロジェクトローカル）の場合:**
+**git-wt（プロジェクトローカル）の場合:**
 1. `.worktree/` はプロジェクト内のサブディレクトリ
 2. direnvは親ディレクトリの `.envrc` を自動継承
-3. `.env` はgit管理なのでworktreeにも存在
-4. 結果、worktreeでも自動で復号される
-
-**gwq（グローバルbasedir）の場合:**
-1. worktreeは `~/worktrees/` 等のグローバルディレクトリに作成
-2. ghq連携時はOwnerレベル（`~/src/github.com/owner/.envrc`）の`.envrc`が継承される
 3. `.env` はgit管理なのでworktreeにも存在
 4. 結果、worktreeでも自動で復号される
 
 ### Modifying .env in Worktree
 
 ```bash
-# 標準git worktreeの場合
+# git-wtで作成したworktreeに移動
 cd .worktree/feature-x/
-
-# gwq（ghq連携）の場合
-# cd ~/src/github.com/owner/repo-feature-x/
 
 # 環境変数を追加/変更（自動で再暗号化される）
 dotenvx set NEW_API_KEY="xxx"
