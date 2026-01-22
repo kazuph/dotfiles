@@ -227,6 +227,12 @@ Write tests that actively hunt for bugs:
 - All temporary scripts and files MUST be placed under `/tmp/` only - never pollute the project directory
 
 ## Worktree Git Operations
+- Use `git wt` for branch/worktree management instead of `git checkout -b`
+- Commands:
+  - `git wt` - List all worktrees
+  - `git wt <branch>` - Switch to worktree (create if needed)
+  - `git wt -d <branch>` - Delete worktree and branch
+- Worktrees are created in `.worktree/` directory (configured in .gitconfig)
 - When working in a worktree, do NOT chain `cd` and git commands
 - Execute `cd` separately first, then run git commands in subsequent calls
 - This avoids hook blocking issues that check the working directory
