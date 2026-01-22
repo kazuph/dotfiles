@@ -115,6 +115,18 @@
       "description": "Secure env management using dotenvx + direnv + git worktree best practices",
       "category": "development",
       "source": "./plugins/dotenvx-direnv-worktree"
+    },
+    {
+      "name": "moonbit-practice",
+      "description": "MoonBit code generation best practices - syntax, testing, moon ide/doc usage",
+      "category": "development",
+      "source": "./plugins/moonbit-practice"
+    },
+    {
+      "name": "moonbit-luna-ui",
+      "description": "MoonBit + Luna UI (Sol Framework) development guide for Cloudflare Workers",
+      "category": "development",
+      "source": "./plugins/moonbit-luna-ui"
     }
   ]
 }
