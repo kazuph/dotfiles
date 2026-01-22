@@ -1,0 +1,13 @@
+{
+  "name": "moonbit-luna-ui",
+  "version": "1.0.0",
+  "description": "MoonBit + Luna UI (Sol Framework) Web application development guide. Covers Cloudflare Workers deployment, D1/KV/R2 bindings, Island Components, Server Actions, and SSG/ISR.",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["moonbit", "luna-ui", "sol-framework", "cloudflare-workers", "island-components", "d1", "kv", "r2"],
+  "skills": "./skills/"
+}
