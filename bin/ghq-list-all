@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+# ghqリポジトリ + worktreesを一覧表示（github.com/を省略した短縮形式）
+# gcd関数から呼び出される
+
+ghq_root=$(ghq root)
+
+# ghq listは相対パス、github.com/を省略（.worktree/.worktrees両方除外）
+ghq list | command grep -v -e '\.worktree/' -e '\.worktrees/' | sed 's|^github.com/||'
+
+# .worktree/.worktrees の中身は相対パス形式に変換、(wt)マーカー付加
+command find "$ghq_root" -maxdepth 4 -type d \( -name '.worktree' -o -name '.worktrees' \) 2>/dev/null | \
+  while read wt_dir; do
+    command find "$wt_dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null
+  done | sed "s|$ghq_root/||; s|github.com/||; s|/\.git$| (wt)|"

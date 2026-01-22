@@ -230,7 +230,7 @@ gcd() {
   # transform で3モード循環: local -> ghq -> git -> local ...
   local toggle='ctrl-g:transform:
     if [[ $FZF_PROMPT =~ local ]]; then
-      echo "change-prompt(ghq> )+reload(zsh -c \"source ~/.zshrc; ghq_list_all\")+change-preview(bat --color=always --style=header,grid --line-range :80 \$(ghq root)/github.com/{}/README.md 2>/dev/null || head -80 \$(ghq root)/github.com/{}/README* 2>/dev/null || echo No README)"
+      echo "change-prompt(ghq> )+reload(ghq-list-all)+change-preview(bat --color=always --style=header,grid --line-range :80 \$(ghq root)/github.com/{}/README.md 2>/dev/null || head -80 \$(ghq root)/github.com/{}/README* 2>/dev/null || echo No README)"
     elif [[ $FZF_PROMPT =~ ghq ]]; then
       echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
     else
