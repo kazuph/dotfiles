@@ -208,6 +208,17 @@ function fzf-checkout-branch() {
 # zle     -N   fzf-checkout-branch
 # bindkey "^b" fzf-checkout-branch
 
+# ghqリポジトリ + worktreesを一覧表示（github.com/を省略した短縮形式）
+ghq_list_all() {
+  local ghq_root=$(ghq root)
+  # ghq listは相対パス、github.com/を省略（.worktree/.worktrees両方除外）
+  ghq list | command grep -v -e '\.worktree/' -e '\.worktrees/' | sed 's|^github.com/||'
+  # worktreeも短縮形式で出力（高速版：findで.worktreeディレクトリを探して中の.gitファイルを列挙）
+  command find "$ghq_root" -maxdepth 4 -type d \( -name '.worktree' -o -name '.worktrees' \) 2>/dev/null | \
+    xargs -I{} command find {} -maxdepth 3 -name '.git' -type f 2>/dev/null | \
+    sed "s|$ghq_root/||; s|github.com/||; s|/\.git$| (wt)|"
+}
+
 # ghqで管理しているリポジトリをプレビュー付きで検索して移動
 f() { fzf | while read LINE; do eval "$@ \"$LINE\"" </dev/tty; done }
 fp() { fzf --preview '[[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {}' | while read LINE; do eval "$@ \"$LINE\"" </dev/tty; done }
@@ -219,7 +230,7 @@ gcd() {
   # transform で3モード循環: local -> ghq -> git -> local ...
   local toggle='ctrl-g:transform:
     if [[ $FZF_PROMPT =~ local ]]; then
-      echo "change-prompt(ghq> )+reload(ghq list -p)+change-preview(bat --color=always --style=header,grid --line-range :80 {}/README.md 2>/dev/null || head -80 {}/README* 2>/dev/null || echo No README)"
+      echo "change-prompt(ghq> )+reload(zsh -c \"source ~/.zshrc; ghq_list_all\")+change-preview(bat --color=always --style=header,grid --line-range :80 \$(ghq root)/github.com/{}/README.md 2>/dev/null || head -80 \$(ghq root)/github.com/{}/README* 2>/dev/null || echo No README)"
     elif [[ $FZF_PROMPT =~ ghq ]]; then
       echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
     else
@@ -228,11 +239,10 @@ gcd() {
 
   if [[ "$current_dir" == "$HOME" ]] || [[ "$current_dir" != "$ghq_root"* ]]; then
     # ホームディレクトリ or ghq管理外 → ghqリポジトリ検索から開始
-    selected=$(ghq list -p | fzf \
+    selected=$(ghq_list_all | fzf \
       --prompt 'ghq> ' \
       --header 'C-g: toggle mode (ghq/git/local)' \
-      --delimiter '/' --with-nth -2.. \
-      --preview "bat --color=always --style=header,grid --line-range :80 {}/README.md 2>/dev/null || head -80 {}/README* 2>/dev/null || echo 'No README'" \
+      --preview "bat --color=always --style=header,grid --line-range :80 $ghq_root/github.com/{}/README.md 2>/dev/null || head -80 $ghq_root/github.com/{}/README* 2>/dev/null || echo 'No README'" \
       --bind "$toggle")
   else
     # ghq管理下 → ファイル/ディレクトリ検索から開始
@@ -246,6 +256,15 @@ gcd() {
 
   # 選択結果を処理
   if [[ -n "$selected" ]]; then
+    # (wt)マーカーを除去
+    selected="${selected%' (wt)'}"
+    # 短縮形式をフルパスに復元（パスが存在しない場合）
+    if [[ ! -e "$selected" ]]; then
+      local full_path="$(ghq root)/github.com/$selected"
+      if [[ -e "$full_path" ]]; then
+        selected="$full_path"
+      fi
+    fi
     if [[ -d "$selected" ]]; then
       cd "$selected"
     elif [[ -f "$selected" ]]; then
@@ -360,7 +379,8 @@ alias "503"="echo 'Service Unavailable'"
 alias "504"="echo 'Gateway Timeout'"
 alias "505"="echo 'HTTP Version Not Supported'"
 alias o='git ls-files | f open'
-alias e='ghq list -p | f cd'
+# ghq_list_allは短縮形式なので、選択後にフルパスに復元
+alias e='ghq_list_all | fzf | while read LINE; do LINE="${LINE%'\'' (wt)'\''}"; [[ ! -e "$LINE" ]] && LINE="$(ghq root)/github.com/$LINE"; cd "$LINE"; done'
 alias ghm='gh markdown-preview'
 
 # ~/.zshrc への追加コード
