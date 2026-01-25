@@ -1,0 +1,13 @@
+{
+  "name": "qntts",
+  "version": "1.0.0",
+  "description": "Qwen3-TTS (VoiceDesign mode) guide for efficient Japanese TTS on Mac with MLX. Covers optimal parameters, RTF optimization, Web UI setup, and Remotion integration.",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["qwen3-tts", "mlx", "tts", "voice-design", "japanese", "mac", "apple-silicon", "fastapi"],
+  "skills": "./skills/"
+}
