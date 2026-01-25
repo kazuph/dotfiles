@@ -129,10 +129,10 @@
       "source": "./plugins/moonbit-luna-ui"
     },
     {
-      "name": "qntts",
+      "name": "qwen-tts-on-macos",
       "description": "Qwen3-TTS (VoiceDesign mode) guide for efficient Japanese TTS on Mac with MLX",
       "category": "development",
-      "source": "./plugins/qntts"
+      "source": "./plugins/qwen-tts-on-macos"
     }
   ]
 }

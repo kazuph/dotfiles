@@ -1,5 +1,5 @@
 ---
-name: qntts
+name: qwen-tts-on-macos
 description: Qwen3-TTS (VoiceDesign mode) をMac MLXで効率的に実行するためのガイド。パラメータ最適化、RTFチューニング、Web UI構築、Remotion連携に使用
 ---
 
