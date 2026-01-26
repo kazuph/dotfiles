@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-practice",
+  "name": "kazuph-plugin",
   "version": "1.0.0",
   "description": "MoonBit code generation best practices. Helps avoid common AI mistakes with syntax, tests, and benchmarks. Includes moon ide/doc usage, testing patterns, and language fundamentals.",
   "author": {

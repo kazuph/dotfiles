@@ -1,5 +1,5 @@
 {
-  "name": "moonbit-luna-ui",
+  "name": "kazuph-plugin",
   "version": "1.0.0",
   "description": "MoonBit + Luna UI (Sol Framework) Web application development guide. Covers Cloudflare Workers deployment, D1/KV/R2 bindings, Island Components, Server Actions, and SSG/ISR.",
   "author": {
