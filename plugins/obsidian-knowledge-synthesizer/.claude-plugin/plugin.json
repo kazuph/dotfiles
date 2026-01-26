@@ -1,0 +1,12 @@
+{
+  "name": "kazuph-plugin",
+  "version": "1.0.0",
+  "description": "Skill: obsidian-knowledge-synthesizer",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "skills": "./skills/"
+}

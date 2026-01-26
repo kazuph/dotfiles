@@ -1,0 +1,50 @@
+flowchart TB
+    subgraph TestLayer["Canary Test Layer"]
+        CT[Canary Test Script]
+        GHA[GitHub Actions]
+        CWS[CloudWatch Synthetics]
+    end
+
+    subgraph IoTLayer["AWS IoT Core"]
+        MQTT[MQTT Broker]
+        TR[Topic Rules<br/>inf/mtr]
+    end
+
+    subgraph ProcessLayer["Lambda Processors"]
+        INF[information-processor]
+        MTR[metrics-processor]
+    end
+
+    subgraph StorageLayer["Storage Layer"]
+        S3[(S3<br/>履歴保存)]
+        DDB[(DynamoDB<br/>最新状態)]
+    end
+
+    subgraph MonitorLayer["Monitoring Layer"]
+        CWL[CloudWatch Logs]
+        CWM[CloudWatch Metrics]
+        CWA[CloudWatch Alarms]
+        SNS[SNS Notification]
+    end
+
+    CT -->|"1. テストデータ送信"| MQTT
+    GHA -->|"CI/CD後"| CT
+    CWS -->|"定期実行"| CT
+
+    MQTT --> TR
+    TR -->|"WHERE EXISTS(inf)"| INF
+    TR -->|"WHERE EXISTS(mtr)"| MTR
+
+    INF --> S3
+    INF --> DDB
+    MTR --> S3
+    MTR --> DDB
+
+    INF --> CWL
+    MTR --> CWL
+    CWL --> CWM
+    CWM --> CWA
+    CWA --> SNS
+
+    CT -->|"2. 検証"| S3
+    CT -->|"2. 検証"| DDB

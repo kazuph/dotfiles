@@ -1,0 +1,56 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4A90D9'}}}%%
+sequenceDiagram
+    autonumber
+    participant U as ユーザー
+    participant C as Claude Code
+    participant S as spec-validator
+    participant M as mock-detector
+    participant A as assert-auditor
+    participant E as evidence-linker
+    participant R as reviw
+
+    U->>C: /sdd-reviw:spec-do auth
+    activate C
+    C->>C: PRD.md作成
+    C->>C: worktree作成
+    C->>C: .artifacts/auth/作成
+    C->>C: evidence-map.json初期化
+    deactivate C
+
+    loop 実装ループ
+        U->>C: コード実装
+        C->>S: 仕様整合性チェック
+        S-->>C: OK/NG
+        C->>M: モック検出
+        M-->>C: 違反なし/違反あり
+        C->>A: assert監査
+        A-->>C: 有効/空虚
+    end
+
+    U->>C: /sdd-reviw:verify
+    activate C
+    C->>C: webapp-testing実行
+    C->>C: スクショ・動画収集
+    C->>E: 要件↔証拠紐付け
+    E-->>C: evidence-map.json更新
+    deactivate C
+
+    U->>C: /sdd-reviw:spec-done
+    activate C
+    C->>C: 完了基準チェック
+    Note over C: 全REQにエビデンス必須
+    C->>R: npx reviw起動
+    deactivate C
+
+    activate R
+    R->>U: ブラウザでレビュー
+    U->>R: コメント追加
+    R-->>C: YAMLフィードバック
+    deactivate R
+
+    alt 修正必要
+        C->>C: Todo登録
+        Note over C,U: 修正→再verify→再reviw
+    else 承認
+        C->>U: 完了報告
+    end

@@ -1,0 +1,36 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4A90D9', 'primaryTextColor': '#fff', 'primaryBorderColor': '#2E5A8B', 'lineColor': '#5C6BC0', 'secondaryColor': '#81C784', 'tertiaryColor': '#FFB74D'}}}%%
+flowchart TB
+    subgraph SDD["SDD（仕様駆動開発）"]
+        PRD["PRD.md<br/>仕様書"]
+        CHANGELOG["CHANGELOG.md<br/>変更履歴"]
+        STATUS["status.json<br/>進捗状態"]
+        TASKS["tasks/<br/>タスク分解"]
+    end
+
+    subgraph REVIW["reviw（検証強制）"]
+        ARTIFACTS[".artifacts/<br/>エビデンス"]
+        WEBAPP["webapp-testing<br/>実ブラウザ検証"]
+        REVIEW["npx reviw<br/>人間レビュー"]
+        YAML["YAML<br/>フィードバック"]
+    end
+
+    subgraph NEW["新規追加（融合）"]
+        MOCK["mock-detector<br/>モック検出"]
+        ASSERT["assert-auditor<br/>空虚assert検出"]
+        EVIDENCE["evidence-linker<br/>要件↔証拠紐付け"]
+        MAP["evidence-map.json<br/>カバレッジ"]
+    end
+
+    PRD --> EVIDENCE
+    ARTIFACTS --> EVIDENCE
+    EVIDENCE --> MAP
+
+    WEBAPP --> ARTIFACTS
+    ARTIFACTS --> REVIEW
+    REVIEW --> YAML
+
+    CODE["実装コード"] --> MOCK
+    TEST["テストコード"] --> ASSERT
+
+    MOCK -->|違反検出| BLOCK["差し戻し"]
+    ASSERT -->|空虚検出| BLOCK

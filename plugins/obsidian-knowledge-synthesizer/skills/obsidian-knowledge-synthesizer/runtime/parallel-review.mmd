@@ -1,0 +1,42 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4A90D9'}}}%%
+flowchart TB
+    subgraph TRIGGER["トリガー"]
+        CMD["/sdd-reviw:review<br/>または git commit 検出"]
+    end
+
+    subgraph ORCHESTRATOR["Review Orchestrator"]
+        ORC["レビュー統括<br/>並列起動・結果集約"]
+    end
+
+    subgraph AGENTS["並列レビューエージェント群"]
+        direction LR
+        subgraph CODE["コード品質"]
+            A1["code-quality-reviewer<br/>可読性・DRY・複雑度"]
+        end
+        subgraph SEC["セキュリティ"]
+            A2["security-reviewer<br/>XSS・インジェクション・OWASP"]
+        end
+        subgraph TEST["テスト品質"]
+            A3["test-auditor<br/>mock検出・空虚assert"]
+        end
+        subgraph SPEC["仕様整合"]
+            A4["spec-validator<br/>PRD↔実装の乖離"]
+        end
+        subgraph PERF["パフォーマンス"]
+            A5["perf-reviewer<br/>N+1・メモリリーク・計算量"]
+        end
+        subgraph STYLE["スタイル"]
+            A6["style-reviewer<br/>lint・フォーマット・命名"]
+        end
+    end
+
+    subgraph OUTPUT["出力"]
+        REPORT["review-report.md<br/>統合レポート"]
+        REVIW["npx reviw<br/>人間レビュー"]
+    end
+
+    TRIGGER --> ORC
+    ORC -->|並列起動| A1 & A2 & A3 & A4 & A5 & A6
+    A1 & A2 & A3 & A4 & A5 & A6 -->|結果| ORC
+    ORC --> REPORT
+    REPORT --> REVIW
