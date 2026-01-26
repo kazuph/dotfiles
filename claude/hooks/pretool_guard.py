@@ -133,7 +133,7 @@ def main():
         worktree_msg = (
             "🚫 mainブランチでの直接作業は避けてください。\n"
             "📁 対象: {root}\n"
-            "✅ 推奨: gwq new feature/xxx または git worktree add <path> -b feature/xxx\n"
+            "✅ 推奨: git wt feature/xxx\n"
             "worktreeディレクトリで作業してください。\n"
             ".md以外の編集はブロックされました。"
         ).format(root=git_root or target_dir)
