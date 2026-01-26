@@ -1,0 +1,13 @@
+{
+  "name": "kazuph-plugin",
+  "version": "1.0.0",
+  "description": "Figma design ingestion and fidelity enforcement. Extract designs via Figma CLI and ensure UI implementation matches Figma specifications.",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["figma", "design", "ui", "cli", "fidelity", "storybook"],
+  "skills": "./skills/"
+}
