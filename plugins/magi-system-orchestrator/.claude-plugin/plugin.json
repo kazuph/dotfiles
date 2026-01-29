@@ -1,0 +1,13 @@
+{
+  "name": "magi-system-orchestrator",
+  "version": "1.0.0",
+  "description": "Multi-AI (Claude/Codex/Gemini) deliberation skill with strict availability checks and structured outputs. MAGI system for complex decision-making and multi-perspective reviews.",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["magi", "multi-ai", "claude", "codex", "gemini", "deliberation", "orchestrator"],
+  "skills": "./skills/"
+}
