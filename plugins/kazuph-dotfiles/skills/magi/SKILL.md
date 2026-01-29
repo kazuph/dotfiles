@@ -1,5 +1,5 @@
 ---
-name: magi-system-orchestrator
+name: magi
 description: Multi-AI (Claude/Codex/Gemini) deliberation skill with strict availability checks and structured outputs.
 allowed-tools:
   - Task

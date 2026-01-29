@@ -1,0 +1,13 @@
+{
+  "name": "kazuph-dotfiles",
+  "version": "1.0.0",
+  "description": "kazuph's personal skills collection - MAGI system, env management, MoonBit, and more",
+  "author": {
+    "name": "kazuph",
+    "email": "kazuph@gmail.com",
+    "url": "https://github.com/kazuph"
+  },
+  "license": "MIT",
+  "keywords": ["kazuph", "skills", "magi", "dotfiles"],
+  "skills": "./skills/"
+}

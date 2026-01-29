@@ -1,0 +1,10 @@
+graph TD
+    A[uvx コマンド実行] --> B[GitHubからパッケージ取得]
+    B --> C[依存関係インストール]
+    C --> D[create-report CLI起動]
+    D --> E[gh auth token で認証]
+    E --> F[GraphQL API呼び出し]
+    F --> G[contributionsCollection取得]
+    G --> H[年別統計計算]
+    H --> I[Rich で整形出力]
+    I --> J[ストリーク/トップリポ表示]

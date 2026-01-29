@@ -1,13 +1,19 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "kazuph-dotfiles",
-  "version": "1.21.0",
-  "description": "kazuph's personal Claude Code plugins - MCP servers and tools",
+  "version": "2.0.0",
+  "description": "kazuph's personal Claude Code plugins - MCP servers and skills",
   "owner": {
     "name": "kazuph",
     "email": "kazuph@gmail.com"
   },
   "plugins": [
+    {
+      "name": "kazuph-dotfiles",
+      "description": "All kazuph's skills: MAGI, MoonBit, env-setup, figma, and more",
+      "category": "development",
+      "source": "./plugins/kazuph-dotfiles"
+    },
     {
       "name": "mcp-browser-tabs",
       "description": "Chrome browser tabs info for Claude",
@@ -109,36 +115,6 @@
       "description": "YouTube video information MCP",
       "category": "development",
       "source": "./plugins/mcp-youtube"
-    },
-    {
-      "name": "dotenvx-direnv-worktree",
-      "description": "Secure env management using dotenvx + direnv + git worktree best practices",
-      "category": "development",
-      "source": "./plugins/dotenvx-direnv-worktree"
-    },
-    {
-      "name": "moonbit-practice",
-      "description": "MoonBit code generation best practices - syntax, testing, moon ide/doc usage",
-      "category": "development",
-      "source": "./plugins/moonbit-practice"
-    },
-    {
-      "name": "moonbit-luna-ui",
-      "description": "MoonBit + Luna UI (Sol Framework) development guide for Cloudflare Workers",
-      "category": "development",
-      "source": "./plugins/moonbit-luna-ui"
-    },
-    {
-      "name": "qwen-tts-on-macos",
-      "description": "Qwen3-TTS (VoiceDesign mode) guide for efficient Japanese TTS on Mac with MLX",
-      "category": "development",
-      "source": "./plugins/qwen-tts-on-macos"
-    },
-    {
-      "name": "magi-system-orchestrator",
-      "description": "Multi-AI (Claude/Codex/Gemini) deliberation skill for complex decisions and multi-perspective reviews",
-      "category": "development",
-      "source": "./plugins/magi-system-orchestrator"
     }
   ]
 }
