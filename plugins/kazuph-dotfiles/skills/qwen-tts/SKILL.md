@@ -88,6 +88,51 @@ sf.write("output.wav", result.audio, result.sample_rate)
 | 2000 | ~160秒 | 長文読み上げ |
 | 4096 | ~327秒 | 使用非推奨 |
 
+### 動的max_tokens計算（セリフ長に応じた最適化）
+
+固定値ではなく、セリフ長に応じてmax_tokensを動的に計算することで、途切れ防止と速度のバランスを取る：
+
+```python
+def calculate_optimal_max_tokens(text_length: int) -> int:
+    """
+    セリフ長に応じた最適なmax_tokensを計算
+
+    計算式:
+    - 1文字あたり約0.35秒と見積もり（日本語の平均的な読み上げ速度）
+    - 最低3秒は確保
+    - 12.5トークン/秒 + 20%の余裕
+    """
+    estimated_duration = max(text_length * 0.35, 3.0)
+    max_tokens = int(estimated_duration * 12.5 * 1.2)  # 20%余裕
+    return max(max_tokens, 50)  # 最低50トークン
+```
+
+#### 実測結果（Mac M4 Pro）
+
+| パターン | 文字数 | max_tokens | 音声長 | 途切れ |
+|----------|--------|------------|--------|--------|
+| 短め | 9文字 | 50 | 1.44秒 | なし |
+| 中くらい | 38文字 | 199 | 9.20秒 | なし |
+| 長め | 84文字 | 435 | 18.56秒 | なし |
+
+#### 使用例
+
+```python
+text = "ずんだもんが、今日は特別なお知らせをお届けするのだ！"
+optimal_max_tokens = calculate_optimal_max_tokens(len(text))
+
+result = next(model.generate_voice_design(
+    text=text,
+    instruct="元気で明るく可愛らしい若い女の子の声",
+    language="Japanese",
+    max_tokens=optimal_max_tokens,  # 動的計算
+    temperature=0.65,
+    repetition_penalty=1.15,
+    top_k=35,
+    top_p=0.92,
+))
+```
+
 ## パラメータリファレンス
 
 詳細は [PARAMETERS.md](PARAMETERS.md) を参照。
