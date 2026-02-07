@@ -113,6 +113,143 @@ _ai_guard_is_checkout_b() {
   return 1
 }
 
+AI_GUARD_TEMP_APPROVAL_FILE="${AI_GUARD_TEMP_APPROVAL_FILE:-$HOME/.ai_guard_temp_approval}"
+AI_GUARD_TEMP_APPROVAL_SECONDS="${AI_GUARD_TEMP_APPROVAL_SECONDS:-180}"
+AI_GUARD_TEMP_REJECT_FILE="${AI_GUARD_TEMP_REJECT_FILE:-$HOME/.ai_guard_temp_reject}"
+AI_GUARD_TEMP_REJECT_SECONDS="${AI_GUARD_TEMP_REJECT_SECONDS:-$AI_GUARD_TEMP_APPROVAL_SECONDS}"
+
+_ai_guard_temp_approval_key() {
+  local cmd="$1"; shift
+  local subcmd="${1:--}"
+  local cwd
+  cwd="$(pwd -P 2>/dev/null || pwd)"
+  printf "%s:%s:%s" "$cmd" "$subcmd" "$cwd"
+}
+
+_ai_guard_temp_approval_is_valid() {
+  local target_key="$1"
+  local file="$AI_GUARD_TEMP_APPROVAL_FILE"
+  [[ -n "$target_key" ]] || return 1
+  [[ -f "$file" ]] || return 1
+
+  local now
+  now=$(date +%s 2>/dev/null) || return 1
+
+  local entry_key entry_expiry
+  local -a kept_lines=()
+  local matched=1
+
+  while IFS=$'\t' read -r entry_key entry_expiry; do
+    [[ -n "$entry_key" && -n "$entry_expiry" ]] || continue
+    [[ "$entry_expiry" =~ ^[0-9]+$ ]] || continue
+    if (( entry_expiry > now )); then
+      kept_lines+=("${entry_key}"$'\t'"${entry_expiry}")
+      [[ "$entry_key" == "$target_key" ]] && matched=0
+    fi
+  done < "$file"
+
+  if (( ${#kept_lines[@]} > 0 )); then
+    printf "%s\n" "${kept_lines[@]}" >| "$file"
+  else
+    builtin command rm -f "$file" 2>/dev/null
+  fi
+
+  return $matched
+}
+
+_ai_guard_temp_approval_set() {
+  local target_key="$1"
+  local duration="${2:-$AI_GUARD_TEMP_APPROVAL_SECONDS}"
+  local file="$AI_GUARD_TEMP_APPROVAL_FILE"
+  [[ -n "$target_key" ]] || return 1
+  [[ "$duration" =~ ^[0-9]+$ ]] || duration=180
+  (( duration > 0 )) || duration=180
+
+  local now expiry
+  now=$(date +%s 2>/dev/null) || return 1
+  expiry=$(( now + duration ))
+
+  local entry_key entry_expiry
+  local -a kept_lines=()
+
+  if [[ -f "$file" ]]; then
+    while IFS=$'\t' read -r entry_key entry_expiry; do
+      [[ -n "$entry_key" && -n "$entry_expiry" ]] || continue
+      [[ "$entry_expiry" =~ ^[0-9]+$ ]] || continue
+      if (( entry_expiry > now )) && [[ "$entry_key" != "$target_key" ]]; then
+        kept_lines+=("${entry_key}"$'\t'"${entry_expiry}")
+      fi
+    done < "$file"
+  fi
+
+  kept_lines+=("${target_key}"$'\t'"${expiry}")
+  printf "%s\n" "${kept_lines[@]}" >| "$file"
+  chmod 600 "$file" 2>/dev/null || true
+  return 0
+}
+
+_ai_guard_temp_reject_is_valid() {
+  local target_key="$1"
+  local file="$AI_GUARD_TEMP_REJECT_FILE"
+  [[ -n "$target_key" ]] || return 1
+  [[ -f "$file" ]] || return 1
+
+  local now
+  now=$(date +%s 2>/dev/null) || return 1
+
+  local entry_key entry_expiry
+  local -a kept_lines=()
+  local matched=1
+
+  while IFS=$'\t' read -r entry_key entry_expiry; do
+    [[ -n "$entry_key" && -n "$entry_expiry" ]] || continue
+    [[ "$entry_expiry" =~ ^[0-9]+$ ]] || continue
+    if (( entry_expiry > now )); then
+      kept_lines+=("${entry_key}"$'\t'"${entry_expiry}")
+      [[ "$entry_key" == "$target_key" ]] && matched=0
+    fi
+  done < "$file"
+
+  if (( ${#kept_lines[@]} > 0 )); then
+    printf "%s\n" "${kept_lines[@]}" >| "$file"
+  else
+    builtin command rm -f "$file" 2>/dev/null
+  fi
+
+  return $matched
+}
+
+_ai_guard_temp_reject_set() {
+  local target_key="$1"
+  local duration="${2:-$AI_GUARD_TEMP_REJECT_SECONDS}"
+  local file="$AI_GUARD_TEMP_REJECT_FILE"
+  [[ -n "$target_key" ]] || return 1
+  [[ "$duration" =~ ^[0-9]+$ ]] || duration=180
+  (( duration > 0 )) || duration=180
+
+  local now expiry
+  now=$(date +%s 2>/dev/null) || return 1
+  expiry=$(( now + duration ))
+
+  local entry_key entry_expiry
+  local -a kept_lines=()
+
+  if [[ -f "$file" ]]; then
+    while IFS=$'\t' read -r entry_key entry_expiry; do
+      [[ -n "$entry_key" && -n "$entry_expiry" ]] || continue
+      [[ "$entry_expiry" =~ ^[0-9]+$ ]] || continue
+      if (( entry_expiry > now )) && [[ "$entry_key" != "$target_key" ]]; then
+        kept_lines+=("${entry_key}"$'\t'"${entry_expiry}")
+      fi
+    done < "$file"
+  fi
+
+  kept_lines+=("${target_key}"$'\t'"${expiry}")
+  printf "%s\n" "${kept_lines[@]}" >| "$file"
+  chmod 600 "$file" 2>/dev/null || true
+  return 0
+}
+
 # ============================================================================
 
 # Detect whether this shell is driven by an AI tool (Codex/Claude等)。
@@ -218,7 +355,7 @@ on run argv
   set titleText to item 3 of argv
   set promptText to "⚠️ 本当に実行しますか？" & return & cmdText & return & ctxText & return & return & "承認/却下の理由を入力してください。"
   try
-    set resp to display dialog promptText default answer "" buttons {"却下", "承認"} default button "却下" with title titleText with icon stop
+    set resp to display dialog promptText default answer "" buttons {"却下", "3分間却下", "3分間承認", "承認"} default button "却下" with title titleText with icon stop
     return (button returned of resp) & linefeed & (text returned of resp)
   on error number -128
     return "ESC" & linefeed & ""
@@ -239,9 +376,9 @@ APPLESCRIPT
 
     if [[ -z "$button_choice" ]]; then
       if [[ -t 0 && -t 1 ]]; then
-        printf "⚠️ 本当に実行しますか？\n%s\n%s\n承認する場合は y/yes を入力してください。\n理由: " "$cmd_display_for_prompt" "$context_block" >&2
+        printf "⚠️ 本当に実行しますか？\n%s\n%s\n承認(y/yes) / 3分承認(t) / 3分却下(r) / 却下(その他)\n理由: " "$cmd_display_for_prompt" "$context_block" >&2
         read -r reason_text
-        printf "承認しますか？ [y/N]: " >&2
+        printf "選択 [y/t/r/N]: " >&2
         read -r button_choice
       else
         reason_text="ダイアログ表示に失敗 (osascript 応答なし/TTYなし)。"
@@ -261,7 +398,16 @@ APPLESCRIPT
     reason_clean="${reason_clean//$'\t'/ }"
     log_reason="${reason_clean:-未入力} ${context_for_log}"
 
-    if [[ "$button_choice" != "承認" && "$button_choice" != "y" && "$button_choice" != "yes" && "$button_choice" != "Y" ]]; then
+    local allow_mode="ALLOW"
+    local set_temp_approval=0
+    local set_temp_reject=0
+    if [[ "$button_choice" == "3分間承認" || "$button_choice" == "t" || "$button_choice" == "T" ]]; then
+      allow_mode="TEMP_ALLOW"
+      set_temp_approval=1
+    elif [[ "$button_choice" == "3分間却下" || "$button_choice" == "r" || "$button_choice" == "R" ]]; then
+      allow_mode="TEMP_REJECT"
+      set_temp_reject=1
+    elif [[ "$button_choice" != "承認" && "$button_choice" != "y" && "$button_choice" != "yes" && "$button_choice" != "Y" ]]; then
       printf "❌ Command cancelled: %s\n" "$cmd_display"
       printf "   理由: %s\n" "${reason_text:-未入力}"
       printf "   %s\n" "$context_block"
@@ -270,8 +416,31 @@ APPLESCRIPT
       return 1
     fi
 
-    (( log_ready )) && printf "%s\tALLOW\t%s\t%s\n" "$(date -Iseconds)" "$cmd_display" "$log_reason" >> "$log_file"
-    printf "✅ 承認: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
+    if (( set_temp_approval )); then
+      local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
+      if ! _ai_guard_temp_approval_set "$temp_key" "$AI_GUARD_TEMP_APPROVAL_SECONDS"; then
+        allow_mode="ALLOW"
+        printf "⚠️ 3分間承認の保存に失敗したため、今回のみ承認として実行します。\n" >&2
+      fi
+    fi
+
+    if (( set_temp_reject )); then
+      local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
+      if ! _ai_guard_temp_reject_set "$temp_key" "$AI_GUARD_TEMP_REJECT_SECONDS"; then
+        printf "⚠️ 3分間却下の保存に失敗しましたが、今回は却下します。\n" >&2
+      fi
+      printf "❌ 3分間却下: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
+      (( log_ready )) && printf "%s\tTEMP_REJECT\t%s\t%s\n" "$(date -Iseconds)" "$cmd_display" "$log_reason" >> "$log_file"
+      AI_GUARD_ACTIVE=${_ai_guard_prev_active}
+      return 1
+    fi
+
+    (( log_ready )) && printf "%s\t%s\t%s\t%s\n" "$(date -Iseconds)" "$allow_mode" "$cmd_display" "$log_reason" >> "$log_file"
+    if [[ "$allow_mode" == "TEMP_ALLOW" ]]; then
+      printf "✅ 3分間承認: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
+    else
+      printf "✅ 承認: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
+    fi
   fi
 
   if [[ -n "${AI_GUARD_EXEC:-}" ]]; then
@@ -768,8 +937,43 @@ _ai_guard_need_prompt() {
           ;;
       esac
       ;;
+    wrangler)
+      # 動的設定ファイルを読み込んで許可リストをチェック（編集だけで即反映）
+      [[ -f "$HOME/dotfiles/.ai_guard_config.zsh" ]] && source "$HOME/dotfiles/.ai_guard_config.zsh"
+      local subcmd_pair="$1 $2"
+      for allowed in "${_AI_GUARD_WRANGLER_ALLOW[@]}"; do
+        [[ "$subcmd_pair" == "$allowed" ]] && return 1
+      done
+      ;;
   esac
   return 1
+}
+
+_ai_guard_confirm_with_temp_approval() {
+  local cmd="$1"; shift
+  local temp_key prev_temp_key rc
+
+  temp_key=$(_ai_guard_temp_approval_key "$cmd" "$@")
+  if _ai_guard_temp_reject_is_valid "$temp_key"; then
+    local cmd_display log_file="$HOME/.ai_extreme_confirm.log"
+    cmd_display="$(printf "%s " "$cmd" "$@")"
+    cmd_display="${cmd_display% }"
+    printf "❌ 3分間却下中のためキャンセル: %s\n" "$cmd_display" >&2
+    printf "%s\tTEMP_REJECT_HIT\t%s\t[cached 3min reject]\n" "$(date -Iseconds)" "$cmd_display" >> "$log_file" 2>/dev/null
+    return 1
+  fi
+
+  if _ai_guard_temp_approval_is_valid "$temp_key"; then
+    builtin command "$cmd" "$@"
+    return $?
+  fi
+
+  prev_temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
+  AI_GUARD_TEMP_APPROVAL_KEY="$temp_key"
+  ai_extreme_confirm "$cmd" "$@"
+  rc=$?
+  AI_GUARD_TEMP_APPROVAL_KEY="$prev_temp_key"
+  return $rc
 }
 
 _ai_guard_dispatch() {
@@ -837,7 +1041,7 @@ _ai_guard_dispatch() {
         return 1
         ;;
       prompt)
-        ai_extreme_confirm "$cmd" "$@"
+        _ai_guard_confirm_with_temp_approval "$cmd" "$@"
         return $?
         ;;
     esac
@@ -850,14 +1054,15 @@ _ai_guard_dispatch() {
         return 1
         ;;
       prompt)
-        ai_extreme_confirm "$cmd" "$@"
+        _ai_guard_confirm_with_temp_approval "$cmd" "$@"
         return $?
         ;;
     esac
   fi
 
   if _ai_guard_need_prompt "$cmd" "$@"; then
-    ai_extreme_confirm "$cmd" "$@"
+    _ai_guard_confirm_with_temp_approval "$cmd" "$@"
+    return $?
   else
     builtin command "$cmd" "$@"
   fi

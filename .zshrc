@@ -227,30 +227,29 @@ gcd() {
   local current_dir=$(pwd)
   local selected
 
-  # transform で3モード循環: local -> ghq -> git -> local ...
+  # transform で3モード循環: git -> local -> ghq -> git ...
   local toggle='ctrl-g:transform:
-    if [[ $FZF_PROMPT =~ local ]]; then
-      echo "change-prompt(ghq> )+reload(ghq-list-all)+change-preview(bat --color=always --style=header,grid --line-range :80 \$(ghq root)/github.com/{}/README.md 2>/dev/null || head -80 \$(ghq root)/github.com/{}/README* 2>/dev/null || echo No README)"
-    elif [[ $FZF_PROMPT =~ ghq ]]; then
-      echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
-    else
+    if [[ $FZF_PROMPT =~ git ]]; then
       echo "change-prompt(local> )+reload(fd . --type f --type d 2>/dev/null)+change-preview([[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {})"
+    elif [[ $FZF_PROMPT =~ local ]]; then
+      echo "change-prompt(ghq> )+reload(ghq-list-all)+change-preview(bat --color=always --style=header,grid --line-range :80 \$(ghq root)/github.com/{}/README.md 2>/dev/null || head -80 \$(ghq root)/github.com/{}/README* 2>/dev/null || echo No README)"
+    else
+      echo "change-prompt(git> )+reload(git branch --all 2>/dev/null | sed \"s/^[*+ ]*//\" | grep -v HEAD)+change-preview(git log --oneline --color=always -20 {} 2>/dev/null)"
     fi'
 
   if [[ "$current_dir" == "$HOME" ]] || [[ "$current_dir" != "$ghq_root"* ]]; then
     # ホームディレクトリ or ghq管理外 → ghqリポジトリ検索から開始
     selected=$(ghq_list_all | fzf \
       --prompt 'ghq> ' \
-      --header 'C-g: toggle mode (ghq/git/local)' \
+      --header 'C-g: toggle mode (ghq/git/local)  ※git配下ではgitから開始' \
       --preview "bat --color=always --style=header,grid --line-range :80 $ghq_root/github.com/{}/README.md 2>/dev/null || head -80 $ghq_root/github.com/{}/README* 2>/dev/null || echo 'No README'" \
       --bind "$toggle")
   else
-    # ghq管理下 → ファイル/ディレクトリ検索から開始
-    selected=$(fd . --type f --type d 2>/dev/null | fzf \
-      --prompt 'local> ' \
-      --header 'C-g: toggle mode (local/ghq/git)' \
-      --delimiter '/' --with-nth -2.. \
-      --preview '[[ -d {} ]] && ls -la {} || bat --color=always --style=header,grid {}' \
+    # ghq管理下 → branch(worktree)検索から開始
+    selected=$(git branch --all 2>/dev/null | sed "s/^[*+ ]*//" | grep -v HEAD | fzf \
+      --prompt 'git> ' \
+      --header 'C-g: toggle mode (git/local/ghq)' \
+      --preview "git log --oneline --color=always -20 {} 2>/dev/null" \
       --bind "$toggle")
   fi
 
@@ -634,3 +633,6 @@ if [[ -n "$PREFIX" && "$PREFIX" == *"com.termux"* ]]; then
   export TMPDIR=$PREFIX/tmp
   export CLAUDE_CODE_TMPDIR=$TMPDIR
 fi
+
+# goneovim alias
+alias gvim="goneovim"
