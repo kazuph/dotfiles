@@ -1,6 +1,6 @@
 {
   "name": "mcp-tmux",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "tmux session management for Claude - Interface with tmux sessions",
   "author": {
     "name": "kazuph",
@@ -8,5 +8,10 @@
   },
   "repository": "https://github.com/kazuph/mcp-tmux",
   "license": "MIT",
-  "keywords": ["mcp", "tmux", "claude", "terminal"]
+  "keywords": [
+    "mcp",
+    "tmux",
+    "claude",
+    "terminal"
+  ]
 }

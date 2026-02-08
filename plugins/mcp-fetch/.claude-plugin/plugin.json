@@ -1,6 +1,6 @@
 {
   "name": "mcp-fetch",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Web content fetching with image support for Claude - Fetch web pages with automatic image saving",
   "author": {
     "name": "kazuph",
@@ -8,5 +8,13 @@
   },
   "repository": "https://github.com/kazuph/mcp-fetch",
   "license": "MIT",
-  "keywords": ["mcp", "fetch", "web", "content", "image processing", "claude", "ai"]
+  "keywords": [
+    "mcp",
+    "fetch",
+    "web",
+    "content",
+    "image processing",
+    "claude",
+    "ai"
+  ]
 }

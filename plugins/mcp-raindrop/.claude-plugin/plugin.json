@@ -1,6 +1,6 @@
 {
   "name": "mcp-raindrop",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Raindrop.io bookmark management for Claude - Access and manage your Raindrop bookmarks",
   "author": {
     "name": "kazuph",
@@ -8,5 +8,10 @@
   },
   "repository": "https://github.com/kazuph/mcp-raindrop",
   "license": "MIT",
-  "keywords": ["raindrop.io", "bookmarks", "mcp", "claude"]
+  "keywords": [
+    "raindrop.io",
+    "bookmarks",
+    "mcp",
+    "claude"
+  ]
 }

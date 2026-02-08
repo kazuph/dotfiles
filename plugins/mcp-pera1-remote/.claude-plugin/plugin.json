@@ -1,11 +1,18 @@
 {
   "name": "mcp-pera1-remote",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "GitHub code extraction via Pera1 remote service - Cloudflare Workers based",
   "author": {
     "name": "kazuph",
     "url": "https://github.com/kazuph"
   },
   "license": "MIT",
-  "keywords": ["github", "code", "mcp", "claude", "pera1", "remote"]
+  "keywords": [
+    "github",
+    "code",
+    "mcp",
+    "claude",
+    "pera1",
+    "remote"
+  ]
 }

@@ -1,11 +1,17 @@
 {
   "name": "mcp-linear",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Linear issue tracking integration via official MCP endpoint",
   "author": {
     "name": "kazuph",
     "url": "https://github.com/kazuph"
   },
   "license": "MIT",
-  "keywords": ["linear", "issues", "project-management", "mcp", "claude"]
+  "keywords": [
+    "linear",
+    "issues",
+    "project-management",
+    "mcp",
+    "claude"
+  ]
 }

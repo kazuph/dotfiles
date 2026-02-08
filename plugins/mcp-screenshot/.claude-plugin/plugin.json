@@ -1,6 +1,6 @@
 {
   "name": "mcp-screenshot",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Screenshot and OCR capabilities for Claude - Take screenshots and extract text",
   "author": {
     "name": "kazuph",
@@ -8,5 +8,9 @@
   },
   "repository": "https://github.com/kazuph/mcp-screenshot",
   "license": "MIT",
-  "keywords": ["mcp", "screenshot", "ocr"]
+  "keywords": [
+    "mcp",
+    "screenshot",
+    "ocr"
+  ]
 }
