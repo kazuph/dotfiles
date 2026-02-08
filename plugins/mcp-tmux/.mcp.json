@@ -1,6 +1,11 @@
 {
-  "mcp-tmux": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-tmux"]
+  "mcpServers": {
+    "mcp-tmux": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-tmux"
+      ]
+    }
   }
 }

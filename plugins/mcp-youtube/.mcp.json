@@ -1,6 +1,11 @@
 {
-  "mcp-youtube": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-youtube"]
+  "mcpServers": {
+    "mcp-youtube": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-youtube"
+      ]
+    }
   }
 }

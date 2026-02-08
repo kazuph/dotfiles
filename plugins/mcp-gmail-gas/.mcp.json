@@ -1,6 +1,11 @@
 {
-  "mcp-gmail-gas": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-gmail-gas"]
+  "mcpServers": {
+    "mcp-gmail-gas": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-gmail-gas"
+      ]
+    }
   }
 }

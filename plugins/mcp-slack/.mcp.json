@@ -1,6 +1,11 @@
 {
-  "mcp-slack": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-slack"]
+  "mcpServers": {
+    "mcp-slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-slack"
+      ]
+    }
   }
 }

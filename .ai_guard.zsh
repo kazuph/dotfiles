@@ -355,7 +355,7 @@ on run argv
   set titleText to item 3 of argv
   set promptText to "⚠️ 本当に実行しますか？" & return & cmdText & return & ctxText & return & return & "承認/却下の理由を入力してください。"
   try
-    set resp to display dialog promptText default answer "" buttons {"却下", "3分間却下", "3分間承認", "承認"} default button "却下" with title titleText with icon stop
+    set resp to display dialog promptText default answer "" buttons {"却下", "3分間承認", "承認"} default button "却下" with title titleText with icon stop
     return (button returned of resp) & linefeed & (text returned of resp)
   on error number -128
     return "ESC" & linefeed & ""

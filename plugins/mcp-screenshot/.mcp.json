@@ -1,6 +1,11 @@
 {
-  "mcp-screenshot": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-screenshot"]
+  "mcpServers": {
+    "mcp-screenshot": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-screenshot"
+      ]
+    }
   }
 }

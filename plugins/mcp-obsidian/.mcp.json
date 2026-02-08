@@ -1,6 +1,11 @@
 {
-  "mcp-obsidian": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-obsidian"]
+  "mcpServers": {
+    "mcp-obsidian": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-obsidian"
+      ]
+    }
   }
 }

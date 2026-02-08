@@ -1,6 +1,11 @@
 {
-  "mcp-taskmanager": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-taskmanager"]
+  "mcpServers": {
+    "mcp-taskmanager": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-taskmanager"
+      ]
+    }
   }
 }

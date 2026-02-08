@@ -34,6 +34,11 @@ opt.fillchars = { eob = " " }
 opt.conceallevel = 2
 opt.autoread = true
 
+-- GUI用フォント設定（goneovim, neovide等）
+if vim.fn.has("gui_running") == 1 or vim.g.neovide or vim.g.gonvim_running then
+  opt.guifont = "UDEV Gothic 35NF:h16"
+end
+
 if vim.fn.has("nvim-0.9") == 1 then
   opt.splitkeep = "screen"
 end

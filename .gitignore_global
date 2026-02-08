@@ -41,3 +41,4 @@ freertos
 .artifacts/
 .reports/
 
+.takt/

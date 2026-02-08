@@ -1,6 +1,11 @@
 {
-  "mcp-browser-tabs": {
-    "command": "npx",
-    "args": ["-y", "@kazuph/mcp-browser-tabs"]
+  "mcpServers": {
+    "mcp-browser-tabs": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@kazuph/mcp-browser-tabs"
+      ]
+    }
   }
 }

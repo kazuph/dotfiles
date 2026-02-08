@@ -172,3 +172,16 @@
 [wt]
 	basedir = ".worktree"
 	copyignored = true
+	nocopy = node_modules/
+	nocopy = dist/
+	nocopy = build/
+	nocopy = cdk.out/
+	nocopy = .next/
+	nocopy = .turbo/
+	nocopy = .wrangler/
+	nocopy = .expo/
+	nocopy = .playwright-mcp/
+	nocopy = .artifacts/
+	nocopy = .lsmcp/
+	nocopy = .serena/
+	nocopy = .pnpm-store/
