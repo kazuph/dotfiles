@@ -22,7 +22,18 @@ fi
 if command -v bat &> /dev/null; then
     alias cat='bat --paging=never'
     alias catp='bat'  # ページャー付き
-    export BAT_THEME="Catppuccin Mocha"
+    if bat --list-themes | command grep -Fxq "Catppuccin Mocha"; then
+        export BAT_THEME="Catppuccin Mocha"
+    elif [ -f "$(bat --config-dir)/themes/Catppuccin Mocha.tmTheme" ]; then
+        bat cache --build >/dev/null 2>&1
+        if bat --list-themes | command grep -Fxq "Catppuccin Mocha"; then
+            export BAT_THEME="Catppuccin Mocha"
+        else
+            export BAT_THEME="Monokai Extended"
+        fi
+    else
+        export BAT_THEME="Monokai Extended"
+    fi
     export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
 
