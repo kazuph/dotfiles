@@ -1,3 +1,7 @@
+# Agent Guidelines
+
+Always prefer simplicity over pathological correctness. YAGNI, KISS, DRY. No backward-compat shims or fallback paths unless they come free without adding cyclomatic complexity.
+
 # Common Rules
 
 ## Language
@@ -368,8 +372,17 @@ Write tests that actively hunt for bugs:
 - Execute `cd` separately first, then run git commands in subsequent calls
 - This avoids hook blocking issues that check the working directory
 
-## Status Reporting
-- After completing a task, use the `reporting-and-tmux` skill for say report and tmux window rename
+## Status Reporting (MANDATORY - 毎回やること)
+
+**以下のタイミングで `reporting-and-tmux` skill を必ず実行する：**
+
+1. **ユーザーへの最終回答を書き終えた直後**（実装完了、調査完了、質問回答など種類を問わない）
+2. **TodoListのタスクを承認待ちに変更した時**
+3. **エラーで作業を中断してユーザーに報告する時**
+
+**実行方法**: `Skill` ツールで `skill: "reporting-and-tmux"` を呼び出す。直接bashで `say` コマンドを叩くのではなく、必ずSkill経由で実行すること。
+
+**やらないと**: ユーザーは別のターミナルで作業しているため、音声通知がないと完了に気づけない。
 
 ## Backup Policy
 - After editing `~/.claude/CLAUDE.md`, use the `claude-gist-backup` skill to sync to Gist
