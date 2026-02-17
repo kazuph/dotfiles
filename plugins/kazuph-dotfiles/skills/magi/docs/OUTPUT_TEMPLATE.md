@@ -1,50 +1,52 @@
+# MAGI Output Template (Compact)
+
+サブエージェントからメインセッションへの返却はこのテンプレートに従う。
+**原則: 生ログは返さない。要点のみ返却し、詳細はファイル参照。**
+
 ```
-Situation Snapshot:
-- Goal: …
-- Constraints: …
-- Success Metric: …
+## MAGI VERDICT
 
-## PHASE 1: INDEPENDENT MULTI-PERSPECTIVE ANALYSIS
+Goal: （40字以内で最終目的）
+Verdict: （実行判断を1文で）
+Confidence: High / Medium / Low
 
-### MELCHIOR-01 (Claude) - Comprehensive Reasoning
-**Status**: ANALYSIS COMPLETE | **Approach**: Nuanced reasoning, ethics, long-term view
-Actionable Insights:
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
+## PERSONA VOTES
 
-### BALTHASAR-02 (GPT-5/Codex) - Deep Research & Technical
-**Status**: ANALYSIS COMPLETE | **Approach**: Technical research, best practices
-Actionable Insights:
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
+| Persona | Recommendation | Confidence | Key Risk |
+|---------|---------------|------------|----------|
+| MELCHIOR (Claude) | A or B | High/Med/Low | 1行でリスク |
+| BALTHASAR (Codex) | A or B | High/Med/Low | 1行でリスク |
+| CASPER (Gemini) | A or B | High/Med/Low | 1行でリスク |
 
-### CASPER-03 (Gemini) - Pattern Recognition & Synthesis
-**Status**: ANALYSIS COMPLETE | **Approach**: Pattern synthesis, alternative framing
-Actionable Insights:
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
-- Action – Tool/Owner – Success Check
+Consensus: （1行で合意点）
+Conflict: （1行で対立点。なければ "None"）
 
-## PHASE 2: FINAL SYNTHESIS & UNIFIED ACTION PLAN
+## ACTION PLAN
 
-**Synthesis Engine**: CASPER-03 (Gemini) | **Integration Status**: COMPLETE
+1. [Action] – verify: [検証方法1行]
+2. [Action] – verify: [検証方法1行]
+3. [Action] – verify: [検証方法1行]
 
-Unified Action Plan:
-1. Step 1 – Owner – ETA – Deliverable – Verification method
-2. Step 2 – Owner – ETA – Deliverable – Verification method
-3. Step 3 – Owner – ETA – Deliverable – Verification method
+## RISKS
 
-Consensus Highlights:
-- Shared agreement 1
-- Shared agreement 2
+- [severity] [リスク内容] → [対策]
 
-Conflicts / Trade-offs:
-- Issue – MELCHIOR vs BALTHASAR vs CASPER – Resolution / data needed
+## BLOCKING QUESTIONS
 
-Risk: Trigger → Mitigation
-Follow-up Question: …
+- （追加確認が必要な点。最大2-3項目。なければ "None"）
 
-MAGI SYSTEM STATUS: DELIBERATION COMPLETE
+## ARTIFACTS
+
+Raw logs: `runtime/magi-<timestamp>-<persona>.log`
+（詳細が必要な場合のみ上記ファイルを参照）
+
+MAGI STATUS: DELIBERATION COMPLETE
 ```
+
+## ガイドライン
+
+- **Phase 1の生分析は返さない**: 各ペルソナの出力はファイルに保存し、PERSONA VOTESの1行サマリのみ返却
+- **Phase 2の長文統合は返さない**: Consensus/Conflictは各1行に圧縮
+- **Action Planは最大5ステップ**: 各ステップは1アクション + 1検証のみ
+- **`raw_included: false` が原則**: 生ログはruntime/に保存、返却メッセージには含めない
+- **全体で200トークン以内を目標**: メインセッションのコンテキストを汚染しない

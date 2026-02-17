@@ -50,7 +50,7 @@ MAGIは複雑な意思決定や多視点レビューのための標準オペレ�
 ## 実行フロー概要
 
 1. **ゴール把握**: 予算/制約/成功指標を聞き出し、揃わなければ Stop-if-Unclear を発動。
-2. **可用性チェック**: Codex/GPT-5とGeminiのCLIを同時に立ち上げられるか疎通（`docs/PLAYBOOK.md`参照）。必ず `script -q /dev/null` で疑似TTYを確保して実行する（TTY無しは失敗する）。
+2. **可用性チェック**: Codex/GPT-5とGeminiのCLIを同時に立ち上げられるか疎通（`docs/PLAYBOOK.md`参照）。`exec` モード（codex）やワンショットモード（gemini）では `script` ラッパー不要。Claude CLIは `CLAUDECODE=` で環境変数をクリアして実行。
 3. **フェーズ1**: 3ペルソナを並列実行し、互いに参照させずに初期アウトプットを取得。
 4. **フェーズ2**: Geminiが統合プランをまとめ、共通点・トレードオフ・リスク・フォローアップを整理。
 5. **セルフチェック**: `docs/CHECKLIST.md`に沿って検証し、満たせない場合は理由を報告。
@@ -61,46 +61,73 @@ MAGIは複雑な意思決定や多視点レビューのための標準オペレ�
 
 | Persona | コマンド例 |
 | --- | --- |
-| Codex/GPT-5 | `outfile=$(mktemp -t codex); script -q /dev/null codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox exec --skip-git-repo-check -o "$outfile" "<prompt>" >/dev/null 2>&1; cat "$outfile"` |
-| Codex/GPT-5 (書込み有) | `outfile=$(mktemp -t codex); script -q /dev/null codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox exec --skip-git-repo-check --full-auto -o "$outfile" "<prompt>" >/dev/null 2>&1; cat "$outfile"` |
-| Gemini | `script -q /dev/null /opt/homebrew/bin/mise exec -- gemini --approval-mode=yolo -p "<prompt>"` |
-| Claude (ゴール整備) | `script -q /dev/null claude --dangerously-skip-permissions --print "<prompt>"` |
-※ any-script等のラッパーは使わず、TTY付きで直接叩く。標準出力モードで実行し、会話状態は期待しないこと。
+| Codex/GPT-5 | `outfile=$(mktemp -t codex); command codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox exec --skip-git-repo-check --full-auto -o "$outfile" "<prompt>" >/dev/null 2>&1; cat "$outfile"` |
+| Gemini | `outfile="/tmp/gemini_$$"; /opt/homebrew/bin/mise exec -- gemini --approval-mode=yolo -o json "<prompt>" 2>/dev/null \| jq -r '.response' > "$outfile"; cat "$outfile"` |
+| Claude (ゴール整備) | `CLAUDECODE= command claude --dangerously-skip-permissions --print "<prompt>"` |
+※ `script -q /dev/null` は不要。`exec`/ワンショットモードではTTYラッパーなしで動作する。標準出力モードで実行し、会話状態は期待しないこと。
 
 - 2系統以上のCLI経路を準備し、いずれかが落ちたら即時Abort。
 - 同期処理は禁止。すべて並列またはできるだけ同時に走らせる。
 
 ## トークン削減パターン（推奨）
 
-Codex execの出力は大量のログを含むため、**最終メッセージのみ取得**するパターンを使用する：
+各CLIから**最終メッセージのみ取得**するパターン。`script -q /dev/null` は不要（exec/ワンショットモードではTTY不要）。
+
+### Codex: `-o` オプションで最終メッセージのみファイルに出力
 
 ```bash
-# Codex: -o オプションで最終メッセージのみファイルに出力（サンドボックス完全バイパス）
 outfile=$(mktemp -t codex)
-script -q /dev/null codex \
+command codex \
   --sandbox workspace-write \
   --config sandbox_workspace_write.network_access=true \
   --dangerously-bypass-approvals-and-sandbox \
-  exec --skip-git-repo-check -o "$outfile" "<prompt>" >/dev/null 2>&1
+  exec --skip-git-repo-check --full-auto -o "$outfile" "<prompt>" >/dev/null 2>&1
 cat "$outfile"
-# ファイルは /var/folders 配下に作成され、macOSが自動クリーンアップするため rm 不要
 ```
 
-**利点:**
-- 返却トークン = 最終エージェントメッセージのみ（ログ・途中経過を除外）
+- `command codex` でエイリアスをバイパス（エイリアスとフラグが重複すると失敗する）
+- `>/dev/null 2>&1` でstdoutのログを抑制しつつ `-o` のファイル出力は維持される
+- `--full-auto` で書き込み権限を付与（読み取り専用にする場合は外す）
+
+### Gemini: `-o json` + `jq` で最終応答のみ抽出
+
+```bash
+outfile="/tmp/gemini_$$"
+/opt/homebrew/bin/mise exec -- gemini \
+  --approval-mode=yolo -o json "<prompt>" 2>/dev/null \
+  | jq -r '.response' > "$outfile"
+cat "$outfile"
+```
+
+- `-o json` で構造化出力。`.response` フィールドに最終応答のみ格納される
+- `-p` フラグは非推奨。位置引数（positional prompt）を使う
+- 思考トークン・stats・session_idは `jq` で除外される
+
+### Claude: `--print` で最終応答のみ出力
+
+```bash
+CLAUDECODE= command claude --dangerously-skip-permissions --print "<prompt>"
+```
+
+- `CLAUDECODE=` でネストセッション検出をバイパス（サブエージェント内から呼ぶ場合に必須）
+
+### 共通の利点
+- 返却トークン = 最終エージェントメッセージのみ（ログ・途中経過・思考トークンを除外）
 - `mktemp -t` でユニークなファイル名を生成するため並列実行でも安全
-- `rm` 不要（認証ダイアログ回避、macOSの自動クリーンアップに任せる）
+- `/tmp` 配下のファイルはmacOSが自動クリーンアップするため明示的削除不要
 
-**注意:** Gemini CLIには同等のオプションがないため、従来通り `| tail` 等で対応する。
-
-## 出力フォーマット
+## 出力フォーマット（Compact方式）
 
 必ず `docs/OUTPUT_TEMPLATE.md` の雛形を使い、以下を満たしてください。
 
-- Situation Snapshotにゴール/制約/成功指標を明記。
-- 各ペルソナのActionable Insightsは3件、`Action – Tool/Owner – Success Check`形式。
-- Unified Action Planは3ステップ以上で、各ステップにETAと検証方法を付与。
-- リスク1件・フォローアップ質問1件。
+**メインセッションへの返却は最小限に。生ログは返さない。**
+
+- MAGI VERDICTにGoal（40字以内）+ Verdict（1文）+ Confidence
+- PERSONA VOTESは1行×3ペルソナのテーブル形式（推奨/信頼度/リスク各1行）
+- Consensus/Conflictは各1行のみ
+- Action Planは最大5ステップ、各ステップ1アクション + 1検証
+- 各ペルソナの生分析は `runtime/` に保存し、返却メッセージには含めない
+- **全体で200トークン以内を目標**: メインセッションのコンテキストを汚染しない
 
 ## 実装タスク時のルール
 

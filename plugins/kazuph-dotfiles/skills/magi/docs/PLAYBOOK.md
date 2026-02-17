@@ -30,10 +30,13 @@ MAGIは Claude (MELCHIOR-01)、Codex/GPT-5 (BALTHASAR-02)、Gemini (CASPER-03) �
 
 ## 4. CLI起動ルール
 
+`script -q /dev/null` は不要。exec/ワンショットモードではTTYラッパーなしで動作する。
+
 | Persona | 代表コマンド | 備考 |
 | --- | --- | --- |
-| Codex/GPT-5 | `outfile=$(mktemp -t codex); script -q /dev/null codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox exec --skip-git-repo-check -o "$outfile" "<prompt>" >/dev/null 2>&1; cat "$outfile"` | 失敗した場合は許可されたフォールバック CLI を速やかに再実行し、それでも不可ならセッション中止。 |
-| Gemini | `mise exec -- gemini --approval-mode=yolo "<prompt>"` | Codex同様に複数パスが準備されていることを確認。 |
+| Codex/GPT-5 | `outfile=$(mktemp -t codex); command codex --sandbox workspace-write --config sandbox_workspace_write.network_access=true --dangerously-bypass-approvals-and-sandbox exec --skip-git-repo-check --full-auto -o "$outfile" "<prompt>" >/dev/null 2>&1; cat "$outfile"` | `-o` で最終メッセージのみファイル出力。失敗時はフォールバック CLI を再実行、不可ならセッション中止。 |
+| Gemini | `outfile="/tmp/gemini_$$"; /opt/homebrew/bin/mise exec -- gemini --approval-mode=yolo -o json "<prompt>" 2>/dev/null \| jq -r '.response' > "$outfile"; cat "$outfile"` | `-o json` + `jq` で最終応答のみ抽出。思考トークン・stats除外。 |
+| Claude | `CLAUDECODE= command claude --dangerously-skip-permissions --print "<prompt>"` | `CLAUDECODE=` でネスト検出バイパス。`--print` で最終応答のみ。 |
 
 両者のCLIを同時起動し、シリアルな順番待ちにしない。どちらかが落ちたら MAGI 全体を中断し、状況を報告する。
 
