@@ -6,13 +6,10 @@ if [[ -z "${TMUX_PANE:-}" ]]; then
   exit 1
 fi
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 \"漢字と絵文字のラベル\"" >&2
-  exit 2
+# 1階層のディレクトリ名を取得 (例: project)
+current_dir="$(basename "${PWD}")"
+if [[ -z "$current_dir" || "$current_dir" == "/" ]]; then
+  current_dir="window"
 fi
 
-label="$1"
-# 1階層のディレクトリ名を取得 (例: project)
-current_dir=$(basename "$PWD")
-
-tmux rename-window -t "$TMUX_PANE" "[${current_dir}] ${label}"
+tmux rename-window -t "$TMUX_PANE" "$current_dir"

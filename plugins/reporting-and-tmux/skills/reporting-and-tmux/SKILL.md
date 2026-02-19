@@ -26,13 +26,13 @@ say -r 230 "Window 2 タスク完了。要約と挨拶を添えて報告しま�
 ## tmuxウィンドウ命名
 
 1. 自分のpane/windowを操作するときは必ず `-t "$TMUX_PANE"` を付け、`tmux display-message -p -t "$TMUX_PANE" '#D'` で取得したペインID(%)を一度だけ取得して使う。
-2. 作業完了時に`~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh "調査完了🔍"`のように「漢字+絵文字」の短い識別子を渡して実行する。
-3. スクリプトが1階層のディレクトリ名を取得し、`[<dir>] <ラベル>`形式へ統一する。
-4. 角括弧や半角スペースを追加しない。指示された漢字＋絵文字のみを末尾に渡す。
+2. 作業完了時に `~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh` を実行する（引数不要）。
+3. スクリプトが1階層のディレクトリ名を取得し、ウィンドウ名をそのまま設定する。
+4. 角括弧、進捗ラベル、余計な半角スペースは追加しない。
 
 ### 動作確認コマンド
 ```
-bash ~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh "検証完了✨"
+bash ~/.claude/skills/reporting-and-tmux/rename_tmux_window.sh
 ```
 
 ## OSC 0更新
