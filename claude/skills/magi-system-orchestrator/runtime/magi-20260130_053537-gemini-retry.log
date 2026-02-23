@@ -1,0 +1,43 @@
+YOLO mode is enabled. All tool calls will be automatically approved.
+Loaded cached credentials.
+Server 'chrome-devtools-mcp' supports tool updates. Listening for changes...
+Server 'figma' supports tool updates. Listening for changes...
+Server 'figma' supports resource updates. Listening for changes...
+Error executing tool read_file: File not found: /Users/kazuph/src/github.com/gaiwaya-development/mangene/src/lib/panelDetector.ts
+Error executing tool read_file: File not found: /Users/kazuph/src/github.com/gaiwaya-development/mangene/src/lib/lsd.d.ts
+**Analysis of Flood Fill for Manga Panel Detection**
+
+From an academic perspective (Document Layout Analysis), the proposed **raw pixel Flood Fill** is **unsound** for manga panel detection.
+
+**Why it fails:**
+1.  **Internal Fragmentation (The "Swiss Cheese" Problem):** Manga panels are not solid colors; they contain drawings (black lines) and speech bubbles (black outlines). A flood fill initiated on a white background will be blocked by any internal drawing lines, failing to fill the entire panel. It will likely return a bounding box for just *part* of the scene (e.g., the sky above a horizon line).
+2.  **Gutter/Content Ambiguity:** Both the gutters (page margins) and panel interiors are predominantly white. Without detecting the *structure* (the black frame), a pixel-based fill cannot distinguish "inside" from "outside" effectively if there are gaps in the border.
+
+To make this approach viable, you must preprocess the image to remove internal details while preserving the structural frames.
+
+### 3 Actionable Insights
+
+**1. Action – Preprocessing – Morphological Closing**
+*   **Context:** Raw flood fill stops at *any* line. You need it to stop only at *panel borders*.
+*   **Solution:** Apply **Morphological Closing** (Dilation followed by Erosion) or **RLSA (Run Length Smoothing Algorithm)** before the fill. This operation "smears" the internal fine lines (drawings, hatching) into the white background, effectively erasing them, while preserving the thicker, continuous panel borders.
+*   **Success Check:** The preprocessed image should look like empty white rectangles (panels) separated by thick black lines. Flood fill on *this* image will fill the entire panel perfectly.
+
+**2. Action – Algorithm – Ray Casting / XY-Scan**
+*   **Context:** Flood fill is computationally expensive ($O(N)$ pixels) and fragile to leaks.
+*   **Solution:** Instead of expanding a region, use **Ray Casting** from the click point. Cast rays in 4 directions (Up, Down, Left, Right) to find the nearest "significant" edge (black pixel run > threshold).
+*   **Success Check:** Clicking anywhere in a panel instantly yields `[y_top, y_bottom, x_left, x_right]` without stack overflow risks on 4K images.
+
+**3. Action – Threshold – Otsu’s Method**
+*   **Context:** A hardcoded `whiteThreshold = 220` is unreliable across different scan qualities, paper types (yellowing), and contrast levels.
+*   **Solution:** Implement **Otsu's Binarization**. This standard academic algorithm automatically calculates the optimal threshold by maximizing the inter-class variance between "ink" (foreground) and "paper" (background).
+*   **Success Check:** The threshold adapts automatically; dark scans get a lower threshold, bright scans get a higher one, ensuring consistent border detection.
+
+### Answers to Specific Questions
+
+1.  **Academically Sound?** No, not on raw pixels. It is sound *only* if performed on a **topological map** (e.g., Region Adjacency Graph) or a **morphologically simplified** image.
+2.  **Speech Bubbles?** Preprocessing (Insight #1) will usually erase the bubble content. If the bubble connects to the border, Ray Casting (Insight #2) is more robust as it looks for the *outermost* frame.
+3.  **Better Algorithms?**
+    *   **Recursive X-Y Cut:** (Already in your codebase) Standard for Manhattan layouts.
+    *   **Connected Component Analysis (CCA):** Run on the *inverted* image (where black lines become holes). The "background" components are the panels.
+4.  **Auto-Threshold?** **Otsu's Method** is the gold standard.
+5.  **Implementation?** Do not run Flood Fill on the UI thread for large images. Use a **Web Worker** or perform the detection on a downscaled version (e.g., width=1024), then scale the coordinates back up.
