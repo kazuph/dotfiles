@@ -485,6 +485,9 @@ fi
 fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit && compinit
 
+# git-wt: shell integration (auto-cd + branch completion)
+eval "$(git-wt --init zsh)"
+
 export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
 
 # bun completions
