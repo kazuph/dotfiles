@@ -121,9 +121,161 @@ AI_GUARD_TEMP_REJECT_SECONDS="${AI_GUARD_TEMP_REJECT_SECONDS:-$AI_GUARD_TEMP_APP
 _ai_guard_temp_approval_key() {
   local cmd="$1"; shift
   local subcmd="${1:--}"
-  local cwd
+  local scope git_group deploy_env cmd_line
+  cmd_line="$cmd $*"
+
+  # ディスク破壊系は常に毎回確認（3分キャッシュを使わない）
+  if _ai_guard_is_always_prompt_cmd "$cmd"; then
+    printf ""
+    return 0
+  fi
+
+  scope=$(_ai_guard_temp_approval_scope)
+
+  # 削除系は「対象パス」ではなく「コマンド種別 + スコープ」で3分許可
+  case "$cmd" in
+    trash|rmdir|rimraf|mv)
+      printf "delete:%s:%s" "$cmd" "$scope"
+      return 0
+      ;;
+  esac
+
+  # git危険操作は destructive group 単位で3分許可
+  if [[ "$cmd" == "git" ]]; then
+    git_group=$(_ai_guard_git_risky_group "$@")
+    if [[ -n "$git_group" ]]; then
+      printf "git:%s:%s" "$git_group" "$scope"
+      return 0
+    fi
+  fi
+
+  # deploy/publish/put 系は tool + env + scope 単位で3分許可
+  if _ai_guard_contains_danger_word "$cmd_line"; then
+    deploy_env=$(_ai_guard_detect_deploy_env "$cmd" "$@")
+    printf "danger:%s:%s:%s" "$cmd" "$deploy_env" "$scope"
+    return 0
+  fi
+
+  printf "%s:%s:%s" "$cmd" "$subcmd" "$scope"
+}
+
+_ai_guard_temp_approval_scope() {
+  local cwd repo_root
   cwd="$(pwd -P 2>/dev/null || pwd)"
-  printf "%s:%s:%s" "$cmd" "$subcmd" "$cwd"
+  repo_root=$(builtin command git rev-parse --show-toplevel 2>/dev/null) || repo_root=""
+  if [[ -n "$repo_root" ]]; then
+    printf "%s" "$repo_root"
+  else
+    printf "%s" "$cwd"
+  fi
+}
+
+_ai_guard_git_risky_group() {
+  local subcmd="$1"; shift
+  case "$subcmd" in
+    reset|restore)
+      printf "reset-restore"
+      return 0
+      ;;
+    checkout)
+      if [[ "$#" -ge 2 || " $* " == *" -- "* || "$1" == -* ]]; then
+        printf "checkout-files"
+        return 0
+      fi
+      ;;
+    clean)
+      printf "clean"
+      return 0
+      ;;
+    stash)
+      if [[ "$1" == "drop" || "$1" == "clear" ]]; then
+        printf "stash-drop-clear"
+        return 0
+      fi
+      ;;
+    branch)
+      if [[ "$1" == "-D" || "$1" == "-d" || "$1" == "--delete" ]]; then
+        printf "branch-delete"
+        return 0
+      fi
+      ;;
+    rebase)
+      printf "rebase"
+      return 0
+      ;;
+    cherry-pick)
+      if [[ "$1" == "--abort" ]]; then
+        printf "cherry-pick-abort"
+        return 0
+      fi
+      ;;
+    merge)
+      if [[ "$1" == "--abort" ]]; then
+        printf "merge-abort"
+        return 0
+      fi
+      ;;
+    push)
+      if [[ " $* " == *" --force "* || " $* " == *" -f "* || " $* " == *" --force-with-lease "* ]]; then
+        printf "push-force"
+      else
+        printf "push-review"
+      fi
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+_ai_guard_detect_deploy_env() {
+  local cmd="$1"; shift
+  local token prev=""
+  local env="unknown"
+  local cmd_line_l="${cmd:l} ${(j: :)${(@)${(@)@}:l}}"
+
+  for token in "$@"; do
+    case "$prev" in
+      --env|-e|--stage|--target|--profile)
+        token="${token:l}"
+        if [[ "$token" == *prod* || "$token" == production ]]; then
+          printf "prod"
+          return 0
+        elif [[ "$token" == stg || "$token" == stage || "$token" == staging ]]; then
+          printf "stg"
+          return 0
+        elif [[ "$token" == preview || "$token" == pre || "$token" == canary ]]; then
+          printf "preview"
+          return 0
+        elif [[ "$token" == dev || "$token" == development || "$token" == local ]]; then
+          printf "dev"
+          return 0
+        fi
+        ;;
+    esac
+    prev="$token"
+  done
+
+  if [[ "$cmd_line_l" == *prod* || "$cmd_line_l" == *production* ]]; then
+    env="prod"
+  elif [[ "$cmd_line_l" == *stg* || "$cmd_line_l" == *stage* || "$cmd_line_l" == *staging* ]]; then
+    env="stg"
+  elif [[ "$cmd_line_l" == *preview* || "$cmd_line_l" == *canary* ]]; then
+    env="preview"
+  elif [[ "$cmd_line_l" == *dev* || "$cmd_line_l" == *development* || "$cmd_line_l" == *local* ]]; then
+    env="dev"
+  fi
+
+  printf "%s" "$env"
+}
+
+_ai_guard_is_always_prompt_cmd() {
+  local cmd="$1"
+  case "$cmd" in
+    dd|mkfs|fdisk|diskutil|format|parted|gparted)
+      return 0
+      ;;
+  esac
+  return 1
 }
 
 _ai_guard_temp_approval_is_valid() {
@@ -417,17 +569,27 @@ APPLESCRIPT
     fi
 
     if (( set_temp_approval )); then
-      local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
-      if ! _ai_guard_temp_approval_set "$temp_key" "$AI_GUARD_TEMP_APPROVAL_SECONDS"; then
+      if [[ "${AI_GUARD_TEMP_APPROVAL_DISABLED:-0}" == "1" ]]; then
         allow_mode="ALLOW"
-        printf "⚠️ 3分間承認の保存に失敗したため、今回のみ承認として実行します。\n" >&2
+        printf "ℹ️ このコマンドは常に確認対象のため、3分間承認は適用しません。\n" >&2
+      else
+        local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
+        if ! _ai_guard_temp_approval_set "$temp_key" "$AI_GUARD_TEMP_APPROVAL_SECONDS"; then
+          allow_mode="ALLOW"
+          printf "⚠️ 3分間承認の保存に失敗したため、今回のみ承認として実行します。\n" >&2
+        fi
       fi
     fi
 
     if (( set_temp_reject )); then
-      local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
-      if ! _ai_guard_temp_reject_set "$temp_key" "$AI_GUARD_TEMP_REJECT_SECONDS"; then
-        printf "⚠️ 3分間却下の保存に失敗しましたが、今回は却下します。\n" >&2
+      if [[ "${AI_GUARD_TEMP_APPROVAL_DISABLED:-0}" == "1" ]]; then
+        allow_mode="REJECT"
+        printf "ℹ️ このコマンドは常に確認対象のため、3分間却下は適用しません。\n" >&2
+      else
+        local temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
+        if ! _ai_guard_temp_reject_set "$temp_key" "$AI_GUARD_TEMP_REJECT_SECONDS"; then
+          printf "⚠️ 3分間却下の保存に失敗しましたが、今回は却下します。\n" >&2
+        fi
       fi
       printf "❌ 3分間却下: %s (理由: %s)\n%s\n" "$cmd_display" "${reason_text:-未入力}" "$context_block"
       (( log_ready )) && printf "%s\tTEMP_REJECT\t%s\t%s\n" "$(date -Iseconds)" "$cmd_display" "$log_reason" >> "$log_file"
@@ -951,10 +1113,13 @@ _ai_guard_need_prompt() {
 
 _ai_guard_confirm_with_temp_approval() {
   local cmd="$1"; shift
-  local temp_key prev_temp_key rc
+  local temp_key prev_temp_key prev_temp_disabled rc
+  local use_temp_cache=1
 
   temp_key=$(_ai_guard_temp_approval_key "$cmd" "$@")
-  if _ai_guard_temp_reject_is_valid "$temp_key"; then
+  [[ -z "$temp_key" ]] && use_temp_cache=0
+
+  if (( use_temp_cache )) && _ai_guard_temp_reject_is_valid "$temp_key"; then
     local cmd_display log_file="$HOME/.ai_extreme_confirm.log"
     cmd_display="$(printf "%s " "$cmd" "$@")"
     cmd_display="${cmd_display% }"
@@ -963,16 +1128,24 @@ _ai_guard_confirm_with_temp_approval() {
     return 1
   fi
 
-  if _ai_guard_temp_approval_is_valid "$temp_key"; then
+  if (( use_temp_cache )) && _ai_guard_temp_approval_is_valid "$temp_key"; then
     builtin command "$cmd" "$@"
     return $?
   fi
 
+  prev_temp_disabled="${AI_GUARD_TEMP_APPROVAL_DISABLED:-0}"
   prev_temp_key="${AI_GUARD_TEMP_APPROVAL_KEY:-}"
-  AI_GUARD_TEMP_APPROVAL_KEY="$temp_key"
+  if (( use_temp_cache )); then
+    AI_GUARD_TEMP_APPROVAL_DISABLED=0
+    AI_GUARD_TEMP_APPROVAL_KEY="$temp_key"
+  else
+    AI_GUARD_TEMP_APPROVAL_DISABLED=1
+    AI_GUARD_TEMP_APPROVAL_KEY=""
+  fi
   ai_extreme_confirm "$cmd" "$@"
   rc=$?
   AI_GUARD_TEMP_APPROVAL_KEY="$prev_temp_key"
+  AI_GUARD_TEMP_APPROVAL_DISABLED="$prev_temp_disabled"
   return $rc
 }
 
