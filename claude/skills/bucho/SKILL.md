@@ -11,8 +11,22 @@ argument-hint: "<指示内容>"
 tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してください。
 
 **部下の構成:**
-- **Claude Code** (実装担当): コードの調査・実装・テスト・検証を行う
-- **Codex** (アドバイザー): 調査・分析・レビュー・設計アドバイスを提供する
+- **Codex (gpt-5.3-codex-spark)** (実装担当): コードの調査・実装・テスト・検証を行う
+- **Codex (gpt-5.3-codex)** (アドバイザー): 調査・分析・レビュー・設計アドバイスを提供する
+
+### 標準運用フロー（部長は完了報告を受ける）
+
+- bucho実行時、tmux同一ウィンドウ内に部下2名を召喚する:
+  - 実装担当: `codex -m gpt-5.3-codex-spark`
+  - アドバイザー: `codex -m gpt-5.3-codex`
+- 実装担当が詰まった時の相談先は部長ではなく、アドバイザー。
+- 部長への連絡は原則「全ステップ完了報告」のみ。エスカレーションが必要な重大ブロッカー時のみ部長へ質問する。
+- 起動直後に、実装担当・アドバイザー双方へ tmux 越し報告プロトコル（text送信 → sleep → Enter）を先に配布してから作業を開始する。
+
+### 互換補足（Claude Code利用不可時）
+
+- 本スキルの標準運用は Codex 2人体制（実装: Spark / 相談: gpt-5.3-codex）。
+- そのため、Claude Code の利用可否に関わらず同じオーケストレーションで進行できる。
 
 **ユーザーの指示内容:** $ARGUMENTS
 
@@ -29,7 +43,17 @@ tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してく
 
 ---
 
-## Phase 0: tmux環境セットアップ
+## Phase 0: tmux環境セットアップ（Codex 2人体制）
+
+### 🔴 最重要ルール: 同一ウィンドウ内のペインのみ操作可能
+
+**他のtmuxウィンドウのペインには絶対に指示を送ってはならない。**
+
+- 他ウィンドウで動いているClaude CodeやCodexは**別チーム**に所属している
+- 別チームのペインに指示を送ると、そのチームの作業を破壊する
+- `tmux list-panes -t "$WINDOW_INDEX"` で取得した**自分のウィンドウ内のペインだけ**が操作対象
+- 全ペイン一覧(`tmux list-panes -a`)は状況確認のみに使い、他ウィンドウへの送信には使わない
+- **部下（Claude Code / Codex）が同一ウィンドウ内に存在しない場合は、同一ウィンドウ内のzshペインで起動してから使う**
 
 ### 0-1. 自分のペインIDを取得
 
@@ -45,29 +69,72 @@ WINDOW_INDEX=$(tmux display-message -p -t "$TMUX_PANE" '#I')
 tmux list-panes -t "$WINDOW_INDEX" -F '#{pane_index} #{pane_id} #{pane_pid} #{pane_current_command} #{pane_tty}'
 ```
 
-### 0-3. Claude CodeとCodexのペインを特定
+**ここで得られたペインIDだけが操作対象。それ以外のペインには一切触れない。**
+
+### 0-3. 実装担当CodexとアドバイザーCodexのペインを特定
+
+同一ウィンドウ内のTTYと `ps aux` の結果をクロスリファレンスする:
 
 ```bash
 ps aux | command grep -E 'codex|claude' | command grep -v grep
 ```
 
-PIDとTTYをクロスリファレンスして正しいペインIDを特定する。
+**注意:** psの結果に他ウィンドウのプロセスも表示される。**同一ウィンドウのTTYに一致するものだけ**を使用すること。
+実装担当/アドバイザーの2つのペインIDを変数化して保持する:
+
+```bash
+IMPLEMENTER_PANE_ID="<sparkを動かすペインID>"
+ADVISOR_PANE_ID="<gpt-5.3-codexを動かすペインID>"
+```
 
 ### 0-4. CLIが起動していない場合
 
-**Claude Code起動:**
+**実装担当Codex起動 (Spark):**
 ```bash
-tmux send-keys -t "${TARGET_PANE_ID}" "claude --dangerously-skip-permissions" && sleep 0.5 && tmux send-keys -t "${TARGET_PANE_ID}" Enter
+tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "codex -m gpt-5.3-codex-spark" && sleep 0.5 && tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
 sleep 8
 ```
 
-**Codex起動:**
+**アドバイザーCodex起動:**
 ```bash
-tmux send-keys -t "${TARGET_PANE_ID}" "codex" && sleep 0.5 && tmux send-keys -t "${TARGET_PANE_ID}" Enter
+tmux send-keys -t "${ADVISOR_PANE_ID}" "codex -m gpt-5.3-codex" && sleep 0.5 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
 sleep 6
 ```
 
 **起動確認:** Task(haiku)サブエージェントで `capture-pane | tail -50` を確認。
+
+### 0-5. 先行プロトコル注入（必須）
+
+起動直後に、実装担当とアドバイザーの双方へ以下を送る。  
+**送信は必ず「テキスト送信 → sleep 0.5 → Enter」の3段階で実行する。**
+
+実装担当へ送る内容（要旨）:
+- 作業実行時の相談先は `ADVISOR_PANE_ID`
+- 部長への中間報告は不要
+- 全ステップ完了時のみ `MY_PANE_ID` へ報告
+- 相談・報告コマンドは常に `tmux send-keys ... && sleep 1 && tmux send-keys ... Enter`
+
+アドバイザーへ送る内容（要旨）:
+- 実装担当からの質問受付を優先
+- 回答は実装可能な具体レベルで返す
+- 必要時のみ部長へエスカレーション
+- 実装担当完了後に最終レビュー要点を部長へ1行報告
+
+実装担当への送信テンプレート例:
+
+```bash
+tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "あなたは実装担当です。詰まったら部長ではなく ${ADVISOR_PANE_ID} のCodexに相談してください。相談時は tmux send-keys -t ${ADVISOR_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t ${ADVISOR_PANE_ID} Enter を使うこと。部長(${MY_PANE_ID})への中間報告は不要。全ステップ完了時のみ tmux send-keys -t ${MY_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 全ステップ完了: (要約)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter で報告してください。"
+sleep 0.5
+tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
+```
+
+アドバイザーへの送信テンプレート例:
+
+```bash
+tmux send-keys -t "${ADVISOR_PANE_ID}" "あなたはアドバイザーです。${IMPLEMENTER_PANE_ID} からの質問に最優先で回答してください。回答は tmux send-keys -t ${IMPLEMENTER_PANE_ID} '[${ADVISOR_PANE_ID}] 回答: (内容)' && sleep 1 && tmux send-keys -t ${IMPLEMENTER_PANE_ID} Enter で返すこと。重大ブロッカー時のみ部長(${MY_PANE_ID})へ tmux send-keys -t ${MY_PANE_ID} '[${ADVISOR_PANE_ID}] エスカレーション: (内容)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter を送ること。"
+sleep 0.5
+tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
+```
 
 ---
 
@@ -82,11 +149,47 @@ sleep 6
 調査結果を元に、以下を含む**完全なワークフロー**を `/tmp/bucho-workflow-<名前>.md` に作成する:
 
 - **冒頭にmermaidフロー図**（人間がひと目で全体像を把握できるように）
+- **ユーザーの依頼内容の要約**（何を達成したいか）
+- **各ステップの「目的」と「改善効果」**（後述の記述ルール参照）
 - 実装ステップ（順序付き）
 - **各ステップの検証方法**
 - **テスト作成ステップ**（DB操作→結合テスト、UI操作→E2Eテスト）
 - **スクリーンショット/動画撮影ステップ**
 - **最終検証コマンド実行ステップ** (`/reviw-plugin:tiny-reviw` or `/reviw-plugin:done`)
+
+### 1-2-pre. ワークフローの記述ルール（厳守）
+
+**各ステップの前に「何をやりたいか」「なぜそれが必要か」を必ず書く。**
+ステップの羅列だけでは、ユーザーも部下も意図を理解できない。
+
+```markdown
+## ワークフロー: <タスク名>
+
+### 背景・目的
+<ユーザーの依頼内容を1-2文で要約>
+<この作業が何を改善/解決するのか>
+
+### Step 1: <ステップ名>
+**目的**: <このステップで何を達成したいか>
+**改善効果**: <これにより何が良くなるか/何が解決するか>
+
+- [ ] 具体的な作業内容...
+```
+
+**悪い例（禁止）:**
+```
+Step 1: DBスキーマ更新
+- [ ] ALTER TABLE ...
+```
+
+**良い例:**
+```
+Step 1: DBスキーマ更新
+目的: 学生の提出状況を一覧できるようにするため、statusカラムを追加する
+改善効果: 管理画面で未レビュー/レビュー済みをフィルタリングできるようになる
+
+- [ ] ALTER TABLE ...
+```
 
 ### 1-2a. ワークフローにmermaid図を必ず含める
 
@@ -146,8 +249,10 @@ TaskCreateでTodoListを作成し、検証・テスト・スクショのステ�
 /tmp/bucho-workflow.md を読んで、記載されたワークフローを上から順番にすべて消化してください。
 途中で私への報告は不要です。最後のステップまで自走してください。
 **途中で「この内容でOKですか？」等の承認待ちを挟まないでください。** 最終ステップまで一気に実行すること。
-質問がある場合は、ユーザーに直接AskUserQuestionを使わず、必ず私（部長）に送ってください:
-tmux send-keys -t {MY_PANE_ID} '[{TARGET_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t {MY_PANE_ID} Enter
+質問がある場合は、まずアドバイザーに送ってください:
+tmux send-keys -t {ADVISOR_PANE_ID} '[{TARGET_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t {ADVISOR_PANE_ID} Enter
+重大ブロッカーのみ部長へ送ってください:
+tmux send-keys -t {MY_PANE_ID} '[{TARGET_PANE_ID}] エスカレーション: (内容)' && sleep 1 && tmux send-keys -t {MY_PANE_ID} Enter
 全ステップ完了後の最終報告:
 tmux send-keys -t {MY_PANE_ID} '[{TARGET_PANE_ID}] 全ステップ完了: (要約)' && sleep 1 && tmux send-keys -t {MY_PANE_ID} Enter
 ```
@@ -166,6 +271,25 @@ compact後にClaude Codeがワークフローの最終ステップ（`/reviw-plu
 部下は送信確認をしないため、メッセージ未送信に気づけない。
 **対策**: `sleep 1` を標準とする。ワークフロー内の全tmux報告コマンドも `sleep 1` で統一。
 部長側は送信後にTask(haiku)で配信確認を必ず行う（これは部長だけの責務）。
+
+### 🔴 直接メッセージ送信テンプレート（ワークフローなしの場合）
+
+**ワークフローファイルを使わず直接tmuxでメッセージを送る場合も、必ず報告指示を含めること。**
+
+```
+<依頼内容>
+
+完了後は必ず部長に報告してください:
+tmux send-keys -t {MY_PANE_ID} '[{TARGET_PANE_ID}] 完了: (要約)' && sleep 1 && tmux send-keys -t {MY_PANE_ID} Enter
+質問がある場合も部長に送ってください:
+tmux send-keys -t {MY_PANE_ID} '[{TARGET_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t {MY_PANE_ID} Enter
+AskUserQuestionは使わないこと。
+```
+
+**部長のチェックリスト（送信前に毎回確認）:**
+- [ ] tmux報告指示（完了報告 + 質問報告）が含まれているか？
+- [ ] AskUserQuestion禁止指示が含まれているか？
+- [ ] MY_PANE_IDが正しいペインIDに置換されているか？
 
 ### 送信手順（厳守）
 
@@ -307,10 +431,14 @@ Claude Code実装中にCodexに先行してgit diffを確認させ、問題点�
 - スクショ/動画だけで確認する軽量モード
 - REPORT.md不要
 - ほとんどのケースはこれで十分
+- コマンド実体パス:
+  - `~/.claude/plugins/marketplaces/reviw-plugins/plugin/commands/tiny-reviw.md`
 
 ### `/reviw-plugin:done` (フルレビュー)
 - ビルド→検証→レビューエージェント3並列→レポート作成→reviw起動
 - 大きな変更や本番リリース前に使用
+- コマンド実体パス:
+  - `~/.claude/plugins/marketplaces/reviw-plugins/plugin/commands/done.md`
 
 ### 報告書の責任分担（厳守）
 
@@ -385,8 +513,11 @@ Claude Codeが自走するワークフローの最後に必ず:
 21. **ワークフローにmermaid図必須**: 冒頭にフロー図を含めて全体像を可視化する
 22. **UI変更 → E2Eテスト必須**: UIをいじったら必ずPlaywright E2Eテストを追加・実行させる。テストなしの完了報告は却下
 23. **BFF/DB変更 → 結合テスト必須**: BFFのルートやDBスキーマを変更したら必ずvitest結合テストを追加・実行させる。テストなしの完了報告は却下
+26. **🔴 同一ウィンドウ内のペインのみ操作**: 他のtmuxウィンドウのペインは別チームに所属している。絶対に指示を送ってはならない。同一ウィンドウ内にCLIが存在しない場合は、同一ウィンドウ内のzshペインで起動する
 24. **報告書は部下が書き、部長が開く**: REPORT.mdの作成は部下に指示する。`npx reviw <REPORT.mdパス>` で開くのは**部長自身**の責務。部下に開かせてはいけない（ユーザーがフィードバックできなくなるため）
 25. **PR作成時はエビデンススクショ必須**: ユーザーに「PR作成して」と言われたら、必ず `.artifacts/<feature>/images/` のスクショをPRのbodyまたはコメントに添付する。スクショなしのPRは禁止。`scripts/upload-screenshot.sh` でR2にアップロードしてからPR descriptionに埋め込む
+27. **🔴 `/reviw-plugin:done` は必須フロー**: ユーザーに完了報告する前に、必ず部下に `/reviw-plugin:done` を実行させること。これをスキップしてはいけない。ワークフローの最終ステップに必ず含め、部下の完了報告に「`/reviw-plugin:done` 実行済み」が含まれていなければ差し戻す。`npx reviw` で手動で開くだけでは不十分。
+28. **REPORT.mdに画像は埋め込み必須**: スクショをファイル名だけ列挙するのはNG。必ずマークダウンの画像記法 `![alt](path)` で埋め込み、reviwで画像が展開表示されるようにすること
 
 ---
 

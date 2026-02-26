@@ -19,11 +19,13 @@ Automatically invoke `EnterPlanMode` when ANY of these apply:
 - **Wide impact scope**: Changes expected in 3+ files
 - **New feature development**: Adding new functionality, not just fixing existing code
 - **User expresses desires**: Statements containing "want to", "would like" - wishes are not specs
+- **Goes sideways**: 作業中に想定外の複雑さや脱線に気づいたら、即座にSTOPして `EnterPlanMode` で計画を立て直す。「もうちょっとで直せそう」で突っ走らない
 
-### When Plan Mode is NOT Required
+### When Plan Mode is NOT Required (Autonomous Execution OK)
 - Simple bug fixes with clear cause and 1-2 modification points
 - Typo corrections, comment additions
 - User provides explicit code changes ("change this to that")
+- **Autonomous Bug Fixing**: バグ報告やCI失敗で原因が明確な場合は、聞かずに直す。ログ・エラー・テスト結果を確認し自力で解決する。ユーザーのコンテキストスイッチをゼロにする
 
 ### Requirements Clarification Flow
 Use `AskUserQuestion` to confirm:
@@ -207,6 +209,7 @@ TaskUpdate: { taskId: "1", status: "completed" }
 - Delegate to subagents; do not execute on main thread
 - Role: You (Director) → Managers (review) → Players (implement)
 - ALWAYS use `model: opus` for implementation/review; sonnet/haiku only for simple tasks
+- **One task per subagent**: 1つのサブエージェントには1つのタスクだけ。集中実行させる
 - Present final deliverables using artifact-proof skill
 
 ## Implementation Feedback Loop (MANDATORY)
@@ -293,6 +296,8 @@ flowchart TD
 - [ ] No console errors in browser
 - [ ] Visual output matches expectations
 - [ ] Evidence collected (screenshots/videos)
+- [ ] **Before/After diff**: mainブランチとの差分を確認し、意図しない変更・回帰がないことを検証
+- [ ] **Self-Challenge**: 「シニアエンジニアがこのコードをレビューしたら承認するか？」と自問してから提出
 
 **Reporting "done" without evidence = task NOT completed**
 
@@ -358,6 +363,31 @@ Write tests that actively hunt for bugs:
 - ポート: Vite=5173, WebSocket=20333
 - 注意: `localhost`ではなく`127.0.0.1`を使う（DNS解決の遅延回避）
 
+## dotenvx Knowledge (Cross-Project)
+
+**dotenvx has a dangerous default**: existing environment variables take precedence over .env file values. Without `--overload`, if `FOO=bar` is already in the shell and `.env` has `FOO=baz`, dotenvx silently keeps `FOO=bar`.
+
+### Rules for any project using dotenvx:
+- **ALWAYS use `--overload`** in `dotenvx run` commands: `dotenvx run -f .env --overload -- <cmd>`
+- **Without `--overload`**: .env values are silently skipped when env vars already exist (e.g., via direnv)
+- **No default warning**: dotenvx does NOT warn at default log level. Use `--verbose` to see `FOO pre-exists (protip: use --overload to override)`
+- **Diagnosis**: If secrets behave unexpectedly, run with `--debug` to see which vars were skipped
+
+### Source code details (v1.51.4):
+- Priority logic: `src/lib/helpers/parse.js` — `if (!this.overload && this.inProcessEnv(key))` → keeps existing value
+- Tracking: Skipped vars stored in `preExisted` object, logged only at verbose/debug level
+- Notification: `src/cli/actions/run.js` — `logger.verbose()` / `logger.debug()` only, NOT `logger.warn()`
+
+### Package.json template:
+```json
+{
+  "scripts": {
+    "dev": "dotenvx run -f .env.development --overload -- <start-cmd>",
+    "test": "dotenvx run -f .env.development --overload -- <test-cmd>"
+  }
+}
+```
+
 ## Temporary Files
 - All temporary scripts and files MUST be placed under `/tmp/` only - never pollute the project directory
 
@@ -386,6 +416,26 @@ Write tests that actively hunt for bugs:
 
 ## Backup Policy
 - After editing `~/.claude/CLAUDE.md`, use the `claude-gist-backup` skill to sync to Gist
+
+## Self-Improvement Loop (Auto Memory活用)
+
+**同じミスを2度繰り返さないための仕組み。CC標準のAuto Memory（MEMORY.md）を活用する。**
+
+### トリガー: ユーザーから修正・指摘を受けた時
+1. 何を間違えたか（パターン）を特定する
+2. なぜ間違えたか（原因）を分析する
+3. 次回どう防ぐか（対策）を Auto Memory に記録する
+   - Claudeが自動で `~/.claude/projects/<project>/memory/MEMORY.md` に記録
+   - 明示的に記録したい場合は「これをmemoryに記録して」と言えばOK
+
+### セッション開始時
+- Auto Memoryは自動的にロードされるため、過去の学びは自然に反映される
+- 同じ間違いを2回繰り返したら、CLAUDE.mdにルールとして昇格させる（Auto Memory → 恒久ルール化）
+
+### 記録すべき内容
+- プロジェクト固有のハマりポイント（「このAPIはこう使わないとバグる」等）
+- ユーザーの好み・スタイル（コードレビューで指摘された点）
+- デバッグで発見した非自明な問題と解決策
 
 ## Code of Conduct
 

@@ -174,6 +174,46 @@ jobs:
 | `dotenvx set KEY="value"` | 変数を追加/更新（自動再暗号化） |
 | `dotenvx get KEY` | 変数の値を取得 |
 | `dotenvx run -- <command>` | 環境変数を注入してコマンド実行 |
+| `dotenvx run --overload -- <command>` | .envの値で既存環境変数を上書きして実行 |
+| `dotenvx run --verbose -- <command>` | スキップされた変数を表示して実行 |
+| `dotenvx run --debug -- <command>` | スキップされた変数の値まで表示して実行 |
+
+### ⚠️ CRITICAL: `--overload` Flag and Silent Override Behavior
+
+**dotenvxのデフォルト動作は危険**: 既存の環境変数が.envファイルの値より優先される。
+
+```
+シェル環境: FOO=bar (direnvなどで設定済み)
+.envファイル: FOO=baz
+
+# --overloadなし → FOO=bar のまま（.envの値は無視される）
+dotenvx run -- echo $FOO  # → "bar"
+
+# --overloadあり → FOO=baz に上書き
+dotenvx run --overload -- echo $FOO  # → "baz"
+```
+
+**最も危険なポイント**: このスキップはデフォルトで**サイレント**。通知は`--verbose`/`--debug`でのみ表示される。
+
+| フラグ | 出力 |
+|--------|------|
+| (なし) | 何も表示されない |
+| `--verbose` | `FOO pre-exists (protip: use --overload to override)` |
+| `--debug` | `FOO pre-exists as bar (protip: use --overload to override)` |
+
+**推奨**: package.jsonのスクリプトでは常に`--overload`を付ける:
+```json
+{
+  "scripts": {
+    "dev": "dotenvx run -f .env.development --overload -- <start-cmd>",
+    "test": "dotenvx run -f .env.development --overload -- <test-cmd>"
+  }
+}
+```
+
+**ソースコード参照** (v1.51.4):
+- 優先チェック: `src/lib/helpers/parse.js` — `if (!this.overload && this.inProcessEnv(key))`
+- 通知: `src/cli/actions/run.js` — `logger.verbose()` / `logger.debug()` のみ（`logger.warn()` は使われていない）
 
 ### git-wt
 
