@@ -11,22 +11,23 @@ argument-hint: "<指示内容>"
 tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してください。
 
 **部下の構成:**
-- **Codex (gpt-5.3-codex-spark)** (実装担当): コードの調査・実装・テスト・検証を行う
+- **Claude Code** (実装担当): コードの調査・実装・テスト・検証を行う
 - **Codex (gpt-5.3-codex)** (アドバイザー): 調査・分析・レビュー・設計アドバイスを提供する
 
 ### 標準運用フロー（部長は完了報告を受ける）
 
 - bucho実行時、tmux同一ウィンドウ内に部下2名を召喚する:
-  - 実装担当: `codex -m gpt-5.3-codex-spark`
+  - 実装担当: `cc`（worktreeは事前に `git wt` で作成・移動してから起動）
   - アドバイザー: `codex -m gpt-5.3-codex`
 - 実装担当が詰まった時の相談先は部長ではなく、アドバイザー。
 - 部長への連絡は原則「全ステップ完了報告」のみ。エスカレーションが必要な重大ブロッカー時のみ部長へ質問する。
 - 起動直後に、実装担当・アドバイザー双方へ tmux 越し報告プロトコル（text送信 → sleep → Enter）を先に配布してから作業を開始する。
 
-### 互換補足（Claude Code利用不可時）
+### CLIオプションに関する注意
 
-- 本スキルの標準運用は Codex 2人体制（実装: Spark / 相談: gpt-5.3-codex）。
-- そのため、Claude Code の利用可否に関わらず同じオーケストレーションで進行できる。
+- **`cc --worktree` は使わない**: `.claude/worktrees/` にランダム名で作成され、既存の `git wt`（`.worktree/`）と管理場所が異なるため
+- **`cc --tmux` は使わない**: 新しいtmuxセッションを作成してデタッチされるバグがあるため
+- worktreeは `git wt <branch名>` で作成・管理し、tmux paneは手動で作成する
 
 **ユーザーの指示内容:** $ARGUMENTS
 
@@ -43,7 +44,7 @@ tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してく
 
 ---
 
-## Phase 0: tmux環境セットアップ（Codex 2人体制）
+## Phase 0: tmux環境セットアップ（CC + Codex 2人体制）
 
 ### 🔴 最重要ルール: 同一ウィンドウ内のペインのみ操作可能
 
@@ -53,7 +54,6 @@ tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してく
 - 別チームのペインに指示を送ると、そのチームの作業を破壊する
 - `tmux list-panes -t "$WINDOW_INDEX"` で取得した**自分のウィンドウ内のペインだけ**が操作対象
 - 全ペイン一覧(`tmux list-panes -a`)は状況確認のみに使い、他ウィンドウへの送信には使わない
-- **部下（Claude Code / Codex）が同一ウィンドウ内に存在しない場合は、同一ウィンドウ内のzshペインで起動してから使う**
 
 ### 0-1. 自分のペインIDを取得
 
@@ -62,89 +62,97 @@ MY_PANE_ID=$(tmux display-message -p -t "$TMUX_PANE" '#{pane_id}')
 echo "My pane ID: $MY_PANE_ID"
 ```
 
-### 0-2. 同一ウィンドウのペインを探索
+### 0-2. 同一ウィンドウに2つのpaneを追加
+
+部下用のpaneを同一ウィンドウ内に手動で作成する:
+
+```bash
+WINDOW_INDEX=$(tmux display-message -p -t "$TMUX_PANE" '#I')
+
+# 実装担当用pane（水平分割）
+tmux split-window -h -t "$WINDOW_INDEX"
+IMPLEMENTER_PANE_ID=$(tmux display-message -p -t "$WINDOW_INDEX.{right}" '#{pane_id}')
+
+# アドバイザー用pane（実装担当paneを垂直分割）
+tmux split-window -v -t "${IMPLEMENTER_PANE_ID}"
+ADVISOR_PANE_ID=$(tmux display-message -p -t "$WINDOW_INDEX.{bottom-right}" '#{pane_id}')
+
+echo "Implementer: $IMPLEMENTER_PANE_ID"
+echo "Advisor: $ADVISOR_PANE_ID"
+```
+
+### 0-3. 部下を起動
+
+**実装担当 Claude Code 起動:**
+```bash
+# 先にworktreeに移動（部長がgit wtで事前作成しておく）
+tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "cd /path/to/.worktree/<branch名> && cc" && sleep 1 && tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
+sleep 8
+```
+
+**アドバイザー Codex 起動:**
+```bash
+tmux send-keys -t "${ADVISOR_PANE_ID}" "codex -m gpt-5.3-codex" && sleep 1 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
+sleep 6
+```
+
+**起動確認:** Task(haiku)サブエージェントで `capture-pane | tail -50` を確認。
+
+### 0-3a. 既存paneがある場合の探索
+
+既にpaneが存在する場合は新規作成せず、既存のペインを探索して使う:
 
 ```bash
 WINDOW_INDEX=$(tmux display-message -p -t "$TMUX_PANE" '#I')
 tmux list-panes -t "$WINDOW_INDEX" -F '#{pane_index} #{pane_id} #{pane_pid} #{pane_current_command} #{pane_tty}'
 ```
 
-**ここで得られたペインIDだけが操作対象。それ以外のペインには一切触れない。**
-
-### 0-3. 実装担当CodexとアドバイザーCodexのペインを特定
-
-同一ウィンドウ内のTTYと `ps aux` の結果をクロスリファレンスする:
+同一ウィンドウ内のTTYと `ps aux` の結果をクロスリファレンスしてCLIを特定:
 
 ```bash
 ps aux | command grep -E 'codex|claude' | command grep -v grep
 ```
 
 **注意:** psの結果に他ウィンドウのプロセスも表示される。**同一ウィンドウのTTYに一致するものだけ**を使用すること。
-実装担当/アドバイザーの2つのペインIDを変数化して保持する:
 
-```bash
-IMPLEMENTER_PANE_ID="<sparkを動かすペインID>"
-ADVISOR_PANE_ID="<gpt-5.3-codexを動かすペインID>"
-```
+### 0-4. 先行プロトコル注入（必須）
 
-### 0-4. CLIが起動していない場合
+起動直後に、実装担当とアドバイザーの双方へ以下を送る。
+**送信は必ず「テキスト送信 → sleep 1 → Enter」の3段階で実行する。**
 
-**実装担当Codex起動 (Spark):**
-```bash
-tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "codex -m gpt-5.3-codex-spark" && sleep 0.5 && tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
-sleep 8
-```
-
-**アドバイザーCodex起動:**
-```bash
-tmux send-keys -t "${ADVISOR_PANE_ID}" "codex -m gpt-5.3-codex" && sleep 0.5 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
-sleep 6
-```
-
-**起動確認:** Task(haiku)サブエージェントで `capture-pane | tail -50` を確認。
-
-### 0-5. 先行プロトコル注入（必須）
-
-起動直後に、実装担当とアドバイザーの双方へ以下を送る。  
-**送信は必ず「テキスト送信 → sleep 0.5 → Enter」の3段階で実行する。**
-
-実装担当へ送る内容（要旨）:
-- 作業実行時の相談先は `ADVISOR_PANE_ID`
+実装担当（Claude Code）へ送る内容（要旨）:
+- 作業実行時の相談先は `ADVISOR_PANE_ID` のCodex
 - 部長への中間報告は不要
 - 全ステップ完了時のみ `MY_PANE_ID` へ報告
 - 相談・報告コマンドは常に `tmux send-keys ... && sleep 1 && tmux send-keys ... Enter`
 
-アドバイザーへ送る内容（要旨）:
+アドバイザー（Codex）へ送る内容（要旨）:
 - 実装担当からの質問受付を優先
 - 回答は実装可能な具体レベルで返す
 - 必要時のみ部長へエスカレーション
 - 実装担当完了後に最終レビュー要点を部長へ1行報告
 
-実装担当への送信テンプレート例:
+実装担当（CC）への送信テンプレート例:
 
 ```bash
-tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "あなたは実装担当です。詰まったら部長ではなく ${ADVISOR_PANE_ID} のCodexに相談してください。相談時は tmux send-keys -t ${ADVISOR_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t ${ADVISOR_PANE_ID} Enter を使うこと。部長(${MY_PANE_ID})への中間報告は不要。全ステップ完了時のみ tmux send-keys -t ${MY_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 全ステップ完了: (要約)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter で報告してください。"
-sleep 0.5
-tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
+tmux send-keys -t "${IMPLEMENTER_PANE_ID}" "あなたは実装担当です。詰まったら部長ではなく ${ADVISOR_PANE_ID} のCodexに相談してください。相談時は tmux send-keys -t ${ADVISOR_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 質問: (内容)' && sleep 1 && tmux send-keys -t ${ADVISOR_PANE_ID} Enter を使うこと。部長(${MY_PANE_ID})への中間報告は不要。全ステップ完了時のみ tmux send-keys -t ${MY_PANE_ID} '[${IMPLEMENTER_PANE_ID}] 全ステップ完了: (要約)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter で報告してください。" && sleep 1 && tmux send-keys -t "${IMPLEMENTER_PANE_ID}" Enter
 ```
 
-アドバイザーへの送信テンプレート例:
+アドバイザー（Codex）への送信テンプレート例:
 
 ```bash
-tmux send-keys -t "${ADVISOR_PANE_ID}" "あなたはアドバイザーです。${IMPLEMENTER_PANE_ID} からの質問に最優先で回答してください。回答は tmux send-keys -t ${IMPLEMENTER_PANE_ID} '[${ADVISOR_PANE_ID}] 回答: (内容)' && sleep 1 && tmux send-keys -t ${IMPLEMENTER_PANE_ID} Enter で返すこと。重大ブロッカー時のみ部長(${MY_PANE_ID})へ tmux send-keys -t ${MY_PANE_ID} '[${ADVISOR_PANE_ID}] エスカレーション: (内容)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter を送ること。"
-sleep 0.5
-tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
+tmux send-keys -t "${ADVISOR_PANE_ID}" "あなたはアドバイザーです。${IMPLEMENTER_PANE_ID} からの質問に最優先で回答してください。回答は tmux send-keys -t ${IMPLEMENTER_PANE_ID} '[${ADVISOR_PANE_ID}] 回答: (内容)' && sleep 1 && tmux send-keys -t ${IMPLEMENTER_PANE_ID} Enter で返すこと。重大ブロッカー時のみ部長(${MY_PANE_ID})へ tmux send-keys -t ${MY_PANE_ID} '[${ADVISOR_PANE_ID}] エスカレーション: (内容)' && sleep 1 && tmux send-keys -t ${MY_PANE_ID} Enter を送ること。" && sleep 1 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
 ```
 
 ---
 
 ## Phase 1: 調査とタスク分解
 
-### 1-1. Codexに先行調査を依頼
+### 1-1. アドバイザーCodexに先行調査を依頼
 
-まずCodexに現状調査を依頼し、結果を待つ。
+まずアドバイザーCodexに現状調査を依頼し、結果を待つ。
 
-### 1-2. Codex調査結果を元にワークフロー作成
+### 1-2. 調査結果を元にワークフロー作成
 
 調査結果を元に、以下を含む**完全なワークフロー**を `/tmp/bucho-workflow-<名前>.md` に作成する:
 
@@ -294,7 +302,7 @@ AskUserQuestionは使わないこと。
 ### 送信手順（厳守）
 
 1. **テキスト送信**: `tmux send-keys -t "${TARGET}" "プロンプト文"`
-2. **待機**: `sleep 0.5`
+2. **待機**: `sleep 1`
 3. **Enter送信**: `tmux send-keys -t "${TARGET}" Enter`
 4. **配信確認**: 3秒待ってから Task(haiku) で確認
 
@@ -329,6 +337,15 @@ AskUserQuestionは使わないこと。
 1. タスク送信後 **5秒** でTask(haiku)で配信確認
 2. 配信確認後 **10-15秒** でTask(haiku)で動作開始確認
 3. AskUserQuestionが来ていないか確認（すぐ来る可能性がある）
+
+### 🔴 部下のセッション保護（最重要）
+
+**部下のCLIにexit/終了/Ctrl-Cを送ることは絶対禁止。**
+
+- 部長が「このタスクは終わった」と思っても、ユーザーが承認するまで部下は生かしておく
+- 部下のコンテキストが消えると、再教育（プロトコル注入、ワークフロー再読み込み）に大量の時間がかかる
+- 部下のセッション終了は**ユーザーの明示的な指示があった場合のみ**
+- 万が一部下が自発的にexitした場合は、即座にユーザーに報告し、再起動の判断を仰ぐ
 
 ### Codexの有効活用
 
@@ -518,6 +535,7 @@ Claude Codeが自走するワークフローの最後に必ず:
 25. **PR作成時はエビデンススクショ必須**: ユーザーに「PR作成して」と言われたら、必ず `.artifacts/<feature>/images/` のスクショをPRのbodyまたはコメントに添付する。スクショなしのPRは禁止。`scripts/upload-screenshot.sh` でR2にアップロードしてからPR descriptionに埋め込む
 27. **🔴 `/reviw-plugin:done` は必須フロー**: ユーザーに完了報告する前に、必ず部下に `/reviw-plugin:done` を実行させること。これをスキップしてはいけない。ワークフローの最終ステップに必ず含め、部下の完了報告に「`/reviw-plugin:done` 実行済み」が含まれていなければ差し戻す。`npx reviw` で手動で開くだけでは不十分。
 28. **REPORT.mdに画像は埋め込み必須**: スクショをファイル名だけ列挙するのはNG。必ずマークダウンの画像記法 `![alt](path)` で埋め込み、reviwで画像が展開表示されるようにすること
+29. **🔴 部下にexit/終了を送ることを絶対禁止**: 部長が「もう不要」と判断しても、部下のCLI（CC/Codex）にexitやCtrl-Cを送ってはいけない。ユーザーが承認するまで部下のセッションは維持する。コンテキストが消えると部下を最初から教育し直す必要があり、ユーザーの時間を大幅に浪費する。部下のセッション終了はユーザーの明示的な指示があった場合のみ許可される
 
 ---
 
