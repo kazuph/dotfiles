@@ -1,0 +1,40 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "kazuph/moonprompt"
+
+// Values
+pub fn detect_repo(String) -> RepoInfo?
+
+pub fn render(PromptContext, RepoInfo?) -> RenderedPrompt
+
+pub fn render_from_runtime(Int, Int) -> RenderedPrompt
+
+// Errors
+
+// Types and methods
+pub struct PromptContext {
+  user : String
+  host : String
+  home : String
+  cwd : String
+  status : Int
+  duration_ms : Int
+  bun_version : String?
+  python_version : String?
+  virtual_env : String?
+  aws_profile : String?
+}
+
+pub struct RenderedPrompt {
+  branch : String?
+  text : String
+}
+
+pub struct RepoInfo {
+  root : String
+  branch : String
+}
+
+// Type aliases
+
+// Traits
+

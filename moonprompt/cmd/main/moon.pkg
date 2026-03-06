@@ -1,0 +1,9 @@
+import {
+  "kazuph/moonprompt" @lib,
+  "moonbitlang/core/strconv" @strconv,
+  "moonbitlang/x/sys" @sys,
+}
+
+options(
+  "is-main": true,
+)

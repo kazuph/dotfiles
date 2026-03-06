@@ -21,7 +21,7 @@ from google import genai
 from google.genai import types
 
 
-MODEL_NAME = "gemini-2.0-flash"
+DEFAULT_MODEL = "gemini-2.0-flash"
 
 
 def load_env_from_skill() -> None:
@@ -76,7 +76,7 @@ def get_mime_type(file_path: Path) -> str:
     return mime_types.get(suffix, "audio/mp4")
 
 
-def transcribe_audio(client: genai.Client, audio_path: Path) -> str:
+def transcribe_audio(client: genai.Client, audio_path: Path, model: str = DEFAULT_MODEL) -> str:
     """音声ファイルを文字起こしする"""
 
     # 音声ファイルを読み込む
@@ -85,12 +85,12 @@ def transcribe_audio(client: genai.Client, audio_path: Path) -> str:
 
     print(f"音声ファイル読み込み完了: {audio_path.name} ({len(audio_data) / 1024 / 1024:.1f} MB)", file=sys.stderr)
     print(f"MIMEタイプ: {mime_type}", file=sys.stderr)
-    print(f"モデル: {MODEL_NAME}", file=sys.stderr)
+    print(f"モデル: {model}", file=sys.stderr)
     print("文字起こし中...", file=sys.stderr)
 
-    # Gemini APIで文字起こし
+    # Gemini APIで文字起こし（タイムアウト10分）
     response = client.models.generate_content(
-        model=MODEL_NAME,
+        model=model,
         contents=[
             types.Content(
                 role="user",
@@ -105,6 +105,9 @@ def transcribe_audio(client: genai.Client, audio_path: Path) -> str:
                 ],
             )
         ],
+        config=types.GenerateContentConfig(
+            http_options=types.HttpOptions(timeout=600_000),  # 10 minutes
+        ),
     )
 
     return response.text
@@ -141,6 +144,13 @@ def parse_args() -> argparse.Namespace:
         default="text",
         help="出力形式（text: プレーンテキスト, md: マークダウン）",
     )
+    parser.add_argument(
+        "--model",
+        "-m",
+        type=str,
+        default=DEFAULT_MODEL,
+        help=f"使用するGeminiモデル（デフォルト: {DEFAULT_MODEL}）",
+    )
     return parser.parse_args()
 
 
@@ -156,7 +166,7 @@ def main() -> None:
 
     client = genai.Client(api_key=api_key)
 
-    transcript = transcribe_audio(client, audio_path)
+    transcript = transcribe_audio(client, audio_path, model=args.model)
 
     # 出力形式に応じてフォーマット
     if args.format == "md":

@@ -546,8 +546,7 @@ function _tmux_update_git_branch_for_pane() {
   command -v tmux >/dev/null 2>&1 || return
 
   local pane="${TMUX_PANE}"
-  local branch
-  branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || branch=""
+  local branch="${1:-}"
 
   if [[ -n "$branch" ]]; then
     tmux set-option -q -p -t "$pane" @git_branch "$branch" >/dev/null 2>&1
@@ -567,15 +566,8 @@ function _tmux_set_pane_title() {
   tmux select-pane -t "$TMUX_PANE" -T "$title" >/dev/null 2>&1
 }
 
-# Git information in prompt
-autoload -Uz vcs_info
-precmd() {
-  vcs_info
-  _tmux_update_git_branch_for_pane
-}
-zstyle ':vcs_info:git:*' formats ' (%b)'
 setopt PROMPT_SUBST
-# PROMPT='%~ ${vcs_info_msg_0_} $ '  # Commented out to use Prezto's sorin theme
+source "$HOME/dotfiles/.config/zsh/moon-prompt.zsh"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
@@ -619,7 +611,7 @@ if [[ -z "$PREFIX" || "$PREFIX" != *"com.termux"* ]]; then
   [[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
 fi
 
-# Modern CLI tools (starship, zoxide, eza, bat, etc.)
+# Modern CLI tools (zoxide, eza, bat, etc.)
 source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
 
 # Go

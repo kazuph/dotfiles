@@ -64,7 +64,6 @@ BREW_PACKAGES=(
     neovim
 
     # Modern CLI replacements
-    starship      # prompt
     zoxide        # smarter cd
     eza           # modern ls
     bat           # modern cat
@@ -149,9 +148,6 @@ if [ -d "$CONFIG_DIR/nvim" ] && [ ! -L "$CONFIG_DIR/nvim" ]; then
 fi
 ln -snfv "$DOTFILES_DIR/.config/nvim" "$CONFIG_DIR/nvim"
 
-# Starship
-ln -sfv "$DOTFILES_DIR/.config/starship.toml" "$CONFIG_DIR/starship.toml"
-
 # Ghostty
 ln -snfv "$DOTFILES_DIR/.config/ghostty" "$CONFIG_DIR/ghostty"
 
@@ -185,9 +181,23 @@ if grep -q "modern-tools.zsh" "$DOTFILES_DIR/.zshrc" 2>/dev/null; then
 else
     log_info "Adding modern-tools.zsh to .zshrc..."
     echo "" >> "$DOTFILES_DIR/.zshrc"
-    echo "# Modern CLI tools (starship, zoxide, eza, bat, etc.)" >> "$DOTFILES_DIR/.zshrc"
+    echo "# Modern CLI tools (moonprompt, zoxide, eza, bat, etc.)" >> "$DOTFILES_DIR/.zshrc"
     echo 'source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"' >> "$DOTFILES_DIR/.zshrc"
     log_success "modern-tools.zsh added"
+fi
+
+# MoonBit native prompt
+if command -v moon >/dev/null 2>&1; then
+    log_info "Building moonprompt..."
+    mkdir -p "$HOME/.local/bin"
+    (
+        cd "$DOTFILES_DIR/moonprompt"
+        moon build --target native --release
+    )
+    install -m 755 "$DOTFILES_DIR/moonprompt/_build/native/release/build/cmd/main/main.exe" "$HOME/.local/bin/moonprompt"
+    log_success "moonprompt installed"
+else
+    log_warn "moon is not installed; skipping moonprompt build"
 fi
 
 # ===========================================
@@ -227,7 +237,7 @@ echo "  2. In tmux, press prefix + I to install plugins"
 echo "  3. Set your terminal font to 'Hack Nerd Font'"
 echo ""
 log_info "Installed tools:"
-echo "  - starship (modern prompt)"
+echo "  - moonprompt (MoonBit native prompt)"
 echo "  - zoxide (z command for smart cd)"
 echo "  - eza (modern ls with icons)"
 echo "  - bat (modern cat with syntax highlighting)"

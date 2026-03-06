@@ -20,7 +20,7 @@ cd dotfiles
 ## 含まれるもの
 
 ### CLI ツール
-- **starship** - モダンなプロンプト
+- **moonprompt** - MoonBit ネイティブの高速プロンプト
 - **zoxide** - スマートなcd（`z`コマンド）
 - **eza** - モダンなls（アイコン/Git対応）
 - **bat** - モダンなcat（シンタックスハイライト）

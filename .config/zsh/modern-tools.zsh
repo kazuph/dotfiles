@@ -2,9 +2,6 @@
 # Modern CLI Tools Configuration
 # ===========================================
 
-# ----- Starship Prompt -----
-eval "$(starship init zsh)"
-
 # ----- Zoxide (smarter cd) -----
 eval "$(zoxide init zsh)"
 # 使い方: z <directory> でジャンプ、zi でインタラクティブ選択
@@ -64,6 +61,6 @@ function zf() {
 
 # ----- Quick edit configs -----
 alias zshconfig='${EDITOR:-nvim} ~/.zshrc'
-alias starconfig='${EDITOR:-nvim} ~/.config/starship.toml'
+alias promptconfig='${EDITOR:-nvim} ~/dotfiles/.config/zsh/moon-prompt.zsh'
 alias tmuxconfig='${EDITOR:-nvim} ~/.tmux.conf'
 alias nvimconfig='${EDITOR:-nvim} ~/.config/nvim/init.lua'
