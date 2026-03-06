@@ -1159,33 +1159,7 @@ _ai_guard_dispatch() {
     return 1
   fi
 
-  # rm は AIセッションのみブロック（Humanは許可）
-  if [[ "$cmd" == "rm" ]] && _ai_guard_is_ai_session; then
-    # rmオプションを除去してパスのみ抽出
-    local trash_targets=()
-    local arg
-    for arg in "$@"; do
-      # -で始まるオプションはスキップ
-      [[ "$arg" == -* ]] && continue
-      trash_targets+=("$arg")
-    done
-
-    printf "❌ rm コマンドは禁止されています。\n" >&2
-    printf "\n" >&2
-    printf "📖 trash コマンドの使い方:\n" >&2
-    printf "  trash <file>       # ファイルをゴミ箱に移動\n" >&2
-    printf "  trash <dir>        # ディレクトリをゴミ箱に移動\n" >&2
-    printf "  trash -l           # ゴミ箱の中身を一覧表示\n" >&2
-    printf "  trash -e           # ゴミ箱を空にする\n" >&2
-    printf "\n" >&2
-    if [[ ${#trash_targets[@]} -gt 0 ]]; then
-      printf "📋 代わりにこちらをコピーして実行:\n" >&2
-      printf "  trash %s\n" "${trash_targets[*]}" >&2
-      printf "\n" >&2
-    fi
-    printf "💡 ゴミ箱から復元: Finder → ゴミ箱 → 右クリック → 戻す\n" >&2
-    return 1
-  fi
+  # rm は通常の確認フローに従う（ブロックしない）
 
   # Humanセッションではガードを通さず即実行
   if _ai_guard_is_ai_session; then :; else
@@ -1201,8 +1175,8 @@ _ai_guard_dispatch() {
   cmd_display="$(printf "%s " "$cmd" "$@")"
   cmd_display="${cmd_display% }"
 
-  # git checkout -b のブロック（全ユーザー対象）
-  if [[ "$cmd" == "git" ]] && _ai_guard_is_checkout_b "$cmd_display"; then
+  # git checkout -b のブロック（Humanのみ。AIは許可）
+  if [[ "$cmd" == "git" ]] && ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_display"; then
     _ai_guard_block_checkout_b "$cmd_display"
     return 1
   fi
@@ -1288,9 +1262,9 @@ command() {
 _ai_guard_preexec_protected_check() {
   local cmd_line="$1"
 
-  # git checkout -b のブロック（全ユーザー対象、preexec での警告）
+  # git checkout -b のブロック（Humanのみ、preexec での警告）
   # ※ 実際のブロックは accept-line で行われるが、万が一のための警告
-  if _ai_guard_is_checkout_b "$cmd_line"; then
+  if ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_line"; then
     _ai_guard_block_checkout_b "$cmd_line"
     return 1
   fi
@@ -1326,8 +1300,8 @@ _ai_guard_accept_line_protected() {
     return 0
   fi
 
-  # git checkout -b のブロック（全ユーザー対象）
-  if _ai_guard_is_checkout_b "$cmd_line"; then
+  # git checkout -b のブロック（Humanのみ）
+  if ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_line"; then
     _ai_guard_block_checkout_b "$cmd_line"
     BUFFER=""
     zle redisplay
