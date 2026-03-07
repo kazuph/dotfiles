@@ -632,3 +632,9 @@ fi
 
 # goneovim alias
 alias gvim="goneovim"
+
+# opencode
+export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
+
+# OpenCode via Debian proot
+alias opencode='proot-distro login debian -- /root/.opencode/bin/opencode'
