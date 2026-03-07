@@ -10,3 +10,7 @@ ln -snfv ~/dotfiles/.tmux/scripts ~/.tmux/scripts
 # 実体はディレクトリ単位で管理しているため、~/.config/ghostty をシンボリックリンクに統一
 mkdir -p ~/.config
 ln -snfv ~/dotfiles/.config/ghostty ~/.config/ghostty
+
+# Claude Code statusline script
+mkdir -p ~/.claude
+ln -sfv ~/dotfiles/claude/statusline.sh ~/.claude/statusline.sh
