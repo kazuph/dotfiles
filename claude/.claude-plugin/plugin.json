@@ -1,0 +1,13 @@
+{
+  "name": "my-claude-tools",
+  "version": "1.0.0",
+  "description": "個人用Claude Codeツール集。Slack連携、カスタムフックなどを含む。",
+  "author": {
+    "name": "Your Name"
+  },
+  "repository": "https://github.com/yourusername/dotfiles",
+  "license": "MIT",
+  "keywords": ["slack", "notification", "approval", "hooks"],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json"
+}
