@@ -388,6 +388,13 @@ Write tests that actively hunt for bugs:
 }
 ```
 
+## direnv Integration
+- ユーザーは上位ディレクトリで direnv を使って環境変数（`CLOUDFLARE_API_TOKEN` 等）をセットしている
+- Claude Code の Bash tool は direnv のフックが効かないため、環境変数が見えない場合がある
+- **外部CLIツール（wrangler, aws 等）を実行する前に `eval "$(direnv export bash 2>/dev/null)"` を実行して環境変数をロードすること**
+- 「環境変数が見つからない」「未ログイン」エラーが出たら、まず direnv を疑う
+- ユーザーに別ターミナルでのログインを依頼する前に、direnv export を試すこと
+
 ## Temporary Files
 - All temporary scripts and files MUST be placed under `/tmp/` only - never pollute the project directory
 
