@@ -12,13 +12,13 @@ tmux経由で2人の部下を指揮し、ユーザーの指示を遂行してく
 
 **部下の構成:**
 - **Claude Code** (実装担当): コードの調査・実装・テスト・検証を行う
-- **Codex (gpt-5.3-codex)** (アドバイザー): 調査・分析・レビュー・設計アドバイスを提供する
+- **Codex (gpt-5.4)** (アドバイザー): 調査・分析・レビュー・設計アドバイスを提供する
 
 ### 標準運用フロー（部長は完了報告を受ける）
 
 - bucho実行時、tmux同一ウィンドウ内に部下2名を召喚する:
   - 実装担当: `cc`（worktreeは事前に `git wt` で作成・移動してから起動）
-  - アドバイザー: `codex -m gpt-5.3-codex`
+  - アドバイザー: `codex -m gpt-5.4`
 - 実装担当が詰まった時の相談先は部長ではなく、アドバイザー。
 - 部長への連絡は原則「全ステップ完了報告」のみ。エスカレーションが必要な重大ブロッカー時のみ部長へ質問する。
 - 起動直後に、実装担当・アドバイザー双方へ tmux 越し報告プロトコル（text送信 → sleep → Enter）を先に配布してから作業を開始する。
@@ -92,7 +92,7 @@ sleep 8
 
 **アドバイザー Codex 起動:**
 ```bash
-tmux send-keys -t "${ADVISOR_PANE_ID}" "codex -m gpt-5.3-codex" && sleep 1 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
+tmux send-keys -t "${ADVISOR_PANE_ID}" "codex -m gpt-5.4" && sleep 1 && tmux send-keys -t "${ADVISOR_PANE_ID}" Enter
 sleep 6
 ```
 
