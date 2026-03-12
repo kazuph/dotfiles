@@ -13,23 +13,24 @@ description: Gemini APIで画像を生成するシンプルなCLIツール。プ
 # 実行例
 
 ```bash
-# 基本的な使い方
+# 基本的な使い方（生バナナ：高速・安価）
 uv run --with google-genai \
   ~/.claude/skills/gemini-icon-creator/scripts/gen_image.py \
   -p "a cute robot icon, flat design" \
   -o robot.png
 
-# 高品質モデル（nanobananapro）を使用
+# 高品質モデル（ナノバナナプロ）を使用
 uv run --with google-genai \
   ~/.claude/skills/gemini-icon-creator/scripts/gen_image.py \
   -p "modern logo design, minimalist" \
   -m nanobananapro \
   -o logo.png
 
-# アスペクト比を指定
+# 最新モデル（ナノバナナ2）を使用
 uv run --with google-genai \
   ~/.claude/skills/gemini-icon-creator/scripts/gen_image.py \
   -p "wide landscape photo" \
+  -m nanobananav2 \
   --aspect 16:9 \
   -o landscape.png
 ```
@@ -40,15 +41,16 @@ uv run --with google-genai \
 |-----------|------|------|
 | `-p`, `--prompt` | Yes | 生成プロンプト |
 | `-o`, `--output` | Yes | 出力ファイルパス |
-| `-m`, `--model` | No | モデル名（default: nanobanana） |
+| `-m`, `--model` | No | モデル名（default: nanobananav2） |
 | `--aspect` | No | アスペクト比（default: 1:1） |
 
 # モデル
 
 | エイリアス | 正式名 | 特徴 |
 |-----------|--------|------|
-| `nanobanana` | gemini-2.5-flash-preview-05-20 | 安価・高速（デフォルト） |
-| `nanobananapro` | gemini-2.0-flash-preview-image-generation | 高品質 |
+| `nanobanana` | gemini-2.5-flash-image-preview | 安価・高速 |
+| `nanobananapro` | gemini-3-pro-image-preview | 高品質 |
+| `nanobananav2` | gemini-3.1-flash-image-preview | 最新・高速・高品質（デフォルト） |
 
 正式なモデル名を直接指定することも可能。
 

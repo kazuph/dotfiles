@@ -8,7 +8,6 @@ Gemini で画像を生成するシンプルなCLIツール。
 
 使用例:
   gen_image.py -p "a cute robot icon" -o robot.png
-  gen_image.py -p "modern logo design" -m nanobananapro -o logo.png
   gen_image.py -p "landscape photo" --aspect 16:9 -o landscape.png
 """
 
@@ -27,29 +26,21 @@ from google.genai import types
 
 # モデル名のエイリアス
 MODEL_ALIASES = {
-    "flash": "gemini-2.5-flash-image-preview",      # 高速・安価
-    "pro": "gemini-3-pro-image-preview",            # 高品質（推奨）
-    "imagen": "imagen-4.0-generate-001",            # Imagen 4.0
-    "imagen-ultra": "imagen-4.0-ultra-generate-001", # Imagen 4.0 Ultra
-    "imagen-fast": "imagen-4.0-fast-generate-001",  # Imagen 4.0 Fast
+    # 新エイリアス
+    "nanobananav2": "gemini-3.1-flash-image-preview", # 最新・高速・高品質（デフォルト）
     # 旧エイリアス（互換性維持）
     "nanobanana": "gemini-2.5-flash-image-preview",
     "nanobananapro": "gemini-3-pro-image-preview",
 }
 
-DEFAULT_MODEL = "pro"
+DEFAULT_MODEL = "nanobananav2"
 ALLOWED_ASPECTS = ["1:1", "4:3", "3:2", "16:9", "21:9", "9:16"]
 
 
 def list_available_models(client: genai.Client) -> list[str]:
-    """画像生成対応モデルをAPIから取得"""
-    image_models = []
-    for m in client.models.list():
-        name = m.name.replace("models/", "")
-        # 画像生成対応モデルをフィルタ
-        if any(kw in name.lower() for kw in ["image", "imagen"]):
-            image_models.append(name)
-    return sorted(image_models)
+    """画像生成対応モデルを取得（エイリアスのみ）"""
+    # エイリアスで定義されているモデルのみを返す
+    return sorted(MODEL_ALIASES.values())
 
 
 def load_env() -> None:
@@ -143,20 +134,18 @@ def parse_args() -> argparse.Namespace:
         epilog="""
 使用例:
   %(prog)s -p "a cute cat icon" -o cat.png
-  %(prog)s -p "modern logo" -m pro -o logo.png
-  %(prog)s -p "wide landscape" --aspect 16:9 -o bg.png
+  %(prog)s -p "modern logo" -m nanobananapro -o logo.png
+  %(prog)s -p "wide landscape" -m nanobananav2 --aspect 16:9 -o bg.png
   %(prog)s --list-models  # 利用可能なモデル一覧
 
 エイリアス:
-  pro          Gemini 3 Pro Image (デフォルト、高品質・推奨)
-  flash        Gemini 2.5 Flash Image (高速・安価)
-  imagen       Imagen 4.0
-  imagen-ultra Imagen 4.0 Ultra (最高品質)
-  imagen-fast  Imagen 4.0 Fast (最速)
+  nanobanana   Gemini 2.5 Flash Image (生バナナ)
+  nanobananapro Gemini 3 Pro Image (ナノバナナプロ、高品質)
+  nanobananav2 Gemini 3.1 Flash Image (ナノバナナ2、最新・高速・高品質・デフォルト)
 
 ⚠️ 背景指定の注意:
-  NG: "transparent background" → 市松模様になる
-  OK: "plain white background, soft gradient, studio lighting, no patterns"
+   NG: "transparent background" → 市松模様になる
+   OK: "plain white background, soft gradient, studio lighting, no patterns"
 """,
     )
     parser.add_argument(
