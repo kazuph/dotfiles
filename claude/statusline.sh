@@ -178,7 +178,15 @@ bar_color() {
 }
 
 # --- Line 2: three bars (context | 5h | 7d) + cost ---
-BAR_WIDTH=10
+# Dynamic BAR_WIDTH based on terminal width
+# Fixed text in L2 (worst case with reset label):
+#   "¥12345 ctx  100%/200k 5h  100%(4h59m) 7d  100%" = ~46 chars + 3 bars
+TERM_WIDTH=$(stty size 2>/dev/null </dev/tty 2>/dev/null | awk '{print $2}')
+[[ -z "$TERM_WIDTH" || "$TERM_WIDTH" -le 0 ]] 2>/dev/null && TERM_WIDTH=$(tput cols 2>/dev/null)
+[[ -z "$TERM_WIDTH" || "$TERM_WIDTH" -le 0 ]] 2>/dev/null && TERM_WIDTH=${COLUMNS:-80}
+BAR_WIDTH=$(( (TERM_WIDTH - 48) / 3 ))
+(( BAR_WIDTH < 3 )) && BAR_WIDTH=3
+(( BAR_WIDTH > 15 )) && BAR_WIDTH=15
 
 # Context size label
 if (( CTX_SIZE >= 1000000 )); then CTX_LABEL="1M"; else CTX_LABEL="200k"; fi
