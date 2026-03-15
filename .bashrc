@@ -8,8 +8,8 @@ fi
 # ai_guard: 危険コマンドを対話確認・ログ付きでラップ
 # 非対話 bash (-c) でも alias が効くようにする
 shopt -s expand_aliases
-if [ -f "$HOME/.ai_guard.zsh" ]; then
-    . "$HOME/.ai_guard.zsh"
+if [ -f "$HOME/dotfiles/.config/shell/load-ai-guard.sh" ]; then
+    . "$HOME/dotfiles/.config/shell/load-ai-guard.sh"
 fi
 
 # User specific aliases and functions

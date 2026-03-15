@@ -3,29 +3,15 @@
 [[ -n ${AI_GUARD_LOADED:-} ]] && return
 AI_GUARD_LOADED=1
 
+if [[ -f "$HOME/dotfiles/.config/shell/ai-guard-common.sh" ]]; then
+  . "$HOME/dotfiles/.config/shell/ai-guard-common.sh"
+fi
+
 # ============================================================================
 # CRITICAL SECURITY: .allow-main 保護機構
 # AIプロセスは .allow-main を含む全てのコマンドを即時ブロック
 # このセクションは最優先で実行され、バイパス不可能
 # ============================================================================
-_AI_GUARD_PROTECTED_PATTERNS=(
-  '.allow-main'
-  '.allow_main'
-  'allow-main'
-  'allow_main'
-)
-
-_ai_guard_check_protected_pattern() {
-  local cmd_line="$1"
-  local pattern
-  for pattern in "${_AI_GUARD_PROTECTED_PATTERNS[@]}"; do
-    if [[ "$cmd_line" == *"$pattern"* ]]; then
-      return 0  # 保護パターンを検出
-    fi
-  done
-  return 1  # 安全
-}
-
 _ai_guard_block_protected() {
   local cmd_line="$1"
   printf "\n" >&2
@@ -176,12 +162,6 @@ _ai_guard_git_risky_group() {
     reset|restore)
       printf "reset-restore"
       return 0
-      ;;
-    checkout)
-      if [[ "$#" -ge 2 || " $* " == *" -- "* || "$1" == -* ]]; then
-        printf "checkout-files"
-        return 0
-      fi
       ;;
     clean)
       printf "clean"
@@ -414,10 +394,10 @@ _ai_guard_is_ai_session() {
   gp_pid=$(ps -p "$pid" -o ppid= 2>/dev/null | tr -d ' ')
   gp=$(ps -o command= -p "$gp_pid" 2>/dev/null || true)
 
-  if echo "$pcmd" | grep -qiE 'codex|claude|anthropic|openai|aider|opencode'; then
+  if _ai_guard_process_matches_ai "$pcmd"; then
     return 0
   fi
-  if echo "$gp" | grep -qiE 'codex|claude|anthropic|openai|aider|opencode'; then
+  if _ai_guard_process_matches_ai "$gp"; then
     return 0
   fi
 
@@ -625,7 +605,7 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # --- guard policy ------------------------------------------------------
 # 確認ダイアログを出す対象：
 # - 単体コマンド: rm / rmdir / rimraf / trash / mv / dd / mkfs / fdisk / diskutil / format / parted / gparted
-# - サブコマンド: git reset|restore|checkout|clean|stash|branch|rebase|cherry-pick|merge
+# - サブコマンド: git reset|restore|clean|stash|branch|rebase|cherry-pick|merge
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
 # ※ git push は確認不要
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
@@ -1058,11 +1038,6 @@ _ai_guard_need_prompt() {
       # 以下は未コミットの変更やコードを失う可能性があるため確認が必要
       case "$1" in
         reset|restore) return 0 ;;  # 変更を巻き戻す
-        checkout)
-          # git checkout <branch> は許可、git checkout <file> や -- <file> は確認
-          # 引数が2つ以上あるか、-- が含まれる場合はファイル復元の可能性
-          [[ $# -ge 2 || "$*" == *" -- "* || "$2" == -* ]] && return 0
-          ;;
         clean) return 0 ;;  # 追跡されていないファイルを削除
         stash)
           # stash drop / stash clear は確認が必要
