@@ -3,17 +3,44 @@ input=$(cat)
 
 USD_JPY=150  # Fixed rate — update occasionally
 
+# --- Platform detection ---
+IS_MACOS=false
+[[ "$(uname -s)" == "Darwin" ]] && IS_MACOS=true
+
+# Portable tmp directory (Termux cannot write to /tmp)
+if [[ -d "/data/data/com.termux/files/usr/tmp" ]]; then
+  TMPBASE="/data/data/com.termux/files/usr/tmp"
+else
+  TMPBASE="/tmp"
+fi
+
+# Portable stat: return mtime as epoch seconds
+portable_mtime() {
+  if $IS_MACOS; then
+    stat -f %m "$1" 2>/dev/null || echo 0
+  else
+    stat -c %Y "$1" 2>/dev/null || echo 0
+  fi
+}
+
 # --- Usage Limits (API fetch with cache) ---
-USAGE_CACHE="/tmp/claude-statusline-usage.json"
-USAGE_STAMP="/tmp/claude-statusline-usage.stamp"
-USAGE_LOCK="/tmp/claude-statusline-usage.lock"
+USAGE_CACHE="$TMPBASE/claude-statusline-usage.json"
+USAGE_STAMP="$TMPBASE/claude-statusline-usage.stamp"
+USAGE_LOCK="$TMPBASE/claude-statusline-usage.lock"
 USAGE_CACHE_AGE=300   # seconds between successful refreshes
 USAGE_RETRY_AGE=60    # seconds between retry after failure
 USAGE_STALE_MAX=1800  # seconds — hide usage if data older than 30 min
 
 fetch_usage() {
   local token="" creds=""
-  creds=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null) || return 1
+  if $IS_MACOS; then
+    creds=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null) || return 1
+  else
+    # Linux/Termux: read credentials from Claude Code's JSON store
+    local cred_file="${HOME}/.claude/.credentials.json"
+    [[ -f "$cred_file" ]] || return 1
+    creds=$(cat "$cred_file" 2>/dev/null) || return 1
+  fi
   token=$(echo "$creds" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
   [[ -z "$token" ]] && return 1
   local tmp="${USAGE_CACHE}.tmp.$$"
@@ -35,7 +62,7 @@ fetch_usage() {
 recover_stale_lock() {
   local lock_pid_file="$USAGE_LOCK/pid"
   if [[ -d "$USAGE_LOCK" ]]; then
-    local lock_age=$(( $(date +%s) - $(stat -f %m "$USAGE_LOCK" 2>/dev/null || echo 0) ))
+    local lock_age=$(( $(date +%s) - $(portable_mtime "$USAGE_LOCK") ))
     if (( lock_age > 30 )); then
       # Lock holder likely dead — reclaim
       rm -rf "$USAGE_LOCK"
@@ -62,7 +89,7 @@ LAST_ATTEMPT=$(cat "$USAGE_STAMP" 2>/dev/null || echo 0)
 
 if [[ ! -f "$USAGE_CACHE" ]]; then
   needs_refresh=true
-elif (( NOW - $(stat -f %m "$USAGE_CACHE" 2>/dev/null || echo 0) > USAGE_CACHE_AGE )) \
+elif (( NOW - $(portable_mtime "$USAGE_CACHE") > USAGE_CACHE_AGE )) \
   && (( NOW - LAST_ATTEMPT > USAGE_RETRY_AGE )); then
   needs_refresh=true
 fi
@@ -78,7 +105,7 @@ fi
 
 # Read usage cache in one jq call (performance: avoid 3 separate jq invocations)
 if [[ -f "$USAGE_CACHE" ]]; then
-  CACHE_AGE=$(( NOW - $(stat -f %m "$USAGE_CACHE" 2>/dev/null || echo 0) ))
+  CACHE_AGE=$(( NOW - $(portable_mtime "$USAGE_CACHE") ))
   if (( CACHE_AGE < USAGE_STALE_MAX )); then
     eval "$(jq -r '
       "USAGE_5H=" + (.five_hour.utilization // 0 | floor | tostring),
@@ -174,7 +201,11 @@ RESET_LABEL=""
 if [[ -n "$RESETS_5H" && "$RESETS_5H" != "null" ]]; then
   # Normalize ISO 8601: remove fractional seconds, +09:00 -> +0900, Z -> +0000
   NORM_TS=$(printf '%s' "$RESETS_5H" | sed -E 's/([+-][0-9]{2}):([0-9]{2})$/\1\2/; s/\.[0-9]+([+-][0-9]{4})$/\1/; s/Z$/+0000/')
-  RESET_TS=$(date -j -f '%Y-%m-%dT%H:%M:%S%z' "$NORM_TS" +%s 2>/dev/null || echo 0)
+  if $IS_MACOS; then
+    RESET_TS=$(date -j -f '%Y-%m-%dT%H:%M:%S%z' "$NORM_TS" +%s 2>/dev/null || echo 0)
+  else
+    RESET_TS=$(date -d "$RESETS_5H" +%s 2>/dev/null || echo 0)
+  fi
   if (( RESET_TS > NOW )); then
     REMAIN_S=$((RESET_TS - NOW))
     REMAIN_H=$((REMAIN_S / 3600))
