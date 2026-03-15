@@ -606,10 +606,8 @@ export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:
 export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
 
 # 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
-# 危険コマンド確認フックを共通ファイルに集約 (Termux以外で有効)
-if [[ -z "$PREFIX" || "$PREFIX" != *"com.termux"* ]]; then
-  [[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
-fi
+# 危険コマンド確認フックの読み込みは bash/zsh 共通ローダーに集約
+[[ -f "$HOME/dotfiles/.config/shell/load-ai-guard.sh" ]] && source "$HOME/dotfiles/.config/shell/load-ai-guard.sh"
 
 # Modern CLI tools (zoxide, eza, bat, etc.)
 source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
@@ -634,7 +632,7 @@ fi
 alias gvim="goneovim"
 
 # opencode
-export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
-
-# OpenCode via Debian proot
-alias opencode='proot-distro login debian -- /root/.opencode/bin/opencode'
+if [[ -d /data/data/com.termux ]]; then
+  export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
+  alias opencode='proot-distro login debian -- /root/.opencode/bin/opencode'
+fi
