@@ -438,7 +438,7 @@ export GIT_EDITOR=vi
 export PATH=$PATH:/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin
 export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/
 
-export AWS_PROFILE=default
+# export AWS_PROFILE=default
 
 # for ddbcli
 # export $(cat ~/.aws/credentials | grep -v 600 | sed -e 's/ //g' | perl -pe "s/(aws\w+)=/\U\1=/g")
