@@ -139,8 +139,27 @@ if [[ -z "$BRANCH" && -n "$PROJECT_DIR" ]] && command -v git >/dev/null 2>&1; th
   BRANCH=$(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 fi
 
-# Replace $HOME with ~
+# Replace $HOME with ~ and shorten intermediate dirs to first char
+# e.g. ~/src/github.com/Photosynth-inc/checkin-poc → ~/s/g/P/checkin-poc
 DIR_PATH="${CWD/#$HOME/~}"
+if [[ "$DIR_PATH" == */* ]]; then
+  local_ifs="$IFS"; IFS='/'
+  read -ra parts <<< "$DIR_PATH"
+  IFS="$local_ifs"
+  last_idx=$(( ${#parts[@]} - 1 ))
+  short=""
+  for i in "${!parts[@]}"; do
+    p="${parts[$i]}"
+    if [[ $i -eq 0 ]]; then
+      short="$p"  # ~ or empty (root)
+    elif [[ $i -eq $last_idx ]]; then
+      short+="/$p"  # keep last dir full
+    else
+      short+="/${p:0:1}"  # first char only
+    fi
+  done
+  DIR_PATH="$short"
+fi
 
 # NerdFont git branch icon
 GIT_ICON=$'\xee\x82\xa0'  # U+E0A0
