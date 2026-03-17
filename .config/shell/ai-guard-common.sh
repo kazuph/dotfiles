@@ -17,6 +17,7 @@ _AI_GUARD_AI_PROCESS_PATTERNS=(
   "codex"
   "openai"
   "aider"
+  "crush"
   "opencode"
   "opencode"
   "github-copilot"
