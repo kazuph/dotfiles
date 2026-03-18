@@ -50,12 +50,15 @@ export SLACK_BOT_TOKEN="xoxb-your-token"
 export SLACK_CHANNEL="C1234567890"
 ```
 
-### 3. claude-slack-bridgeのインストール
+### 3. 既存クレデンシャルの再利用
 
-```bash
-cd ~/claude-slack-bridge
-npm install
-```
+この実装は以下を自動で探索します。
+
+- `~/dotfiles/claude/hooks/.env`
+- `~/.claude/hooks/.env`
+- macOS Keychain の `SLACK_BOT_TOKEN` / `SLACK_CHANNEL(_ID)`
+
+そのため、Slack 通知 hook で使っている bot token / channel をそのまま再利用できます。
 
 ## プラグインとしてのインストール
 
