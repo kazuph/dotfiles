@@ -45,12 +45,34 @@ When you think of alternatives, present options to the user for selection.
 - ✗ Proceeding with "I'll ask later" mentality
 - ✗ Claiming "done" without screenshot verification
 
-### Mandatory Screenshot Verification (webapp-testing Required)
-- **実装後は必ず`webapp-testing` skillを使ってスクショを撮影して確認する**
-- Playwrightを使って実際にブラウザで動作確認する
-- スクショなしで「完了」と言ってはいけない
-- Chrome MCPは不安定なので、webapp-testing skill（Playwright）を優先して使う
-- TodoListにも「webapp-testingでスクショ確認」を含める
+### Mandatory Verification (webapp-testing Required)
+
+**全てのブラウザ操作・テスト実行はサブエージェント内で完結させること。メインセッションでのブラウザ操作は絶対禁止。**
+
+理由: ブラウザ操作はスクリーンショット・DOM・ログでトークンを大量消費し、メインセッションのコンテキストがすぐにコンパクションされる。デバッグループのたびにコンテキストが失われ、作業効率が壊滅する。
+
+#### 検証フロー（必須順序）
+1. **CLI先行**: まず Playwright CLI (`npx @playwright/cli@latest`) または Agent Browser CLI (`agent-browser`) でサイト構造を低コストで把握する。いきなりE2Eテストを書かない（デバッグコスト爆発の原因）
+2. **E2Eテスト作成**: CLIで把握した情報を元に、`e2e/features/<feature>/` にリグレッションテスト（TypeScript + Playwright Test）を永続的に作成する
+3. **テスト実行・デバッグ**: サブエージェント内で `npx playwright test` を実行し、全パスするまでデバッグ
+4. **証跡収集**: スクリーンショット・動画を `.artifacts/<feature>/` に保存
+
+#### CLIツールは常に最新版を使う
+- Playwright CLI: `npx @playwright/cli@latest snapshot <url>` （古いバージョンだと動作がおかしい場合がある）
+- Agent Browser CLI: `npx agent-browser@latest` または事前にグローバルインストール
+- **初回使用時は必ず `--help` で最新のオプションを確認する**（新しいツールのため情報が古い可能性あり）
+
+#### テスト永続化ルール
+- テストは `/tmp/` に使い捨てで書かない。`e2e/features/` に永続化し、CIで継続実行する前提で書く
+- テストファイル: `<feature>.spec.ts`（TypeScript必須）
+- モック・スタブ禁止。実サーバー + Playwright Test の `webServer` 設定で実環境テスト
+
+#### 禁止事項
+- ❌ メインセッションで `page.goto()`, `page.screenshot()`, `npx playwright test` を実行
+- ❌ CLIでの事前調査なしにいきなりE2Eテストを書く
+- ❌ `/tmp/` に使い捨てテストを書いてリグレッション不可能にする
+- ❌ スクショなしで「完了」と言う
+- TodoListにも「サブエージェントでwebapp-testing検証」を含める
 
 ## 🚨 TodoList-Driven Task Management (MOST CRITICAL)
 
@@ -284,10 +306,12 @@ flowchart TD
 - **Threshold** = Zero critical bugs + Zero broken user flows + UI matches spec
 - **Minimum iterations**: At least 2-3 verification cycles before reporting
 
-### Verification Tools (use at least one per cycle)
-1. **webapp-testing skill** - Interactive browser testing via Playwright
-2. **Chrome DevTools MCP** - Console logs, network, DOM inspection
-3. **Playwright E2E tests** - Automated regression detection
+### Verification Tools (use at least one per cycle, ALL in sub-agent)
+1. **Playwright CLI / Agent Browser CLI** - サイト構造の低コスト把握（常に `@latest` を使う）
+2. **webapp-testing skill** - TypeScript + Playwright Test によるE2Eリグレッションテスト
+3. **Playwright E2E tests** - `e2e/features/` に永続化した自動リグレッション検出
+
+**全てサブエージェント内で実行すること。メインセッションでのブラウザ操作は絶対禁止。**
 
 ### Loop Exit Criteria
 - [ ] Build succeeds without errors

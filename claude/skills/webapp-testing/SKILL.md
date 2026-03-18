@@ -1,210 +1,245 @@
 ---
 name: webapp-testing
-description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs. [MANDATORY] Before saying "implementation complete", you MUST use this skill to run tests and verify functionality. Completion reports without verification are PROHIBITED.
+description: Toolkit for interacting with and testing local web applications using Playwright (TypeScript). Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs. [MANDATORY] Before saying "implementation complete", you MUST use this skill to run tests and verify functionality. Completion reports without verification are PROHIBITED.
 license: Complete terms in LICENSE.txt
 ---
 
 # Web Application Testing
 
-To test local web applications, write native Python Playwright scripts.
+TypeScript + Playwright によるWebアプリケーションのテスト・検証スキル。
 
-**Helper Scripts Available**:
-- `scripts/with_server.py` - Manages server lifecycle (supports multiple servers)
+## 🚨 絶対ルール: メインセッション禁止
 
-**Always run scripts with `--help` first** to see usage. DO NOT read the source until you try running the script first and find that a customized solution is abslutely necessary. These scripts can be very large and thus pollute your context window. They exist to be called directly as black-box scripts rather than ingested into your context window.
+**ブラウザ操作・テスト実行は絶対にメインセッションで行ってはならない。**
 
-## Decision Tree: Choosing Your Approach
+理由:
+1. **トークン爆発**: ブラウザ操作はスクリーンショット・DOM・ログで大量のトークンを消費する
+2. **コンテキスト汚染**: メインセッションのコンテキストがすぐにリフレッシュ（コンパクション）される
+3. **デバッグ地獄**: メインセッションでやるとデバッグループのたびにコンテキストが失われる
+
+**必ずサブエージェント（Agent tool）を使って、その内部で以下を全て完結させること：**
+- Playwright CLI / Agent Browser CLI での概要把握
+- Playwright Test のE2Eテスト実装
+- テスト実行・デバッグ
+- スクリーンショット・動画の証跡収集
 
 ```
-User task → Is it static HTML?
-    ├─ Yes → Read HTML file directly to identify selectors
-    │         ├─ Success → Write Playwright script using selectors
-    │         └─ Fails/Incomplete → Treat as dynamic (below)
-    │
-    └─ No (dynamic webapp) → Is the server already running?
-        ├─ No → Run: python scripts/with_server.py --help
-        │        Then use the helper + write simplified Playwright script
-        │
-        └─ Yes → Reconnaissance-then-action:
-            1. Navigate and wait for networkidle
-            2. Take screenshot or inspect DOM
-            3. Identify selectors from rendered state
-            4. Execute actions with discovered selectors
+❌ メインセッションで: page.goto(), page.screenshot(), npx playwright test
+✅ Agent tool → サブエージェント内で全てのブラウザ操作を実行
 ```
 
-## Example: Using with_server.py
+## 必須フロー: CLI先行 → E2Eテスト
 
-To start a server, run `--help` first, then use the helper:
+**いきなりE2Eテストを書き始めてはいけない。**
 
-**Single server:**
+E2Eテストから書き始めると、途中まで実装して失敗した場合のデバッグコストが跳ね上がる。
+まず軽量CLIでサイトの現状を把握してから、確実なテストを書く。
+
+### Step 1: CLI でサイト概要把握（トークン節約）
+
+**Playwright CLI** (`@playwright/cli`) または **Agent Browser CLI** (`agent-browser`) を使って、
+対象ページの構造・要素・状態を低コストで把握する。
+
+> ⚠️ これらは新しいツールのため、使用前に必ず `--help` や公式ドキュメントを確認して最新の使い方を調べること。
+
+#### Playwright CLI（Microsoft）
 ```bash
-python scripts/with_server.py --server "npm run dev" --port 5173 -- python your_automation.py
+# スナップショット取得（YAML形式、トークン効率的）
+npx @playwright/cli snapshot http://localhost:3000
+# → コンパクトなYAMLで要素参照（e21, e35等）をディスクに保存
+
+# 要素をクリック
+npx @playwright/cli click e21
+
+# スクリーンショット保存
+npx @playwright/cli screenshot --output /tmp/page.png
 ```
 
-**Multiple servers (e.g., backend + frontend):**
+#### Agent Browser CLI（Vercel Labs）
 ```bash
-python scripts/with_server.py \
-  --server "cd backend && python server.py" --port 3000 \
-  --server "cd frontend && npm run dev" --port 5173 \
-  -- python your_automation.py
+# ページを開く
+agent-browser open http://localhost:3000
+
+# アクセシビリティツリーのスナップショット取得
+agent-browser snapshot -i
+# → ref付きのコンパクトなツリーを出力
+
+# 要素操作（refベース）
+agent-browser click @e3
+agent-browser fill @e1 "user@example.com"
+
+# スクリーンショット
+agent-browser screenshot /tmp/page.png
+
+# テキスト取得
+agent-browser get text @e1
+
+# 閉じる
+agent-browser close
 ```
 
-To create an automation script, include only Playwright logic (servers are managed automatically):
-```python
-from playwright.sync_api import sync_playwright
+**なぜCLI先行が必要か:**
+- DOM構造、セレクタ、要素の状態を事前に把握できる
+- テスト記述の精度が上がり、一発で通る確率が大幅に向上
+- CLIの出力はファイルベースなので、LLMコンテキストを消費しない
 
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True) # Always launch chromium in headless mode
-    page = browser.new_page()
-    page.goto('http://localhost:5173') # Server already running and ready
-    page.wait_for_load_state('networkidle') # CRITICAL: Wait for JS to execute
-    # ... your automation logic
-    browser.close()
+### Step 2: Playwright Test でE2Eテスト実装（永続化・リグレッション）
+
+CLIで把握した情報を元に、**プロジェクトに根差した永続的なリグレッションテスト**を書く。
+
+```typescript
+// e2e/features/auth/login.spec.ts
+import { test, expect } from '@playwright/test';
+
+test.describe('ログイン機能', () => {
+  test('メールアドレスとパスワードでログインできる', async ({ page }) => {
+    await page.goto('/login');
+    await page.waitForLoadState('networkidle');
+
+    await page.getByLabel('メールアドレス').fill('test@example.com');
+    await page.getByLabel('パスワード').fill('password123');
+    await page.getByRole('button', { name: 'ログイン' }).click();
+
+    await expect(page).toHaveURL('/dashboard');
+    await expect(page.getByRole('heading', { name: 'ダッシュボード' })).toBeVisible();
+  });
+
+  test('不正なパスワードでエラーが表示される', async ({ page }) => {
+    await page.goto('/login');
+    await page.waitForLoadState('networkidle');
+
+    await page.getByLabel('メールアドレス').fill('test@example.com');
+    await page.getByLabel('パスワード').fill('wrong');
+    await page.getByRole('button', { name: 'ログイン' }).click();
+
+    await expect(page.getByText('認証に失敗しました')).toBeVisible();
+  });
+});
 ```
 
-## Reconnaissance-Then-Action Pattern
+## テスト永続化ルール（リグレッション前提）
 
-1. **Inspect rendered DOM**:
-   ```python
-   page.screenshot(path='/tmp/inspect.png', full_page=True)
-   content = page.content()
-   page.locator('button').all()
-   ```
+**テストは一時ファイルではなく、プロジェクトのリポジトリに永続的に配置する。**
 
-2. **Identify selectors** from inspection results
+### テスト配置ルール
+```
+<project-root>/
+├── e2e/                          # E2Eテストルート
+│   ├── features/                 # 機能別テスト
+│   │   ├── auth/
+│   │   │   ├── login.spec.ts
+│   │   │   └── signup.spec.ts
+│   │   ├── dashboard/
+│   │   │   └── overview.spec.ts
+│   │   └── ...
+│   └── fixtures/                 # 共有フィクスチャ
+│       └── auth.fixture.ts
+├── playwright.config.ts          # Playwright設定
+└── .artifacts/<feature>/         # 証跡（gitignore対象）
+    ├── images/
+    ├── videos/
+    └── traces/
+```
 
-3. **Execute actions** using discovered selectors
+### 命名規則
+- テストファイル: `<feature>.spec.ts`（必ず `.spec.ts` 拡張子）
+- フィクスチャ: `<name>.fixture.ts`
+- テスト記述: 日本語で具体的な振る舞いを書く
 
-## Common Pitfall
+### テストの書き方ポリシー
+1. **一時的なテストは禁止**: `/tmp/` にテストスクリプトを書いて使い捨てにしない
+2. **リグレッション前提**: 一度書いたテストはCIで継続的に実行される前提で書く
+3. **独立実行可能**: 各テストファイルは単体でも、スイート全体でも実行できること
+4. **実際のデータフロー**: モック・スタブ禁止。実際のAPI・DBに接続するテストを書く
+5. **エッジケース重視**: ハッピーパスだけでなく、エラー状態・空状態・ローディング状態もテスト
 
-❌ **Don't** inspect the DOM before waiting for `networkidle` on dynamic apps
-✅ **Do** wait for `page.wait_for_load_state('networkidle')` before inspection
+### playwright.config.ts テンプレート
+```typescript
+import { defineConfig, devices } from '@playwright/test';
 
-## Best Practices
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  ],
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
 
-- **Use bundled scripts as black boxes** - To accomplish a task, consider whether one of the scripts available in `scripts/` can help. These scripts handle common, complex workflows reliably without cluttering the context window. Use `--help` to see usage, then invoke directly. 
-- Use `sync_playwright()` for synchronous scripts
-- Always close the browser when done
-- Use descriptive selectors: `text=`, `role=`, CSS selectors, or IDs
-- Add appropriate waits: `page.wait_for_selector()` or `page.wait_for_timeout()`
+## サブエージェントでの実行パターン
 
-## Reference Files
+メインセッションからサブエージェントに委譲する際のプロンプト例：
 
-- **examples/** - Examples showing common patterns:
-  - `element_discovery.py` - Discovering buttons, links, and inputs on a page
-  - `static_html_automation.py` - Using file:// URLs for local HTML
-  - `console_logging.py` - Capturing console logs during automation
-  - `node_site_diagnostics.js` - Node版の簡易診断（コンソールエラー/HTTP失敗収集＋スクショ）
+```
+Agent tool prompt例:
+「以下のWebアプリをテストしてください：
+1. まず agent-browser または Playwright CLI でサイト構造を把握
+2. e2e/features/<feature>/<name>.spec.ts にリグレッションテストを作成
+3. npx playwright test で実行し、全テストがパスするまでデバッグ
+4. スクリーンショットを .artifacts/<feature>/images/ に保存
+5. 結果を報告」
+```
 
----
-
-## Node Playwright Addendum (local extensions)
-
-Node版の運用で便利だった手筋を追記しておく。公式本文はPython基盤のまま保持し、ここだけローカル拡張として参照する。
-
-- **即席ワンライナー**: `/tmp`を汚さない一発実行が最速。`networkidle`待機とフルページスクショの最小例:
-  ```bash
-  node -e "const { chromium } = require('playwright');
-  (async () => {
-    const browser = await chromium.launch();
-    const page = await browser.newPage();
-    await page.goto(process.env.BASE_URL || 'http://localhost:3000', { waitUntil: 'networkidle' });
-    await page.screenshot({ path: '/tmp/webapp.png', fullPage: true });
-    await browser.close();
-    console.log('saved: /tmp/webapp.png');
-  })();"
-  ```
-
-- **証跡セット（スクリプト/動画/スクショ/trace）**: 証跡が必要なときは`.artifacts/<feature>/`にまとめる。**Playwrightスクリプト自体も`scripts/`に保存**し、何を実行したか再現可能にする。動画は`recordVideo`、traceはPlaywright Testで`--trace=retain-on-failure`が手軽。
-  ```bash
-  FEATURE=${FEATURE:-feature}
-  mkdir -p .artifacts/$FEATURE/{scripts,images,videos}
-  node -e "const { chromium } = require('playwright');
-  (async () => {
-    const browser = await chromium.launch({ headless: false });
-    const context = await browser.newContext({
-      viewport: { width: 1440, height: 900 },
-      recordVideo: { dir: `.artifacts/${FEATURE}/videos` }
-    });
-    const page = await context.newPage();
-    await page.goto(process.env.BASE_URL || 'http://localhost:3000', { waitUntil: 'networkidle' });
-    await page.screenshot({ path: `.artifacts/${FEATURE}/images/${Date.now()}-step.png`, fullPage: true });
-    await browser.close();
-  })();"
-  # Playwright Testでtraceを残す場合
-  # BASE_URL=http://localhost:3000 npx playwright test tests/e2e/<spec>.spec.ts --headed --output=.artifacts/$FEATURE/images --trace=retain-on-failure --reporter=line
-  ```
-
-- **Chrome DevTools MCPの併用判断**: スクショだけで原因が読みにくいレイアウト/フォント/重ね順/パフォーマンスは、まずPlaywrightで再現と証跡取得 → それでも不明ならDevTools MCPでStyles/Computed/Box model/Performanceをピンポイント確認。
-
-- **Lighthouseによる性能スナップショット**: ざっくり性能を測りたいときの最小実行。出力は`/tmp`に集約。
-  ```bash
-  npx lighthouse ${BASE_URL:-http://localhost:3000} --output=json --output-path=/tmp/lh.json --chrome-flags="--headless" --only-categories=performance
-  node -e "const data = require('/tmp/lh.json'); const perf = data.categories.performance; console.log('Performance Score', Math.round(perf.score*100));"
-  ```
-
-運用ポリシー: 基本はheadless、証跡が要るときだけheadedに切り替え。プロジェクト直下を汚さず`/tmp`か`.artifacts/`配下に書き出し、終了後は不要ファイルを削除する。
-
-## DevTools MCP不要でPlaywrightだけでやる方法メモ
-Chrome DevTools MCPの中身はPuppeteer+CDP。Playwrightも同じCDPを叩けるので、以下の手順で代替する。
-
-- **Performanceトレース（Performanceパネル相当）**: Playwright標準のトレースを使う。
-  ```python
-  with sync_playwright() as p:
-      browser = p.chromium.launch(headless=True)
-      context = browser.new_context(record_video_dir=None)
-      context.tracing.start(screenshots=True, snapshots=True)
-      page = context.new_page()
-      page.goto("http://localhost:3000", wait_until="networkidle")
-      # ここで操作
-      context.tracing.stop(path=".artifacts/feature/traces/trace.zip")
-      browser.close()
-  ```
-  DevToolsの`Performance`ビューに近い詳細が欲しければCDPセッションで`Tracing.start`/`end`し、出力JSONを`chrome://tracing`や`perfetto.dev`で読む。
-
-- **Coverage（Coverageパネル相当）**: CDP経由で取得。
-  ```python
-  cdp = page.context.new_cdp_session(page)
-  cdp.send("Profiler.enable")
-  cdp.send("Profiler.startPreciseCoverage", {"callCount": True, "detailed": True})
-  # ここで操作
-  result = cdp.send("Profiler.takePreciseCoverage")
-  cdp.send("Profiler.stopPreciseCoverage"); cdp.send("Profiler.disable")
-  # result["result"] にファイルごとの使用率が入る
-  ```
-
-- **Styles/Box Model/Computed値の確認**: DevTools UIでなく値だけ取る。
-  ```python
-  box = page.locator("selector").evaluate("el => el.getBoundingClientRect()")
-  styles = page.locator("selector").evaluate("el => getComputedStyle(el)")
-  ```
-
-- **Networkボディ取得**: `page.on('request')`でメタは取れるが、レスポンス本文はCDPで。
-  ```python
-  cdp = page.context.new_cdp_session(page)
-  resp = cdp.send("Network.getResponseBody", {"requestId": "<target requestId>"})
-  ```
-  `requestId`は`page.on("requestfinished", ...)`で`request.timing()`と一緒にログして紐付ける。
-
-- **コンソール/エラー収集**: Playwrightのイベントで足りる。
-  ```python
-  page.on("console", lambda msg: print("console:", msg.type, msg.text))
-  page.on("pageerror", lambda err: print("pageerror:", err))
-  page.on("requestfailed", lambda req: print("requestfailed:", req.url))
-  ```
-
-## ファイル配置規約
+## 証跡ファイル配置規約
 
 検証時に生成するファイルは以下の構成で `.artifacts/<feature>/` に集約する：
 
 ```
 .artifacts/<feature>/
-├── scripts/      # Playwrightスクリプト（.py / .js / .ts）
+├── scripts/      # 検証用Playwrightスクリプト（.ts）
 ├── images/       # スクリーンショット
 ├── videos/       # 録画ファイル
 └── traces/       # Playwright trace（.zip）
 ```
 
-- **スクリプトも証跡の一部**: 何を実行したか再現可能にするため、使い捨てでも `scripts/` に保存
-- **命名規則**: `<timestamp>-<step>.png`、`verify-<feature>.py` など意図が分かる名前を推奨
+- **スクリプトも証跡の一部**: 何を実行したか再現可能にするため `scripts/` に保存
+- **命名規則**: `<timestamp>-<step>.png`、`verify-<feature>.ts` など意図が分かる名前
 - **即席検証のみ `/tmp`**: 証跡不要の一発確認は `/tmp` でOK、ただし後から参照できない前提
+
+## Playwright Test 実行コマンド
+
+```bash
+# 全テスト実行
+npx playwright test
+
+# 特定ファイルのみ
+npx playwright test e2e/features/auth/login.spec.ts
+
+# headedモード（ブラウザ表示）
+npx playwright test --headed
+
+# trace付き実行
+npx playwright test --trace=retain-on-failure
+
+# 証跡をartifactsに出力
+npx playwright test --output=.artifacts/<feature>/images
+```
+
+## Common Pitfall
+
+❌ **Don't** いきなりE2Eテストを書き始める → デバッグコスト爆発
+✅ **Do** まずCLI（Playwright CLI / Agent Browser）で構造把握 → テスト作成
+
+❌ **Don't** メインセッションでブラウザ操作 → コンテキスト消費・コンパクション
+✅ **Do** サブエージェントに委譲して完結させる
+
+❌ **Don't** `/tmp/test.ts` に使い捨てテスト → リグレッション不可
+✅ **Do** `e2e/features/<feature>/` に永続テスト → CI連続実行
+
+❌ **Don't** `networkidle` 前にDOMを検査する
+✅ **Do** `page.waitForLoadState('networkidle')` 後に検査
