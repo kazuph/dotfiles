@@ -285,6 +285,79 @@ async function postBlockMessage(token, channel, fallbackText, blocks) {
   });
 }
 
+async function uploadFile(token, channel, filePath, threadTs) {
+  const fileData = fs.readFileSync(filePath);
+  const fileName = path.basename(filePath);
+
+  // Step 1: Get upload URL (requires form-urlencoded)
+  const urlRes = await fetch("https://slack.com/api/files.getUploadURLExternal", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/x-www-form-urlencoded" },
+    body: `filename=${encodeURIComponent(fileName)}&length=${fileData.length}`,
+    signal: AbortSignal.timeout(30000),
+  });
+  const urlJson = await urlRes.json();
+  if (!urlJson.ok) throw new Error(urlJson.error || "upload_url_failed");
+
+  // Step 2: Upload file to the URL
+  await fetch(urlJson.upload_url, { method: "POST", body: fileData });
+
+  // Step 3: Complete the upload
+  const completeBody = { files: [{ id: urlJson.file_id, title: fileName }] };
+  if (channel) completeBody.channel_id = channel;
+  if (threadTs) completeBody.thread_ts = threadTs;
+
+  await callSlackApi(token, "files.completeUploadExternal", completeBody);
+  return { file_id: urlJson.file_id, filename: fileName };
+}
+
+const MIME_TO_EXT = {
+  "image/png": ".png",
+  "image/jpeg": ".jpg",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+  "image/heic": ".heic",
+  "image/heif": ".heif",
+  "image/svg+xml": ".svg",
+  "application/pdf": ".pdf",
+};
+
+async function downloadSlackFile(token, fileUrl, destDir) {
+  const response = await fetch(fileUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+    signal: AbortSignal.timeout(30000),
+  });
+  if (!response.ok) return null;
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  const contentType = response.headers.get("content-type") || "";
+
+  // Determine extension from Content-Type, fallback to URL path
+  const urlPath = new URL(fileUrl).pathname;
+  let fileName = path.basename(urlPath);
+  const correctExt = MIME_TO_EXT[contentType.split(";")[0].trim()];
+  if (correctExt && !fileName.endsWith(correctExt)) {
+    fileName = fileName.replace(/\.[^.]+$/, "") + correctExt;
+  }
+
+  const destPath = path.join(destDir, `slack_${Date.now()}_${fileName}`);
+  fs.writeFileSync(destPath, buffer);
+  return { localPath: destPath, contentType: contentType.split(";")[0].trim(), size: buffer.length };
+}
+
+function extractFiles(message) {
+  const files = message.files || [];
+  return files
+    .filter((f) => f.url_private && !f.is_external)
+    .map((f) => ({
+      id: f.id,
+      name: f.name || f.title || "unknown",
+      mimetype: f.mimetype || "",
+      url: f.url_private,
+      size: f.size || 0,
+    }));
+}
+
 async function addReactions(token, channel, ts, emojiNames) {
   for (const name of emojiNames) {
     try {
@@ -331,6 +404,17 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
       }
 
       const text = message.text || "";
+      const msgFiles = extractFiles(message);
+
+      // Download any attached files to /tmp
+      const downloadedFiles = [];
+      for (const f of msgFiles) {
+        const dl = await downloadSlackFile(token, f.url, os.tmpdir());
+        if (dl) {
+          downloadedFiles.push({ ...f, localPath: dl.localPath, contentType: dl.contentType, downloadedSize: dl.size });
+        }
+      }
+
       if (mode === "decision") {
         const decision = parseDecision(text);
         if (decision) {
@@ -340,6 +424,7 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
             response: decision.reason,
             user: message.user || "",
             raw: decision.raw,
+            files: downloadedFiles,
           };
         }
         // Any non-matching reply = reject with the reply text as reason
@@ -349,6 +434,7 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
           response: normalizeText(text),
           user: message.user || "",
           raw: normalizeText(text),
+          files: downloadedFiles,
         };
       }
 
@@ -358,6 +444,7 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
         response: normalizeText(text),
         user: message.user || "",
         raw: normalizeText(text),
+        files: downloadedFiles,
       };
     }
 
@@ -498,6 +585,20 @@ async function main() {
     return;
   }
 
+  if (command === "upload") {
+    const filePath = args[0] || "";
+    const threadTs = args[1] || "";
+    if (!filePath) {
+      throw new Error("file_path_required");
+    }
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`file_not_found: ${filePath}`);
+    }
+    const result = await uploadFile(token, channel, filePath, threadTs || undefined);
+    jsonPrint({ success: true, channel, ...result });
+    return;
+  }
+
   if (command === "ask") {
     const auth = await authTest(token);
     const question = args[0] || "";
@@ -545,6 +646,9 @@ async function main() {
     if (response.optionIndex != null) {
       payload.optionIndex = response.optionIndex;
     }
+    if (response.files?.length > 0) {
+      payload.files = response.files;
+    }
 
     if (options.format === "shell") {
       shellPrint(response.button, response.response);
@@ -589,6 +693,9 @@ async function main() {
       ts: posted.ts,
       channel,
     };
+    if (response.files?.length > 0) {
+      payload.files = response.files;
+    }
 
     if (options.format === "shell") {
       shellPrint(response.button, response.response);
