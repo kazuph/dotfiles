@@ -6,7 +6,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 
-const DEFAULT_TIMEOUT_SECONDS = 1800;
+const DEFAULT_TIMEOUT_SECONDS = 600;
 const POLL_INTERVAL_MS = 3000;
 const NUMBER_EMOJIS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
@@ -193,23 +193,47 @@ function buildAskBlocks(question, optionsList, timeoutSeconds) {
   return blocks;
 }
 
-function buildApprovalBlocks(title, description, timeoutSeconds) {
+function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
   const blocks = [
     {
       type: "header",
       text: { type: "plain_text", text: "🔐 承認リクエスト", emoji: true },
     },
-    {
-      type: "section",
-      text: { type: "mrkdwn", text: `*${title}*` },
-    },
   ];
 
-  if (description) {
+  if (meta && Object.keys(meta).length > 0) {
+    // Structured table-like display with meta info
+    const fields = [];
+    if (meta.cmd) fields.push({ type: "mrkdwn", text: `*コマンド*\n\`${meta.cmd}\`` });
+    if (meta.dir) fields.push({ type: "mrkdwn", text: `*ディレクトリ*\n\`${meta.dir}\`` });
+    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
+    if (meta.process) fields.push({ type: "mrkdwn", text: `*プロセス*\n\`${meta.process}\`` });
+    if (meta.repo) fields.push({ type: "mrkdwn", text: `*リポジトリ*\n\`${meta.repo}\`` });
+    if (meta.tmux) fields.push({ type: "mrkdwn", text: `*tmux*\n\`${meta.tmux}\`` });
+
+    if (fields.length > 0) {
+      blocks.push({ type: "section", fields });
+    }
+
+    // Full command as a code block if longer than the summary
+    if (meta.full_cmd && meta.full_cmd !== meta.cmd) {
+      blocks.push({
+        type: "section",
+        text: { type: "mrkdwn", text: `*実行コマンド全体*\n\`\`\`${meta.full_cmd}\`\`\`` },
+      });
+    }
+  } else {
+    // Fallback: plain text display
     blocks.push({
       type: "section",
-      text: { type: "mrkdwn", text: description },
+      text: { type: "mrkdwn", text: `*${title}*` },
     });
+    if (description) {
+      blocks.push({
+        type: "section",
+        text: { type: "mrkdwn", text: description },
+      });
+    }
   }
 
   blocks.push({ type: "divider" });
@@ -217,16 +241,13 @@ function buildApprovalBlocks(title, description, timeoutSeconds) {
     type: "section",
     text: {
       type: "mrkdwn",
-      text: ":white_check_mark: = 承認  |  :x: = 却下",
+      text: ":white_check_mark: 承認  |  :three: 3分承認  |  :x: 却下",
     },
   });
   blocks.push({
     type: "context",
     elements: [
-      {
-        type: "mrkdwn",
-        text: `リアクションで選択 or スレッドに \`承認 理由\` / \`却下 理由\` で返信  |  ⏱️ タイムアウト: ${timeoutSeconds}秒`,
-      },
+      { type: "mrkdwn", text: `スレッド返信でも可  |  ⏱️ ${timeoutSeconds}秒` },
     ],
   });
 
@@ -373,6 +394,9 @@ async function checkApprovalReactions(token, channel, ts, botUserId) {
     if (reaction.name === "white_check_mark") {
       return { approved: true, button: "承認", response: "承認 (リアクション)", user: users[0], raw: "✅" };
     }
+    if (reaction.name === "three") {
+      return { approved: true, button: "3分間承認", response: "3分間承認 (リアクション)", user: users[0], raw: "3️⃣" };
+    }
     if (reaction.name === "x") {
       return { approved: false, button: "却下", response: "却下 (リアクション)", user: users[0], raw: "❌" };
     }
@@ -392,29 +416,34 @@ function jsonPrint(payload) {
 
 function parseArgs(argv) {
   const args = [...argv];
-  const command = args.shift() || "";
   const options = {
     format: "json",
     timeoutSeconds: DEFAULT_TIMEOUT_SECONDS,
   };
 
-  while (args.length > 0 && args[0]?.startsWith("--")) {
-    const flag = args.shift();
-    if (flag === "--format") {
+  // Parse flags from anywhere in the args (before or after command)
+  const remaining = [];
+  while (args.length > 0) {
+    const token = args[0];
+    if (token === "--format") {
+      args.shift();
       options.format = args.shift() || "json";
-      continue;
-    }
-    if (flag === "--timeout-seconds") {
+    } else if (token === "--timeout-seconds") {
+      args.shift();
       options.timeoutSeconds = Number(args.shift() || DEFAULT_TIMEOUT_SECONDS);
-      continue;
-    }
-    if (flag === "--channel") {
+    } else if (token === "--channel") {
+      args.shift();
       options.channel = args.shift() || "";
-      continue;
+    } else if (token === "--meta") {
+      args.shift();
+      try { options.meta = JSON.parse(args.shift() || "{}"); } catch { options.meta = {}; }
+    } else {
+      remaining.push(args.shift());
     }
   }
 
-  return { command, options, args };
+  const command = remaining.shift() || "";
+  return { command, options, args: remaining };
 }
 
 async function authTest(token) {
@@ -518,13 +547,13 @@ async function main() {
       throw new Error("title_required");
     }
 
-    const blocks = buildApprovalBlocks(title, description, options.timeoutSeconds);
+    const blocks = buildApprovalBlocks(title, description, options.timeoutSeconds, options.meta);
     const fallback = description ? `${title}\n${description}` : title;
 
     const posted = await postBlockMessage(token, channel, fallback, blocks);
 
     // Add approval/rejection emoji reactions
-    await addReactions(token, channel, posted.ts, ["white_check_mark", "x"]);
+    await addReactions(token, channel, posted.ts, ["white_check_mark", "three", "x"]);
 
     const response = await waitForResponse({
       token,
