@@ -27,12 +27,17 @@ allowed-tools:
 ## 質問する（ask）
 
 ```bash
-# バックグラウンドで実行
-~/.claude/skills/slack-ask/scripts/ask.sh "質問内容" "選択肢1" "選択肢2" ...
+# コンテキスト付き（推奨）- git情報を自動収集してSlackに表示
+_repo=$(git rev-parse --show-toplevel 2>/dev/null | xargs basename) _branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+node ~/.claude/skills/slack-ask/scripts/slack-approval.mjs \
+  --meta "{\"repo\":\"$_repo\",\"branch\":\"$_branch\"}" \
+  ask "質問内容" "選択肢1,選択肢2,選択肢3"
 
-# TaskOutputで待機
-TaskOutput(task_id: "...", block: true, timeout: 600000)
+# シンプル版（コンテキストなし）
+~/.claude/skills/slack-ask/scripts/ask.sh "質問内容" "選択肢1" "選択肢2" ...
 ```
+
+`run_in_background: true` で実行 → `TaskOutput(block: true, timeout: 600000)` で待機
 
 **Slack側の応答方法:**
 - 数字リアクション（1️⃣2️⃣3️⃣）で選択肢を選ぶ

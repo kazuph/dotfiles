@@ -38,4 +38,7 @@ fi
 _meta=$(printf '{"dir":"%s","branch":"%s","repo":"%s","process":"%s","tmux":"%s"}' \
     "$_dir" "$_branch" "$_repo" "$_process" "$_tmux")
 
+# Output meta+args as JSON for caller to use, then exec node directly
+# Note: ai_guard may intercept 'node' in bash; if so, caller should use
+# node directly from non-bash context (e.g. Claude Code's Bash tool)
 exec node "$HELPER" --meta "$_meta" ask "$QUESTION" "$OPTIONS_CSV"
