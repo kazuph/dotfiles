@@ -1332,25 +1332,24 @@ _ai_guard_accept_line_protected() {
   fi
 
   # 元の accept-line 処理を実行
-  # danger word チェック（既存の _ai_guard_accept_line のロジック）
-  local cmd_trim="${cmd_line##[[:space:]]#}"
-  local cmd_name="${cmd_trim%% *}"
-  if [[ "$cmd_name" == "git" ]]; then
-    zle .accept-line
-    return 0
-  fi
-  if _ai_guard_contains_danger_word "$cmd_line"; then
-    local prev_exec="${AI_GUARD_EXEC:-}"
-    local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
-    AI_GUARD_EXEC=":"
-    AI_GUARD_CMD_DISPLAY="$cmd_line"
-    ai_extreme_confirm :
-    local rc=$?
-    AI_GUARD_EXEC="$prev_exec"
-    AI_GUARD_CMD_DISPLAY="$prev_display"
-    if [[ $rc -ne 0 ]]; then
-      zle redisplay
-      return 0
+  # danger word チェック（AIセッションのみ）
+  # Humanセッションでは danger word の accept-line ブロックをスキップ
+  if _ai_guard_is_ai_session && _ai_guard_contains_danger_word "$cmd_line"; then
+    local cmd_trim="${cmd_line##[[:space:]]#}"
+    local cmd_name="${cmd_trim%% *}"
+    if [[ "$cmd_name" != "git" ]]; then
+      local prev_exec="${AI_GUARD_EXEC:-}"
+      local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
+      AI_GUARD_EXEC=":"
+      AI_GUARD_CMD_DISPLAY="$cmd_line"
+      ai_extreme_confirm :
+      local rc=$?
+      AI_GUARD_EXEC="$prev_exec"
+      AI_GUARD_CMD_DISPLAY="$prev_display"
+      if [[ $rc -ne 0 ]]; then
+        zle redisplay
+        return 0
+      fi
     fi
   fi
   zle .accept-line
