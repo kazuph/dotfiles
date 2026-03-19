@@ -148,17 +148,28 @@ function parseDecision(text) {
 
 // --- Block Kit Builders ---
 
-function buildAskBlocks(question, optionsList, timeoutSeconds) {
+function buildAskBlocks(question, optionsList, timeoutSeconds, meta) {
   const blocks = [
     {
       type: "header",
       text: { type: "plain_text", text: "🤖 Claude Code からの質問", emoji: true },
     },
-    {
-      type: "section",
-      text: { type: "mrkdwn", text: `*${question}*` },
-    },
   ];
+
+  // Context fields (dir, branch, etc.)
+  if (meta && Object.keys(meta).length > 0) {
+    const fields = [];
+    if (meta.repo) fields.push({ type: "mrkdwn", text: `*リポジトリ*\n\`${meta.repo}\`` });
+    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
+    if (fields.length > 0) {
+      blocks.push({ type: "section", fields });
+    }
+  }
+
+  blocks.push({
+    type: "section",
+    text: { type: "mrkdwn", text: `*${question}*` },
+  });
 
   if (optionsList.length > 0) {
     blocks.push({ type: "divider" });
@@ -174,7 +185,7 @@ function buildAskBlocks(question, optionsList, timeoutSeconds) {
       elements: [
         {
           type: "mrkdwn",
-          text: `リアクションで選択 or スレッドに自由記述で返信  |  ⏱️ タイムアウト: ${timeoutSeconds}秒`,
+          text: `リアクションで選択 or スレッドに自由記述で返信  |  ⏱️ ${timeoutSeconds}秒`,
         },
       ],
     });
@@ -184,7 +195,7 @@ function buildAskBlocks(question, optionsList, timeoutSeconds) {
       elements: [
         {
           type: "mrkdwn",
-          text: `スレッドに返信してください  |  ⏱️ タイムアウト: ${timeoutSeconds}秒`,
+          text: `スレッドに返信してください  |  ⏱️ ${timeoutSeconds}秒`,
         },
       ],
     });
@@ -205,11 +216,8 @@ function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
     // Structured table-like display with meta info
     const fields = [];
     if (meta.cmd) fields.push({ type: "mrkdwn", text: `*コマンド*\n\`${meta.cmd}\`` });
-    if (meta.dir) fields.push({ type: "mrkdwn", text: `*ディレクトリ*\n\`${meta.dir}\`` });
-    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
-    if (meta.process) fields.push({ type: "mrkdwn", text: `*プロセス*\n\`${meta.process}\`` });
     if (meta.repo) fields.push({ type: "mrkdwn", text: `*リポジトリ*\n\`${meta.repo}\`` });
-    if (meta.tmux) fields.push({ type: "mrkdwn", text: `*tmux*\n\`${meta.tmux}\`` });
+    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
 
     if (fields.length > 0) {
       blocks.push({ type: "section", fields });
@@ -502,7 +510,7 @@ async function main() {
       ? optionsStr.split(",").map((s) => s.trim()).filter(Boolean)
       : [];
 
-    const blocks = buildAskBlocks(question, optionsList, options.timeoutSeconds);
+    const blocks = buildAskBlocks(question, optionsList, options.timeoutSeconds, options.meta);
     const fallback = optionsList.length > 0
       ? `${question}\n${optionsList.map((o, i) => `${i + 1}. ${o}`).join("\n")}`
       : question;

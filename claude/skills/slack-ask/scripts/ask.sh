@@ -1,5 +1,5 @@
 #!/bin/bash
-# Slack質問スクリプト
+# Slack質問スクリプト（自動コンテキスト収集付き）
 # Usage: ask.sh "質問内容" "選択肢1" "選択肢2" ...
 #    or: ask.sh "質問内容" "選択肢1,選択肢2"
 
@@ -17,11 +17,25 @@ shift || true
 
 OPTIONS_CSV=""
 if [ "$#" -gt 1 ]; then
-    # Multiple arguments: join with comma
     OPTIONS_CSV="$(printf '%s\n' "$@" | paste -sd ',' -)"
 elif [ "$#" -eq 1 ]; then
-    # Single argument: already CSV or single option
     OPTIONS_CSV="$1"
 fi
 
-exec node "$HELPER" ask "$QUESTION" "$OPTIONS_CSV"
+# Auto-collect context meta
+_dir="$(pwd -P 2>/dev/null || pwd)"
+_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || _branch=""
+_repo=$(git rev-parse --show-toplevel 2>/dev/null) || _repo=""
+[ -n "$_repo" ] && _repo="${_repo##*/}"
+_process=$(ps -o comm= -p "$PPID" 2>/dev/null | tr -d '\n') || _process=""
+_tmux=""
+if [ -n "${TMUX_PANE:-}" ]; then
+    _tw=$(tmux display-message -p -t "${TMUX_PANE}" '#{window_name}' 2>/dev/null | tr -d '\n') || _tw=""
+    _tp=$(tmux display-message -p -t "${TMUX_PANE}" '#{pane_title}' 2>/dev/null | tr -d '\n') || _tp=""
+    [ -n "$_tw" ] || [ -n "$_tp" ] && _tmux="${_tw:-?}:${_tp:-?}"
+fi
+
+_meta=$(printf '{"dir":"%s","branch":"%s","repo":"%s","process":"%s","tmux":"%s"}' \
+    "$_dir" "$_branch" "$_repo" "$_process" "$_tmux")
+
+exec node "$HELPER" --meta "$_meta" ask "$QUESTION" "$OPTIONS_CSV"
