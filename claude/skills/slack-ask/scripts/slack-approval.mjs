@@ -247,7 +247,7 @@ function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
   blocks.push({
     type: "context",
     elements: [
-      { type: "mrkdwn", text: `スレッド返信でも可  |  ⏱️ ${timeoutSeconds}秒` },
+      { type: "mrkdwn", text: `スレッド返信 = 却下（内容が理由に）| 承認はリアクションで  |  ⏱️ ${timeoutSeconds}秒` },
     ],
   });
 
@@ -325,15 +325,22 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
       const text = message.text || "";
       if (mode === "decision") {
         const decision = parseDecision(text);
-        if (!decision) {
-          continue;
+        if (decision) {
+          return {
+            approved: decision.button === "承認" || decision.button === "3分間承認",
+            button: decision.button,
+            response: decision.reason,
+            user: message.user || "",
+            raw: decision.raw,
+          };
         }
+        // Any non-matching reply = reject with the reply text as reason
         return {
-          approved: decision.button === "承認" || decision.button === "3分間承認",
-          button: decision.button,
-          response: decision.reason,
+          approved: false,
+          button: "却下",
+          response: normalizeText(text),
           user: message.user || "",
-          raw: decision.raw,
+          raw: normalizeText(text),
         };
       }
 
