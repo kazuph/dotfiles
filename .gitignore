@@ -42,3 +42,4 @@ Temporary Items
 
 # End of https://www.gitignore.io/api/osx
 get-docker.sh
+bin/_build/
