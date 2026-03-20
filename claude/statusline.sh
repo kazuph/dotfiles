@@ -7,115 +7,7 @@ USD_JPY=150  # Fixed rate — update occasionally
 IS_MACOS=false
 [[ "$(uname -s)" == "Darwin" ]] && IS_MACOS=true
 
-# Portable tmp directory (Termux cannot write to /tmp)
-if [[ -d "/data/data/com.termux/files/usr/tmp" ]]; then
-  TMPBASE="/data/data/com.termux/files/usr/tmp"
-else
-  TMPBASE="/tmp"
-fi
-
-# Portable stat: return mtime as epoch seconds
-portable_mtime() {
-  if $IS_MACOS; then
-    stat -f %m "$1" 2>/dev/null || echo 0
-  else
-    stat -c %Y "$1" 2>/dev/null || echo 0
-  fi
-}
-
-# --- Usage Limits (API fetch with cache) ---
-USAGE_CACHE="$TMPBASE/claude-statusline-usage.json"
-USAGE_STAMP="$TMPBASE/claude-statusline-usage.stamp"
-USAGE_LOCK="$TMPBASE/claude-statusline-usage.lock"
-USAGE_CACHE_AGE=300   # seconds between successful refreshes
-USAGE_RETRY_AGE=60    # seconds between retry after failure
-USAGE_STALE_MAX=1800  # seconds — hide usage if data older than 30 min
-
-fetch_usage() {
-  local token="" creds=""
-  if $IS_MACOS; then
-    creds=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null) || return 1
-  else
-    # Linux/Termux: read credentials from Claude Code's JSON store
-    local cred_file="${HOME}/.claude/.credentials.json"
-    [[ -f "$cred_file" ]] || return 1
-    creds=$(cat "$cred_file" 2>/dev/null) || return 1
-  fi
-  token=$(echo "$creds" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null)
-  [[ -z "$token" ]] && return 1
-  local tmp="${USAGE_CACHE}.tmp.$$"
-  if curl -s --max-time 3 "https://api.anthropic.com/api/oauth/usage" \
-    -H "Authorization: Bearer $token" \
-    -H "anthropic-beta: oauth-2025-04-20" \
-    -H "Content-Type: application/json" -o "$tmp" 2>/dev/null \
-    && [[ -s "$tmp" ]] \
-    && jq -e '.five_hour' "$tmp" >/dev/null 2>&1; then
-    mv -f "$tmp" "$USAGE_CACHE"
-  else
-    rm -f "$tmp"
-  fi
-  # Always update stamp (tracks last attempt, not last success)
-  date +%s > "$USAGE_STAMP"
-}
-
-# Stale lock recovery: if lock is older than 30s, the holder likely crashed
-recover_stale_lock() {
-  local lock_pid_file="$USAGE_LOCK/pid"
-  if [[ -d "$USAGE_LOCK" ]]; then
-    local lock_age=$(( $(date +%s) - $(portable_mtime "$USAGE_LOCK") ))
-    if (( lock_age > 30 )); then
-      # Lock holder likely dead — reclaim
-      rm -rf "$USAGE_LOCK"
-      return 0
-    fi
-    # Check if PID is still alive
-    if [[ -f "$lock_pid_file" ]]; then
-      local lock_pid
-      lock_pid=$(<"$lock_pid_file")
-      if ! kill -0 "$lock_pid" 2>/dev/null; then
-        rm -rf "$USAGE_LOCK"
-        return 0
-      fi
-    fi
-    return 1  # lock is valid
-  fi
-  return 0  # no lock exists
-}
-
-# Decide whether to refresh
-needs_refresh=false
-NOW=$(date +%s)
-LAST_ATTEMPT=$(cat "$USAGE_STAMP" 2>/dev/null || echo 0)
-
-if [[ ! -f "$USAGE_CACHE" ]]; then
-  needs_refresh=true
-elif (( NOW - $(portable_mtime "$USAGE_CACHE") > USAGE_CACHE_AGE )) \
-  && (( NOW - LAST_ATTEMPT > USAGE_RETRY_AGE )); then
-  needs_refresh=true
-fi
-
-if $needs_refresh; then
-  recover_stale_lock
-  if mkdir "$USAGE_LOCK" 2>/dev/null; then
-    echo $$ > "$USAGE_LOCK/pid"
-    fetch_usage
-    rm -rf "$USAGE_LOCK"
-  fi
-fi
-
-# Read usage cache in one jq call (performance: avoid 3 separate jq invocations)
-if [[ -f "$USAGE_CACHE" ]]; then
-  CACHE_AGE=$(( NOW - $(portable_mtime "$USAGE_CACHE") ))
-  if (( CACHE_AGE < USAGE_STALE_MAX )); then
-    eval "$(jq -r '
-      "USAGE_5H=" + (.five_hour.utilization // 0 | floor | tostring),
-      "USAGE_7D=" + (.seven_day.utilization // 0 | floor | tostring),
-      "RESETS_5H=" + (.five_hour.resets_at // "" | @sh)
-    ' "$USAGE_CACHE" 2>/dev/null)"
-  fi
-fi
-
-# Parse stdin JSON — single jq call for all fields
+# Parse stdin JSON — single jq call for all fields (including rate_limits)
 eval "$(echo "$input" | jq -r '
   "MODEL=" + (@sh "\(.model.display_name // "?")"),
   "CWD=" + (@sh "\(.workspace.current_dir // "")"),
@@ -125,7 +17,10 @@ eval "$(echo "$input" | jq -r '
   "LINES_ADD=" + (@sh "\(.cost.total_lines_added // 0 | tostring)"),
   "LINES_DEL=" + (@sh "\(.cost.total_lines_removed // 0 | tostring)"),
   "WT_BRANCH=" + (@sh "\(.worktree.branch // "")"),
-  "COST_USD=" + (@sh "\(.cost.total_cost_usd // 0 | tostring)")
+  "COST_USD=" + (@sh "\(.cost.total_cost_usd // 0 | tostring)"),
+  "USAGE_5H=" + (.rate_limits.five_hour.used_percentage // 0 | floor | tostring),
+  "USAGE_7D=" + (.rate_limits.seven_day.used_percentage // 0 | floor | tostring),
+  "RESETS_5H=" + (.rate_limits.five_hour.resets_at // 0 | tostring)
 ' 2>/dev/null)" || true
 
 # --- Colors ---
@@ -198,8 +93,6 @@ bar_color() {
 
 # --- Line 2: three bars (context | 5h | 7d) + cost ---
 # Dynamic BAR_WIDTH based on terminal width
-# Fixed text in L2 (worst case with reset label):
-#   "¥12345 ctx  100%/200k 5h  100%(4h59m) 7d  100%" = ~46 chars + 3 bars
 TERM_WIDTH=$(stty size 2>/dev/null </dev/tty 2>/dev/null | awk '{print $2}')
 [[ -z "$TERM_WIDTH" || "$TERM_WIDTH" -le 0 ]] 2>/dev/null && TERM_WIDTH=$(tput cols 2>/dev/null)
 [[ -z "$TERM_WIDTH" || "$TERM_WIDTH" -le 0 ]] 2>/dev/null && TERM_WIDTH=${COLUMNS:-80}
@@ -223,18 +116,12 @@ CTX_C=$(bar_color "$PCT")
 U5H_C=$(bar_color "$U5H_PCT")
 U7D_C=$(bar_color "$U7D_PCT")
 
-# Reset time remaining for 5h block (pure shell — no python3)
+# Reset time remaining for 5h block (resets_at is now Unix epoch — no parsing needed!)
+NOW=$(date +%s)
 RESET_LABEL=""
-if [[ -n "$RESETS_5H" && "$RESETS_5H" != "null" ]]; then
-  # Normalize ISO 8601: remove fractional seconds, +09:00 -> +0900, Z -> +0000
-  NORM_TS=$(printf '%s' "$RESETS_5H" | sed -E 's/([+-][0-9]{2}):([0-9]{2})$/\1\2/; s/\.[0-9]+([+-][0-9]{4})$/\1/; s/Z$/+0000/')
-  if $IS_MACOS; then
-    RESET_TS=$(date -j -f '%Y-%m-%dT%H:%M:%S%z' "$NORM_TS" +%s 2>/dev/null || echo 0)
-  else
-    RESET_TS=$(date -d "$RESETS_5H" +%s 2>/dev/null || echo 0)
-  fi
-  if (( RESET_TS > NOW )); then
-    REMAIN_S=$((RESET_TS - NOW))
+if [[ -n "$RESETS_5H" && "$RESETS_5H" != "0" && "$RESETS_5H" != "null" ]]; then
+  if (( RESETS_5H > NOW )); then
+    REMAIN_S=$((RESETS_5H - NOW))
     REMAIN_H=$((REMAIN_S / 3600))
     REMAIN_M=$(((REMAIN_S % 3600) / 60))
     RESET_LABEL="${DIM}(${REMAIN_H}h${REMAIN_M}m)${RST}"
