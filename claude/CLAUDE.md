@@ -1,7 +1,3 @@
-# Agent Guidelines
-
-Always prefer simplicity over pathological correctness. YAGNI, KISS, DRY. No backward-compat shims or fallback paths unless they come free without adding cyclomatic complexity.
-
 # Common Rules
 
 ## Language
@@ -88,23 +84,7 @@ When you think of alternatives, present options to the user for selection.
 
 ### TodoList Lifecycle (MANDATORY)
 
-```mermaid
-flowchart LR
-    A[📥 ユーザー依頼] --> B[📝 TodoCreate]
-    B --> C[🔄 in_progress]
-    C --> D{作業完了?}
-    D -->|No| C
-    D -->|Yes| E[⏸️ 承認待ち状態]
-    E --> F{ユーザー承認?}
-    F -->|No: 修正要求| C
-    F -->|Yes| G[✅ completed]
-
-    style A fill:#e3f2fd
-    style B fill:#fff9c4
-    style C fill:#ffe0b2
-    style E fill:#f3e5f5
-    style G fill:#c8e6c9
-```
+依頼 → Todo作成 → in_progress → 承認待ち → ユーザー承認後のみ completed
 
 ### Task Creation Rules
 
@@ -238,44 +218,6 @@ TaskUpdate: { taskId: "1", status: "completed" }
 
 **NEVER say "Implementation complete" without running this loop.**
 
-```mermaid
-flowchart TD
-    subgraph MAIN["🎯 Main Session (User Interaction)"]
-        A[User Request] --> Q1[List Questions/Ambiguities]
-        Q1 --> Q2{Unclear Points?}
-        Q2 -->|Yes| Q3[AskUserQuestion / EnterPlanMode]
-        Q3 --> Q4[User Clarification]
-        Q4 --> Q1
-        Q2 -->|No: requirements clear| DELEGATE
-        DELEGATE[Delegate to Sub-Agent] --> WAIT
-    end
-
-    subgraph SUB["🤖 Sub-Agent (Token-Efficient Execution)"]
-        WAIT[Receive Task] --> B[Implement]
-        B --> C{Test & Verify}
-        C -->|webapp-testing| D1[Test Result 1]
-        C -->|Chrome DevTools MCP| D2[Test Result 2]
-        C -->|Playwright E2E| D3[Test Result 3]
-        D1 & D2 & D3 --> D[Aggregate Issues]
-        D --> E{Loss < Threshold?}
-        E -->|No: bugs found| B
-        E -->|Yes: quality OK| F[Collect Evidence]
-        F --> RETURN[Return Results to Main]
-    end
-
-    subgraph MAIN2["🎯 Main Session (Final Report)"]
-        RETURN --> G[artifact-proof skill]
-        G --> H[Report with Proof to User]
-    end
-
-    style A fill:#e1f5fe
-    style Q2 fill:#fff9c4
-    style E fill:#fff3e0
-    style H fill:#c8e6c9
-    style DELEGATE fill:#bbdefb
-    style RETURN fill:#bbdefb
-```
-
 ### Hearing Loop: Drill-Down Before Implementation
 **Loop until all ambiguities are resolved. Never proceed with unclear requirements.**
 
@@ -288,23 +230,6 @@ flowchart TD
 - Don't stop at surface-level questions ("What to build?" → also ask "Why is this needed?")
 - Verbalize implicit assumptions (confirm what user takes for granted)
 - Identify edge cases upfront ("What happens when X occurs?")
-
-### Sub-Agent Delegation Strategy
-**Why Sub-Agents**: Save main session tokens, enable parallel execution, isolate tasks
-
-| Phase | Executor | Reason |
-|-------|----------|--------|
-| Hearing Loop | Main | Direct user interaction required, context preservation critical |
-| Implement | Sub-Agent | Independent coding task, can parallelize multi-file edits |
-| Test & Verify | Sub-Agent (Parallel) | Run webapp-testing / DevTools / E2E simultaneously |
-| Bug Fix | Sub-Agent | Isolated fix task, doesn't pollute main context |
-| Collect Evidence | Sub-Agent | Screenshot/video collection is independent |
-| Final Report | Main | Direct delivery to user with full context |
-
-### Loss Function: User Request vs Deliverable
-- **Loss** = Gap between what user asked for and what was actually delivered
-- **Threshold** = Zero critical bugs + Zero broken user flows + UI matches spec
-- **Minimum iterations**: At least 2-3 verification cycles before reporting
 
 ### Verification Tools (use at least one per cycle, ALL in sub-agent)
 1. **Playwright CLI / Agent Browser CLI** - サイト構造の低コスト把握（常に `@latest` を使う）
@@ -337,11 +262,6 @@ flowchart TD
 - ❌ **Shortcuts**: Quick-and-dirty solutions that compromise quality
 - ❌ **Fabrication**: Fake data, fake responses, fake success states
 
-### What IS Allowed
-- ✅ Dependency Injection with real local emulators (Firebase Emulator, local SMTP, etc.)
-- ✅ Test fixtures with realistic data
-- ✅ Environment-specific configuration (not behavior changes)
-
 ## Problem Detection First (Google Engineer Mindset)
 
 **Your job is to FIND bugs, not to hope they don't exist.**
@@ -369,23 +289,8 @@ Write tests that actively hunt for bugs:
 - Each test should be runnable independently AND as part of the full suite
 - Tests are assets for future regression detection - write them like production code
 
-### Red Flags (your test is too weak if...)
-- It only checks "element exists"
-- It doesn't verify actual content/values
-- It can't detect visual regressions
-- It passes when the feature is obviously broken
-
 ## Command Interpretation
-- When user says "open", use the macOS `open` command to open in Chrome
 - Do not use `&` with the Bash tool; use `run_in_background: true` parameter instead
-
-## Project-Specific Commands
-
-### m5tuber (Dokochan VTuber)
-- **一発起動**: `cd ~/src/github.com/kazuph/m5tuber/webapp && pnpm run dev`
-- Vite起動時にWebSocketサーバー(ws://127.0.0.1:20333)も自動起動
-- ポート: Vite=5173, WebSocket=20333
-- 注意: `localhost`ではなく`127.0.0.1`を使う（DNS解決の遅延回避）
 
 ## dotenvx Knowledge (Cross-Project)
 
@@ -418,9 +323,6 @@ Write tests that actively hunt for bugs:
 - **外部CLIツール（wrangler, aws 等）を実行する前に `eval "$(direnv export bash 2>/dev/null)"` を実行して環境変数をロードすること**
 - 「環境変数が見つからない」「未ログイン」エラーが出たら、まず direnv を疑う
 - ユーザーに別ターミナルでのログインを依頼する前に、direnv export を試すこと
-
-## Temporary Files
-- All temporary scripts and files MUST be placed under `/tmp/` only - never pollute the project directory
 
 ## Worktree Git Operations
 - Use `git wt` for branch/worktree management instead of `git checkout -b`
@@ -467,13 +369,3 @@ Write tests that actively hunt for bugs:
 - プロジェクト固有のハマりポイント（「このAPIはこう使わないとバグる」等）
 - ユーザーの好み・スタイル（コードレビューで指摘された点）
 - デバッグで発見した非自明な問題と解決策
-
-## Code of Conduct
-
-**The user's stance: Zero tolerance for shortcuts. Will report violations immediately.**
-
-- Taking easy but insecure approaches is criminal. Always implement secure solutions.
-- Using time constraints as an excuse for shortcuts is strictly prohibited.
-- If you ever feel tempted to suggest a mock, bypass, or "temporary" solution - DON'T.
-- The user would rather wait longer for a proper implementation than accept a fake one.
-- Any attempt to sneak in prohibited patterns will destroy trust permanently.
