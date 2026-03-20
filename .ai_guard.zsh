@@ -473,18 +473,22 @@ ai_extreme_confirm() {
   cmd_display_for_prompt=$'💻 コマンド: '"$cmd_display"
 
   if (( needs_prompt )); then
-    local dialog_output button_choice reason_text
+    local dialog_output="" button_choice reason_text approval_winner=""
+    local slack_approve_script="" slack_title="" slack_detail="" slack_meta_json=""
+    local slack_thread_ts="" slack_wait_pid="" slack_result_file="" slack_status_file=""
+    local slack_resolution_mode="" slack_active=0 apple_pid="" apple_active=0
+    local apple_result_file="" apple_status_file="" approval_tmp_dir="" tmp_as=""
+
+    approval_tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/ai_guard_approval.XXXXXX" 2>/dev/null || mktemp -d -t ai_guard_approval 2>/dev/null) || approval_tmp_dir=""
 
     if [[ "${AI_GUARD_APPROVAL_MODE:-auto}" == "slack" || "${AI_GUARD_APPROVAL_MODE:-auto}" == "auto" ]]; then
-      local slack_approve_script slack_title slack_detail
       slack_approve_script="$HOME/dotfiles/claude/skills/slack-ask/scripts/slack-approval.mjs"
-      if [[ -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
+      if [[ -n "$approval_tmp_dir" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
         slack_title="実行承認: ${cmd} @ ${cwd_short}"
         slack_detail=$'%s\n%s\n\n次のどれかで返信してください。\n・承認 理由\n・3分承認 理由\n・却下 理由\n・3分却下 理由'
         slack_detail=$(printf "$slack_detail" "$cmd_display_for_prompt" "$context_block")
 
-        # Build structured meta JSON for rich Slack display
-        local slack_meta_json _meta_branch _meta_cwd _meta_repo _meta_tmux
+        local _meta_branch _meta_cwd _meta_repo _meta_tmux
         _meta_cwd="$(pwd -P 2>/dev/null || pwd)"
         _meta_branch=$(builtin command git rev-parse --abbrev-ref HEAD 2>/dev/null) || _meta_branch=""
         _meta_repo=$(builtin command git rev-parse --show-toplevel 2>/dev/null) || _meta_repo=""
@@ -497,7 +501,6 @@ ai_extreme_confirm() {
           [[ -n "$_tw" || -n "$_tp" ]] && _meta_tmux="${_tw:-?}:${_tp:-?}"
         fi
 
-        # Escape for JSON (minimal: backslash, double-quote, newline)
         local _esc_cmd _esc_full
         _esc_cmd="${cmd//\\/\\\\}"; _esc_cmd="${_esc_cmd//\"/\\\"}"
         _esc_full="${cmd_display//\\/\\\\}"; _esc_full="${_esc_full//\"/\\\"}"
@@ -506,10 +509,24 @@ ai_extreme_confirm() {
         slack_meta_json=$(printf '{"cmd":"%s","full_cmd":"%s","dir":"%s","branch":"%s","repo":"%s","process":"%s","tmux":"%s"}' \
           "$_esc_cmd" "$_esc_full" "$_meta_cwd" "$_meta_branch" "$_meta_repo" "$(ps -o comm= -p "$PPID" 2>/dev/null | tr -d '\n')" "$_meta_tmux")
 
-        dialog_output=$(node "$slack_approve_script" --format shell --timeout-seconds 1800 --meta "$slack_meta_json" approve "$slack_title" "$slack_detail" 2>/dev/null) || dialog_output=""
+        local slack_post_file
+        slack_post_file="$approval_tmp_dir/slack_post.json"
+        if node "$slack_approve_script" --timeout-seconds 1800 --meta "$slack_meta_json" approve-post "$slack_title" "$slack_detail" >| "$slack_post_file" 2>/dev/null; then
+          slack_thread_ts=$(jq -r '.ts // empty' "$slack_post_file" 2>/dev/null)
+          if [[ -n "$slack_thread_ts" ]]; then
+            slack_active=1
+            slack_result_file="$approval_tmp_dir/slack_result.txt"
+            slack_status_file="$approval_tmp_dir/slack_status"
+            (
+              node "$slack_approve_script" --format shell --timeout-seconds 1800 --meta "$slack_meta_json" --thread-ts "$slack_thread_ts" approve-wait >| "$slack_result_file" 2>/dev/null
+              printf "%s\n" "$?" >| "$slack_status_file"
+            ) &
+            slack_wait_pid=$!
+          fi
+        fi
       fi
 
-      if [[ -z "$dialog_output" && "${AI_GUARD_APPROVAL_MODE:-auto}" == "slack" ]]; then
+      if (( !slack_active )) && [[ "${AI_GUARD_APPROVAL_MODE:-auto}" == "slack" ]]; then
         reason_text="Slack 承認に失敗しました。"
         local reason_clean reason_for_log
         reason_clean="${reason_text//$'\n'/ }"
@@ -517,18 +534,15 @@ ai_extreme_confirm() {
         reason_for_log="${reason_clean:-未入力} ${context_for_log}"
         printf "❌ Command cancelled: %s\n   理由: %s\n   %s\n" "$cmd_display" "$reason_text" "$context_block" >&2
         (( log_ready )) && printf "%s\tREJECT\t%s\t%s\n" "$(date -Iseconds)" "$cmd_display" "$reason_for_log" >> "$log_file"
+        [[ -n "$approval_tmp_dir" ]] && builtin command rm -rf "$approval_tmp_dir" 2>/dev/null
         AI_GUARD_ACTIVE=${_ai_guard_prev_active}
         return 1
       fi
     fi
 
-    # GUIダイアログは1回だけ試行し、失敗・却下なら即キャンセル扱い
-    # （スクリプト等でGUIを出したくない場合: AI_GUARD_NO_GUI=1）
-    if [[ -z "$dialog_output" && "${AI_GUARD_NO_GUI:-0}" != "1" ]] && command -v osascript >/dev/null 2>&1; then
-      local tmp_as
-      tmp_as=$(mktemp -t ai_guard_dialog) || tmp_as=""
-      if [[ -n "$tmp_as" ]]; then
-        cat <<'APPLESCRIPT' >| "$tmp_as"
+    if [[ "${AI_GUARD_APPROVAL_MODE:-auto}" == "auto" && "${AI_GUARD_NO_GUI:-0}" != "1" && -n "$approval_tmp_dir" ]] && command -v osascript >/dev/null 2>&1; then
+      tmp_as="$approval_tmp_dir/dialog.applescript"
+      cat <<'APPLESCRIPT' >| "$tmp_as"
 on run argv
   set cmdText to item 1 of argv
   set ctxText to item 2 of argv
@@ -542,16 +556,98 @@ on run argv
   end try
 end run
 APPLESCRIPT
-        # タイトルに「[tmux window: pane title] コマンド @ ディレクトリ末尾2階層」を表示
+      if [[ -f "$tmp_as" ]]; then
         local dialog_title="${dialog_title_prefix}${cmd} @ ${cwd_short}"
-        dialog_output=$(osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" 2>/dev/null) || dialog_output=""
-        builtin command rm -f "$tmp_as"
+        apple_active=1
+        apple_result_file="$approval_tmp_dir/apple_result.txt"
+        apple_status_file="$approval_tmp_dir/apple_status"
+        (
+          osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" >| "$apple_result_file" 2>/dev/null
+          printf "%s\n" "$?" >| "$apple_status_file"
+        ) &
+        apple_pid=$!
+      fi
+    fi
+
+    if (( slack_active )) || (( apple_active )); then
+      local apple_status="" slack_status="" winner_output=""
+      while :; do
+        if (( apple_active )) && [[ -f "$apple_status_file" ]]; then
+          apple_status=$(<"$apple_status_file")
+          if [[ "$apple_status" == "0" && -s "$apple_result_file" ]]; then
+            approval_winner="dialog"
+            winner_output=$(<"$apple_result_file")
+            break
+          fi
+          apple_active=0
+        fi
+
+        if (( slack_active )) && [[ -f "$slack_status_file" ]]; then
+          slack_status=$(<"$slack_status_file")
+          if [[ "$slack_status" == "0" && -s "$slack_result_file" ]]; then
+            approval_winner="slack"
+            winner_output=$(<"$slack_result_file")
+            break
+          fi
+          slack_active=0
+        fi
+
+        if (( !apple_active && !slack_active )); then
+          break
+        fi
+        sleep 0.2
+      done
+
+      if [[ -n "$approval_winner" ]]; then
+        dialog_output="$winner_output"
+        if [[ "$approval_winner" == "slack" && -n "$apple_pid" ]]; then
+          kill "$apple_pid" 2>/dev/null || true
+          wait "$apple_pid" 2>/dev/null || true
+          apple_active=0
+        elif [[ "$approval_winner" == "dialog" && -n "$slack_wait_pid" ]]; then
+          kill "$slack_wait_pid" 2>/dev/null || true
+          wait "$slack_wait_pid" 2>/dev/null || true
+          slack_active=0
+        fi
       fi
     fi
 
     if [[ -n "$dialog_output" ]]; then
       button_choice="${dialog_output%%$'\n'*}"
       reason_text="${dialog_output#*$'\n'}"
+    fi
+
+    if [[ -n "$slack_thread_ts" && -n "$approval_winner" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
+      if [[ "$approval_winner" == "dialog" ]]; then
+        slack_resolution_mode="delete_or_update"
+      else
+        slack_resolution_mode="update"
+      fi
+      node "$slack_approve_script" \
+        --thread-ts "$slack_thread_ts" \
+        --source "$approval_winner" \
+        --resolution "$slack_resolution_mode" \
+        approve-resolve "$slack_thread_ts" "$button_choice" "$reason_text" >/dev/null 2>&1 || true
+    fi
+
+    if [[ -n "$slack_wait_pid" ]]; then
+      wait "$slack_wait_pid" 2>/dev/null || true
+    fi
+    if [[ -n "$apple_pid" ]]; then
+      wait "$apple_pid" 2>/dev/null || true
+    fi
+    [[ -n "$approval_tmp_dir" ]] && builtin command rm -rf "$approval_tmp_dir" 2>/dev/null
+
+    if [[ -z "$button_choice" && "${AI_GUARD_APPROVAL_MODE:-auto}" == "slack" ]]; then
+      reason_text="Slack 承認が完了しませんでした。"
+      local reason_clean reason_for_log
+      reason_clean="${reason_text//$'\n'/ }"
+      reason_clean="${reason_clean//$'\t'/ }"
+      reason_for_log="${reason_clean:-未入力} ${context_for_log}"
+      printf "❌ Command cancelled: %s\n   理由: %s\n   %s\n" "$cmd_display" "$reason_text" "$context_block" >&2
+      (( log_ready )) && printf "%s\tREJECT\t%s\t%s\n" "$(date -Iseconds)" "$cmd_display" "$reason_for_log" >> "$log_file"
+      AI_GUARD_ACTIVE=${_ai_guard_prev_active}
+      return 1
     fi
 
     if [[ -z "$button_choice" ]]; then

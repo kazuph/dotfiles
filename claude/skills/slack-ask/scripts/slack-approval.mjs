@@ -9,6 +9,11 @@ import process from "node:process";
 const DEFAULT_TIMEOUT_SECONDS = 600;
 const POLL_INTERVAL_MS = 3000;
 const NUMBER_EMOJIS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+const CODEX_NOTIFY_TMUX_PANE = process.env.SLACK_APPROVAL_CODEX_TMUX_PANE || "%91";
+const CODEX_NOTIFY_DELAY_MS = Number(process.env.SLACK_APPROVAL_CODEX_NOTIFY_DELAY_MS || 200);
+const SLACK_ATTENTION_MENTION = process.env.SLACK_APPROVAL_MENTION || "<@U06778BS5LK>";
+const THREAD_CACHE_FILE = path.join(os.homedir(), ".slack-approval-threads.json");
+const MAX_THREAD_MESSAGES = 30;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -31,6 +36,26 @@ function parseEnvFile(filePath) {
     env[key.trim()] = value;
   }
   return env;
+}
+
+function sleepSync(ms) {
+  const waitMs = Math.max(0, Number(ms) || 0);
+  if (waitMs === 0) {
+    return;
+  }
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, waitMs);
+}
+
+function detectInvokerProcessName() {
+  try {
+    return execFileSync(
+      "ps",
+      ["-o", "comm=", "-p", String(process.ppid)],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    ).trim();
+  } catch {
+    return "";
+  }
 }
 
 function readKeychainValue(service) {
@@ -149,20 +174,26 @@ function parseDecision(text) {
 // --- Block Kit Builders ---
 
 function buildAskBlocks(question, optionsList, timeoutSeconds, meta) {
+  const mention = (SLACK_ATTENTION_MENTION || "").trim();
   const blocks = [
     {
-      type: "header",
-      text: { type: "plain_text", text: "🤖 Claude Code からの質問", emoji: true },
+      type: "context",
+      elements: [{ type: "mrkdwn", text: mention ? `質問 | ${mention}` : "質問" }],
     },
   ];
 
-  // Context fields (dir, branch, etc.)
   if (meta && Object.keys(meta).length > 0) {
-    const fields = [];
-    if (meta.repo) fields.push({ type: "mrkdwn", text: `*リポジトリ*\n\`${meta.repo}\`` });
-    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
-    if (fields.length > 0) {
-      blocks.push({ type: "section", fields });
+    const lines = [];
+    const repoBits = [];
+    if (meta.repo) repoBits.push(`*リポジトリ* \`${meta.repo}\``);
+    if (meta.branch) repoBits.push(`*ブランチ* \`${meta.branch}\``);
+    if (repoBits.length > 0) lines.push(repoBits.join(" | "));
+    if (meta.dir) lines.push(`*ディレクトリ* \`${meta.dir}\``);
+    if (lines.length > 0) {
+      blocks.push({
+        type: "section",
+        text: { type: "mrkdwn", text: lines.join("\n") },
+      });
     }
   }
 
@@ -205,25 +236,29 @@ function buildAskBlocks(question, optionsList, timeoutSeconds, meta) {
 }
 
 function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
+  const mention = (SLACK_ATTENTION_MENTION || "").trim();
   const blocks = [
     {
-      type: "header",
-      text: { type: "plain_text", text: "🔐 承認リクエスト", emoji: true },
+      type: "context",
+      elements: [{ type: "mrkdwn", text: mention ? `コマンド確認 | ${mention}` : "コマンド確認" }],
     },
   ];
 
   if (meta && Object.keys(meta).length > 0) {
-    // Structured table-like display with meta info
-    const fields = [];
-    if (meta.cmd) fields.push({ type: "mrkdwn", text: `*コマンド*\n\`${meta.cmd}\`` });
-    if (meta.repo) fields.push({ type: "mrkdwn", text: `*リポジトリ*\n\`${meta.repo}\`` });
-    if (meta.branch) fields.push({ type: "mrkdwn", text: `*ブランチ*\n\`${meta.branch}\`` });
+    const lines = [];
+    if (meta.cmd) lines.push(`*コマンド* \`${meta.cmd}\``);
+    const repoBits = [];
+    if (meta.repo) repoBits.push(`*リポジトリ* \`${meta.repo}\``);
+    if (meta.branch) repoBits.push(`*ブランチ* \`${meta.branch}\``);
+    if (repoBits.length > 0) lines.push(repoBits.join(" | "));
+    if (meta.dir) lines.push(`*ディレクトリ* \`${meta.dir}\``);
 
-    if (fields.length > 0) {
-      blocks.push({ type: "section", fields });
+    if (lines.length > 0) {
+      blocks.push({
+        type: "section",
+        text: { type: "mrkdwn", text: lines.join("\n") },
+      });
     }
-
-    // Full command as a code block if longer than the summary
     if (meta.full_cmd && meta.full_cmd !== meta.cmd) {
       blocks.push({
         type: "section",
@@ -246,16 +281,9 @@ function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
 
   blocks.push({ type: "divider" });
   blocks.push({
-    type: "section",
-    text: {
-      type: "mrkdwn",
-      text: ":white_check_mark: 承認  |  :three: 3分承認  |  :x: 却下",
-    },
-  });
-  blocks.push({
     type: "context",
     elements: [
-      { type: "mrkdwn", text: `スレッド返信 = 却下（内容が理由に）| 承認はリアクションで  |  ⏱️ ${timeoutSeconds}秒` },
+      { type: "mrkdwn", text: `スレッド返信 = 却下（内容が理由に）  |  ⏱️ ${timeoutSeconds}秒` },
     ],
   });
 
@@ -263,10 +291,11 @@ function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
 }
 
 function buildNotifyBlocks(message) {
+  const mention = (SLACK_ATTENTION_MENTION || "").trim();
   return [
     {
-      type: "header",
-      text: { type: "plain_text", text: "📢 Claude Code からの通知", emoji: true },
+      type: "context",
+      elements: [{ type: "mrkdwn", text: mention ? `通知 | ${mention}` : "通知" }],
     },
     {
       type: "section",
@@ -275,13 +304,42 @@ function buildNotifyBlocks(message) {
   ];
 }
 
+function withAttentionMention(text) {
+  const mention = (SLACK_ATTENTION_MENTION || "").trim();
+  if (!mention) {
+    return text;
+  }
+  return `${mention} ${text}`.trim();
+}
+
 // --- Posting ---
 
 async function postBlockMessage(token, channel, fallbackText, blocks) {
+  return postBlockMessageInThread(token, channel, fallbackText, blocks);
+}
+
+async function postBlockMessageInThread(token, channel, fallbackText, blocks, threadTs) {
   return callSlackApi(token, "chat.postMessage", {
     channel,
     text: fallbackText,
     blocks,
+    ...(threadTs ? { thread_ts: threadTs } : {}),
+  });
+}
+
+async function updateBlockMessage(token, channel, ts, fallbackText, blocks) {
+  return callSlackApi(token, "chat.update", {
+    channel,
+    ts,
+    text: fallbackText,
+    blocks,
+  });
+}
+
+async function deleteMessage(token, channel, ts) {
+  return callSlackApi(token, "chat.delete", {
+    channel,
+    ts,
   });
 }
 
@@ -368,20 +426,191 @@ async function addReactions(token, channel, ts, emojiNames) {
   }
 }
 
+function readThreadCache() {
+  try {
+    if (!fs.existsSync(THREAD_CACHE_FILE)) {
+      return {};
+    }
+    const parsed = JSON.parse(fs.readFileSync(THREAD_CACHE_FILE, "utf8"));
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeThreadCache(cache) {
+  try {
+    fs.writeFileSync(THREAD_CACHE_FILE, JSON.stringify(cache, null, 2));
+    fs.chmodSync(THREAD_CACHE_FILE, 0o600);
+  } catch {
+    // ignore cache write failures
+  }
+}
+
+function getThreadCacheKey(channel, meta) {
+  if (!channel || !meta?.dir) {
+    return "";
+  }
+  return `${channel}:${meta.dir}`;
+}
+
+function getReusableThread(channel, meta) {
+  const key = getThreadCacheKey(channel, meta);
+  if (!key) {
+    return { key: "", rootTs: "" };
+  }
+  const cache = readThreadCache();
+  const entry = cache[key];
+  if (!entry?.rootTs || !Number(entry.count)) {
+    return { key, rootTs: "" };
+  }
+  if (Number(entry.count) >= MAX_THREAD_MESSAGES) {
+    return { key, rootTs: "" };
+  }
+  return { key, rootTs: entry.rootTs };
+}
+
+function recordPostedThread(channel, meta, rootTs, postedTs) {
+  const key = getThreadCacheKey(channel, meta);
+  if (!key || !postedTs) {
+    return;
+  }
+
+  const cache = readThreadCache();
+  const prev = cache[key];
+  if (rootTs && prev?.rootTs === rootTs) {
+    cache[key] = {
+      rootTs,
+      count: Math.min(Number(prev.count || 0) + 1, MAX_THREAD_MESSAGES),
+      updatedAt: Date.now(),
+    };
+  } else {
+    cache[key] = {
+      rootTs: postedTs,
+      count: 1,
+      updatedAt: Date.now(),
+    };
+  }
+  writeThreadCache(cache);
+}
+
+function clearRecordedThread(channel, meta) {
+  const key = getThreadCacheKey(channel, meta);
+  if (!key) {
+    return;
+  }
+  const cache = readThreadCache();
+  if (!cache[key]) {
+    return;
+  }
+  delete cache[key];
+  writeThreadCache(cache);
+}
+
+async function postPromptMessage(token, channel, fallbackText, blocks, meta) {
+  const threadInfo = getReusableThread(channel, meta);
+  let posted;
+  let parentThreadTs = threadInfo.rootTs || "";
+
+  try {
+    posted = await postBlockMessageInThread(token, channel, fallbackText, blocks, threadInfo.rootTs || undefined);
+    parentThreadTs = threadInfo.rootTs || posted.ts;
+  } catch (error) {
+    const slackError = error?.message || error?.payload?.error || "";
+    if (threadInfo.rootTs && (slackError === "thread_not_found" || slackError === "invalid_thread_ts")) {
+      clearRecordedThread(channel, meta);
+      posted = await postBlockMessageInThread(token, channel, fallbackText, blocks);
+      parentThreadTs = posted.ts;
+    } else {
+      throw error;
+    }
+  }
+
+  recordPostedThread(channel, meta, parentThreadTs, posted.ts);
+
+  return {
+    ...posted,
+    parent_thread_ts: parentThreadTs,
+  };
+}
+
+async function postApprovalRequest(token, channel, timeoutSeconds, meta, title, description) {
+  const blocks = buildApprovalBlocks(title, description, timeoutSeconds, meta);
+  const fallback = withAttentionMention(description ? `${title}\n${description}` : title);
+  const posted = await postPromptMessage(token, channel, fallback, blocks, meta);
+  await addReactions(token, channel, posted.ts, ["white_check_mark", "three", "x"]);
+  return posted;
+}
+
+function buildApprovalResolutionBlocks({ button, reason, source }) {
+  const isApproved = button === "承認" || button === "3分間承認";
+  const statusText = isApproved ? "承認済み" : "却下済み";
+  const sourceText = source === "dialog"
+    ? "AppleScript ダイアログ"
+    : source === "slack"
+      ? "Slack"
+      : "不明";
+
+  const blocks = [
+    {
+      type: "context",
+      elements: [{ type: "mrkdwn", text: statusText }],
+    },
+    {
+      type: "section",
+      fields: [
+        { type: "mrkdwn", text: `*結果*\n${button}` },
+        { type: "mrkdwn", text: `*操作元*\n${sourceText}` },
+      ],
+    },
+  ];
+
+  if (reason) {
+    blocks.push({
+      type: "section",
+      text: { type: "mrkdwn", text: `*理由*\n${reason}` },
+    });
+  }
+
+  return blocks;
+}
+
+async function resolveApprovalRequest(token, channel, ts, { button, reason, source, resolution }) {
+  if (resolution === "delete") {
+    await deleteMessage(token, channel, ts);
+    return { action: "delete" };
+  }
+
+  if (resolution === "delete_or_update") {
+    try {
+      await deleteMessage(token, channel, ts);
+      return { action: "delete" };
+    } catch {
+      // Fall through to update when deletion is unavailable.
+    }
+  }
+
+  const blocks = buildApprovalResolutionBlocks({ button, reason, source });
+  const fallback = `${button}${reason ? `: ${reason}` : ""} (${source})`;
+  await updateBlockMessage(token, channel, ts, fallback, blocks);
+  return { action: "update" };
+}
+
 // --- Waiting for response ---
 
-async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSeconds, mode, optionsList }) {
-  const seen = new Set([threadTs]);
+async function waitForResponse({ token, channel, threadTs, promptTs, botUserId, timeoutSeconds, mode, optionsList }) {
+  const seen = new Set();
   const deadline = Date.now() + timeoutSeconds * 1000;
+  const promptTsNumber = Number(promptTs || threadTs || 0);
 
   while (Date.now() < deadline) {
     // Check reactions first (for ask with options or approval)
     if (mode === "ask" && optionsList.length > 0) {
-      const reactionResult = await checkOptionReactions(token, channel, threadTs, botUserId, optionsList);
+      const reactionResult = await checkOptionReactions(token, channel, promptTs || threadTs, botUserId, optionsList);
       if (reactionResult) return reactionResult;
     }
     if (mode === "decision") {
-      const approvalResult = await checkApprovalReactions(token, channel, threadTs, botUserId);
+      const approvalResult = await checkApprovalReactions(token, channel, promptTs || threadTs, botUserId);
       if (approvalResult) return approvalResult;
     }
 
@@ -395,6 +624,10 @@ async function waitForResponse({ token, channel, threadTs, botUserId, timeoutSec
 
     for (const message of replies.messages || []) {
       if (!message.ts || seen.has(message.ts)) {
+        continue;
+      }
+      if (Number(message.ts) <= promptTsNumber) {
+        seen.add(message.ts);
         continue;
       }
       seen.add(message.ts);
@@ -539,6 +772,15 @@ function parseArgs(argv) {
     } else if (token === "--meta") {
       args.shift();
       try { options.meta = JSON.parse(args.shift() || "{}"); } catch { options.meta = {}; }
+    } else if (token === "--thread-ts") {
+      args.shift();
+      options.threadTs = args.shift() || "";
+    } else if (token === "--resolution") {
+      args.shift();
+      options.resolution = args.shift() || "update";
+    } else if (token === "--source") {
+      args.shift();
+      options.source = args.shift() || "";
     } else {
       remaining.push(args.shift());
     }
@@ -555,6 +797,84 @@ async function authTest(token) {
     team: result.team,
     bot_id: result.bot_id,
   };
+}
+
+function deriveRuntimeMeta(meta = {}) {
+  const merged = { ...(meta || {}) };
+
+  merged.dir ||= process.cwd();
+
+  if (!merged.branch) {
+    try {
+      merged.branch = execFileSync(
+        "git",
+        ["rev-parse", "--abbrev-ref", "HEAD"],
+        { encoding: "utf8", cwd: merged.dir, stdio: ["ignore", "pipe", "ignore"] },
+      ).trim();
+    } catch {
+      // ignore
+    }
+  }
+
+  if (!merged.repo) {
+    try {
+      const repoRoot = execFileSync(
+        "git",
+        ["rev-parse", "--show-toplevel"],
+        { encoding: "utf8", cwd: merged.dir, stdio: ["ignore", "pipe", "ignore"] },
+      ).trim();
+      if (repoRoot) {
+        merged.repo = path.basename(repoRoot);
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  merged.process ||= detectInvokerProcessName() || path.basename(process.env._ || process.argv[0] || "node");
+
+  return merged;
+}
+
+function shouldNotifyCodex(meta = {}) {
+  return /codex/i.test(meta?.process || "");
+}
+
+function tmuxPaneExists(paneId) {
+  if (!paneId) {
+    return false;
+  }
+  try {
+    const panes = execFileSync(
+      "tmux",
+      ["list-panes", "-a", "-F", "#{pane_id}"],
+      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+    );
+    return panes.split("\n").some((pane) => pane.trim() === paneId);
+  } catch {
+    return false;
+  }
+}
+
+function notifyCodexPane(meta = {}, message) {
+  if (!shouldNotifyCodex(meta) || !message || !tmuxPaneExists(CODEX_NOTIFY_TMUX_PANE)) {
+    return;
+  }
+  try {
+    execFileSync(
+      "tmux",
+      ["send-keys", "-t", CODEX_NOTIFY_TMUX_PANE, "-l", message],
+      { stdio: ["ignore", "ignore", "ignore"] },
+    );
+    sleepSync(CODEX_NOTIFY_DELAY_MS);
+    execFileSync(
+      "tmux",
+      ["send-keys", "-t", CODEX_NOTIFY_TMUX_PANE, "Enter"],
+      { stdio: ["ignore", "ignore", "ignore"] },
+    );
+  } catch {
+    // ignore tmux notification failures
+  }
 }
 
 // --- Main ---
@@ -574,13 +894,21 @@ async function main() {
     return;
   }
 
+  if (command === "tmux-notify-test") {
+    const meta = deriveRuntimeMeta(options.meta);
+    const message = args.join(" ").trim() || `Slack helper finished in ${meta.dir || process.cwd()}.`;
+    notifyCodexPane(meta, message);
+    jsonPrint({ success: true, notified: shouldNotifyCodex(meta), pane: CODEX_NOTIFY_TMUX_PANE, message });
+    return;
+  }
+
   if (command === "notify") {
     const message = args.join(" ").trim();
     if (!message) {
       throw new Error("message_required");
     }
     const blocks = buildNotifyBlocks(message);
-    const posted = await postBlockMessage(token, channel, message, blocks);
+    const posted = await postBlockMessage(token, channel, withAttentionMention(message), blocks);
     jsonPrint({ success: true, channel, ts: posted.ts });
     return;
   }
@@ -611,12 +939,13 @@ async function main() {
       ? optionsStr.split(",").map((s) => s.trim()).filter(Boolean)
       : [];
 
-    const blocks = buildAskBlocks(question, optionsList, options.timeoutSeconds, options.meta);
-    const fallback = optionsList.length > 0
+    const askMeta = deriveRuntimeMeta(options.meta);
+    const blocks = buildAskBlocks(question, optionsList, options.timeoutSeconds, askMeta);
+    const fallback = withAttentionMention(optionsList.length > 0
       ? `${question}\n${optionsList.map((o, i) => `${i + 1}. ${o}`).join("\n")}`
-      : question;
+      : question);
 
-    const posted = await postBlockMessage(token, channel, fallback, blocks);
+    const posted = await postPromptMessage(token, channel, fallback, blocks, askMeta);
 
     // Add number emoji reactions for options
     if (optionsList.length > 0) {
@@ -627,7 +956,8 @@ async function main() {
     const response = await waitForResponse({
       token,
       channel,
-      threadTs: posted.ts,
+      threadTs: posted.parent_thread_ts || posted.ts,
+      promptTs: posted.ts,
       botUserId: auth.user_id,
       timeoutSeconds: options.timeoutSeconds,
       mode: "ask",
@@ -641,6 +971,7 @@ async function main() {
       response: response.response,
       user: response.user,
       ts: posted.ts,
+      thread_ts: posted.parent_thread_ts || posted.ts,
       channel,
     };
     if (response.optionIndex != null) {
@@ -651,10 +982,101 @@ async function main() {
     }
 
     if (options.format === "shell") {
+      notifyCodexPane(askMeta, `Slack ask complete in ${askMeta.dir || process.cwd()}. Check result.`);
       shellPrint(response.button, response.response);
       return;
     }
+    notifyCodexPane(askMeta, `Slack ask complete in ${askMeta.dir || process.cwd()}. Check result.`);
     jsonPrint(payload);
+    return;
+  }
+
+  if (command === "approve-post") {
+    const title = args[0] || "";
+    const description = args[1] || "";
+    if (!title) {
+      throw new Error("title_required");
+    }
+
+    const auth = await authTest(token);
+    const posted = await postApprovalRequest(token, channel, options.timeoutSeconds, options.meta, title, description);
+
+    jsonPrint({
+      success: true,
+      channel,
+      ts: posted.ts,
+      thread_ts: posted.parent_thread_ts || posted.ts,
+      user_id: auth.user_id,
+    });
+    return;
+  }
+
+  if (command === "approve-wait") {
+    const threadTs = options.threadTs || args[0] || "";
+    if (!threadTs) {
+      throw new Error("thread_ts_required");
+    }
+
+    const auth = await authTest(token);
+    const waitMeta = deriveRuntimeMeta(options.meta);
+    const response = await waitForResponse({
+      token,
+      channel,
+      threadTs,
+      promptTs: threadTs,
+      botUserId: auth.user_id,
+      timeoutSeconds: options.timeoutSeconds,
+      mode: "decision",
+      optionsList: [],
+    });
+
+    const payload = {
+      success: true,
+      approved: response.approved,
+      button: response.button,
+      response: response.response,
+      user: response.user,
+      ts: threadTs,
+      channel,
+    };
+    if (response.files?.length > 0) {
+      payload.files = response.files;
+    }
+
+    if (options.format === "shell") {
+      notifyCodexPane(waitMeta, `Slack approval complete in ${waitMeta.dir || process.cwd()}. Check result.`);
+      shellPrint(response.button, response.response);
+      return;
+    }
+    notifyCodexPane(waitMeta, `Slack approval complete in ${waitMeta.dir || process.cwd()}. Check result.`);
+    jsonPrint(payload);
+    return;
+  }
+
+  if (command === "approve-resolve") {
+    const threadTs = options.threadTs || args[0] || "";
+    const button = args[1] || "";
+    const reason = args[2] || "";
+    if (!threadTs) {
+      throw new Error("thread_ts_required");
+    }
+    if (!button) {
+      throw new Error("button_required");
+    }
+
+    const result = await resolveApprovalRequest(token, channel, threadTs, {
+      button,
+      reason,
+      source: options.source || "unknown",
+      resolution: options.resolution || "update",
+    });
+
+    jsonPrint({
+      success: true,
+      channel,
+      ts: threadTs,
+      action: result.action,
+    });
     return;
   }
 
@@ -666,18 +1088,14 @@ async function main() {
       throw new Error("title_required");
     }
 
-    const blocks = buildApprovalBlocks(title, description, options.timeoutSeconds, options.meta);
-    const fallback = description ? `${title}\n${description}` : title;
-
-    const posted = await postBlockMessage(token, channel, fallback, blocks);
-
-    // Add approval/rejection emoji reactions
-    await addReactions(token, channel, posted.ts, ["white_check_mark", "three", "x"]);
+    const approveMeta = deriveRuntimeMeta(options.meta);
+    const posted = await postApprovalRequest(token, channel, options.timeoutSeconds, approveMeta, title, description);
 
     const response = await waitForResponse({
       token,
       channel,
-      threadTs: posted.ts,
+      threadTs: posted.parent_thread_ts || posted.ts,
+      promptTs: posted.ts,
       botUserId: auth.user_id,
       timeoutSeconds: options.timeoutSeconds,
       mode: "decision",
@@ -691,6 +1109,7 @@ async function main() {
       response: response.response,
       user: response.user,
       ts: posted.ts,
+      thread_ts: posted.parent_thread_ts || posted.ts,
       channel,
     };
     if (response.files?.length > 0) {
@@ -698,9 +1117,11 @@ async function main() {
     }
 
     if (options.format === "shell") {
+      notifyCodexPane(approveMeta, `Slack approval complete in ${approveMeta.dir || process.cwd()}. Check result.`);
       shellPrint(response.button, response.response);
       return;
     }
+    notifyCodexPane(approveMeta, `Slack approval complete in ${approveMeta.dir || process.cwd()}. Check result.`);
     jsonPrint(payload);
     return;
   }
