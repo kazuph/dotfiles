@@ -542,7 +542,7 @@ async function postApprovalRequest(token, channel, timeoutSeconds, meta, title, 
   return posted;
 }
 
-function buildApprovalResolutionBlocks({ button, reason, source }) {
+function buildApprovalResolutionBlocks({ button, reason, source, title, description }) {
   const isApproved = button === "承認" || button === "3分間承認";
   const statusText = isApproved ? "承認済み" : "却下済み";
   const sourceText = source === "dialog"
@@ -556,26 +556,30 @@ function buildApprovalResolutionBlocks({ button, reason, source }) {
       type: "context",
       elements: [{ type: "mrkdwn", text: statusText }],
     },
-    {
-      type: "section",
-      fields: [
-        { type: "mrkdwn", text: `*結果*\n${button}` },
-        { type: "mrkdwn", text: `*操作元*\n${sourceText}` },
-      ],
-    },
   ];
 
-  if (reason) {
+  if (title || description) {
+    const originalLines = [];
+    if (title) originalLines.push(`*元の確認*\n${title}`);
+    if (description) originalLines.push(description);
     blocks.push({
       type: "section",
-      text: { type: "mrkdwn", text: `*理由*\n${reason}` },
+      text: { type: "mrkdwn", text: originalLines.join("\n\n") },
     });
   }
+
+  blocks.push({
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `*結果* ${button}\n*操作元* ${sourceText}${reason ? `\n*理由* ${reason}` : ""}`,
+    },
+  });
 
   return blocks;
 }
 
-async function resolveApprovalRequest(token, channel, ts, { button, reason, source, resolution }) {
+async function resolveApprovalRequest(token, channel, ts, { button, reason, source, resolution, title, description }) {
   if (resolution === "delete") {
     await deleteMessage(token, channel, ts);
     return { action: "delete" };
@@ -590,8 +594,11 @@ async function resolveApprovalRequest(token, channel, ts, { button, reason, sour
     }
   }
 
-  const blocks = buildApprovalResolutionBlocks({ button, reason, source });
-  const fallback = `${button}${reason ? `: ${reason}` : ""} (${source})`;
+  const blocks = buildApprovalResolutionBlocks({ button, reason, source, title, description });
+  const fallbackBase = [title, description, `${button}${reason ? `: ${reason}` : ""} (${source})`]
+    .filter(Boolean)
+    .join("\n");
+  const fallback = fallbackBase || `${button}${reason ? `: ${reason}` : ""} (${source})`;
   await updateBlockMessage(token, channel, ts, fallback, blocks);
   return { action: "update" };
 }
@@ -1057,6 +1064,8 @@ async function main() {
     const threadTs = options.threadTs || args[0] || "";
     const button = args[1] || "";
     const reason = args[2] || "";
+    const title = args[3] || "";
+    const description = args[4] || "";
     if (!threadTs) {
       throw new Error("thread_ts_required");
     }
@@ -1067,6 +1076,8 @@ async function main() {
     const result = await resolveApprovalRequest(token, channel, threadTs, {
       button,
       reason,
+      title,
+      description,
       source: options.source || "unknown",
       resolution: options.resolution || "update",
     });

@@ -476,7 +476,7 @@ ai_extreme_confirm() {
     local dialog_output="" button_choice reason_text approval_winner=""
     local slack_approve_script="" slack_title="" slack_detail="" slack_meta_json=""
     local slack_thread_ts="" slack_wait_pid="" slack_result_file="" slack_status_file=""
-    local slack_resolution_mode="" slack_active=0 apple_pid="" apple_active=0
+    local slack_active=0 apple_pid="" apple_active=0
     local apple_result_file="" apple_status_file="" approval_tmp_dir="" tmp_as=""
 
     approval_tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/ai_guard_approval.XXXXXX" 2>/dev/null || mktemp -d -t ai_guard_approval 2>/dev/null) || approval_tmp_dir=""
@@ -617,17 +617,12 @@ APPLESCRIPT
       reason_text="${dialog_output#*$'\n'}"
     fi
 
-    if [[ -n "$slack_thread_ts" && -n "$approval_winner" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
-      if [[ "$approval_winner" == "dialog" ]]; then
-        slack_resolution_mode="delete_or_update"
-      else
-        slack_resolution_mode="update"
-      fi
+    if [[ -n "$slack_thread_ts" && "$approval_winner" == "dialog" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
       node "$slack_approve_script" \
         --thread-ts "$slack_thread_ts" \
         --source "$approval_winner" \
-        --resolution "$slack_resolution_mode" \
-        approve-resolve "$slack_thread_ts" "$button_choice" "$reason_text" >/dev/null 2>&1 || true
+        --resolution "delete_or_update" \
+        approve-resolve "$slack_thread_ts" "$button_choice" "$reason_text" "$slack_title" "$slack_detail" >/dev/null 2>&1 || true
     fi
 
     if [[ -n "$slack_wait_pid" ]]; then
