@@ -617,11 +617,11 @@ APPLESCRIPT
       reason_text="${dialog_output#*$'\n'}"
     fi
 
-    if [[ -n "$slack_thread_ts" && "$approval_winner" == "dialog" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
+    if [[ -n "$slack_thread_ts" && -n "$approval_winner" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
       node "$slack_approve_script" \
         --thread-ts "$slack_thread_ts" \
         --source "$approval_winner" \
-        --resolution "delete_or_update" \
+        --resolution "update" \
         approve-resolve "$slack_thread_ts" "$button_choice" "$reason_text" "$slack_title" "$slack_detail" >/dev/null 2>&1 || true
     fi
 

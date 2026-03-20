@@ -151,10 +151,10 @@ function parseDecision(text) {
   }
 
   const checks = [
-    { regex: /^(3分承認|temp[- ]?allow|temporary[- ]?allow|ta)\b[:：\-\s]*/i, button: "3分間承認" },
-    { regex: /^(3分却下|temp[- ]?reject|temporary[- ]?reject|tr)\b[:：\-\s]*/i, button: "3分間却下" },
-    { regex: /^(承認|approve|approved|yes|y|ok|lgtm|go)\b[:：\-\s]*/i, button: "承認" },
-    { regex: /^(却下|reject|rejected|cancel|no|n|stop|中止|キャンセル)\b[:：\-\s]*/i, button: "却下" },
+    { regex: /^(?:3分承認|temp[- ]?allow\b|temporary[- ]?allow\b|ta\b)[:：\-\s]*/i, button: "3分間承認" },
+    { regex: /^(?:3分却下|temp[- ]?reject\b|temporary[- ]?reject\b|tr\b)[:：\-\s]*/i, button: "3分間却下" },
+    { regex: /^(?:承認|approve\b|approved\b|yes\b|y\b|ok\b|lgtm\b|go\b)[:：\-\s]*/i, button: "承認" },
+    { regex: /^(?:却下|reject\b|rejected\b|cancel\b|no\b|n\b|stop\b|中止|キャンセル)[:：\-\s]*/i, button: "却下" },
   ];
 
   for (const check of checks) {
@@ -173,12 +173,18 @@ function parseDecision(text) {
 
 // --- Block Kit Builders ---
 
-function buildAskBlocks(question, optionsList, timeoutSeconds, meta) {
+function buildHeaderText(label, statusText) {
   const mention = (SLACK_ATTENTION_MENTION || "").trim();
+  return mention
+    ? `【${statusText}】${label} | ${mention}`
+    : `【${statusText}】${label}`;
+}
+
+function buildAskBlocks(question, optionsList, timeoutSeconds, meta, statusText = ":hourglass_flowing_sand: 回答待ち") {
   const blocks = [
     {
       type: "context",
-      elements: [{ type: "mrkdwn", text: mention ? `質問 | ${mention}` : "質問" }],
+      elements: [{ type: "mrkdwn", text: buildHeaderText("質問", statusText) }],
     },
   ];
 
@@ -235,12 +241,11 @@ function buildAskBlocks(question, optionsList, timeoutSeconds, meta) {
   return blocks;
 }
 
-function buildApprovalBlocks(title, description, timeoutSeconds, meta) {
-  const mention = (SLACK_ATTENTION_MENTION || "").trim();
+function buildApprovalBlocks(title, description, timeoutSeconds, meta, statusText = ":hourglass_flowing_sand: 確認待ち") {
   const blocks = [
     {
       type: "context",
-      elements: [{ type: "mrkdwn", text: mention ? `コマンド確認 | ${mention}` : "コマンド確認" }],
+      elements: [{ type: "mrkdwn", text: buildHeaderText("コマンド確認", statusText) }],
     },
   ];
 
@@ -318,12 +323,13 @@ async function postBlockMessage(token, channel, fallbackText, blocks) {
   return postBlockMessageInThread(token, channel, fallbackText, blocks);
 }
 
-async function postBlockMessageInThread(token, channel, fallbackText, blocks, threadTs) {
+async function postBlockMessageInThread(token, channel, fallbackText, blocks, threadTs, replyBroadcast = false) {
   return callSlackApi(token, "chat.postMessage", {
     channel,
     text: fallbackText,
     blocks,
     ...(threadTs ? { thread_ts: threadTs } : {}),
+    ...(threadTs && replyBroadcast ? { reply_broadcast: true } : {}),
   });
 }
 
@@ -511,9 +517,10 @@ async function postPromptMessage(token, channel, fallbackText, blocks, meta) {
   const threadInfo = getReusableThread(channel, meta);
   let posted;
   let parentThreadTs = threadInfo.rootTs || "";
+  const replyBroadcast = Boolean(threadInfo.rootTs);
 
   try {
-    posted = await postBlockMessageInThread(token, channel, fallbackText, blocks, threadInfo.rootTs || undefined);
+    posted = await postBlockMessageInThread(token, channel, fallbackText, blocks, threadInfo.rootTs || undefined, replyBroadcast);
     parentThreadTs = threadInfo.rootTs || posted.ts;
   } catch (error) {
     const slackError = error?.message || error?.payload?.error || "";
@@ -544,7 +551,7 @@ async function postApprovalRequest(token, channel, timeoutSeconds, meta, title, 
 
 function buildApprovalResolutionBlocks({ button, reason, source, title, description }) {
   const isApproved = button === "承認" || button === "3分間承認";
-  const statusText = isApproved ? "承認済み" : "却下済み";
+  const statusText = isApproved ? ":white_check_mark: 承認済み" : ":x: 却下済み";
   const sourceText = source === "dialog"
     ? "AppleScript ダイアログ"
     : source === "slack"
@@ -554,7 +561,7 @@ function buildApprovalResolutionBlocks({ button, reason, source, title, descript
   const blocks = [
     {
       type: "context",
-      elements: [{ type: "mrkdwn", text: statusText }],
+      elements: [{ type: "mrkdwn", text: buildHeaderText("コマンド確認", statusText) }],
     },
   ];
 
@@ -577,6 +584,22 @@ function buildApprovalResolutionBlocks({ button, reason, source, title, descript
   });
 
   return blocks;
+}
+
+function buildAskResolutionBlocks({ question, optionsList, timeoutSeconds, meta, response }) {
+  const blocks = buildAskBlocks(question, optionsList, timeoutSeconds, meta, ":white_check_mark: 回答済み");
+  blocks.push({
+    type: "section",
+    text: { type: "mrkdwn", text: `*回答* ${response}` },
+  });
+  return blocks;
+}
+
+async function resolveAskRequest(token, channel, ts, { question, optionsList, timeoutSeconds, meta, response }) {
+  const blocks = buildAskResolutionBlocks({ question, optionsList, timeoutSeconds, meta, response });
+  const fallback = [question, response].filter(Boolean).join("\n");
+  await updateBlockMessage(token, channel, ts, fallback, blocks);
+  return { action: "update" };
 }
 
 async function resolveApprovalRequest(token, channel, ts, { button, reason, source, resolution, title, description }) {
@@ -987,6 +1010,14 @@ async function main() {
     if (response.files?.length > 0) {
       payload.files = response.files;
     }
+
+    await resolveAskRequest(token, channel, posted.ts, {
+      question,
+      optionsList,
+      timeoutSeconds: options.timeoutSeconds,
+      meta: askMeta,
+      response: response.response,
+    });
 
     if (options.format === "shell") {
       notifyCodexPane(askMeta, `Slack ask complete in ${askMeta.dir || process.cwd()}. Check result.`);
