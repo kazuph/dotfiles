@@ -9,6 +9,15 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pretool_guard.py"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/ask-user-slack-redirect.js"
+          }
+        ]
       }
     ],
     "Stop": [

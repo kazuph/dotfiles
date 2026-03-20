@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """
-PreToolUse guard - Slim version
+PreToolUse guard - mainブランチ保護のみ
 
-役割分担:
-- Bashツール: .ai_guard.zsh に任せる（全て許可）
-- Edit/Write/MultiEdit/NotebookEdit: このスクリプトでガード
-  - .allow-main ファイル操作はブロック
-  - mainブランチで .md 以外の編集はブロック
+Edit/Write/MultiEdit/NotebookEdit に対して:
+- mainブランチで .md 以外の編集はブロック（worktree除く）
+- .allow-main ファイルが存在する場合は制限緩和
 
-.ai_guard.zsh は全てのAI（Claude, Codex, Aider等）に対して動作し、
-osascriptダイアログで承認/拒否＋理由入力ができる。
+.allow-main の編集禁止は settings.json の deny で管理。
+Bash ツールのガードは ai_guard.zsh + settings.json で管理。
 """
 
 import json
@@ -33,7 +31,6 @@ def emit_decision(decision: str, reason: Optional[str] = None) -> None:
 
 
 def get_target_directory(input_data: dict) -> str:
-    """Edit/Writeツールの対象ディレクトリを取得"""
     tool_input = input_data.get("tool_input", {})
     for key in ("file_path", "path", "notebook_path"):
         path = tool_input.get(key)
@@ -70,7 +67,6 @@ def run_git(args: list, cwd: str) -> Optional[str]:
 
 
 def get_git_info(target_dir: str) -> Tuple[bool, Optional[str], Optional[str], bool]:
-    """Gitリポジトリ情報を取得"""
     branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], target_dir)
     if not branch:
         return False, None, None, False
@@ -90,25 +86,9 @@ def main():
     tool_input = input_data.get("tool_input", {})
     file_path = tool_input.get("file_path") or tool_input.get("path")
 
-    # ========================================
-    # Bashツール: .ai_guard.zsh に任せる
-    # ========================================
-    if tool_name == "Bash":
-        emit_decision("allow", "Bashは.ai_guard.zshに委譲")
-
-    # ========================================
-    # Edit/Write系ツール: このスクリプトでガード
-    # ========================================
+    # Edit/Write系ツール以外は対象外
     if tool_name not in {"Write", "Edit", "MultiEdit", "NotebookEdit"}:
         emit_decision("allow", f"対象外ツール: {tool_name}")
-
-    # .allow-main ファイル操作は常にブロック
-    if file_path and os.path.basename(file_path) == ".allow-main":
-        emit_decision(
-            "deny",
-            "🚫 .allow-main の作成・編集は禁止されています。\n"
-            "main保護バイパス用途のため、手動生成は行わないでください。"
-        )
 
     # Gitリポジトリ情報を取得
     target_dir = get_target_directory(input_data)
@@ -119,8 +99,7 @@ def main():
         emit_decision("allow", "gitリポジトリ外")
 
     # .allow-main ファイルが存在する場合は制限緩和
-    allow_main_flag = bool(git_root and os.path.isfile(os.path.join(git_root, ".allow-main")))
-    if allow_main_flag:
+    if git_root and os.path.isfile(os.path.join(git_root, ".allow-main")):
         emit_decision("allow", ".allow-main により制限緩和")
 
     # main/master かつ 非worktree の場合
@@ -131,9 +110,9 @@ def main():
 
         # それ以外はブロック
         worktree_msg = (
-            "🚫 mainブランチでの直接作業は避けてください。\n"
-            "📁 対象: {root}\n"
-            "✅ 推奨: git wt feature/xxx\n"
+            "mainブランチでの直接作業は避けてください。\n"
+            "対象: {root}\n"
+            "推奨: git wt feature/xxx\n"
             "worktreeディレクトリで作業してください。\n"
             ".md以外の編集はブロックされました。"
         ).format(root=git_root or target_dir)
