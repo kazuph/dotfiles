@@ -137,7 +137,8 @@ _ai_guard_temp_approval_key() {
   fi
 
   # deploy/publish/put 系は tool + env + scope 単位で3分許可
-  if _ai_guard_contains_danger_word "$cmd_line"; then
+  # ただし git は危険語だけでは確認対象にしない
+  if _ai_guard_requires_danger_word_prompt "$cmd" "$@"; then
     deploy_env=$(_ai_guard_detect_deploy_env "$cmd" "$@")
     printf "danger:%s:%s:%s" "$cmd" "$deploy_env" "$scope"
     return 0
@@ -618,10 +619,14 @@ APPLESCRIPT
     fi
 
     if [[ -n "$slack_thread_ts" && -n "$approval_winner" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
+      local slack_resolution="update"
+      if [[ "$approval_winner" == "dialog" ]]; then
+        slack_resolution="delete_or_update"
+      fi
       node "$slack_approve_script" \
         --thread-ts "$slack_thread_ts" \
         --source "$approval_winner" \
-        --resolution "update" \
+        --resolution "$slack_resolution" \
         approve-resolve "$slack_thread_ts" "$button_choice" "$reason_text" "$slack_title" "$slack_detail" >/dev/null 2>&1 || true
     fi
 
@@ -747,6 +752,7 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # - サブコマンド: git restore|clean|stash|branch|cherry-pick|merge
 # - AI からの git 履歴改変: commit --amend / reset / rebase / push --force* は即ブロック
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
+#   ただし git コマンドだけは危険語だけでは確認しない
 # ※ 通常の git push は所有権チェック後に許可
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
@@ -902,6 +908,12 @@ _ai_guard_contains_danger_word() {
   local cmd_line_l="${cmd_line:l}"
   [[ "$cmd_line_l" =~ $_AI_GUARD_DANGER_REGEX ]] && return 0
   return 1
+}
+
+_ai_guard_requires_danger_word_prompt() {
+  local cmd="$1"; shift
+  [[ "$cmd" == "git" ]] && return 1
+  _ai_guard_contains_danger_word "$cmd" "$@"
 }
 
 AI_GUARD_BLOCK_REASON=""
@@ -1197,7 +1209,7 @@ _ai_guard_need_prompt() {
   if [[ "${AI_GUARD_DANGER_WORD_ACK:-0}" == "1" ]]; then
     return 1
   fi
-  if _ai_guard_contains_danger_word "$cmd_line"; then
+  if _ai_guard_requires_danger_word_prompt "$cmd" "$@"; then
     return 0
   fi
 
