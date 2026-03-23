@@ -636,3 +636,6 @@ if [[ -d /data/data/com.termux ]]; then
   export PATH=/data/data/com.termux/files/home/.opencode/bin:$PATH
   alias opencode='proot-distro login debian -- /root/.opencode/bin/opencode'
 fi
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"
