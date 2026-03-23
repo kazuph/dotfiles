@@ -485,7 +485,7 @@ ai_extreme_confirm() {
       slack_approve_script="$HOME/dotfiles/claude/skills/slack-ask/scripts/slack-approval.mjs"
       if [[ -n "$approval_tmp_dir" && -f "$slack_approve_script" ]] && command -v node >/dev/null 2>&1; then
         slack_title="実行承認: ${cmd} @ ${cwd_short}"
-        slack_detail=$'%s\n%s\n\n次のどれかで返信してください。\n・承認 理由\n・3分承認 理由\n・却下 理由\n・3分却下 理由'
+        slack_detail=$'%s\n%s'
         slack_detail=$(printf "$slack_detail" "$cmd_display_for_prompt" "$context_block")
 
         local _meta_branch _meta_cwd _meta_repo _meta_tmux
@@ -744,9 +744,10 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # --- guard policy ------------------------------------------------------
 # 確認ダイアログを出す対象：
 # - 単体コマンド: rm / rmdir / rimraf / trash / mv / dd / mkfs / fdisk / diskutil / format / parted / gparted
-# - サブコマンド: git reset|restore|clean|stash|branch|rebase|cherry-pick|merge
+# - サブコマンド: git restore|clean|stash|branch|cherry-pick|merge
+# - AI からの git 履歴改変: commit --amend / reset / rebase / push --force* は即ブロック
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
-# ※ git push は確認不要
+# ※ 通常の git push は所有権チェック後に許可
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
 # ファイル作成系コマンド（touch, tee, cp）も追加して .allow-main 作成を防止
@@ -905,6 +906,7 @@ _ai_guard_contains_danger_word() {
 
 AI_GUARD_BLOCK_REASON=""
 AI_GUARD_GIT_PUSH_DECISION=""
+AI_GUARD_GIT_HISTORY_DECISION=""
 AI_GUARD_GH_PR_CREATE_DECISION=""
 AI_GUARD_DANGER_WORD_ACK="0"
 AI_GUARD_TRAP_ACTIVE="0"
@@ -981,6 +983,59 @@ _ai_guard_resolve_repo_full() {
   return 1
 }
 
+_ai_guard_has_git_force_flag() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      --force|-f|--force-with-lease|--force-with-lease=*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+_ai_guard_eval_git_history_rewrite() {
+  local subcmd="$1"; shift
+  AI_GUARD_BLOCK_REASON=""
+  AI_GUARD_GIT_HISTORY_DECISION="allow"
+
+  case "$subcmd" in
+    commit)
+      local arg
+      for arg in "$@"; do
+        case "$arg" in
+          --amend)
+            AI_GUARD_BLOCK_REASON="git commit --amend による履歴上書きは禁止です。修正は追いコミットで積んでください。"
+            AI_GUARD_GIT_HISTORY_DECISION="block"
+            return 0
+            ;;
+        esac
+      done
+      return 0
+      ;;
+    push)
+      if _ai_guard_has_git_force_flag "$@"; then
+        AI_GUARD_BLOCK_REASON="git push --force 系は禁止です。履歴を書き換えず通常の push を使ってください。"
+        AI_GUARD_GIT_HISTORY_DECISION="block"
+      fi
+      return 0
+      ;;
+    reset)
+      AI_GUARD_BLOCK_REASON="git reset による巻き戻しは禁止です。履歴は書き換えず、修正コミットで前に進めてください。"
+      AI_GUARD_GIT_HISTORY_DECISION="block"
+      return 0
+      ;;
+    rebase)
+      AI_GUARD_BLOCK_REASON="git rebase による履歴書き換えは禁止です。修正は追いコミットで積んでください。"
+      AI_GUARD_GIT_HISTORY_DECISION="block"
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
 _ai_guard_eval_git_push() {
   local subcmd="$1"; shift
   [[ "$subcmd" == "push" ]] || return 1
@@ -998,12 +1053,6 @@ _ai_guard_eval_git_push() {
   local arg remote_name="" remote_name_set=0
   for arg in "$@"; do
     case "$arg" in
-      --force|-f)
-        # --force は .allow-main があっても確認が必要
-        AI_GUARD_BLOCK_REASON="--force/-f は確認が必要です。"
-        AI_GUARD_GIT_PUSH_DECISION="prompt"
-        return 0
-        ;;
       main|*/main|*:main|master|*/master|*:master)
         # .allow-main がある場合は許可、なければブロック
         if [[ "$allow_main_flag" -eq 0 ]]; then
@@ -1011,11 +1060,6 @@ _ai_guard_eval_git_push() {
           AI_GUARD_GIT_PUSH_DECISION="block"
           return 0
         fi
-        ;;
-      --force-with-lease)
-        AI_GUARD_BLOCK_REASON="--force-with-lease は確認が必要です。"
-        AI_GUARD_GIT_PUSH_DECISION="prompt"
-        return 0
         ;;
     esac
     if [[ "$arg" != -* && "$remote_name_set" -eq 0 ]]; then
@@ -1173,10 +1217,10 @@ _ai_guard_need_prompt() {
       ;;
     dd|mkfs|fdisk|diskutil|format|parted|gparted) return 0 ;;
     git)
-      # ※ git push は原則確認不要（所有判定不能時は別処理で確認）
-      # 以下は未コミットの変更やコードを失う可能性があるため確認が必要
+      # 履歴改変系は dispatch 側で先に即ブロックする。
+      # ここでは未コミットの変更やコードを失う可能性がある操作だけ確認する。
       case "$1" in
-        reset|restore) return 0 ;;  # 変更を巻き戻す
+        restore) return 0 ;;  # 変更を巻き戻す
         clean) return 0 ;;  # 追跡されていないファイルを削除
         stash)
           # stash drop / stash clear は確認が必要
@@ -1293,6 +1337,15 @@ _ai_guard_dispatch() {
   if [[ "$cmd" == "git" ]] && ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_display"; then
     _ai_guard_block_checkout_b "$cmd_display"
     return 1
+  fi
+
+  if [[ "$cmd" == "git" ]] && _ai_guard_eval_git_history_rewrite "$@"; then
+    case "$AI_GUARD_GIT_HISTORY_DECISION" in
+      block)
+        ai_guard_block "$cmd_display" "$AI_GUARD_BLOCK_REASON"
+        return 1
+        ;;
+    esac
   fi
 
   if [[ "$cmd" == "git" ]] && _ai_guard_eval_git_push "$@"; then
