@@ -173,11 +173,25 @@ function parseDecision(text) {
 
 // --- Block Kit Builders ---
 
-function buildHeaderText(label, statusText) {
+function buildHeaderText(label, statusText, locationLabel = "") {
   const mention = (SLACK_ATTENTION_MENTION || "").trim();
-  return mention
-    ? `【${statusText}】${label} | ${mention}`
-    : `【${statusText}】${label}`;
+  const pieces = [label];
+  if (mention) pieces.push(mention);
+  if (locationLabel) pieces.push(locationLabel);
+  return `【${statusText}】${pieces.join(" | ")}`;
+}
+
+function deriveLocationLabel(meta = {}) {
+  const parts = [];
+  const dir = meta?.dir || "";
+  if (dir) {
+    const base = path.basename(dir);
+    parts.push(base && base !== "." ? base : dir);
+  }
+  if (meta?.branch) {
+    parts.push(meta.branch);
+  }
+  return parts.join(" | ");
 }
 
 function buildAskBlocks(question, optionsList, timeoutSeconds, meta, statusText = ":hourglass_flowing_sand: 回答待ち") {
@@ -295,12 +309,12 @@ function buildApprovalBlocks(title, description, timeoutSeconds, meta, statusTex
   return blocks;
 }
 
-function buildNotifyBlocks(message) {
-  const mention = (SLACK_ATTENTION_MENTION || "").trim();
+function buildNotifyBlocks(message, meta = {}) {
+  const locationLabel = [deriveLocationLabel(meta), "no reply"].filter(Boolean).join(" | ");
   return [
     {
       type: "context",
-      elements: [{ type: "mrkdwn", text: mention ? `通知 | ${mention}` : "通知" }],
+      elements: [{ type: "mrkdwn", text: buildHeaderText("通知", "通知", locationLabel) }],
     },
     {
       type: "section",
@@ -937,7 +951,8 @@ async function main() {
     if (!message) {
       throw new Error("message_required");
     }
-    const blocks = buildNotifyBlocks(message);
+    const notifyMeta = deriveRuntimeMeta(options.meta);
+    const blocks = buildNotifyBlocks(message, notifyMeta);
     const posted = await postBlockMessage(token, channel, withAttentionMention(message), blocks);
     jsonPrint({ success: true, channel, ts: posted.ts });
     return;

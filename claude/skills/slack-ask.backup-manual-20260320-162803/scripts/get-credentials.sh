@@ -24,20 +24,20 @@ _slack_load_env_file() {
 
         case "$key" in
             SLACK_BOT_TOKEN)
-                [ -n "$SLACK_BOT_TOKEN" ] || SLACK_BOT_TOKEN="$value"
+                [ -n "${SLACK_BOT_TOKEN:-}" ] || SLACK_BOT_TOKEN="$value"
                 ;;
             SLACK_CHANNEL|SLACK_CHANNEL_ID)
-                [ -n "$SLACK_CHANNEL" ] || SLACK_CHANNEL="$value"
+                [ -n "${SLACK_CHANNEL:-}" ] || SLACK_CHANNEL="$value"
                 ;;
         esac
     done <"$env_file"
 }
 
-if [ -n "$SLACK_BOT_TOKEN" ] && [ -z "$SLACK_CHANNEL" ] && [ -n "$SLACK_CHANNEL_ID" ]; then
+if [ -n "${SLACK_BOT_TOKEN:-}" ] && [ -z "${SLACK_CHANNEL:-}" ] && [ -n "${SLACK_CHANNEL_ID:-}" ]; then
     SLACK_CHANNEL="$SLACK_CHANNEL_ID"
 fi
 
-if [ -n "$SLACK_BOT_TOKEN" ] && [ -n "$SLACK_CHANNEL" ]; then
+if [ -n "${SLACK_BOT_TOKEN:-}" ] && [ -n "${SLACK_CHANNEL:-}" ]; then
     export SLACK_BOT_TOKEN
     export SLACK_CHANNEL
     export SLACK_CHANNEL_ID="${SLACK_CHANNEL_ID:-$SLACK_CHANNEL}"
@@ -48,22 +48,22 @@ _slack_load_env_file "$HOME/dotfiles/claude/hooks/.env"
 _slack_load_env_file "$HOME/.claude/hooks/.env"
 
 if command -v security >/dev/null 2>&1; then
-    if [ -z "$SLACK_BOT_TOKEN" ]; then
+    if [ -z "${SLACK_BOT_TOKEN:-}" ]; then
         SLACK_BOT_TOKEN=$(security find-generic-password -w -a claude-slack -s SLACK_BOT_TOKEN 2>/dev/null)
     fi
-    if [ -z "$SLACK_CHANNEL" ]; then
+    if [ -z "${SLACK_CHANNEL:-}" ]; then
         SLACK_CHANNEL=$(security find-generic-password -w -a claude-slack -s SLACK_CHANNEL 2>/dev/null)
     fi
-    if [ -z "$SLACK_CHANNEL" ]; then
+    if [ -z "${SLACK_CHANNEL:-}" ]; then
         SLACK_CHANNEL=$(security find-generic-password -w -a claude-slack -s SLACK_CHANNEL_ID 2>/dev/null)
     fi
 fi
 
 if command -v pass >/dev/null 2>&1; then
-    if [ -z "$SLACK_BOT_TOKEN" ]; then
+    if [ -z "${SLACK_BOT_TOKEN:-}" ]; then
         SLACK_BOT_TOKEN=$(pass show claude/slack-bot-token 2>/dev/null)
     fi
-    if [ -z "$SLACK_CHANNEL" ]; then
+    if [ -z "${SLACK_CHANNEL:-}" ]; then
         SLACK_CHANNEL=$(pass show claude/slack-channel 2>/dev/null)
     fi
 fi
