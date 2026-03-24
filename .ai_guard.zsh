@@ -752,7 +752,7 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # - サブコマンド: git restore|clean|stash|branch|cherry-pick|merge
 # - AI からの git 履歴改変: commit --amend / reset / rebase / push --force* は即ブロック
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
-#   ただし git コマンドだけは危険語だけでは確認しない
+#   ただし git / gh コマンドだけは危険語だけでは確認しない
 # ※ 通常の git push は所有権チェック後に許可
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
@@ -912,8 +912,18 @@ _ai_guard_contains_danger_word() {
 
 _ai_guard_requires_danger_word_prompt() {
   local cmd="$1"; shift
-  [[ "$cmd" == "git" ]] && return 1
+  if [[ "$cmd" == "git" || "$cmd" == "gh" ]]; then
+    return 1
+  fi
   _ai_guard_contains_danger_word "$cmd" "$@"
+}
+
+_ai_guard_cmd_line_requires_danger_word_prompt() {
+  local cmd_line="$1"
+  local -a argv
+  argv=("${(z)cmd_line}")
+  (( ${#argv[@]} > 0 )) || return 1
+  _ai_guard_requires_danger_word_prompt "${argv[@]}"
 }
 
 AI_GUARD_BLOCK_REASON=""
@@ -931,7 +941,7 @@ _ai_guard_accept_line() {
     zle .accept-line
     return 0
   fi
-  if _ai_guard_contains_danger_word "$cmd_line"; then
+  if _ai_guard_cmd_line_requires_danger_word_prompt "$cmd_line"; then
     local prev_exec="${AI_GUARD_EXEC:-}"
     local prev_display="${AI_GUARD_CMD_DISPLAY:-}"
     AI_GUARD_EXEC=":"
@@ -1193,6 +1203,185 @@ _ai_guard_eval_gh_pr_create() {
   return 0
 }
 
+_ai_guard_extract_gh_api_method() {
+  local arg prev=""
+
+  for arg in "$@"; do
+    case "$arg" in
+      -X)
+        prev="-X"
+        continue
+        ;;
+      --method)
+        prev="--method"
+        continue
+        ;;
+      -X*)
+        printf "%s" "${${arg#-X}:u}"
+        return 0
+        ;;
+      --method=*)
+        printf "%s" "${${arg#--method=}:u}"
+        return 0
+        ;;
+    esac
+
+    case "$prev" in
+      -X|--method)
+        printf "%s" "${arg:u}"
+        return 0
+        ;;
+    esac
+
+    prev=""
+  done
+
+  return 1
+}
+
+_ai_guard_is_high_risk_gh_command() {
+  local subcmd="$1"; shift
+  local method=""
+
+  # issue/pr の本文やタイトルに含まれる単語で誤爆しないよう、
+  # gh は危険語ではなくサブコマンド単位で高リスク操作だけ確認する。
+  case "$subcmd" in
+    api)
+      method=$(_ai_guard_extract_gh_api_method "$@") || method="GET"
+      case "$method" in
+        POST|PUT|PATCH|DELETE)
+          return 0
+          ;;
+      esac
+      ;;
+    auth)
+      case "$1" in
+        login|logout|refresh|setup-git)
+          return 0
+          ;;
+      esac
+      ;;
+    gist)
+      case "$1" in
+        create|edit|delete)
+          return 0
+          ;;
+      esac
+      ;;
+    label)
+      case "$1" in
+        clone|create|delete|edit)
+          return 0
+          ;;
+      esac
+      ;;
+    release)
+      case "$1" in
+        create|delete|delete-asset|edit|upload)
+          return 0
+          ;;
+      esac
+      ;;
+    repo)
+      case "$1" in
+        create|delete|edit)
+          return 0
+          ;;
+      esac
+      ;;
+    secret)
+      case "$1" in
+        delete|set)
+          return 0
+          ;;
+      esac
+      ;;
+    variable)
+      case "$1" in
+        delete|set)
+          return 0
+          ;;
+      esac
+      ;;
+    workflow)
+      case "$1" in
+        disable|enable|run)
+          return 0
+          ;;
+      esac
+      ;;
+  esac
+
+  return 1
+}
+
+_ai_guard_is_readonly_gh_command() {
+  local subcmd="$1"; shift
+
+  # 明確に参照しかしないサブコマンドだけを allow する。
+  # 暗黙の GET や将来の仕様変更に依存したくないので、ここは保守的に列挙する。
+  case "$subcmd" in
+    alias)
+      [[ "$1" == "list" ]] && return 0
+      ;;
+    auth)
+      [[ "$1" == "status" ]] && return 0
+      ;;
+    cache)
+      [[ "$1" == "list" ]] && return 0
+      ;;
+    config)
+      [[ "$1" == "get" || "$1" == "list" ]] && return 0
+      ;;
+    gist)
+      case "$1" in
+        list|view) return 0 ;;
+      esac
+      ;;
+    issue)
+      case "$1" in
+        list|status|view) return 0 ;;
+      esac
+      ;;
+    label)
+      [[ "$1" == "list" ]] && return 0
+      ;;
+    org)
+      [[ "$1" == "list" ]] && return 0
+      ;;
+    pr)
+      case "$1" in
+        checks|diff|list|status|view) return 0 ;;
+      esac
+      ;;
+    release)
+      case "$1" in
+        list|view) return 0 ;;
+      esac
+      ;;
+    repo)
+      case "$1" in
+        list|view) return 0 ;;
+      esac
+      ;;
+    run)
+      case "$1" in
+        list|view) return 0 ;;
+      esac
+      ;;
+    search)
+      return 0
+      ;;
+    workflow)
+      case "$1" in
+        list|view) return 0 ;;
+      esac
+      ;;
+  esac
+
+  return 1
+}
+
 _ai_guard_is_target() {
   local cmd="$1"
   (( ${_AI_GUARD_TARGETS[(i)$cmd]} )) && return 0
@@ -1258,6 +1447,9 @@ _ai_guard_need_prompt() {
       esac
       ;;
     gh)
+      if _ai_guard_is_high_risk_gh_command "$@"; then
+        return 0
+      fi
       case "$1" in
         pr)
           [[ "$2" == "merge" ]] && return 0
@@ -1371,6 +1563,12 @@ _ai_guard_dispatch() {
         return $?
         ;;
     esac
+  fi
+
+  # 参照専用の gh コマンドは AI セッションでもダイアログなしで通す。
+  if [[ "$cmd" == "gh" ]] && _ai_guard_is_readonly_gh_command "$@"; then
+    builtin command "$cmd" "$@"
+    return $?
   fi
 
   if [[ "$cmd" == "gh" ]] && _ai_guard_eval_gh_pr_create "$@"; then
@@ -1490,7 +1688,7 @@ _ai_guard_accept_line_protected() {
   # 元の accept-line 処理を実行
   # danger word チェック（AIセッションのみ）
   # Humanセッションでは danger word の accept-line ブロックをスキップ
-  if _ai_guard_is_ai_session && _ai_guard_contains_danger_word "$cmd_line"; then
+  if _ai_guard_is_ai_session && _ai_guard_cmd_line_requires_danger_word_prompt "$cmd_line"; then
     local cmd_trim="${cmd_line##[[:space:]]#}"
     local cmd_name="${cmd_trim%% *}"
     if [[ "$cmd_name" != "git" ]]; then
