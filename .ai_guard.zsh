@@ -1064,6 +1064,32 @@ _ai_guard_git_push_targets_main() {
   return 1
 }
 
+_ai_guard_git_restore_is_index_only() {
+  local arg short_flags=""
+  local staged=0 worktree=0 source=0
+
+  for arg in "$@"; do
+    case "$arg" in
+      --staged)
+        staged=1
+        ;;
+      --worktree)
+        worktree=1
+        ;;
+      --source|--source=*)
+        source=1
+        ;;
+      -[!-]*)
+        short_flags="${arg#-}"
+        [[ "$short_flags" == *S* ]] && staged=1
+        [[ "$short_flags" == *W* ]] && worktree=1
+        ;;
+    esac
+  done
+
+  [[ "$staged" -eq 1 && "$worktree" -eq 0 && "$source" -eq 0 ]]
+}
+
 _ai_guard_eval_git_history_rewrite() {
   local subcmd="$1"; shift
   AI_GUARD_BLOCK_REASON=""
@@ -1473,7 +1499,11 @@ _ai_guard_need_prompt() {
       # 履歴改変系は dispatch 側で先に即ブロックする。
       # ここでは未コミットの変更やコードを失う可能性がある操作だけ確認する。
       case "$1" in
-        restore) return 0 ;;  # 変更を巻き戻す
+        restore)
+          shift
+          _ai_guard_git_restore_is_index_only "$@" && return 1
+          return 0
+          ;;
         clean) return 0 ;;  # 追跡されていないファイルを削除
         stash)
           # stash drop / stash clear は確認が必要
