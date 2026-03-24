@@ -1018,6 +1018,52 @@ _ai_guard_has_git_force_flag() {
   return 1
 }
 
+_ai_guard_is_main_branch_name() {
+  local branch="$1"
+  case "$branch" in
+    main|master|refs/heads/main|refs/heads/master)
+      return 0
+      ;;
+  esac
+  return 1
+}
+
+_ai_guard_git_push_targets_main() {
+  local arg current_branch="" non_option_count=0 target=""
+
+  current_branch=$(builtin command git symbolic-ref --quiet --short HEAD 2>/dev/null) || current_branch=""
+
+  for arg in "$@"; do
+    [[ "$arg" == "--" ]] && break
+    [[ "$arg" == -* ]] && continue
+
+    non_option_count=$((non_option_count + 1))
+
+    # 最初の非オプション引数は remote 名として扱う。
+    if (( non_option_count == 1 )); then
+      continue
+    fi
+
+    target="$arg"
+    if [[ "$target" == *:* ]]; then
+      target="${target##*:}"
+      [[ -z "$target" || "$target" == "HEAD" ]] && target="$current_branch"
+    elif [[ "$target" == "HEAD" ]]; then
+      target="$current_branch"
+    fi
+
+    [[ "$target" == refs/heads/* ]] && target="${target#refs/heads/}"
+    _ai_guard_is_main_branch_name "$target" && return 0
+  done
+
+  # refspec を省略した push は現在ブランチへの push とみなして main/master を保護する。
+  if (( non_option_count <= 1 )) && _ai_guard_is_main_branch_name "$current_branch"; then
+    return 0
+  fi
+
+  return 1
+}
+
 _ai_guard_eval_git_history_rewrite() {
   local subcmd="$1"; shift
   AI_GUARD_BLOCK_REASON=""
@@ -1066,29 +1112,18 @@ _ai_guard_eval_git_push() {
   AI_GUARD_BLOCK_REASON=""
   AI_GUARD_GIT_PUSH_DECISION="allow"
 
-  # .allow-main ファイルが存在する場合は main/master への push を許可
-  local git_root allow_main_flag=0
-  git_root=$(builtin command git rev-parse --show-toplevel 2>/dev/null)
-  if [[ -n "$git_root" && -f "${git_root}/.allow-main" ]]; then
-    allow_main_flag=1
+  if _ai_guard_git_push_targets_main "$@"; then
+    AI_GUARD_BLOCK_REASON="main/master への push は AI からは禁止です。必要なら人間が手動で実行してください。"
+    AI_GUARD_GIT_PUSH_DECISION="block"
+    return 0
   fi
 
   local arg remote_name="" remote_name_set=0
   for arg in "$@"; do
-    case "$arg" in
-      main|*/main|*:main|master|*/master|*:master)
-        # .allow-main がある場合は許可、なければブロック
-        if [[ "$allow_main_flag" -eq 0 ]]; then
-          AI_GUARD_BLOCK_REASON="main/master は禁止です。"
-          AI_GUARD_GIT_PUSH_DECISION="block"
-          return 0
-        fi
-        ;;
-    esac
-    if [[ "$arg" != -* && "$remote_name_set" -eq 0 ]]; then
-      remote_name="$arg"
-      remote_name_set=1
-    fi
+    [[ "$arg" == -* ]] && continue
+    remote_name="$arg"
+    remote_name_set=1
+    break
   done
 
   [[ -n "$remote_name" ]] || remote_name="origin"
