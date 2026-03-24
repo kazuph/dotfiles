@@ -753,13 +753,14 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # - AI からの git 履歴改変: commit --amend / reset / rebase / push --force* は即ブロック
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
 #   ただし git / gh コマンドだけは危険語だけでは確認しない
+# - aws の put-* 操作は危険語ではなくサブコマンドで確認
 # ※ 通常の git push は所有権チェック後に許可
 # ※ 新しいCLIツールを使う場合は _AI_GUARD_TARGETS に追加してください
 
 # ファイル作成系コマンド（touch, tee, cp）も追加して .allow-main 作成を防止
 _AI_GUARD_TARGETS=(rm rmdir rimraf trash mv dd mkfs fdisk diskutil format parted gparted git gh sh bash zsh dash ksh fish nu aws npm npx pnpm pnpx yarn bun bunx deno cargo firebase vercel flyctl fly wrangler netlify railway render amplify cdk serverless sls pulumi terraform touch tee cp ln)
 
-_AI_GUARD_DANGER_WORDS=(publish deploy put)
+_AI_GUARD_DANGER_WORDS=(publish deploy)
 _AI_GUARD_DANGER_REGEX="(^|[^[:alnum:]])($(printf "%s|" "${_AI_GUARD_DANGER_WORDS[@]}" | sed 's/|$//'))([^[:alnum:]]|$)"
 
 # AIセッションの起動ディレクトリを取得（PPIDのcwd）
@@ -1315,6 +1316,22 @@ _ai_guard_is_high_risk_gh_command() {
   return 1
 }
 
+_ai_guard_is_high_risk_aws_command() {
+  local arg arg_l
+
+  # aws は本文文字列ではなく、更新系オペレーション名だけを見る。
+  for arg in "$@"; do
+    arg_l="${arg:l}"
+    case "$arg_l" in
+      put-*)
+        return 0
+        ;;
+    esac
+  done
+
+  return 1
+}
+
 _ai_guard_is_readonly_gh_command() {
   local subcmd="$1"; shift
 
@@ -1460,6 +1477,11 @@ _ai_guard_need_prompt() {
           fi
           ;;
       esac
+      ;;
+    aws)
+      if _ai_guard_is_high_risk_aws_command "$@"; then
+        return 0
+      fi
       ;;
     wrangler)
       # 動的設定ファイルを読み込んで許可リストをチェック（編集だけで即反映）
