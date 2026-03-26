@@ -603,7 +603,12 @@ export ANDROID_NDK_HOME=/opt/homebrew/share/android-ndk
 export PATH="$JAVA_HOME/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"
 
 # moonbit
-export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH"
+if [[ -d "$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin" ]]; then
+  case ":$PATH:" in
+    *":$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:"*) ;;
+    *) export PATH="$HOME/src/github.com/kazuph/moonbit-sandbox/.moon/bin:$PATH" ;;
+  esac
+fi
 
 # 最低限の危険コマンドだけダイアログを残す（rm -rfやディスク破壊系のみ）。承認/却下理由をフォーム入力で残す。
 # 危険コマンド確認フックの読み込みは bash/zsh 共通ローダーに集約
@@ -616,7 +621,12 @@ source "$HOME/dotfiles/.config/zsh/modern-tools.zsh"
 export PATH="$HOME/go/bin:$PATH"
 
 # moonbit
-export PATH="$HOME/.moon/bin:$PATH"
+if [[ -d "$HOME/.moon/bin" ]]; then
+  case ":$PATH:" in
+    *":$HOME/.moon/bin:"*) ;;
+    *) export PATH="$HOME/.moon/bin:$PATH" ;;
+  esac
+fi
 
 # direnv
 eval "$(direnv hook zsh)"
