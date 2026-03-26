@@ -39,4 +39,4 @@ prioritize_cargo_bin
 [[ -f "$HOME/.ai_guard.zsh" ]] && source "$HOME/.ai_guard.zsh"
 
 # Vite+ bin (https://viteplus.dev)
-. "$HOME/.vite-plus/env"
+[[ -f "$HOME/.vite-plus/env" ]] && . "$HOME/.vite-plus/env"
