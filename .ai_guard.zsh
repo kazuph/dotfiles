@@ -181,10 +181,6 @@ _ai_guard_git_risky_group() {
         return 0
       fi
       ;;
-    rebase)
-      printf "rebase"
-      return 0
-      ;;
     cherry-pick)
       if [[ "$1" == "--abort" ]]; then
         printf "cherry-pick-abort"
@@ -750,7 +746,7 @@ export PATH="/opt/homebrew/opt/trash/bin:$PATH"
 # 確認ダイアログを出す対象：
 # - 単体コマンド: rm / rmdir / rimraf / trash / mv / dd / mkfs / fdisk / diskutil / format / parted / gparted
 # - サブコマンド: git restore|clean|stash|branch|cherry-pick|merge
-# - AI からの git 履歴改変: commit --amend / reset / rebase / push --force* は即ブロック
+# - AI からの git 履歴改変: commit --amend / reset / push --force* は即ブロック (rebase は許可)
 # - publish / deploy: 引数のどこかに含まれていれば常に確認（npx cdk deploy 等も検知）
 #   ただし git / gh コマンドだけは危険語だけでは確認しない
 # - aws の put-* 操作は危険語ではなくサブコマンドで確認
@@ -1118,11 +1114,6 @@ _ai_guard_eval_git_history_rewrite() {
       ;;
     reset)
       AI_GUARD_BLOCK_REASON="git reset による巻き戻しは禁止です。履歴は書き換えず、修正コミットで前に進めてください。"
-      AI_GUARD_GIT_HISTORY_DECISION="block"
-      return 0
-      ;;
-    rebase)
-      AI_GUARD_BLOCK_REASON="git rebase による履歴書き換えは禁止です。修正は追いコミットで積んでください。"
       AI_GUARD_GIT_HISTORY_DECISION="block"
       return 0
       ;;
@@ -1513,7 +1504,6 @@ _ai_guard_need_prompt() {
           # git branch -D (強制削除) は確認が必要
           [[ "$2" == -D || "$2" == -d || "$2" == --delete ]] && return 0
           ;;
-        rebase) return 0 ;;  # 履歴を書き換える
         cherry-pick)
           # cherry-pick --abort は確認が必要
           [[ "$2" == --abort ]] && return 0
