@@ -194,7 +194,7 @@ _ai_guard_git_risky_group() {
       fi
       ;;
     push)
-      if [[ " $* " == *" --force "* || " $* " == *" -f "* || " $* " == *" --force-with-lease "* ]]; then
+      if _ai_guard_has_git_force_flag "$@"; then
         printf "push-force"
       else
         printf "push-review"
