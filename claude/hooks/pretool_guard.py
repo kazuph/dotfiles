@@ -6,15 +6,20 @@ Edit/Write/MultiEdit/NotebookEdit に対して:
 - mainブランチで .md 以外の編集はブロック（worktree除く）
 - .allow-main ファイルが存在する場合は制限緩和
 
-.allow-main の編集禁止は settings.json の deny で管理。
-Bash ツールのガードは ai_guard.zsh + settings.json で管理。
+Bash に対して:
+- main/master への git push をブロック
+- .allow-main ファイルが存在する場合は許可
 """
 
 import json
 import os
+import shlex
 import subprocess
 import sys
 from typing import Optional, Tuple
+
+
+PROTECTED_BRANCHES = {"main", "master"}
 
 
 def emit_decision(decision: str, reason: Optional[str] = None) -> None:
@@ -32,6 +37,10 @@ def emit_decision(decision: str, reason: Optional[str] = None) -> None:
 
 def get_target_directory(input_data: dict) -> str:
     tool_input = input_data.get("tool_input", {})
+    for key in ("cwd",):
+        path = tool_input.get(key)
+        if isinstance(path, str) and path:
+            return os.path.abspath(path)
     for key in ("file_path", "path", "notebook_path"):
         path = tool_input.get(key)
         if isinstance(path, str) and path:
@@ -76,6 +85,64 @@ def get_git_info(target_dir: str) -> Tuple[bool, Optional[str], Optional[str], b
     return True, branch, root, is_worktree
 
 
+def get_bash_command(input_data: dict) -> str:
+    tool_input = input_data.get("tool_input", {})
+    for key in ("command", "cmd"):
+        command = tool_input.get(key)
+        if isinstance(command, str) and command.strip():
+            return command.strip()
+    return ""
+
+
+def is_protected_ref(ref: str, current_branch: Optional[str]) -> bool:
+    candidate = ref.strip()
+    if not candidate:
+        return False
+    if candidate == "HEAD":
+        return current_branch in PROTECTED_BRANCHES
+    normalized = candidate.removeprefix("refs/heads/")
+    return normalized in PROTECTED_BRANCHES
+
+
+def is_git_push_to_protected_branch(
+    command: str, current_branch: Optional[str]
+) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+
+    git_index = None
+    for index, token in enumerate(tokens):
+        if os.path.basename(token) == "git":
+            git_index = index
+            break
+
+    if git_index is None or git_index + 1 >= len(tokens):
+        return False
+    if tokens[git_index + 1] != "push":
+        return False
+
+    args = tokens[git_index + 2 :]
+    positionals = [arg for arg in args if arg and not arg.startswith("-")]
+
+    # refspec未指定の push は現在ブランチをそのまま push するとみなす
+    if len(positionals) <= 1:
+        return current_branch in PROTECTED_BRANCHES
+
+    refspecs = positionals[1:]
+    for refspec in refspecs:
+        if ":" in refspec:
+            _, destination = refspec.split(":", 1)
+            if is_protected_ref(destination, current_branch):
+                return True
+            continue
+        if is_protected_ref(refspec, current_branch):
+            return True
+
+    return False
+
+
 def main():
     try:
         input_data = json.load(sys.stdin)
@@ -86,8 +153,8 @@ def main():
     tool_input = input_data.get("tool_input", {})
     file_path = tool_input.get("file_path") or tool_input.get("path")
 
-    # Edit/Write系ツール以外は対象外
-    if tool_name not in {"Write", "Edit", "MultiEdit", "NotebookEdit"}:
+    # Bash/Edit/Write系ツール以外は対象外
+    if tool_name not in {"Bash", "Write", "Edit", "MultiEdit", "NotebookEdit"}:
         emit_decision("allow", f"対象外ツール: {tool_name}")
 
     # Gitリポジトリ情報を取得
@@ -98,12 +165,32 @@ def main():
     if not in_repo:
         emit_decision("allow", "gitリポジトリ外")
 
+    allow_main = bool(
+        git_root and os.path.isfile(os.path.join(git_root, ".allow-main"))
+    )
+
+    if tool_name == "Bash":
+        command = get_bash_command(input_data)
+        if not command:
+            emit_decision("allow", "Bashコマンド未指定")
+
+        if is_git_push_to_protected_branch(command, branch):
+            if allow_main:
+                emit_decision("allow", ".allow-main により main/master への push を許可")
+            emit_decision(
+                "deny",
+                "main/master への git push は禁止されています。\n"
+                "必要な場合のみリポジトリ直下に .allow-main を置いてください。",
+            )
+
+        emit_decision("allow", f"branch={branch}")
+
     # .allow-main ファイルが存在する場合は制限緩和
-    if git_root and os.path.isfile(os.path.join(git_root, ".allow-main")):
+    if allow_main:
         emit_decision("allow", ".allow-main により制限緩和")
 
     # main/master かつ 非worktree の場合
-    if branch in {"main", "master"} and not is_worktree:
+    if branch in PROTECTED_BRANCHES and not is_worktree:
         # .md ファイルは許可
         if file_path and file_path.endswith(".md"):
             emit_decision("allow", "mainでの.md編集を許可")
