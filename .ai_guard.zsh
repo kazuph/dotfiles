@@ -1130,6 +1130,13 @@ _ai_guard_eval_git_push() {
   AI_GUARD_GIT_PUSH_DECISION="allow"
 
   if _ai_guard_git_push_targets_main "$@"; then
+    # .allow-main があれば許可
+    local _git_root
+    _git_root=$(builtin command git rev-parse --show-toplevel 2>/dev/null) || _git_root=""
+    if [[ -n "$_git_root" && -f "${_git_root}/.allow-main" ]]; then
+      AI_GUARD_GIT_PUSH_DECISION="allow"
+      return 0
+    fi
     AI_GUARD_BLOCK_REASON="main/master への push は AI からは禁止です。必要なら人間が手動で実行してください。"
     AI_GUARD_GIT_PUSH_DECISION="block"
     return 0
