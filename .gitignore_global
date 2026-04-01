@@ -27,6 +27,7 @@ tags
 .DS_Store
 ._.DS_Store
 .env
+.envrc
 
 .vscode/
 .devcontainer/
@@ -44,3 +45,7 @@ freertos
 .takt/
 
 .playwright-cli/
+.cursor/
+
+.pnpm-store/
+
