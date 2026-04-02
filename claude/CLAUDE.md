@@ -335,17 +335,21 @@ Write tests that actively hunt for bugs:
 - Execute `cd` separately first, then run git commands in subsequent calls
 - This avoids hook blocking issues that check the working directory
 
-## Status Reporting (MANDATORY - 毎回やること)
+## Status Reporting (MANDATORY - 作業開始時と完了時に必ず実行)
 
 **以下のタイミングで `reporting-and-tmux` skill を必ず実行する：**
 
+### 作業開始時（tmuxウィンドウ命名）
+1. **ユーザーから依頼を受けて方針が固まったら**、探索や実装を始める前にスキルを実行してtmuxウィンドウ名をセットする
+
+### 作業完了時（tmuxウィンドウ命名 + say報告）
 1. **ユーザーへの最終回答を書き終えた直後**（実装完了、調査完了、質問回答など種類を問わない）
 2. **TodoListのタスクを承認待ちに変更した時**
 3. **エラーで作業を中断してユーザーに報告する時**
 
 **実行方法**: `Skill` ツールで `skill: "reporting-and-tmux"` を呼び出す。直接bashで `say` コマンドを叩くのではなく、必ずSkill経由で実行すること。
 
-**やらないと**: ユーザーは別のターミナルで作業しているため、音声通知がないと完了に気づけない。
+**やらないと**: ユーザーは別のターミナルで作業しているため、音声通知がないと完了に気づけない。開始時のウィンドウ名がないと、どのウィンドウで何の作業をしているか判別できない。
 
 ## Backup Policy
 - After editing `~/.claude/CLAUDE.md`, use the `claude-gist-backup` skill to sync to Gist
