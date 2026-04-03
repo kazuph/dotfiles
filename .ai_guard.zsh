@@ -99,6 +99,25 @@ _ai_guard_is_checkout_b() {
   return 1
 }
 
+# Codex CLI専用
+_ai_guard_is_git_wt_list() {
+  local cmd_line="$1"
+  [[ "$cmd_line" =~ (^|[[:space:][:punct:]])git[[:space:]]+wt[[:space:]]+list([[:space:][:punct:]]|$) ]] && return 0
+  return 1
+}
+
+_ai_guard_block_git_wt_list() {
+  local cmd_line="$1"
+  printf "\n" >&2
+  printf "そのコマンドは実行できません。\n" >&2
+  printf "git wt をそのまま実行すれば、worktreeリストが出てきます。\n" >&2
+  printf "\n" >&2
+
+  local log_file="$HOME/.ai_guard_security.log"
+  printf "%s\tBLOCKED_GIT_WT_LIST\t%s\t[Redirecting to git wt]\n" \
+    "$(date -Iseconds)" "$cmd_line" >> "$log_file" 2>/dev/null
+}
+
 AI_GUARD_TEMP_APPROVAL_FILE="${AI_GUARD_TEMP_APPROVAL_FILE:-$HOME/.ai_guard_temp_approval}"
 AI_GUARD_TEMP_APPROVAL_SECONDS="${AI_GUARD_TEMP_APPROVAL_SECONDS:-180}"
 AI_GUARD_TEMP_REJECT_FILE="${AI_GUARD_TEMP_REJECT_FILE:-$HOME/.ai_guard_temp_reject}"
@@ -1621,6 +1640,11 @@ _ai_guard_dispatch() {
   cmd_display="$(printf "%s " "$cmd" "$@")"
   cmd_display="${cmd_display% }"
 
+  if [[ "$cmd" == "git" ]] && _ai_guard_is_git_wt_list "$cmd_display"; then
+    _ai_guard_block_git_wt_list "$cmd_display"
+    return 1
+  fi
+
   # git checkout -b のブロック（Humanのみ。AIは許可）
   if [[ "$cmd" == "git" ]] && ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_display"; then
     _ai_guard_block_checkout_b "$cmd_display"
@@ -1723,6 +1747,11 @@ command() {
 _ai_guard_preexec_protected_check() {
   local cmd_line="$1"
 
+  if _ai_guard_is_ai_session && _ai_guard_is_git_wt_list "$cmd_line"; then
+    _ai_guard_block_git_wt_list "$cmd_line"
+    return 1
+  fi
+
   # git checkout -b のブロック（Humanのみ、preexec での警告）
   # ※ 実際のブロックは accept-line で行われるが、万が一のための警告
   if ! _ai_guard_is_ai_session && _ai_guard_is_checkout_b "$cmd_line"; then
@@ -1752,6 +1781,13 @@ _AI_GUARD_BLOCKED_CMD=""
 # accept-line をオーバーライドして、保護パターンを含むコマンドをブロック
 _ai_guard_accept_line_protected() {
   local cmd_line="$BUFFER"
+
+  if _ai_guard_is_ai_session && _ai_guard_is_git_wt_list "$cmd_line"; then
+    _ai_guard_block_git_wt_list "$cmd_line"
+    BUFFER=""
+    zle redisplay
+    return 0
+  fi
 
   # AIセッションで保護パターンを含む場合はブロック
   if _ai_guard_is_ai_session && _ai_guard_check_protected_pattern "$cmd_line"; then
