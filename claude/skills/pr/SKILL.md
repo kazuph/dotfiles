@@ -60,22 +60,30 @@ EOF
 
 ### 3. CI監視
 
+**`sleep` で待たない。`--watch` をバックグラウンドで実行し、完了通知を受け取る。**
+
 ```bash
-# CI完了まで待機（sleepしてからチェック）
-sleep 90 && gh pr checks <PR番号>
+# バックグラウンドでCI完了を監視（run_in_background: true で実行）
+gh pr checks <PR番号> --watch
+
+# 完了通知を受け取ったら結果を確認
+gh pr checks <PR番号>
 
 # 失敗していたらログ確認
 gh run view <run-id> --log-failed | tail -40
 ```
 
+- `gh pr checks --watch` は全チェックが完了するまでブロックする。`run_in_background: true` で実行し、完了通知が来たら次に進む
+- 待機中は他の作業（Copilotレビューコメントの事前確認など）を進めてよい
 - **CI失敗時**: ログを読んで原因特定→修正→`npx prettier --write`→コミット→`git push origin HEAD`→再度CI監視
 - **全パスするまで繰り返す**
 
 ### 4. Copilotレビュー対応
 
 ```bash
-# レビューコメント確認（CIパス後30-90秒で付く）
-sleep 60 && gh api repos/{owner}/{repo}/pulls/<PR番号>/comments \
+# CIパス後、レビューコメントを確認（CIパス後30-90秒で付く）
+# こちらもバックグラウンドで待機してよい
+gh api repos/{owner}/{repo}/pulls/<PR番号>/comments \
   --jq '.[] | "[\(.path):\(.line)] \(.body[0:200])"'
 ```
 
@@ -108,5 +116,6 @@ PR #XX: <URL>
 - 途中で「CIが通ったらやる？」「レビュー対応する？」と聞かない
 - Preview環境のデプロイ待ちでブロックしない（ローカルで検証）
 - `git push` を使わない（`git push origin HEAD` を使う）
+- `sleep` でCI/レビュー完了を待たない（`gh pr checks --watch` + `run_in_background` を使う）
 - CI失敗を放置しない
 - Copilotの指摘を無視しない
