@@ -1,10 +1,20 @@
 ---
 name: playwright-cli
-description: Automates browser interactions for web testing, form filling, screenshots, and data extraction. Use when the user needs to navigate websites, interact with web pages, fill forms, take screenshots, test web applications, or extract information from web pages.
+description: Real-browser automation for navigation, interaction, screenshots, tracing, downloads, and reliable verification. Use when rendered output, visual confidence, or user-facing proof matters, including after a lighter `agent-browser --engine lightpanda` first pass.
 allowed-tools: Bash(playwright-cli:*)
 ---
 
 # Browser Automation with playwright-cli
+
+## Positioning
+
+Use `playwright-cli` when the task needs a real browser.
+
+- Good default for screenshots, downloads, and user-visible proof
+- Good follow-up after a quick `agent-browser --engine lightpanda` probe
+- Better fit than Lightpanda when the AI must confirm that the visible workflow actually worked
+
+If the user only wants a quick AI-only behavior probe, `agent-browser --engine lightpanda` can be tried first. Do not use that as a substitute for final verification here.
 
 ## Quick start
 

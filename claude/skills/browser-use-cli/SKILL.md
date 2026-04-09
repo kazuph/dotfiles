@@ -1,13 +1,17 @@
 ---
 name: browser-use-cli
-description: Browser automation via browser-use CLI v2. Fastest local browser tool - use BEFORE playwright-cli or agent-browser. Supports navigation, clicking, typing, screenshots, state inspection, JS eval, data extraction, and session management. No API key needed for local mode.
+description: Browser automation via browser-use CLI v2. One fast local browser option for navigation, clicking, typing, screenshots, state inspection, JS eval, data extraction, and session management. Choose it when its workflow fits best; it is not the only valid first step.
 allowed-tools: Bash(browser-use:*)
 ---
 
 # Browser Automation with browser-use CLI v2
 
-**Priority: Use this tool FIRST for all browser automation tasks.**
-Faster than playwright-cli and agent-browser. No API key required for local operations.
+This is one fast local browser option.
+
+- Use it when its index-based workflow fits the task well
+- Do not treat it as mandatory before every other browser tool
+- If the user specifically wants `agent-browser`, or wants to try `agent-browser --engine lightpanda` as an AI-only first pass, follow that request
+- If the task needs stronger visual proof or trace-like debugging, `playwright-cli` is often the better next tool
 
 ## Quick Start
 
@@ -209,3 +213,4 @@ different profile.
 - Sessions persist until explicitly closed - reuse them for multi-step flows
 - No API key needed for local browser automation (chromium mode)
 - If state/screenshot fails after mode switch, clean socket: `rm -f ~/.browser-use/default.sock`
+- When the user asks for a quick AI-led first-pass behavior check with `agent-browser` + Lightpanda, that is a valid alternative starting point
