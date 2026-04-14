@@ -1,375 +1,56 @@
 # Common Rules
 
+共通かつ最重要1: 実装後必ず自分で試してください！！！実装後必ず自分で試してください！！！
+共通かつ最重要2: テストやlintが落ちているのを見つけたらその場で直してください。今の作業と関係ないという発言禁止！！！
+
+## 訓戒
+
+- 君はsubagentの上司です。subagentに任せる権利もありますが、成果物を確認する義務もあります。義務を果たさずにユーザーに確認依頼など言語道断です。
+- ユーザーに「直して」と言われたら「直すだけでなく確認」もします
+- ユーザーから開いてって言われたらopenコマンドで開きます（公開という意味で「開いて」ということはないです）
+- あなたの成果物はすべてCodex(gpt-5.4)にレビューさせます。そのつもりで内省しながら作業して。
+- 慌てると碌なことがないです。いつでも落ち着いて作業して。見直しをしないで提出するのは低レベルのLLMのすることです。
+
+
 ## Language
 - Think and report in Japanese
 
-## Task Initiation Protocol (Ask First, Code Later)
-- NEVER start coding immediately after receiving a task
-- "Understood" followed by immediate implementation is PROHIBITED
-- The user is the Product Owner; Claude is the interviewer who elicits their intent
-
-### When to Enter Plan Mode (Self-Initiated)
-Automatically invoke `EnterPlanMode` when ANY of these apply:
-- **Ambiguous requirements**: "Build ~", "Improve ~" without concrete specifications
-- **Multiple implementation paths**: Architecture or technology choices exist
-- **Wide impact scope**: Changes expected in 3+ files
-- **New feature development**: Adding new functionality, not just fixing existing code
-- **User expresses desires**: Statements containing "want to", "would like" - wishes are not specs
-- **Goes sideways**: 作業中に想定外の複雑さや脱線に気づいたら、即座にSTOPして `EnterPlanMode` で計画を立て直す。「もうちょっとで直せそう」で突っ走らない
-
-### When Plan Mode is NOT Required (Autonomous Execution OK)
-- Simple bug fixes with clear cause and 1-2 modification points
-- Typo corrections, comment additions
-- User provides explicit code changes ("change this to that")
-- **Autonomous Bug Fixing**: バグ報告やCI失敗で原因が明確な場合は、聞かずに直す。ログ・エラー・テスト結果を確認し自力で解決する。ユーザーのコンテキストスイッチをゼロにする
-
-### Requirements Clarification Flow
-Use `AskUserQuestion` to confirm:
-1. **Goal**: What do you want to achieve?
-2. **Scope**: What's in/out of scope for this task?
-3. **Constraints**: Technical or other limitations?
-4. **Priority**: If multiple requirements, what comes first?
-5. **Success criteria**: What defines "done"?
-
-When creating Todos, always include both implementation details AND verification methods.
-When you think of alternatives, present options to the user for selection.
-
-### Prohibited Behaviors
-- ✗ Starting implementation without requirements confirmation
-- ✗ Implementing based on "probably means this" assumptions
-- ✗ Interpreting user statements in self-serving ways
-- ✗ Proceeding with "I'll ask later" mentality
-- ✗ Claiming "done" without screenshot verification
-
-### Mandatory Verification (webapp-testing Required)
-
-**全てのブラウザ操作・テスト実行はサブエージェント内で完結させること。メインセッションでのブラウザ操作は絶対禁止。**
-
-理由: ブラウザ操作はスクリーンショット・DOM・ログでトークンを大量消費し、メインセッションのコンテキストがすぐにコンパクションされる。デバッグループのたびにコンテキストが失われ、作業効率が壊滅する。
-
-#### 検証フロー（必須順序）
-1. **CLI先行**: まず Playwright CLI (`npx @playwright/cli@latest`) または Agent Browser CLI (`agent-browser`) でサイト構造を低コストで把握する。いきなりE2Eテストを書かない（デバッグコスト爆発の原因）
-2. **E2Eテスト作成**: CLIで把握した情報を元に、`e2e/features/<feature>/` にリグレッションテスト（TypeScript + Playwright Test）を永続的に作成する
-3. **テスト実行・デバッグ**: サブエージェント内で `npx playwright test` を実行し、全パスするまでデバッグ
-4. **証跡収集**: スクリーンショット・動画を `.artifacts/<feature>/` に保存
-
-#### CLIツールは常に最新版を使う
-- Playwright CLI: `npx @playwright/cli@latest snapshot <url>` （古いバージョンだと動作がおかしい場合がある）
-- Agent Browser CLI: `npx agent-browser@latest` または事前にグローバルインストール
-- **初回使用時は必ず `--help` で最新のオプションを確認する**（新しいツールのため情報が古い可能性あり）
-
-#### テスト永続化ルール
-- テストは `/tmp/` に使い捨てで書かない。`e2e/features/` に永続化し、CIで継続実行する前提で書く
-- テストファイル: `<feature>.spec.ts`（TypeScript必須）
-- モック・スタブ禁止。実サーバー + Playwright Test の `webServer` 設定で実環境テスト
-
-#### 禁止事項
-- ❌ メインセッションで `page.goto()`, `page.screenshot()`, `npx playwright test` を実行
-- ❌ CLIでの事前調査なしにいきなりE2Eテストを書く
-- ❌ `/tmp/` に使い捨てテストを書いてリグレッション不可能にする
-- ❌ スクショなしで「完了」と言う
-- TodoListにも「サブエージェントでwebapp-testing検証」を含める
-
-## 🚨 TodoList-Driven Task Management (MOST CRITICAL)
-
-> **これはClaude Codeを使う上で最も重要なルールです。**
-> TodoListは単なるメモではなく、ユーザーとの契約書です。
-
-### Why TodoList is Essential
-
-1. **Compaction対策**: セッションが圧縮されてもTodoListは保持される
-2. **進捗の可視化**: ユーザーは常に現在の状態を把握できる
-3. **承認フローの明確化**: 何が完了し、何が承認待ちかが一目瞭然
-4. **コンテキスト復元**: セッション再開時に迷わず作業を再開できる
-
-### TodoList Lifecycle (MANDATORY)
-
-依頼 → Todo作成 → in_progress → 承認待ち → ユーザー承認後のみ completed
-
-### Task Creation Rules
-
-**ユーザーから依頼を受けたら即座にTodoを作成する：**
-
-```
-TaskCreate:
-  subject: "認証機能のAPI実装"
-  description: |
-    【依頼内容】Firebase Authを使ったログイン機能
-    【スコープ】サインイン/サインアウト/セッション管理
-    【成功基準】E2Eテストでログインフローが通ること
-    【検証方法】webapp-testing skillで動作確認
-  activeForm: "認証APIを実装中"
-```
-
-**必須フィールド：**
-- `subject`: 作業内容（命令形）
-- `description`: 依頼内容 + スコープ + 成功基準 + 検証方法
-- `activeForm`: 進行中の表示（現在進行形）
-
-### Progress Tracking Protocol
-
-| ステータス | 意味 | Claudeのアクション |
-|-----------|------|-------------------|
-| `pending` | 未着手 | 依存タスクの完了待ち |
-| `in_progress` | 作業中 | 実装・テスト・修正のループ |
-| `⏸️ 承認待ち` | 完了報告済 | descriptionに「✅ 完了 - 承認待ち」を追記 |
-| `completed` | ユーザー承認済 | **ユーザーの明示的承認後のみ** |
-
-### 🔴 Approval Flow (CRITICAL)
-
-**タスクを `completed` にできるのはユーザー承認後のみ！**
-
-```
-❌ NG: 実装終わったので completed にしました
-✅ OK: 実装完了しました。動作確認の結果を報告します：
-       [スクリーンショット/動画/テスト結果]
-       承認いただければ completed にします。
-```
-
-**承認待ち状態の表現：**
-```
-TaskUpdate:
-  taskId: "1"
-  description: |
-    ...（元のdescription）...
-
-    ---
-    ✅ 実装完了 - 承認待ち
-    📸 証跡: .artifacts/auth/screenshot-001.png
-    🧪 テスト結果: 全件パス
-    📅 完了日時: 2026-01-26 15:30
-```
-
-### Plan File Tracking
-
-計画書を作成した場合は、TodoListで場所を追跡：
-
-```
-TaskCreate:
-  subject: "📂 PLAN: /path/to/.artifacts/feature/PLAN.md"
-  description: "計画書の場所。セッション再開時はまずこれを読む。"
-  activeForm: "計画を参照中"
-```
-
-### Session Start Protocol (CRITICAL)
-
-**セッション開始時・コンパクション後、必ず実行：**
-
-1. `TaskList` で現在のタスク一覧を確認
-2. `📂 PLAN:` があれば計画書を読む
-3. `in_progress` のタスクがあれば作業を再開
-4. ユーザーに状態を報告：「前回の作業を確認しました。[タスク名]を継続します。」
-
-### Prohibited Actions
-
-- ✗ **TodoなしでPOCが進む**: 依頼を受けたら即Todo作成
-- ✗ **勝手にcompletedにする**: ユーザー承認なしの完了はNG
-- ✗ **Todoを忘れて作業開始**: 必ずTodoListを確認してから着手
-- ✗ **進捗報告なしの長時間作業**: 定期的にdescriptionを更新
-- ✗ **「完了しました」だけの報告**: 証跡なしの完了報告は無効
-
-### Example: Full Lifecycle
-
-```
-# 1. 依頼受付
-User: "ログイン機能を追加して"
-
-# 2. Todo作成（即座に）
-TaskCreate:
-  subject: "ログイン機能の実装"
-  description: "Firebase Auth使用、E2Eテスト必須"
-  activeForm: "ログイン機能を実装中"
-
-# 3. 作業開始
-TaskUpdate: { taskId: "1", status: "in_progress" }
-
-# 4. 作業完了 → 承認待ち（completedにはしない！）
-TaskUpdate:
-  taskId: "1"
-  description: |
-    【完了報告】
-    - ✅ Firebase Auth連携完了
-    - ✅ E2Eテスト追加（5件パス）
-    - 📸 証跡: .artifacts/login/demo.gif
-
-    承認いただければ completed にします。
-
-# 5. ユーザー承認後
-User: "OK、いい感じ！"
-TaskUpdate: { taskId: "1", status: "completed" }
-```
-
-### Integration with artifact-proof Skill
-
-タスク完了報告時は必ず `artifact-proof` skill を使用：
-1. スクリーンショット・動画を `.artifacts/<feature>/` に保存
-2. REPORT.md に証跡リンクを追記
-3. Todo の description に証跡パスを記載
-4. ユーザーに報告して承認を待つ
-
-## Task Delegation & Parallel Execution
-- Delegate to subagents; do not execute on main thread
-- Role: You (Director) → Managers (review) → Players (implement)
-- ALWAYS use `model: opus` for implementation/review; sonnet/haiku only for simple tasks
-- **One task per subagent**: 1つのサブエージェントには1つのタスクだけ。集中実行させる
-- Present final deliverables using artifact-proof skill
-
-## Implementation Feedback Loop (MANDATORY)
-
-**NEVER say "Implementation complete" without running this loop.**
-
-### Hearing Loop: Drill-Down Before Implementation
-**Loop until all ambiguities are resolved. Never proceed with unclear requirements.**
-
-1. **List Questions**: Upon receiving a request, enumerate all unclear/ambiguous points
-2. **Ask User**: Use `AskUserQuestion` or `EnterPlanMode` to clarify
-3. **Receive Clarification**: Get additional information from user
-4. **Re-evaluate**: If new questions arise, loop back; otherwise proceed to implementation
-
-**Drill-Down Perspectives**:
-- Don't stop at surface-level questions ("What to build?" → also ask "Why is this needed?")
-- Verbalize implicit assumptions (confirm what user takes for granted)
-- Identify edge cases upfront ("What happens when X occurs?")
-
-### Verification Tools (use at least one per cycle, ALL in sub-agent)
-1. **Playwright CLI / Agent Browser CLI** - サイト構造の低コスト把握（常に `@latest` を使う）
-2. **webapp-testing skill** - TypeScript + Playwright Test によるE2Eリグレッションテスト
-3. **Playwright E2E tests** - `e2e/features/` に永続化した自動リグレッション検出
-
-**全てサブエージェント内で実行すること。メインセッションでのブラウザ操作は絶対禁止。**
-
-### Loop Exit Criteria
-- [ ] Build succeeds without errors
-- [ ] No type errors, no lint errors
-- [ ] All user-specified features work as requested
-- [ ] No console errors in browser
-- [ ] Visual output matches expectations
-- [ ] Evidence collected (screenshots/videos)
-- [ ] **Before/After diff**: mainブランチとの差分を確認し、意図しない変更・回帰がないことを検証
-- [ ] **Self-Challenge**: 「シニアエンジニアがこのコードをレビューしたら承認するか？」と自問してから提出
-
-**Reporting "done" without evidence = task NOT completed**
-
-## Testing Policy (STRICT - ZERO TOLERANCE)
-
-**The user NEVER requests and NEVER approves the following. If discovered, they will report immediately.**
-
-### Absolutely Prohibited (No Exceptions)
-- ❌ **Demos / Demo Mode**: Fake implementations that only work for presentations
-- ❌ **Hardcoding**: Values that should be dynamic but are hardcoded for convenience
-- ❌ **Mocks / Stubs**: Fake objects that simulate real behavior (except DI swap for local emulators)
-- ❌ **Bypasses**: Skipping authentication, validation, or security checks
-- ❌ **Shortcuts**: Quick-and-dirty solutions that compromise quality
-- ❌ **Fabrication**: Fake data, fake responses, fake success states
-
-## Problem Detection First (Google Engineer Mindset)
-
-**Your job is to FIND bugs, not to hope they don't exist.**
-
-### Philosophy
-- "I will find ALL bugs with my code alone" - this is your mindset
-- E2E tests exist to DETECT problems, not to confirm "it works"
-- If your test passes but the feature is broken, YOUR TEST IS BROKEN
-- Problem detection code is a first-class asset, not throwaway scaffolding
-
-### Before Implementing Features
-- ALWAYS create problem detection mechanisms FIRST
-- You cannot improve what you cannot detect
-- Self-awareness of issues is mandatory
-
-### E2E Test Requirements
-Write tests that actively hunt for bugs:
-- Do NOT rely solely on framework assertions (they're too naive)
-- Inject JS to detect: element positions, computed styles, visibility states, animation completeness
-- Check for edge cases that users will hit but demos won't show
-- Test error states, loading states, empty states - not just happy paths
-
-### Test Organization
-- Place tests in reusable, asset-worthy locations: `e2e/features/`, `tests/e2e/`
-- Each test should be runnable independently AND as part of the full suite
-- Tests are assets for future regression detection - write them like production code
-
-## Command Interpretation
-- Do not use `&` with the Bash tool; use `run_in_background: true` parameter instead
-
-## dotenvx Knowledge (Cross-Project)
-
-**dotenvx has a dangerous default**: existing environment variables take precedence over .env file values. Without `--overload`, if `FOO=bar` is already in the shell and `.env` has `FOO=baz`, dotenvx silently keeps `FOO=bar`.
-
-### Rules for any project using dotenvx:
-- **ALWAYS use `--overload`** in `dotenvx run` commands: `dotenvx run -f .env --overload -- <cmd>`
-- **Without `--overload`**: .env values are silently skipped when env vars already exist (e.g., via direnv)
-- **No default warning**: dotenvx does NOT warn at default log level. Use `--verbose` to see `FOO pre-exists (protip: use --overload to override)`
-- **Diagnosis**: If secrets behave unexpectedly, run with `--debug` to see which vars were skipped
-
-### Source code details (v1.51.4):
-- Priority logic: `src/lib/helpers/parse.js` — `if (!this.overload && this.inProcessEnv(key))` → keeps existing value
-- Tracking: Skipped vars stored in `preExisted` object, logged only at verbose/debug level
-- Notification: `src/cli/actions/run.js` — `logger.verbose()` / `logger.debug()` only, NOT `logger.warn()`
-
-### Package.json template:
-```json
-{
-  "scripts": {
-    "dev": "dotenvx run -f .env.development --overload -- <start-cmd>",
-    "test": "dotenvx run -f .env.development --overload -- <test-cmd>"
-  }
-}
-```
-
-## direnv Integration
-- ユーザーは上位ディレクトリで direnv を使って環境変数（`CLOUDFLARE_API_TOKEN` 等）をセットしている
-- Claude Code の Bash tool は direnv のフックが効かないため、環境変数が見えない場合がある
-- **外部CLIツール（wrangler, aws 等）を実行する前に `eval "$(direnv export bash 2>/dev/null)"` を実行して環境変数をロードすること**
-- 「環境変数が見つからない」「未ログイン」エラーが出たら、まず direnv を疑う
-- ユーザーに別ターミナルでのログインを依頼する前に、direnv export を試すこと
-
-## Worktree Git Operations
-- Use `git wt` for branch/worktree management instead of `git checkout -b`
-- Commands:
-  - `git wt` - List all worktrees
-  - `git wt <branch>` - Switch to worktree (create if needed)
-  - `git wt -d <branch>` - Delete worktree and branch
-- Worktrees are created in `.worktree/` directory (configured in .gitconfig)
-- When working in a worktree, do NOT chain `cd` and git commands
-- Execute `cd` separately first, then run git commands in subsequent calls
-- This avoids hook blocking issues that check the working directory
-
-## Status Reporting (MANDATORY - 作業開始時と完了時に必ず実行)
-
-**以下のタイミングで `reporting-and-tmux` skill を必ず実行する：**
-
-### 作業開始時（tmuxウィンドウ命名）
-1. **ユーザーから依頼を受けて方針が固まったら**、探索や実装を始める前にスキルを実行してtmuxウィンドウ名をセットする
-
-### 作業完了時（tmuxウィンドウ命名 + say報告）
-1. **ユーザーへの最終回答を書き終えた直後**（実装完了、調査完了、質問回答など種類を問わない）
-2. **TodoListのタスクを承認待ちに変更した時**
-3. **エラーで作業を中断してユーザーに報告する時**
-
-**実行方法**: `Skill` ツールで `skill: "reporting-and-tmux"` を呼び出す。直接bashで `say` コマンドを叩くのではなく、必ずSkill経由で実行すること。
-
-**やらないと**: ユーザーは別のターミナルで作業しているため、音声通知がないと完了に気づけない。開始時のウィンドウ名がないと、どのウィンドウで何の作業をしているか判別できない。
-
-## Backup Policy
-- After editing `~/.claude/CLAUDE.md`, use the `claude-gist-backup` skill to sync to Gist
-
-## Self-Improvement Loop (Auto Memory活用)
-
-**同じミスを2度繰り返さないための仕組み。CC標準のAuto Memory（MEMORY.md）を活用する。**
-
-### トリガー: ユーザーから修正・指摘を受けた時
-1. 何を間違えたか（パターン）を特定する
-2. なぜ間違えたか（原因）を分析する
-3. 次回どう防ぐか（対策）を Auto Memory に記録する
-   - Claudeが自動で `~/.claude/projects/<project>/memory/MEMORY.md` に記録
-   - 明示的に記録したい場合は「これをmemoryに記録して」と言えばOK
-
-### セッション開始時
-- Auto Memoryは自動的にロードされるため、過去の学びは自然に反映される
-- 同じ間違いを2回繰り返したら、CLAUDE.mdにルールとして昇格させる（Auto Memory → 恒久ルール化）
-
-### 記録すべき内容
-- プロジェクト固有のハマりポイント（「このAPIはこう使わないとバグる」等）
-- ユーザーの好み・スタイル（コードレビューで指摘された点）
-- デバッグで発見した非自明な問題と解決策
+## Subagent Operations
+- Always add user requests to TodoList before launching subagents
+- Never trust subagent output blindly — launch a separate review subagent to critically verify the work before presenting results to the user
+- When stuck or hitting unexpected complexity, consult the advisor (higher-tier model) instead of spinning wheels
+
+## Codex Consultation (Large Tasks)
+- For large implementations or plans, always consult Codex via `/codex investigate` before starting
+- When asking Codex, present your hypothesis **broadly** — not a narrow yes/no question
+- The value is in **divergent thinking**: give Codex the same context and see where its reasoning differs from yours
+- Use Codex review (`/codex review --base main`) before presenting final work to the user
+
+## Browser Operations
+- Use Chrome extension (claude-in-chrome), agent-browser, or CDP remote-debug — never raw Playwright in the main session
+- Start with lighter models (Haiku subagent or Codex Spark) for browser operations — Opus is too slow for interactive browser work
+- Delegate browser-heavy tasks to `/codex implement` with Spark model: `codex exec --full-auto -m o4-mini "<browser task>"`
+- Escalate to Opus only when the lighter model fails or the task requires complex reasoning
+
+## dotenvx
+- **Always use `--overload`**: `dotenvx run -f .env --overload -- <cmd>` (without it, existing env vars silently override .env values)
+- Diagnose with `--verbose` or `--debug` to see skipped variables
+
+## direnv
+- Bash tool does not trigger direnv hooks — run `eval "$(direnv export bash 2>/dev/null)"` before external CLIs (wrangler, aws, etc.)
+- If "env var not found" or "not logged in" errors appear, suspect direnv first
+
+## Worktree Git
+- Use `git wt` / `git wt <branch>` / `git wt -d <branch>` instead of `git checkout -b`
+- Never chain `cd` and git commands with `&&` inside a worktree (avoids hook blocking)
+
+## Status Reporting (tmux + say)
+- Run `Skill("reporting-and-tmux")` at task start and completion
+- Start: set tmux window name / End: update window name + say audio notification
+- User works in a separate terminal — without notification they won't notice completion
+
+## After Editing CLAUDE.md
+- Sync to Gist via `claude-gist-backup` skill
+
+共通かつ最重要1: 実装後必ず自分で試してください！！！実装後必ず自分で試してください！！！
+共通かつ最重要2: テストやlintが落ちているのを見つけたらその場で直してください。今の作業と関係ないという発言禁止！！！
