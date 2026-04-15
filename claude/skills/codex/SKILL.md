@@ -255,17 +255,90 @@ cat "$outfile"
 
 When Claude Code consults Codex for planning or review, the goal is **not** confirmation — it's **perspective diversity**.
 
+### 重要原則: Claude の仮説をぶつけない
+
+Claude の結論・仮説・推奨案を先に渡すと、Codex はそれに引きずられて「狭い範囲の検証」しか返さなくなる。
+価値は divergent thinking (発散的思考) にあるので、**Codex にはゼロベースで考えさせる**。
+
+### 渡すべきコンテクスト (広め)
+
+- ❌ 悪い例: 「この関数を X に書き換える案で良いか確認して」
+- ❌ 悪い例: 「原因は Y だと思うが合っているか」
+- ✅ 良い例: 「以下の症状・関連ファイル・制約を渡すので、考えうる原因と対処方針を複数出して」
+- ✅ 良い例: 「このプロジェクトの背景・ゴール・制約を渡すので、どう設計するか自由に提案して」
+
+渡す情報:
+1. **問題・症状** (何が起きているか、何を達成したいか)
+2. **関連ファイル/コード断片** (Codex が自分で読めるようパスを渡す)
+3. **制約条件** (動かしてはいけない箇所、パフォーマンス要件、期限など)
+4. **既に試したこと** (ただし「これが正解っぽい」という誘導はしない)
+
+Claude 自身の結論や推奨は **渡さない**。もしくは「自分はこう考えたが、ゼロベースで再検討して」と明示する。
+
 ### How to ask
 
-- Share the full context (problem, constraints, what you've considered)
-- Ask open-ended: "What approaches would you consider?" not "Is my approach correct?"
-- Explicitly request: "Where does your thinking differ from mine?"
+- 常に open-ended: "What approaches would you consider?" not "Is my approach correct?"
+- 明示的に要求: "Where does your thinking differ from mine?" "別の angle からも検討して"
+- 複数案を要求: "少なくとも 3 つの異なるアプローチを挙げて、それぞれのトレードオフを示して"
 
 ### How to use the response
 
-- Look for **disagreements** — that's where the value is
-- If Codex agrees on everything, you probably asked too narrowly
-- Synthesize both perspectives before presenting to the user
+- **disagreement** こそが価値 — 同意だけ返ってきたら質問が狭すぎた証拠
+- Codex が Claude と違う結論を出したら、その差分を必ずユーザーに共有する
+- 両方の観点を synthesize してから提示する
+
+## Codex が使えない時のフォールバック (copilot)
+
+Codex CLI は rate limit / quota / "You've hit your usage limit" エラーで使えなくなることがある。
+その場合は **自動的に GitHub Copilot CLI にフォールバックする**。ユーザーに聞き直さない。
+
+### 検出条件
+
+以下のいずれかが Codex の出力/stderr に含まれる場合は limit と判定:
+
+- `usage limit`
+- `rate limit`
+- `quota`
+- `429`
+- `You've reached`
+- `try again later`
+
+または Codex の exit code が非 0 で上記に該当しない場合でも、
+2 回リトライして失敗したら copilot にフォールバックしてよい。
+
+### フォールバックコマンド
+
+```bash
+copilot -p "<プロンプト>" --yolo --model gpt-5.4
+```
+
+- `-p` でプロンプトを一発実行
+- `--yolo` で承認をスキップ (codex の `--full-auto` に相当)
+- `--model gpt-5.4` でモデルを明示 (注: `-m` はエイリアスがないので必ず `--model`)
+
+### フォールバック実行例 (investigate)
+
+```bash
+outfile=$(mktemp -t codex)
+if ! codex exec --sandbox read-only -o "$outfile" "<プロンプト>" >/dev/null 2>&1; then
+  if grep -qiE "usage limit|rate limit|quota|429|reached" "$outfile"; then
+    echo "[codex limit detected — falling back to copilot]" >&2
+    copilot -p "<プロンプト>" --yolo --model gpt-5.4
+  else
+    cat "$outfile"
+    exit 1
+  fi
+else
+  cat "$outfile"
+fi
+```
+
+### フォールバック時の注意
+
+- copilot は codex と出力形式が違う可能性があるので、結果をそのまま鵜呑みにしない
+- `--yolo` はファイル変更も許可するので、`investigate` 相当の用途では **プロンプト側で「ファイル変更禁止」を明記** する
+- review 用途では copilot のレビューコマンドが無いので、プロンプトで差分を渡してレビューさせる
+- フォールバックが発動したら、ユーザーに「Codex が limit だったので copilot にフォールバックした」と必ず報告
 
 ## Troubleshooting
 
