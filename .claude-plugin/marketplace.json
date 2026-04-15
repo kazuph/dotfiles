@@ -9,12 +9,6 @@
   },
   "plugins": [
     {
-      "name": "kazuph-dotfiles",
-      "description": "All kazuph's skills: MAGI, MoonBit, env-setup, figma, and more",
-      "category": "development",
-      "source": "./plugins/kazuph-dotfiles"
-    },
-    {
       "name": "mcp-browser-tabs",
       "description": "Chrome browser tabs info for Claude",
       "category": "development",
