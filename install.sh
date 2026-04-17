@@ -129,6 +129,7 @@ log_info "Creating symbolic links..."
 mkdir -p "$CONFIG_DIR"
 
 # Shell configs
+ln -sfv "$DOTFILES_DIR/.bashrc" "$HOME/.bashrc"
 ln -sfv "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 ln -sfv "$DOTFILES_DIR/.zshenv" "$HOME/.zshenv"
 ln -sfv "$DOTFILES_DIR/.zpreztorc" "$HOME/.zpreztorc"
