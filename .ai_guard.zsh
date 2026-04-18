@@ -421,6 +421,29 @@ _ai_guard_is_ai_session() {
   return 1
 }
 
+_ai_guard_stop_async_job() {
+  local job_pid="${1:-}" child_pid_file="${2:-}" child_pid=""
+
+  if [[ -n "$child_pid_file" && -f "$child_pid_file" ]]; then
+    child_pid=$(<"$child_pid_file")
+    case "$child_pid" in
+      ''|*[!0-9]*) ;;
+      *)
+      kill "$child_pid" 2>/dev/null || true
+      wait "$child_pid" 2>/dev/null || true
+      ;;
+    esac
+  fi
+
+  case "$job_pid" in
+    ''|*[!0-9]*) ;;
+    *)
+    kill "$job_pid" 2>/dev/null || true
+    wait "$job_pid" 2>/dev/null || true
+    ;;
+  esac
+}
+
 ai_extreme_confirm() {
   # xtraceが有効なシェルでも、この関数内のトレース出力を抑止してノイズを防ぐ
   setopt localoptions noxtrace
@@ -493,7 +516,8 @@ ai_extreme_confirm() {
     local slack_approve_script="" slack_title="" slack_detail="" slack_meta_json=""
     local slack_thread_ts="" slack_wait_pid="" slack_result_file="" slack_status_file=""
     local slack_active=0 apple_pid="" apple_active=0
-    local apple_result_file="" apple_status_file="" approval_tmp_dir="" tmp_as=""
+    local apple_result_file="" apple_status_file="" apple_child_pid_file=""
+    local approval_tmp_dir="" tmp_as=""
 
     approval_tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/ai_guard_approval.XXXXXX" 2>/dev/null || mktemp -d -t ai_guard_approval 2>/dev/null) || approval_tmp_dir=""
 
@@ -577,8 +601,12 @@ APPLESCRIPT
         apple_active=1
         apple_result_file="$approval_tmp_dir/apple_result.txt"
         apple_status_file="$approval_tmp_dir/apple_status"
+        apple_child_pid_file="$approval_tmp_dir/apple_child.pid"
         (
-          osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" >| "$apple_result_file" 2>/dev/null
+          osascript "$tmp_as" "$cmd_display_for_prompt" "$context_block" "$dialog_title" >| "$apple_result_file" 2>/dev/null &
+          local osascript_pid=$!
+          printf "%s\n" "$osascript_pid" >| "$apple_child_pid_file"
+          wait "$osascript_pid"
           printf "%s\n" "$?" >| "$apple_status_file"
         ) &
         apple_pid=$!
@@ -617,12 +645,12 @@ APPLESCRIPT
       if [[ -n "$approval_winner" ]]; then
         dialog_output="$winner_output"
         if [[ "$approval_winner" == "slack" && -n "$apple_pid" ]]; then
-          kill "$apple_pid" 2>/dev/null || true
-          wait "$apple_pid" 2>/dev/null || true
+          _ai_guard_stop_async_job "$apple_pid" "$apple_child_pid_file"
+          apple_pid=""
           apple_active=0
         elif [[ "$approval_winner" == "dialog" && -n "$slack_wait_pid" ]]; then
-          kill "$slack_wait_pid" 2>/dev/null || true
-          wait "$slack_wait_pid" 2>/dev/null || true
+          _ai_guard_stop_async_job "$slack_wait_pid"
+          slack_wait_pid=""
           slack_active=0
         fi
       fi
@@ -1237,44 +1265,110 @@ _ai_guard_eval_gh_pr_create() {
   AI_GUARD_BLOCK_REASON=""
   AI_GUARD_GH_PR_CREATE_DECISION="allow"
 
-  local target_repo="" head_ref="" arg prev=""
+  # 判定ポリシー: 「他人のリポジトリに PR するな」
+  #   - target_owner != my_login  → block
+  #   - target_owner == my_login  → allow
+  #   fork かどうか・upstream かどうかは問わない (所有/非所有で判定)
+  #
+  # `gh repo view` の結果は `gh repo set-default` に引きずられるため使わない。
+  # 代わりに target_repo を明示 --repo > gh のデフォルト解決 > origin URL の順で推定する。
+
+  local target_repo="" arg prev=""
   for arg in "$@"; do
     if [[ "$prev" == "--repo" || "$prev" == "-R" ]]; then
       target_repo="$arg"
-    elif [[ "$prev" == "--head" ]]; then
-      head_ref="$arg"
     fi
     prev="$arg"
   done
+  for arg in "$@"; do
+    case "$arg" in
+      --repo=*) target_repo="${arg#--repo=}" ;;
+      -R*)
+        if [[ "$arg" != "-R" ]]; then
+          target_repo="${arg#-R}"
+        fi
+        ;;
+    esac
+  done
 
-  local is_fork parent_full parent_owner
-  is_fork=$(builtin command gh repo view --json isFork --jq '.isFork' 2>/dev/null) || {
-    AI_GUARD_GH_PR_CREATE_DECISION="prompt"
-    return 0
-  }
-
-  if [[ "$is_fork" != "true" ]]; then
-    AI_GUARD_GH_PR_CREATE_DECISION="allow"
-    return 0
+  if [[ -z "$target_repo" ]]; then
+    target_repo=$(builtin command gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null)
+  fi
+  if [[ -z "$target_repo" ]]; then
+    local origin_url
+    origin_url=$(builtin command git remote get-url origin 2>/dev/null)
+    target_repo=$(printf "%s" "$origin_url" \
+      | sed -E -e 's|^git@[^:]+:||' -e 's|^https?://[^/]+/||' -e 's|\.git$||')
   fi
 
-  parent_full=$(builtin command gh repo view --json parent --jq 'if .parent then (.parent.owner.login + "/" + .parent.name) else "" end' 2>/dev/null)
-  parent_owner=$(builtin command gh repo view --json parent --jq 'if .parent then .parent.owner.login else "" end' 2>/dev/null)
-
-  if [[ -z "$parent_full" || -z "$parent_owner" ]]; then
-    AI_GUARD_GH_PR_CREATE_DECISION="prompt"
-    return 0
-  fi
-
-  if [[ -z "$target_repo" || "$target_repo" == "$parent_full" ]]; then
-    AI_GUARD_BLOCK_REASON="fork 事故防止のため、upstream への PR 作成は禁止です。"
+  if [[ -z "$target_repo" || "$target_repo" != */* ]]; then
+    AI_GUARD_BLOCK_REASON="PR の target repo を特定できません。--repo を明示してください。"
     AI_GUARD_GH_PR_CREATE_DECISION="block"
     return 0
   fi
 
-  if [[ -n "$head_ref" && "$head_ref" == "$parent_owner:"* ]]; then
-    AI_GUARD_BLOCK_REASON="fork 事故防止のため、upstream への PR 作成は禁止です。"
+  local my_login
+  my_login=$(builtin command gh api /user --jq '.login' 2>/dev/null)
+  if [[ -z "$my_login" ]]; then
+    AI_GUARD_BLOCK_REASON="gh 認証情報が取得できないため block。gh auth status を確認してください。"
     AI_GUARD_GH_PR_CREATE_DECISION="block"
+    return 0
+  fi
+
+  local target_owner="${target_repo%%/*}"
+  if [[ "$target_owner" != "$my_login" ]]; then
+    # Unified with _ai_guard_eval_git_push (line 1191-1225):
+    # - Organization repo with write+ permission → allow (even for AI sessions)
+    # - Organization repo without push rights → block
+    # - Non-Organization (other user's repo) → AI: block / human: prompt
+    # - gh API unreachable → fall back to legacy AI: block / human: prompt
+    local owner_type push_ok permission
+    owner_type=$(builtin command gh api "repos/${target_repo}" --jq '.owner.type' 2>/dev/null) || owner_type=""
+    push_ok=$(builtin command gh api "repos/${target_repo}" --jq '.permissions.push' 2>/dev/null) || push_ok=""
+
+    if [[ -z "$owner_type" ]]; then
+      if _ai_guard_is_ai_session; then
+        AI_GUARD_BLOCK_REASON="AI による他人所有リポ (${target_repo}) への PR 作成は禁止です (repo メタ情報を取得できず)。"
+        AI_GUARD_GH_PR_CREATE_DECISION="block"
+      else
+        AI_GUARD_GH_PR_CREATE_DECISION="prompt"
+      fi
+      return 0
+    fi
+
+    if [[ "$owner_type" == "Organization" ]]; then
+      if [[ "$push_ok" == "true" ]]; then
+        AI_GUARD_GH_PR_CREATE_DECISION="allow"
+        return 0
+      fi
+      if [[ "$push_ok" == "false" ]]; then
+        AI_GUARD_BLOCK_REASON="組織 (${target_owner}) への PR 作成権限がないため禁止です。"
+        AI_GUARD_GH_PR_CREATE_DECISION="block"
+        return 0
+      fi
+      permission=$(builtin command gh api "repos/${target_repo}/collaborators/${my_login}/permission" --jq '.permission' 2>/dev/null) || permission=""
+      case "$permission" in
+        admin|maintain|write)
+          AI_GUARD_GH_PR_CREATE_DECISION="allow"
+          return 0
+          ;;
+        read|triage)
+          AI_GUARD_BLOCK_REASON="組織 (${target_owner}) への PR 作成権限がないため禁止です。"
+          AI_GUARD_GH_PR_CREATE_DECISION="block"
+          return 0
+          ;;
+      esac
+      AI_GUARD_GH_PR_CREATE_DECISION="allow"
+      return 0
+    fi
+
+    # User-owned repo that is not me: keep original policy
+    if _ai_guard_is_ai_session; then
+      AI_GUARD_BLOCK_REASON="AI による他人所有リポ (${target_repo}) への PR 作成は禁止です。--repo ${my_login}/<name> を明示してください。"
+      AI_GUARD_GH_PR_CREATE_DECISION="block"
+    else
+      AI_GUARD_GH_PR_CREATE_DECISION="prompt"
+    fi
     return 0
   fi
 
@@ -1626,8 +1720,25 @@ _ai_guard_dispatch() {
 
   # rm は通常の確認フローに従う（ブロックしない）
 
-  # Humanセッションではガードを通さず即実行
+  # Humanセッションでは原則ガードを通さず即実行する。
+  # ただし gh pr create は「他人所有リポへの書き込み防止」のため所有判定を通し、
+  # prompt decision なら Slack/Dialog 並行承認フローを起動する。
   if _ai_guard_is_ai_session; then :; else
+    if [[ "$cmd" == "gh" ]] && _ai_guard_eval_gh_pr_create "$@"; then
+      local cmd_display_human
+      cmd_display_human="$(printf "%s " "$cmd" "$@")"
+      cmd_display_human="${cmd_display_human% }"
+      case "$AI_GUARD_GH_PR_CREATE_DECISION" in
+        block)
+          ai_guard_block "$cmd_display_human" "$AI_GUARD_BLOCK_REASON"
+          return 1
+          ;;
+        prompt)
+          _ai_guard_confirm_with_temp_approval "$cmd" "$@"
+          return $?
+          ;;
+      esac
+    fi
     builtin command "$cmd" "$@"
     return $?
   fi
